@@ -1,37 +1,41 @@
 package cyclops.instances.reactive.collections.immutable;
 
-import static com.oath.cyclops.data.ReactiveWitness.*;
-
 import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.types.persistent.PersistentList;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
-import cyclops.reactive.collections.immutable.LinkedListX;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.MonoidKs;
 import cyclops.control.Either;
-import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
-import cyclops.function.Function3;
 import cyclops.function.Monoid;
 import cyclops.hkt.Active;
 import cyclops.hkt.Coproduct;
 import cyclops.hkt.Nested;
 import cyclops.hkt.Product;
-import cyclops.typeclasses.*;
+import cyclops.reactive.collections.immutable.LinkedListX;
+import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.arrow.MonoidK;
-import cyclops.arrow.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.instances.General;
-import cyclops.typeclasses.monad.*;
+import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.MonadPlus;
+import cyclops.typeclasses.monad.MonadRec;
+import cyclops.typeclasses.monad.MonadZero;
+import cyclops.typeclasses.monad.Traverse;
+import cyclops.typeclasses.monad.TraverseByTraverse;
+import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
+import lombok.experimental.Wither;
 
 import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
+import static com.oath.cyclops.data.ReactiveWitness.linkedListX;
 import static cyclops.reactive.collections.immutable.LinkedListX.narrowK;
 
 /**
@@ -118,7 +122,7 @@ public class LinkedListXInstances {
 
       @Override
       public <T> Option<Comonad<linkedListX>> comonad() {
-        return Maybe.nothing();
+        return Option.none();
       }
 
       @Override
@@ -127,107 +131,157 @@ public class LinkedListXInstances {
       }
     };
   }
-  public static Unfoldable<linkedListX> unfoldable(){
-    return new Unfoldable<linkedListX>() {
-      @Override
-      public <R, T> Higher<linkedListX, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
-        return LinkedListX.unfold(b,fn);
-      }
-    };
-  }
 
-  public static <T,R>Functor<linkedListX> functor(){
-    BiFunction<LinkedListX<T>,Function<? super T, ? extends R>,LinkedListX<R>> map = LinkedListXInstances::map;
-    return General.functor(map);
-  }
+    public static Pure<linkedListX> unit() {
+        return INSTANCE;
+    }
 
-  public static <T> Pure<linkedListX> unit(){
-    return General.<linkedListX,T>unit(LinkedListXInstances::of);
-  }
+    private final static LinkedListXTypeClasses INSTANCE = new LinkedListXTypeClasses();
+    @AllArgsConstructor
+    @Wither
+    public static class LinkedListXTypeClasses implements MonadPlus<linkedListX>,
+        MonadRec<linkedListX>,
+        TraverseByTraverse<linkedListX>,
+        Foldable<linkedListX>,
+        Unfoldable<linkedListX>{
 
-  public static <T,R> Applicative<linkedListX> zippingApplicative(){
-    BiFunction<LinkedListX< Function<T, R>>,LinkedListX<T>,LinkedListX<R>> ap = LinkedListXInstances::ap;
-    return General.applicative(functor(), unit(), ap);
-  }
+        private final MonoidK<linkedListX> monoidK;
+        public LinkedListXTypeClasses(){
+            monoidK = MonoidKs.linkedListXConcat();
+        }
+        @Override
+        public <T> Higher<linkedListX, T> filter(Predicate<? super T> predicate, Higher<linkedListX, T> ds) {
+            return narrowK(ds).filter(predicate);
+        }
 
-  public static <T,R> Monad<linkedListX> monad(){
+        @Override
+        public <T, R> Higher<linkedListX, Tuple2<T, R>> zip(Higher<linkedListX, T> fa, Higher<linkedListX, R> fb) {
+            return narrowK(fa).zip(narrowK(fb));
+        }
 
-    BiFunction<Higher<linkedListX,T>,Function<? super T, ? extends Higher<linkedListX,R>>,Higher<linkedListX,R>> flatMap = LinkedListXInstances::flatMap;
-    return General.monad(zippingApplicative(), flatMap);
-  }
+        @Override
+        public <T1, T2, R> Higher<linkedListX, R> zip(Higher<linkedListX, T1> fa, Higher<linkedListX, T2> fb, BiFunction<? super T1, ? super T2, ? extends R> f) {
+            return narrowK(fa).zip(narrowK(fb),f);
+        }
 
-  public static <T,R> MonadZero<linkedListX> monadZero(){
+        @Override
+        public <T> MonoidK<linkedListX> monoid() {
+            return monoidK;
+        }
 
-    return General.monadZero(monad(), LinkedListX.empty());
-  }
+        @Override
+        public <T, R> Higher<linkedListX, R> flatMap(Function<? super T, ? extends Higher<linkedListX, R>> fn, Higher<linkedListX, T> ds) {
+            return narrowK(ds).concatMap(i->narrowK(fn.apply(i)));
+        }
 
-  public static <T> MonadPlus<linkedListX> monadPlus(){
+        @Override
+        public <T, R> Higher<linkedListX, R> ap(Higher<linkedListX, ? extends Function<T, R>> fn, Higher<linkedListX, T> apply) {
+            return narrowK(apply)
+                .zip(narrowK(fn),(a,b)->b.apply(a));
+        }
 
-    return General.monadPlus(monadZero(), MonoidKs.linkedListXConcat());
-  }
-  public static <T,R> MonadRec<linkedListX> monadRec(){
+        @Override
+        public <T> Higher<linkedListX, T> unit(T value) {
+            return LinkedListX.of(value);
+        }
 
-    return new MonadRec<linkedListX>(){
-      @Override
-      public <T, R> Higher<linkedListX, R> tailRec(T initial, Function<? super T, ? extends Higher<linkedListX,? extends Either<T, R>>> fn) {
-        return LinkedListX.tailRec(initial,fn.andThen(LinkedListX::narrowK));
-      }
-    };
-  }
-
-  public static MonadPlus<linkedListX> monadPlus(MonoidK<linkedListX> m){
-
-    return General.monadPlus(monadZero(),m);
-  }
-
-  /**
-   * @return Type class for traversables with traverse / sequence operations
-   */
-  public static <C2,T> Traverse<linkedListX> traverse(){
-    BiFunction<Applicative<C2>,LinkedListX<Higher<C2, T>>,Higher<C2, LinkedListX<T>>> sequenceFn = (ap, list) -> {
-
-      Higher<C2,LinkedListX<T>> identity = ap.unit(LinkedListX.empty());
-
-      BiFunction<Higher<C2,LinkedListX<T>>,Higher<C2,T>,Higher<C2,LinkedListX<T>>> combineToPStack =   (acc, next) -> ap.apBiFn(ap.unit((a, b) ->a.plus(b)),acc,next);
-
-      BinaryOperator<Higher<C2,LinkedListX<T>>> combinePStacks = (a, b)-> ap.apBiFn(ap.unit((l1, l2)-> l1.plusAll(l2)),a,b); ;
+        @Override
+        public <T, R> Higher<linkedListX, R> map(Function<? super T, ? extends R> fn, Higher<linkedListX, T> ds) {
+            return narrowK(ds).map(fn);
+        }
 
 
-      return list.stream()
-        .reverse()
-        .reduce(identity,
-          combineToPStack,
-          combinePStacks);
+        @Override
+        public <T, R> Higher<linkedListX, R> tailRec(T initial, Function<? super T, ? extends Higher<linkedListX, ? extends Either<T, R>>> fn) {
+            return LinkedListX.tailRec(initial,i->narrowK(fn.apply(i)));
+        }
+
+        @Override
+        public <C2, T, R> Higher<C2, Higher<linkedListX, R>> traverseA(Applicative<C2> ap, Function<? super T, ? extends Higher<C2, R>> fn, Higher<linkedListX, T> ds) {
+            LinkedListX<T> v = narrowK(ds);
+            return v.<Higher<C2, Higher<linkedListX,R>>>foldLeft(ap.unit(LinkedListX.<R>empty()),
+                (a, b) -> ap.zip(fn.apply(b), a, (sn, vec) -> narrowK(vec).plus(sn)));
 
 
-    };
-    BiFunction<Applicative<C2>,Higher<linkedListX,Higher<C2, T>>,Higher<C2, Higher<linkedListX,T>>> sequenceNarrow  =
-      (a,b) -> LinkedListX.widen2(sequenceFn.apply(a, narrowK(b)));
-    return General.traverse(zippingApplicative(), sequenceNarrow);
-  }
+        }
 
-  public static <T,R> Foldable<linkedListX> foldable(){
-    BiFunction<Monoid<T>,Higher<linkedListX,T>,T> foldRightFn =  (m, l)-> narrowK(l).foldRight(m);
-    BiFunction<Monoid<T>,Higher<linkedListX,T>,T> foldLeftFn = (m, l)-> narrowK(l).foldLeft(m);
-    Function3<Monoid<R>, Function<T, R>, Higher<linkedListX, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
+        @Override
+        public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<linkedListX, T> ds) {
+            LinkedListX<T> x = narrowK(ds);
+            return x.foldLeft(mb.zero(),(a,b)->mb.apply(a,fn.apply(b)));
+        }
 
-    return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
-  }
+        @Override
+        public <T, R> Higher<linkedListX, Tuple2<T, Long>> zipWithIndex(Higher<linkedListX, T> ds) {
+            return narrowK(ds).zipWithIndex();
+        }
 
-  private static  <T> LinkedListX<T> concat(PersistentList<T> l1, PersistentList<T> l2){
+        @Override
+        public <T> T foldRight(Monoid<T> monoid, Higher<linkedListX, T> ds) {
+            return narrowK(ds).foldRight(monoid);
+        }
 
-    return LinkedListX.fromIterable(l1.plusAll(l2));
-  }
-  private <T> LinkedListX<T> of(T value){
-    return LinkedListX.singleton(value);
-  }
-  private static <T,R> LinkedListX<R> ap(LinkedListX<Function< T, R>> lt, LinkedListX<T> list){
-    return LinkedListX.fromIterable(lt).zip(list,(a, b)->a.apply(b));
-  }
-  private static <T,R> Higher<linkedListX,R> flatMap(Higher<linkedListX,T> lt, Function<? super T, ? extends  Higher<linkedListX,R>> fn){
-    return narrowK(lt).concatMap(fn.andThen(LinkedListX::narrowK));
-  }
-  private static <T,R> LinkedListX<R> map(LinkedListX<T> lt, Function<? super T, ? extends R> fn){
-    return LinkedListX.fromIterable(lt).map(fn);
-  }
+
+        @Override
+        public <T> T foldLeft(Monoid<T> monoid, Higher<linkedListX, T> ds) {
+            return narrowK(ds).foldLeft(monoid);
+        }
+
+
+        @Override
+        public <R, T> Higher<linkedListX, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
+            return LinkedListX.unfold(b,fn);
+        }
+
+
+    }
+
+    public static Unfoldable<linkedListX> unfoldable(){
+
+        return INSTANCE;
+    }
+
+    public static MonadPlus<linkedListX> monadPlus(MonoidK<linkedListX> m){
+
+        return INSTANCE.withMonoidK(m);
+    }
+    public static <T,R> Applicative<linkedListX> zippingApplicative(){
+        return INSTANCE;
+    }
+    public static <T,R>Functor<linkedListX> functor(){
+        return INSTANCE;
+    }
+
+    public static <T,R> Monad<linkedListX> monad(){
+        return INSTANCE;
+    }
+
+    public static <T,R> MonadZero<linkedListX> monadZero(){
+
+        return INSTANCE;
+    }
+
+    public static <T> MonadPlus<linkedListX> monadPlus(){
+
+        return INSTANCE;
+    }
+    public static <T,R> MonadRec<linkedListX> monadRec(){
+
+        return INSTANCE;
+    }
+
+
+    public static <C2,T> Traverse<linkedListX> traverse(){
+        return INSTANCE;
+    }
+
+    public static <T,R> Foldable<linkedListX> foldable(){
+        return INSTANCE;
+    }
+
+
+
+
+
+
 }

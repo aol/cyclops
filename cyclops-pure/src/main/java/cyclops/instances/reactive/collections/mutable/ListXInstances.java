@@ -1,11 +1,10 @@
 package cyclops.instances.reactive.collections.mutable;
 
-import static com.oath.cyclops.data.ReactiveWitness.*;
-
 import com.oath.cyclops.hkt.Higher;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.MonoidKs;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
@@ -15,22 +14,29 @@ import cyclops.hkt.Active;
 import cyclops.hkt.Coproduct;
 import cyclops.hkt.Nested;
 import cyclops.hkt.Product;
-import cyclops.reactive.ReactiveSeq;
-import cyclops.typeclasses.*;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.arrow.MonoidK;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.instances.General;
-import cyclops.typeclasses.monad.*;
+import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.MonadPlus;
+import cyclops.typeclasses.monad.MonadRec;
+import cyclops.typeclasses.monad.MonadZero;
+import cyclops.typeclasses.monad.Traverse;
+import cyclops.typeclasses.monad.TraverseByTraverse;
+import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
+import lombok.experimental.Wither;
 
-import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
-import java.util.stream.Stream;
+import java.util.function.Predicate;
+
+import static com.oath.cyclops.data.ReactiveWitness.list;
 
 @UtilityClass
 public class ListXInstances {
@@ -119,275 +125,158 @@ public class ListXInstances {
     };
 
   }
-  public static Unfoldable<list> unfoldable(){
-    return new Unfoldable<list>() {
-      @Override
-      public <R, T> Higher<list, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
-        return ListX.unfold(b,fn);
-      }
-    };
-  }
-  /**
-   *
-   * Transform a list, mulitplying every element by 2
-   *
-   * <pre>
-   * {@code
-   *  ListX<Integer> list = Lists.functor().map(i->i*2, ListX.widen(Arrays.asList(1,2,3));
-   *
-   *  //[2,4,6]
-   *
-   *
-   * }
-   * </pre>
-   *
-   * An example fluent api working with Lists
-   * <pre>
-   * {@code
-   *   ListX<Integer> list = Lists.unit()
-  .unit("hello")
-  .applyHKT(h->Lists.functor().map((String v) ->v.length(), h))
-  .convert(ListX::narrowK3);
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A functor for Lists
-   */
-  public static <T,R>Functor<list> functor(){
-    BiFunction<ListX<T>,Function<? super T, ? extends R>,ListX<R>> map = ListXInstances::map;
-    return General.functor(map);
-  }
-  /**
-   * <pre>
-   * {@code
-   * ListX<String> list = Lists.unit()
-  .unit("hello")
-  .convert(ListX::narrowK3);
 
-  //Arrays.asList("hello"))
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A factory for Lists
-   */
-  public static <T> Pure<list> unit(){
-    return General.<list,T>unit(ListXInstances::of);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   * import static com.oath.cyclops.hkt.jdk.ListX.widen;
-   * import static com.oath.cyclops.util.function.Lambda.l1;
-   * import static java.util.Arrays.asList;
-   *
-  Lists.zippingApplicative()
-  .ap(widen(asList(l1(this::multiplyByTwo))),widen(asList(1,2,3)));
-   *
-   * //[2,4,6]
-   * }
-   * </pre>
-   *
-   *
-   * Example fluent API
-   * <pre>
-   * {@code
-   * ListX<Function<Integer,Integer>> listFn =Lists.unit()
-   *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-   *                                                  .convert(ListX::narrowK3);
+    public static Pure<list> unit() {
+      return INSTANCE;
+    }
 
-  ListX<Integer> list = Lists.unit()
-  .unit("hello")
-  .applyHKT(h->Lists.functor().map((String v) ->v.length(), h))
-  .applyHKT(h->Lists.zippingApplicative().ap(listFn, h))
-  .convert(ListX::narrowK3);
+    private final static ListXTypeClasses INSTANCE = new ListXTypeClasses();
+    @AllArgsConstructor
+    @Wither
+    public static class ListXTypeClasses implements MonadPlus<list>,
+        MonadRec<list>,
+        TraverseByTraverse<list>,
+        Foldable<list>,
+        Unfoldable<list>{
 
-  //Arrays.asList("hello".length()*2))
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A zipper for Lists
-   */
-  public static <T,R> Applicative<list> zippingApplicative(){
-    BiFunction<ListX< Function<T, R>>,ListX<T>,ListX<R>> ap = ListXInstances::ap;
-    return General.applicative(functor(), unit(), ap);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   * import static com.oath.cyclops.hkt.jdk.ListX.widen;
-   * ListX<Integer> list  = Lists.monad()
-  .flatMap(i->widen(ListX.range(0,i)), widen(Arrays.asList(1,2,3)))
-  .convert(ListX::narrowK3);
-   * }
-   * </pre>
-   *
-   * Example fluent API
-   * <pre>
-   * {@code
-   *    ListX<Integer> list = Lists.unit()
-  .unit("hello")
-  .applyHKT(h->Lists.monad().flatMap((String v) ->Lists.unit().unit(v.length()), h))
-  .convert(ListX::narrowK3);
+        private final MonoidK<list> monoidK;
+        public ListXTypeClasses(){
+            monoidK = MonoidKs.listXConcat();
+        }
+        @Override
+        public <T> Higher<list, T> filter(Predicate<? super T> predicate, Higher<list, T> ds) {
+            return narrowK(ds).filter(predicate);
+        }
 
-  //Arrays.asList("hello".length())
-   *
-   * }
-   * </pre>
-   *
-   * @return Type class with monad arrow for Lists
-   */
-  public static <T,R> Monad<list> monad(){
+        @Override
+        public <T, R> Higher<list, Tuple2<T, R>> zip(Higher<list, T> fa, Higher<list, R> fb) {
+            return narrowK(fa).zip(narrowK(fb));
+        }
 
-    BiFunction<Higher<list,T>,Function<? super T, ? extends Higher<list,R>>,Higher<list,R>> flatMap = ListXInstances::flatMap;
-    return General.monad(zippingApplicative(), flatMap);
-  }
-  public static <T,R> MonadRec<list> monadRec(){
+        @Override
+        public <T1, T2, R> Higher<list, R> zip(Higher<list, T1> fa, Higher<list, T2> fb, BiFunction<? super T1, ? super T2, ? extends R> f) {
+            return narrowK(fa).zip(narrowK(fb),f);
+        }
 
-    return new MonadRec<list>(){
-      @Override
-      public <T, R> Higher<list, R> tailRec(T initial, Function<? super T, ? extends Higher<list,? extends Either<T, R>>> fn) {
-        return ListX.tailRec(initial,fn.andThen(ListX::narrowK));
-      }
-    };
-  }
+        @Override
+        public <T> MonoidK<list> monoid() {
+            return monoidK;
+        }
 
-  /**
-   *
-   * <pre>
-   * {@code
-   *  ListX<String> list = Lists.unit()
-  .unit("hello")
-  .applyHKT(h->Lists.monadZero().filter((String t)->t.startsWith("he"), h))
-  .convert(ListX::narrowK3);
+        @Override
+        public <T, R> Higher<list, R> flatMap(Function<? super T, ? extends Higher<list, R>> fn, Higher<list, T> ds) {
+            return narrowK(ds).concatMap(i->narrowK(fn.apply(i)));
+        }
 
-  //Arrays.asList("hello"));
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A filterable monad (with default value)
-   */
-  public static <T,R> MonadZero<list> monadZero(){
+        @Override
+        public <T, R> Higher<list, R> ap(Higher<list, ? extends Function<T, R>> fn, Higher<list, T> apply) {
+            return narrowK(apply)
+                .zip(narrowK(fn),(a,b)->b.apply(a));
+        }
 
-    return General.monadZero(monad(), ListX.empty());
-  }
+        @Override
+        public <T> Higher<list, T> unit(T value) {
+            return ListX.of(value);
+        }
 
-  public static <T> MonadPlus<list> monadPlus(){
-
-    MonoidK<list> m = new MonoidK<list>() {
-      @Override
-      public <T> Higher<list, T> zero() {
-        return ListX.empty();
-      }
-
-      @Override
-      public <T> Higher<list, T> apply(Higher<list, T> t1, Higher<list, T> t2) {
-        return ListXInstances.concat(narrowK(t1),narrowK(t2));
-      }
-    };
-    return General.monadPlus(monadZero(),m);
-  }
-
-  public static <T> MonadPlus<list> monadPlus(MonoidK<list> m){
-
-    return General.monadPlus(monadZero(),m);
-  }
-
-  /**
-   * @return Type class for traversables with traverse / sequence operations
-   */
-  public static <C2,T> Traverse<list> traverse(){
-    BiFunction<Applicative<C2>,ListX<Higher<C2, T>>,Higher<C2, ListX<T>>> sequenceFn = (ap,list) -> {
-
-      Higher<C2,ListX<T>> identity = ap.unit(ListX.empty());
-
-      BiFunction<Higher<C2,ListX<T>>,Higher<C2,T>,Higher<C2,ListX<T>>> combineToList =   (acc,next) -> ap.apBiFn(ap.unit((a,b) -> {
-          a.add(b); return a;}),acc,next);
-
-      BinaryOperator<Higher<C2,ListX<T>>> combineLists = (a, b)-> ap.apBiFn(ap.unit((l1, l2)-> { l1.addAll(l2); return l1;}),a,b); ;
-
-      return list.stream()
-        .reduce(identity,
-          combineToList,
-          combineLists);
+        @Override
+        public <T, R> Higher<list, R> map(Function<? super T, ? extends R> fn, Higher<list, T> ds) {
+            return narrowK(ds).map(fn);
+        }
 
 
-    };
-    BiFunction<Applicative<C2>,Higher<list,Higher<C2, T>>,Higher<C2, Higher<list,T>>> sequenceNarrow  =
-      (a,b) -> ListXInstances.widen2(sequenceFn.apply(a, ListXInstances.narrowK(b)));
-    return General.traverse(zippingApplicative(), sequenceNarrow);
-  }
+        @Override
+        public <T, R> Higher<list, R> tailRec(T initial, Function<? super T, ? extends Higher<list, ? extends Either<T, R>>> fn) {
+            return ListX.tailRec(initial,i->narrowK(fn.apply(i)));
+        }
 
-  /**
-   *
-   * <pre>
-   * {@code
-   * int sum  = Lists.foldable()
-  .foldLeft(0, (a,b)->a+b, ListX.widen(Arrays.asList(1,2,3,4)));
-
-  //10
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return Type class for folding / reduction operations
-   */
-  public static <T> Foldable<list> foldable(){
-    return new Foldable<list>() {
-      @Override
-      public <T> T foldRight(Monoid<T> monoid, Higher<list, T> ds) {
-        return  ListX.fromIterable(narrow(ds)).foldRight(monoid);
-      }
-
-      @Override
-      public <T> T foldLeft(Monoid<T> monoid, Higher<list, T> ds) {
-        return  ListX.fromIterable(narrow(ds)).foldLeft(monoid);
-      }
-
-      @Override
-      public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<list, T> nestedA) {
-        return narrow(nestedA).<R>map(fn).foldLeft(mb);
+        @Override
+        public <C2, T, R> Higher<C2, Higher<list, R>> traverseA(Applicative<C2> ap, Function<? super T, ? extends Higher<C2, R>> fn, Higher<list, T> ds) {
+            ListX<T> v = narrowK(ds);
+            return v.<Higher<C2, Higher<list,R>>>foldLeft(ap.unit(ListX.<R>empty()),
+                (a, b) -> ap.zip(fn.apply(b), a, (sn, vec) -> narrowK(vec).plus(sn)));
 
 
-      }
-    };
+        }
 
-  }
+        @Override
+        public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<list, T> ds) {
+            ListX<T> x = narrowK(ds);
+            return x.foldLeft(mb.zero(),(a,b)->mb.apply(a,fn.apply(b)));
+        }
 
-  private static  <T> ListX<T> concat(List<T> l1, List<T> l2){
-    return ListX.listX(ReactiveSeq.fromStream(Stream.concat(l1.stream(),l2.stream())));
-  }
-  private static <T> ListX<T> of(T value){
-    return ListX.of(value);
-  }
-  private static <T,R> ListX<R> ap(ListX<Function< T, R>> lt,  ListX<T> list){
-    return ListX.fromIterable(lt).zip(list,(a,b)->a.apply(b));
-  }
-  private static <T,R> Higher<list,R> flatMap(Higher<list,T> lt, Function<? super T, ? extends  Higher<list,R>> fn){
-    return narrowK(lt).concatMap(fn.andThen(ListXInstances::narrowK));
-  }
-  private static <T,R> ListX<R> map(ListX<T> lt, Function<? super T, ? extends R> fn){
-    return ListX.fromIterable(lt).map(fn);
-  }
+        @Override
+        public <T, R> Higher<list, Tuple2<T, Long>> zipWithIndex(Higher<list, T> ds) {
+            return narrowK(ds).zipWithIndex();
+        }
+
+        @Override
+        public <T> T foldRight(Monoid<T> monoid, Higher<list, T> ds) {
+            return narrowK(ds).foldRight(monoid);
+        }
+
+
+        @Override
+        public <T> T foldLeft(Monoid<T> monoid, Higher<list, T> ds) {
+            return narrowK(ds).foldLeft(monoid);
+        }
+
+
+        @Override
+        public <R, T> Higher<list, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
+            return ListX.unfold(b,fn);
+        }
+
+
+    }
+
+    public static Unfoldable<list> unfoldable(){
+
+        return INSTANCE;
+    }
+
+    public static MonadPlus<list> monadPlus(MonoidK<list> m){
+
+        return INSTANCE.withMonoidK(m);
+    }
+    public static <T,R> Applicative<list> zippingApplicative(){
+        return INSTANCE;
+    }
+    public static <T,R>Functor<list> functor(){
+        return INSTANCE;
+    }
+
+    public static <T,R> Monad<list> monad(){
+        return INSTANCE;
+    }
+
+    public static <T,R> MonadZero<list> monadZero(){
+
+        return INSTANCE;
+    }
+
+    public static <T> MonadPlus<list> monadPlus(){
+
+        return INSTANCE;
+    }
+    public static <T,R> MonadRec<list> monadRec(){
+
+        return INSTANCE;
+    }
+
+
+    public static <C2,T> Traverse<list> traverse(){
+        return INSTANCE;
+    }
+
+    public static <T,R> Foldable<list> foldable(){
+        return INSTANCE;
+    }
 
 
 
-  /**
-   * Widen a ListType nest inside another HKT encoded type
-   *
-   * @param flux HTK encoded type containing  a List to widen
-   * @return HKT encoded type with a widened List
-   */
+
+
   public static <C2, T> Higher<C2, Higher<list, T>> widen2(Higher<C2, ListX<T>> flux) {
     // a functor could be used (if C2 is a functor / one exists for C2 type)
     // instead of casting
@@ -401,23 +290,13 @@ public class ListXInstances {
 
 
 
-  /**
-   * Convert the raw Higher Kinded Type for ListType types into the ListType type definition class
-   *
-   * @param future HKT encoded list into a ListType
-   * @return ListType
-   */
+
   public static <T> ListX<T> narrowK(final Higher<list, T> future) {
     return (ListX<T>) future;
   }
 
 
-  /**
-   * Convert the HigherKindedType definition for a List into
-   *
-   * @param  completableList Type Constructor to convert back into narrowed type
-   * @return List from Higher Kinded Type
-   */
+
   public static <T> ListX<T> narrow(final Higher<list, T> completableList) {
 
     return ((ListX<T>) completableList);//.narrow();

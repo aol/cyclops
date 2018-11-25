@@ -1,10 +1,10 @@
 package cyclops.instances.reactive.collections.mutable;
 
-import static com.oath.cyclops.data.ReactiveWitness.*;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
-import cyclops.reactive.collections.mutable.SetX;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.MonoidKs;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
@@ -14,23 +14,29 @@ import cyclops.hkt.Active;
 import cyclops.hkt.Coproduct;
 import cyclops.hkt.Nested;
 import cyclops.hkt.Product;
-import cyclops.reactive.ReactiveSeq;
-import cyclops.typeclasses.*;
+import cyclops.reactive.collections.mutable.SetX;
+import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.arrow.MonoidK;
-import cyclops.arrow.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.instances.General;
-import cyclops.typeclasses.monad.*;
+import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.MonadPlus;
+import cyclops.typeclasses.monad.MonadRec;
+import cyclops.typeclasses.monad.MonadZero;
+import cyclops.typeclasses.monad.Traverse;
+import cyclops.typeclasses.monad.TraverseByTraverse;
+import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
+import lombok.experimental.Wither;
 
-import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
-import java.util.stream.Stream;
+import java.util.function.Predicate;
+
+import static com.oath.cyclops.data.ReactiveWitness.set;
 
 @UtilityClass
 public class SetXInstances {
@@ -121,259 +127,156 @@ public class SetXInstances {
     };
 
   }
-  public static Unfoldable<set> unfoldable(){
-    return new Unfoldable<set>() {
-      @Override
-      public <R, T> Higher<set, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
-        return SetX.unfold(b,fn);
-      }
-    };
-  }
-  /**
-   *
-   * Transform a set, mulitplying every element by 2
-   *
-   * <pre>
-   * {@code
-   *  SetX<Integer> set = Sets.functor().map(i->i*2, SetX.widen(Arrays.asSet(1,2,3));
-   *
-   *  //[2,4,6]
-   *
-   *
-   * }
-   * </pre>
-   *
-   * An example fluent api working with Sets
-   * <pre>
-   * {@code
-   *   SetX<Integer> set = Sets.unit()
-  .unit("hello")
-  .applyHKT(h->Sets.functor().map((String v) ->v.length(), h))
-  .convert(SetX::narrowK3);
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A functor for Sets
-   */
-  public static <T,R>Functor<set> functor(){
-    BiFunction<SetX<T>,Function<? super T, ? extends R>,SetX<R>> map = SetXInstances::map;
-    return General.functor(map);
-  }
-  /**
-   * <pre>
-   * {@code
-   * SetX<String> set = Sets.unit()
-  .unit("hello")
-  .convert(SetX::narrowK3);
 
-  //Arrays.asSet("hello"))
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A factory for Sets
-   */
-  public static <T> Pure<set> unit(){
-    return General.<set,T>unit(SetXInstances::of);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   * import static com.oath.cyclops.hkt.jdk.SetX.widen;
-   * import static com.oath.cyclops.util.function.Lambda.l1;
-   * import static java.util.Arrays.asSet;
-   *
-  Sets.zippingApplicative()
-  .ap(widen(asSet(l1(this::multiplyByTwo))),widen(asSet(1,2,3)));
-   *
-   * //[2,4,6]
-   * }
-   * </pre>
-   *
-   *
-   * Example fluent API
-   * <pre>
-   * {@code
-   * SetX<Function<Integer,Integer>> setFn =Sets.unit()
-   *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-   *                                                  .convert(SetX::narrowK3);
+    public static Pure<set> unit() {
+      return INSTANCE;
+    }
 
-  SetX<Integer> set = Sets.unit()
-  .unit("hello")
-  .applyHKT(h->Sets.functor().map((String v) ->v.length(), h))
-  .applyHKT(h->Sets.zippingApplicative().ap(setFn, h))
-  .convert(SetX::narrowK3);
+    private final static SetXTypeClasses INSTANCE = new SetXTypeClasses();
+    @AllArgsConstructor
+    @Wither
+    public static class SetXTypeClasses implements MonadPlus<set>,
+                                                    MonadRec<set>,
+                                                    TraverseByTraverse<set>,
+                                                    Foldable<set>,
+                                                    Unfoldable<set>{
 
-  //Arrays.asSet("hello".length()*2))
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A zipper for Sets
-   */
-  public static <T,R> Applicative<set> zippingApplicative(){
-    BiFunction<SetX< Function<T, R>>,SetX<T>,SetX<R>> ap = SetXInstances::ap;
-    return General.applicative(functor(), unit(), ap);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   * import static com.oath.cyclops.hkt.jdk.SetX.widen;
-   * SetX<Integer> set  = Sets.monad()
-  .flatMap(i->widen(SetX.range(0,i)), widen(Arrays.asSet(1,2,3)))
-  .convert(SetX::narrowK3);
-   * }
-   * </pre>
-   *
-   * Example fluent API
-   * <pre>
-   * {@code
-   *    SetX<Integer> set = Sets.unit()
-  .unit("hello")
-  .applyHKT(h->Sets.monad().flatMap((String v) ->Sets.unit().unit(v.length()), h))
-  .convert(SetX::narrowK3);
+        private final MonoidK<set> monoidK;
+        public SetXTypeClasses(){
+            monoidK = MonoidKs.setXConcat();
+        }
+        @Override
+        public <T> Higher<set, T> filter(Predicate<? super T> predicate, Higher<set, T> ds) {
+            return narrowK(ds).filter(predicate);
+        }
 
-  //Arrays.asSet("hello".length())
-   *
-   * }
-   * </pre>
-   *
-   * @return Type class with monad arrow for Sets
-   */
-  public static <T,R> Monad<set> monad(){
+        @Override
+        public <T, R> Higher<set, Tuple2<T, R>> zip(Higher<set, T> fa, Higher<set, R> fb) {
+            return narrowK(fa).zip(narrowK(fb));
+        }
 
-    BiFunction<Higher<set,T>,Function<? super T, ? extends Higher<set,R>>,Higher<set,R>> flatMap = SetXInstances::flatMap;
-    return General.monad(zippingApplicative(), flatMap);
-  }
-  public static <T,R> MonadRec<set> monadRec(){
+        @Override
+        public <T1, T2, R> Higher<set, R> zip(Higher<set, T1> fa, Higher<set, T2> fb, BiFunction<? super T1, ? super T2, ? extends R> f) {
+            return narrowK(fa).zip(narrowK(fb),f);
+        }
 
-    return new MonadRec<set>(){
-      @Override
-      public <T, R> Higher<set, R> tailRec(T initial, Function<? super T, ? extends Higher<set,? extends Either<T, R>>> fn) {
-        return SetX.tailRec(initial,fn.andThen(SetX::narrowK));
-      }
-    };
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   *  SetX<String> set = Sets.unit()
-  .unit("hello")
-  .applyHKT(h->Sets.monadZero().filter((String t)->t.startsWith("he"), h))
-  .convert(SetX::narrowK3);
+        @Override
+        public <T> MonoidK<set> monoid() {
+            return monoidK;
+        }
 
-  //Arrays.asSet("hello"));
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A filterable monad (with default value)
-   */
-  public static <T,R> MonadZero<set> monadZero(){
+        @Override
+        public <T, R> Higher<set, R> flatMap(Function<? super T, ? extends Higher<set, R>> fn, Higher<set, T> ds) {
+            return narrowK(ds).concatMap(i->narrowK(fn.apply(i)));
+        }
 
-    return General.monadZero(monad(), SetX.empty());
-  }
+        @Override
+        public <T, R> Higher<set, R> ap(Higher<set, ? extends Function<T, R>> fn, Higher<set, T> apply) {
+            return narrowK(apply)
+                .zip(narrowK(fn),(a,b)->b.apply(a));
+        }
 
-  public static <T> MonadPlus<set> monadPlus(){
+        @Override
+        public <T> Higher<set, T> unit(T value) {
+            return SetX.of(value);
+        }
 
-    return General.monadPlus(monadZero(), MonoidKs.setXConcat());
-  }
-
-  public static <T> MonadPlus<set> monadPlus(MonoidK<set> m){
-
-    return General.monadPlus(monadZero(),m);
-  }
-
-  /**
-   * @return Type class for traversables with traverse / sequence operations
-   */
-  public static <C2,T> Traverse<set> traverse(){
-    BiFunction<Applicative<C2>,SetX<Higher<C2, T>>,Higher<C2, SetX<T>>> sequenceFn = (ap, set) -> {
-
-      Higher<C2,SetX<T>> identity = ap.unit(SetX.empty());
-
-      BiFunction<Higher<C2,SetX<T>>,Higher<C2,T>,Higher<C2,SetX<T>>> combineToSet =   (acc,next) -> ap.apBiFn(ap.unit((a,b) -> { a.add(b); return a;}),acc,next);
-
-      BinaryOperator<Higher<C2,SetX<T>>> combineSets = (a, b)-> ap.apBiFn(ap.unit((l1, l2)-> { l1.addAll(l2); return l1;}),a,b); ;
-
-      return set.stream()
-        .reduce(identity,
-          combineToSet,
-          combineSets);
+        @Override
+        public <T, R> Higher<set, R> map(Function<? super T, ? extends R> fn, Higher<set, T> ds) {
+            return narrowK(ds).map(fn);
+        }
 
 
-    };
-    BiFunction<Applicative<C2>,Higher<set,Higher<C2, T>>,Higher<C2, Higher<set,T>>> sequenceNarrow  =
-      (a,b) -> SetXInstances.widen2(sequenceFn.apply(a, SetXInstances.narrowK(b)));
-    return General.traverse(zippingApplicative(), sequenceNarrow);
-  }
+        @Override
+        public <T, R> Higher<set, R> tailRec(T initial, Function<? super T, ? extends Higher<set, ? extends Either<T, R>>> fn) {
+            return SetX.tailRec(initial,i->narrowK(fn.apply(i)));
+        }
 
-  /**
-   *
-   * <pre>
-   * {@code
-   * int sum  = Sets.foldable()
-  .foldLeft(0, (a,b)->a+b, SetX.widen(Arrays.asSet(1,2,3,4)));
+        @Override
+        public <C2, T, R> Higher<C2, Higher<set, R>> traverseA(Applicative<C2> ap, Function<? super T, ? extends Higher<C2, R>> fn, Higher<set, T> ds) {
+            SetX<T> v = narrowK(ds);
+            return v.<Higher<C2, Higher<set,R>>>foldLeft(ap.unit(SetX.<R>empty()),
+                (a, b) -> ap.zip(fn.apply(b), a, (sn, vec) -> narrowK(vec).plus(sn)));
 
-  //10
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return Type class for folding / reduction operations
-   */
-  public static <T> Foldable<set> foldable(){
-    return new Foldable<set>() {
-      @Override
-      public <T> T foldRight(Monoid<T> monoid, Higher<set, T> ds) {
-        return  SetX.fromIterable(narrowK(ds)).foldRight(monoid);
-      }
 
-      @Override
-      public <T> T foldLeft(Monoid<T> monoid, Higher<set, T> ds) {
-        return  SetX.fromIterable(narrowK(ds)).foldLeft(monoid);
-      }
+        }
 
-      @Override
-      public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<set, T> nestedA) {
-        return narrowK(nestedA).<R>map(fn).foldLeft(mb);
-      }
-    };
-  }
+        @Override
+        public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<set, T> ds) {
+            SetX<T> x = narrowK(ds);
+            return x.foldLeft(mb.zero(),(a,b)->mb.apply(a,fn.apply(b)));
+        }
 
-  private static  <T> SetX<T> concat(Set<T> l1, Set<T> l2){
-    return SetX.setX(ReactiveSeq.fromStream(Stream.concat(l1.stream(),l2.stream())));
-  }
-  private static <T> SetX<T> of(T value){
-    return SetX.of(value);
-  }
-  private static <T,R> SetX<R> ap(SetX<Function< T, R>> lt,  SetX<T> set){
-    return SetX.fromIterable(lt).zip(set,(a,b)->a.apply(b));
-  }
-  private static <T,R> Higher<set,R> flatMap(Higher<set,T> lt, Function<? super T, ? extends  Higher<set,R>> fn){
-    return narrowK(lt).concatMap(fn.andThen(SetXInstances::narrowK));
-  }
-  private static <T,R> SetX<R> map(SetX<T> lt, Function<? super T, ? extends R> fn){
-    return SetX.fromIterable(lt).map(fn);
-  }
+        @Override
+        public <T, R> Higher<set, Tuple2<T, Long>> zipWithIndex(Higher<set, T> ds) {
+            return narrowK(ds).zipWithIndex();
+        }
+
+        @Override
+        public <T> T foldRight(Monoid<T> monoid, Higher<set, T> ds) {
+            return narrowK(ds).foldRight(monoid);
+        }
+
+
+        @Override
+        public <T> T foldLeft(Monoid<T> monoid, Higher<set, T> ds) {
+            return narrowK(ds).foldLeft(monoid);
+        }
+
+
+        @Override
+        public <R, T> Higher<set, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
+            return SetX.unfold(b,fn);
+        }
+
+
+    }
+
+    public static Unfoldable<set> unfoldable(){
+
+        return INSTANCE;
+    }
+
+    public static MonadPlus<set> monadPlus(MonoidK<set> m){
+
+        return INSTANCE.withMonoidK(m);
+    }
+    public static <T,R> Applicative<set> zippingApplicative(){
+        return INSTANCE;
+    }
+    public static <T,R>Functor<set> functor(){
+        return INSTANCE;
+    }
+
+    public static <T,R> Monad<set> monad(){
+        return INSTANCE;
+    }
+
+    public static <T,R> MonadZero<set> monadZero(){
+
+        return INSTANCE;
+    }
+
+    public static <T> MonadPlus<set> monadPlus(){
+
+        return INSTANCE;
+    }
+    public static <T,R> MonadRec<set> monadRec(){
+
+        return INSTANCE;
+    }
+
+
+    public static <C2,T> Traverse<set> traverse(){
+        return INSTANCE;
+    }
+
+    public static <T,R> Foldable<set> foldable(){
+        return INSTANCE;
+    }
 
 
 
-  /**
-   * Widen a SetType nest inside another HKT encoded type
-   *
-   * @param flux HTK encoded type containing  a Set to widen
-   * @return HKT encoded type with a widened Set
-   */
   public static <C2, T> Higher<C2, Higher<set, T>> widen2(Higher<C2, SetX<T>> flux) {
     // a functor could be used (if C2 is a functor / one exists for C2 type)
     // instead of casting
@@ -383,22 +286,12 @@ public class SetXInstances {
 
 
 
-  /**
-   * Convert the raw Higher Kinded Type for SetType types into the SetType type definition class
-   *
-   * @param future HKT encoded set into a SetType
-   * @return SetType
-   */
+
   public static <T> SetX<T> narrowK(final Higher<set, T> future) {
     return (SetX<T>) future;
   }
 
-  /**
-   * Convert the HigherKindedType definition for a Set into
-   *
-   * @param completableSet Type Constructor to convert back into narrowed type
-   * @return Set from Higher Kinded Type
-   */
+
   public static <T> SetX<T> narrow(final Higher<set, T> completableSet) {
 
     return ((SetX<T>) completableSet);

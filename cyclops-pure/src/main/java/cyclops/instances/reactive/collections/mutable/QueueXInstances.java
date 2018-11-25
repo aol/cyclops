@@ -1,12 +1,11 @@
 package cyclops.instances.reactive.collections.mutable;
 
 
-import static com.oath.cyclops.data.ReactiveWitness.*;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
-import cyclops.reactive.collections.mutable.QueueX;
-import cyclops.reactive.companion.CyclopsCollectors;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.MonoidKs;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
@@ -16,24 +15,29 @@ import cyclops.hkt.Active;
 import cyclops.hkt.Coproduct;
 import cyclops.hkt.Nested;
 import cyclops.hkt.Product;
-import cyclops.typeclasses.*;
+import cyclops.reactive.collections.mutable.QueueX;
+import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.arrow.MonoidK;
-import cyclops.arrow.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.instances.General;
-import cyclops.typeclasses.monad.*;
+import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.MonadPlus;
+import cyclops.typeclasses.monad.MonadRec;
+import cyclops.typeclasses.monad.MonadZero;
+import cyclops.typeclasses.monad.Traverse;
+import cyclops.typeclasses.monad.TraverseByTraverse;
+import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
+import lombok.experimental.Wither;
 
-import java.util.Queue;
 import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
-import java.util.stream.Stream;
+import java.util.function.Predicate;
 
-import static cyclops.reactive.collections.mutable.QueueX.fromIterable;
+import static com.oath.cyclops.data.ReactiveWitness.queue;
 import static cyclops.reactive.collections.mutable.QueueX.narrowK;
 
 /**
@@ -43,332 +47,249 @@ import static cyclops.reactive.collections.mutable.QueueX.narrowK;
  */
 @UtilityClass
 public class QueueXInstances {
-  public static  <T> Kleisli<queue,QueueX<T>,T> kindKleisli(){
-    return Kleisli.of(QueueXInstances.monad(), QueueX::widen);
-  }
+    public static <T> Kleisli<queue, QueueX<T>, T> kindKleisli() {
+        return Kleisli.of(QueueXInstances.monad(), QueueX::widen);
+    }
 
-  public static  <T> Cokleisli<queue,T,QueueX<T>> kindCokleisli(){
-    return Cokleisli.of(QueueX::narrowK);
-  }
-  public static <W1,T> Nested<queue,W1,T> nested(QueueX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
-    return Nested.of(nested, QueueXInstances.definitions(),def2);
-  }
-  public static  <W1,T> Product<queue,W1,T> product(QueueX<T> q, Active<W1,T> active){
-    return Product.of(allTypeclasses(q),active);
-  }
-  public static  <W1,T> Coproduct<W1,queue,T> coproduct(QueueX<T> q, InstanceDefinitions<W1> def2){
-    return Coproduct.right(q,def2, QueueXInstances.definitions());
-  }
-  public static <T> Active<queue,T> allTypeclasses(QueueX<T> q){
-    return Active.of(q, QueueXInstances.definitions());
-  }
-  public static  <W2,R,T> Nested<queue,W2,R> mapM(QueueX<T> q,Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
-    return Nested.of(q.map(fn), QueueXInstances.definitions(), defs);
-  }
-  public static InstanceDefinitions<queue> definitions(){
-    return new InstanceDefinitions<queue>() {
-      @Override
-      public <T, R> Functor<queue> functor() {
-        return QueueXInstances.functor();
-      }
+    public static <T> Cokleisli<queue, T, QueueX<T>> kindCokleisli() {
+        return Cokleisli.of(QueueX::narrowK);
+    }
 
-      @Override
-      public <T> Pure<queue> unit() {
-        return QueueXInstances.unit();
-      }
+    public static <W1, T> Nested<queue, W1, T> nested(QueueX<Higher<W1, T>> nested, InstanceDefinitions<W1> def2) {
+        return Nested.of(nested, QueueXInstances.definitions(), def2);
+    }
 
-      @Override
-      public <T, R> Applicative<queue> applicative() {
-        return QueueXInstances.zippingApplicative();
-      }
+    public static <W1, T> Product<queue, W1, T> product(QueueX<T> q, Active<W1, T> active) {
+        return Product.of(allTypeclasses(q), active);
+    }
 
-      @Override
-      public <T, R> Monad<queue> monad() {
-        return QueueXInstances.monad();
-      }
+    public static <W1, T> Coproduct<W1, queue, T> coproduct(QueueX<T> q, InstanceDefinitions<W1> def2) {
+        return Coproduct.right(q, def2, QueueXInstances.definitions());
+    }
 
-      @Override
-      public <T, R> Option<MonadZero<queue>> monadZero() {
-        return Option.some(QueueXInstances.monadZero());
-      }
+    public static <T> Active<queue, T> allTypeclasses(QueueX<T> q) {
+        return Active.of(q, QueueXInstances.definitions());
+    }
 
-      @Override
-      public <T> Option<MonadPlus<queue>> monadPlus() {
-        return Option.some(QueueXInstances.monadPlus());
-      }
+    public static <W2, R, T> Nested<queue, W2, R> mapM(QueueX<T> q, Function<? super T, ? extends Higher<W2, R>> fn, InstanceDefinitions<W2> defs) {
+        return Nested.of(q.map(fn), QueueXInstances.definitions(), defs);
+    }
 
-      @Override
-      public <T> MonadRec<queue> monadRec() {
-        return QueueXInstances.monadRec();
-      }
+    public static InstanceDefinitions<queue> definitions() {
+        return new InstanceDefinitions<queue>() {
+            @Override
+            public <T, R> Functor<queue> functor() {
+                return QueueXInstances.functor();
+            }
 
-      @Override
-      public <T> Option<MonadPlus<queue>> monadPlus(MonoidK<queue> m) {
-        return Option.some(QueueXInstances.monadPlus(m));
-      }
+            @Override
+            public <T> Pure<queue> unit() {
+                return QueueXInstances.unit();
+            }
 
-      @Override
-      public <C2, T> Traverse<queue> traverse() {
-        return QueueXInstances.traverse();
-      }
+            @Override
+            public <T, R> Applicative<queue> applicative() {
+                return QueueXInstances.zippingApplicative();
+            }
 
-      @Override
-      public <T> Foldable<queue> foldable() {
-        return QueueXInstances.foldable();
-      }
+            @Override
+            public <T, R> Monad<queue> monad() {
+                return QueueXInstances.monad();
+            }
 
-      @Override
-      public <T> Option<Comonad<queue>> comonad() {
-        return Maybe.nothing();
-      }
-      @Override
-      public <T> Option<Unfoldable<queue>> unfoldable() {
-        return Option.some(QueueXInstances.unfoldable());
-      }
-    };
-  }
-  public static Unfoldable<queue> unfoldable(){
-    return new Unfoldable<queue>() {
-      @Override
-      public <R, T> Higher<queue, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
-        return QueueX.unfold(b,fn);
-      }
-    };
-  }
-  /**
-   *
-   * Transform a queue, mulitplying every element by 2
-   *
-   * <pre>
-   * {@code
-   *  QueueX<Integer> queue = Queues.functor().map(i->i*2, QueueX.of(1,2,3));
-   *
-   *  //[2,4,6]
-   *
-   *
-   * }
-   * </pre>
-   *
-   * An example fluent api working with Queues
-   * <pre>
-   * {@code
-   *   QueueX<Integer> queue = Queues.unit()
-  .unit("hello")
-  .applyHKT(h->Queues.functor().map((String v) ->v.length(), h))
-  .convert(QueueX::narrowK3);
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A functor for Queues
-   */
-  public static <T,R>Functor<queue> functor(){
-    BiFunction<QueueX<T>,Function<? super T, ? extends R>,QueueX<R>> map = QueueXInstances::map;
-    return General.functor(map);
-  }
-  /**
-   * <pre>
-   * {@code
-   * QueueX<String> queue = Queues.unit()
-  .unit("hello")
-  .convert(QueueX::narrowK3);
+            @Override
+            public <T, R> Option<MonadZero<queue>> monadZero() {
+                return Option.some(QueueXInstances.monadZero());
+            }
 
-  //QueueX.of("hello"))
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A factory for Queues
-   */
-  public static <T> Pure<queue> unit(){
-    return General.<queue,T>unit(QueueXInstances::of);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   * import static com.aol.cyclops.hkt.jdk.QueueX.widen;
-   * import static com.aol.cyclops.util.function.Lambda.l1;
-   * import static java.util.QueueX.of;
-   *
-  Queues.zippingApplicative()
-  .ap(widen(asQueue(l1(this::multiplyByTwo))),widen(asQueue(1,2,3)));
-   *
-   * //[2,4,6]
-   * }
-   * </pre>
-   *
-   *
-   * Example fluent API
-   * <pre>
-   * {@code
-   * QueueX<Function<Integer,Integer>> queueFn =Queues.unit()
-   *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-   *                                                  .convert(QueueX::narrowK3);
+            @Override
+            public <T> Option<MonadPlus<queue>> monadPlus() {
+                return Option.some(QueueXInstances.monadPlus());
+            }
 
-  QueueX<Integer> queue = Queues.unit()
-  .unit("hello")
-  .applyHKT(h->Queues.functor().map((String v) ->v.length(), h))
-  .applyHKT(h->Queues.zippingApplicative().ap(queueFn, h))
-  .convert(QueueX::narrowK3);
+            @Override
+            public <T> MonadRec<queue> monadRec() {
+                return QueueXInstances.monadRec();
+            }
 
-  //QueueX.of("hello".length()*2))
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A zipper for Queues
-   */
-  public static <T,R> Applicative<queue> zippingApplicative(){
-    BiFunction<QueueX< Function<T, R>>,QueueX<T>,QueueX<R>> ap = QueueXInstances::ap;
-    return General.applicative(functor(), unit(), ap);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   * import static com.aol.cyclops.hkt.jdk.QueueX.widen;
-   * QueueX<Integer> queue  = Queues.monad()
-  .flatMap(i->widen(QueueX.range(0,i)), widen(QueueX.of(1,2,3)))
-  .convert(QueueX::narrowK3);
-   * }
-   * </pre>
-   *
-   * Example fluent API
-   * <pre>
-   * {@code
-   *    QueueX<Integer> queue = Queues.unit()
-  .unit("hello")
-  .applyHKT(h->Queues.monad().flatMap((String v) ->Queues.unit().unit(v.length()), h))
-  .convert(QueueX::narrowK3);
+            @Override
+            public <T> Option<MonadPlus<queue>> monadPlus(MonoidK<queue> m) {
+                return Option.some(QueueXInstances.monadPlus(m));
+            }
 
-  //QueueX.of("hello".length())
-   *
-   * }
-   * </pre>
-   *
-   * @return Type class with monad arrow for Queues
-   */
-  public static <T,R> Monad<queue> monad(){
+            @Override
+            public <C2, T> Traverse<queue> traverse() {
+                return QueueXInstances.traverse();
+            }
 
-    BiFunction<Higher<queue,T>,Function<? super T, ? extends Higher<queue,R>>,Higher<queue,R>> flatMap = QueueXInstances::flatMap;
-    return General.monad(zippingApplicative(), flatMap);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   *  QueueX<String> queue = Queues.unit()
-  .unit("hello")
-  .applyHKT(h->Queues.monadZero().filter((String t)->t.startsWith("he"), h))
-  .convert(QueueX::narrowK3);
+            @Override
+            public <T> Foldable<queue> foldable() {
+                return QueueXInstances.foldable();
+            }
 
-  //QueueX.of("hello"));
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A filterable monad (with default value)
-   */
-  public static <T,R> MonadZero<queue> monadZero(){
+            @Override
+            public <T> Option<Comonad<queue>> comonad() {
+                return Maybe.nothing();
+            }
 
-    return General.monadZero(monad(), QueueX.empty());
-  }
+            @Override
+            public <T> Option<Unfoldable<queue>> unfoldable() {
+                return Option.some(QueueXInstances.unfoldable());
+            }
+        };
+    }
 
-  public static <T> MonadPlus<queue> monadPlus(){
+    public static Pure<queue> unit() {
+        return INSTANCE;
+    }
 
-    return General.monadPlus(monadZero(), MonoidKs.queueXConcat());
-  }
-  public static <T,R> MonadRec<queue> monadRec(){
+    private final static QueueXTypeClasses INSTANCE = new QueueXTypeClasses();
 
-    return new MonadRec<queue>(){
-      @Override
-      public <T, R> Higher<queue, R> tailRec(T initial, Function<? super T, ? extends Higher<queue,? extends Either<T, R>>> fn) {
-        return QueueX.tailRec(initial,fn.andThen(QueueX::narrowK));
-      }
-    };
-  }
+    @AllArgsConstructor
+    @Wither
+    public static class QueueXTypeClasses implements MonadPlus<queue>,
+        MonadRec<queue>,
+        TraverseByTraverse<queue>,
+        Foldable<queue>,
+        Unfoldable<queue> {
 
-  public static <T> MonadPlus<queue> monadPlus(MonoidK<queue> m){
+        private final MonoidK<queue> monoidK;
 
-    return General.monadPlus(monadZero(),m);
-  }
+        public QueueXTypeClasses() {
+            monoidK = MonoidKs.queueXConcat();
+        }
 
-  /**
-   * @return Type class for traversables with traverse / sequence operations
-   */
-  public static <C2,T> Traverse<queue> traverse(){
-    BiFunction<Applicative<C2>,QueueX<Higher<C2, T>>,Higher<C2, QueueX<T>>> sequenceFn = (ap,queue) -> {
+        @Override
+        public <T> Higher<queue, T> filter(Predicate<? super T> predicate, Higher<queue, T> ds) {
+            return narrowK(ds).filter(predicate);
+        }
 
-      Higher<C2,QueueX<T>> identity = ap.unit(QueueX.of());
+        @Override
+        public <T, R> Higher<queue, Tuple2<T, R>> zip(Higher<queue, T> fa, Higher<queue, R> fb) {
+            return narrowK(fa).zip(narrowK(fb));
+        }
 
-      BiFunction<Higher<C2,QueueX<T>>,Higher<C2,T>,Higher<C2,QueueX<T>>> combineToQueue =   (acc,next) -> ap.apBiFn(ap.unit((a,b) -> { a.add(b); return a;}),acc,next);
+        @Override
+        public <T1, T2, R> Higher<queue, R> zip(Higher<queue, T1> fa, Higher<queue, T2> fb, BiFunction<? super T1, ? super T2, ? extends R> f) {
+            return narrowK(fa).zip(narrowK(fb), f);
+        }
 
-      BinaryOperator<Higher<C2,QueueX<T>>> combineQueues = (a, b)-> ap.apBiFn(ap.unit((l1, l2)-> { l1.addAll(l2); return l1;}),a,b); ;
+        @Override
+        public <T> MonoidK<queue> monoid() {
+            return monoidK;
+        }
 
-      return queue.stream()
-        .reduce(identity,
-          combineToQueue,
-          combineQueues);
+        @Override
+        public <T, R> Higher<queue, R> flatMap(Function<? super T, ? extends Higher<queue, R>> fn, Higher<queue, T> ds) {
+            return narrowK(ds).concatMap(i -> narrowK(fn.apply(i)));
+        }
+
+        @Override
+        public <T, R> Higher<queue, R> ap(Higher<queue, ? extends Function<T, R>> fn, Higher<queue, T> apply) {
+            return narrowK(apply)
+                .zip(narrowK(fn), (a, b) -> b.apply(a));
+        }
+
+        @Override
+        public <T> Higher<queue, T> unit(T value) {
+            return QueueX.of(value);
+        }
+
+        @Override
+        public <T, R> Higher<queue, R> map(Function<? super T, ? extends R> fn, Higher<queue, T> ds) {
+            return narrowK(ds).map(fn);
+        }
 
 
-    };
-    BiFunction<Applicative<C2>,Higher<queue,Higher<C2, T>>,Higher<C2, Higher<queue,T>>> sequenceNarrow  =
-      (a,b) -> QueueX.widen2(sequenceFn.apply(a, narrowK(b)));
-    return General.traverse(zippingApplicative(), sequenceNarrow);
-  }
+        @Override
+        public <T, R> Higher<queue, R> tailRec(T initial, Function<? super T, ? extends Higher<queue, ? extends Either<T, R>>> fn) {
+            return QueueX.tailRec(initial, i -> narrowK(fn.apply(i)));
+        }
 
-  /**
-   *
-   * <pre>
-   * {@code
-   * int sum  = Queues.foldable()
-  .foldLeft(0, (a,b)->a+b, QueueX.of(1,2,3,4)));
+        @Override
+        public <C2, T, R> Higher<C2, Higher<queue, R>> traverseA(Applicative<C2> ap, Function<? super T, ? extends Higher<C2, R>> fn, Higher<queue, T> ds) {
+            QueueX<T> v = narrowK(ds);
+            return v.<Higher<C2, Higher<queue, R>>>foldLeft(ap.unit(QueueX.<R>empty()),
+                (a, b) -> ap.zip(fn.apply(b), a, (sn, vec) -> narrowK(vec).plus(sn)));
 
-  //10
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return Type class for folding / reduction operations
-   */
-  public static <T> Foldable<queue> foldable(){
-    return new Foldable<queue>() {
-      @Override
-      public <T> T foldRight(Monoid<T> monoid, Higher<queue, T> ds) {
-        return  fromIterable(narrowK(ds)).foldRight(monoid);
-      }
 
-      @Override
-      public <T> T foldLeft(Monoid<T> monoid, Higher<queue, T> ds) {
-        return  fromIterable(narrowK(ds)).foldLeft(monoid);
-      }
+        }
 
-      @Override
-      public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<queue, T> nestedA) {
-        return narrowK(nestedA).<R>map(fn).foldLeft(mb);
-      }
-    };
-  }
+        @Override
+        public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<queue, T> ds) {
+            QueueX<T> x = narrowK(ds);
+            return x.foldLeft(mb.zero(), (a, b) -> mb.apply(a, fn.apply(b)));
+        }
 
-  private static  <T> QueueX<T> concat(Queue<T> l1, Queue<T> l2){
-    return Stream.concat(l1.stream(),l2.stream()).collect(CyclopsCollectors.toQueueX());
-  }
-  private <T> QueueX<T> of(T value){
-    return QueueX.of(value);
-  }
-  private static <T,R> QueueX<R> ap(QueueX<Function< T, R>> lt,  QueueX<T> queue){
-    return lt.zip(queue,(a,b)->a.apply(b));
-  }
-  private static <T,R> Higher<queue,R> flatMap(Higher<queue,T> lt, Function<? super T, ? extends  Higher<queue,R>> fn){
-    return narrowK(lt).concatMap(fn.andThen(QueueX::narrowK));
-  }
-  private static <T,R> QueueX<R> map(QueueX<T> lt, Function<? super T, ? extends R> fn){
-    return lt.map(fn);
-  }
+        @Override
+        public <T, R> Higher<queue, Tuple2<T, Long>> zipWithIndex(Higher<queue, T> ds) {
+            return narrowK(ds).zipWithIndex();
+        }
+
+        @Override
+        public <T> T foldRight(Monoid<T> monoid, Higher<queue, T> ds) {
+            return narrowK(ds).foldRight(monoid);
+        }
+
+
+        @Override
+        public <T> T foldLeft(Monoid<T> monoid, Higher<queue, T> ds) {
+            return narrowK(ds).foldLeft(monoid);
+        }
+
+
+        @Override
+        public <R, T> Higher<queue, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
+            return QueueX.unfold(b, fn);
+        }
+
+
+    }
+
+    public static Unfoldable<queue> unfoldable() {
+
+        return INSTANCE;
+    }
+
+    public static MonadPlus<queue> monadPlus(MonoidK<queue> m) {
+
+        return INSTANCE.withMonoidK(m);
+    }
+
+    public static <T, R> Applicative<queue> zippingApplicative() {
+        return INSTANCE;
+    }
+
+    public static <T, R> Functor<queue> functor() {
+        return INSTANCE;
+    }
+
+    public static <T, R> Monad<queue> monad() {
+        return INSTANCE;
+    }
+
+    public static <T, R> MonadZero<queue> monadZero() {
+
+        return INSTANCE;
+    }
+
+    public static <T> MonadPlus<queue> monadPlus() {
+
+        return INSTANCE;
+    }
+
+    public static <T, R> MonadRec<queue> monadRec() {
+
+        return INSTANCE;
+    }
+
+
+    public static <C2, T> Traverse<queue> traverse() {
+        return INSTANCE;
+    }
+
+    public static <T, R> Foldable<queue> foldable() {
+        return INSTANCE;
+    }
+
 }
