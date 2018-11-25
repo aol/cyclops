@@ -497,27 +497,21 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         return (Maybe<T>) MonadicValue.super.filterNot(fn);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Filters#notNull()
-     */
+
     @Override
     default Maybe<T> notNull() {
 
         return (Maybe<T>) MonadicValue.super.notNull();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Filters#filter(java.util.function.Predicate)
-     */
+
     @Override
     default Maybe<T> filter(final Predicate<? super T> pred) {
         return toMaybe().filter(pred);
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
-     */
+
     @Override
     default Eval<T> peek(final Consumer<? super T> c) {
         return (Eval<T>) MonadicValue.super.peek(c);
@@ -525,9 +519,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.foldable.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
-     */
+
     @Override
     default <R> R fold(final Function<? super T, ? extends R> present, final Supplier<? extends R> absent) {
         final T value = get();
@@ -536,12 +528,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         return absent.get();
     }
 
-    /**
-     * Narrow covariant type parameter
-     *
-     * @param broad Eval with covariant type parameter
-     * @return Narrowed Eval
-     */
+
     static <R> Eval<R> narrow(final Eval<? extends R> broad) {
         return (Eval<R>) broad;
     }

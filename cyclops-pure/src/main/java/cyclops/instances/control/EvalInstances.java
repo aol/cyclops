@@ -1,37 +1,39 @@
 package cyclops.instances.control;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.eval;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
-import cyclops.arrow.MonoidKs;
+import cyclops.arrow.MonoidK;
 import cyclops.control.Either;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
-import cyclops.data.tuple.Tuple2;
-import cyclops.function.Function3;
 import cyclops.function.Monoid;
 import cyclops.hkt.Active;
 import cyclops.hkt.Coproduct;
 import cyclops.hkt.Nested;
 import cyclops.hkt.Product;
-import cyclops.typeclasses.*;
+import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.arrow.MonoidK;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.instances.General;
-import cyclops.typeclasses.monad.*;
+import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.MonadPlus;
+import cyclops.typeclasses.monad.MonadRec;
+import cyclops.typeclasses.monad.MonadZero;
+import cyclops.typeclasses.monad.Traverse;
+import cyclops.typeclasses.monad.TraverseByTraverse;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
 
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static cyclops.control.Eval.narrowK;
+import static javafx.scene.input.KeyCode.T;
 
 /**
  * Companion class for creating Type Class instances for working with Evals
@@ -89,12 +91,12 @@ public class EvalInstances {
 
       @Override
       public <T, R> Option<MonadZero<eval>> monadZero() {
-        return Option.some(EvalInstances.monadZero());
+        return Option.none();
       }
 
       @Override
       public <T> Option<MonadPlus<eval>> monadPlus() {
-        return Maybe.nothing();
+        return Option.none();
       }
 
       @Override
@@ -104,7 +106,7 @@ public class EvalInstances {
 
       @Override
       public <T> Option<MonadPlus<eval>> monadPlus(MonoidK<eval> m) {
-        return Maybe.nothing();
+        return Option.none();
       }
 
       @Override
@@ -119,12 +121,12 @@ public class EvalInstances {
 
       @Override
       public <T> Option<Comonad<eval>> comonad() {
-        return Maybe.just(EvalInstances.comonad());
+        return Option.some(EvalInstances.comonad());
       }
 
       @Override
       public <T> Option<Unfoldable<eval>> unfoldable() {
-        return Maybe.nothing();
+        return Option.none();
       }
     };
   }
@@ -135,42 +137,43 @@ public class EvalInstances {
     public static class EvalTypeclasses  implements Monad<eval>,
                                                     MonadRec<eval>,
                                                     TraverseByTraverse<eval>,
-                                                    Foldable<eval>{
+                                                    Foldable<eval>,
+                                                    Comonad<eval>{
 
         @Override
         public <T> T foldRight(Monoid<T> monoid, Higher<eval, T> ds) {
-            return Eval.narrowK(ds).fold(monoid);
+            return narrowK(ds).fold(monoid);
         }
 
 
 
         @Override
         public <T> T foldLeft(Monoid<T> monoid, Higher<eval, T> ds) {
-            return Eval.narrowK(ds).fold(monoid);
+            return narrowK(ds).fold(monoid);
         }
 
 
 
         @Override
         public <T, R> Higher<eval, R> flatMap(Function<? super T, ? extends Higher<eval, R>> fn, Higher<eval, T> ds) {
-            return Eval.narrowK(ds).flatMap(t-> Eval.narrowK(fn.apply(t)));
+            return narrowK(ds).flatMap(t-> narrowK(fn.apply(t)));
         }
 
         @Override
         public <C2, T, R> Higher<C2, Higher<eval, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<eval, T> ds) {
-            Eval<T> eval = Eval.narrowK(ds);
+            Eval<T> eval = narrowK(ds);
             return applicative.map(Eval::now, fn.apply(eval.get()));
         }
 
         @Override
         public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<eval, T> ds) {
-            Eval<R>  opt  = Eval.narrowK(ds).map(fn);
+            Eval<R>  opt  = narrowK(ds).map(fn);
             return opt.fold(mb);
         }
 
         @Override
         public <T, R> Higher<eval, R> ap(Higher<eval, ? extends Function<T, R>> fn, Higher<eval, T> apply) {
-            return Eval.narrowK(apply).zip(Eval.narrowK(fn), (a, b)->b.apply(a));
+            return narrowK(apply).zip(narrowK(fn), (a, b)->b.apply(a));
         }
 
         @Override
@@ -180,12 +183,27 @@ public class EvalInstances {
 
         @Override
         public <T, R> Higher<eval, R> map(Function<? super T, ? extends R> fn, Higher<eval, T> ds) {
-            return Eval.narrowK(ds).map(fn);
+            return narrowK(ds).map(fn);
         }
 
         @Override
         public <T, R> Higher<eval, R> tailRec(T initial, Function<? super T, ? extends Higher<eval, ? extends Either<T, R>>> fn) {
-            return Eval.tailRec(initial,t-> Eval.narrowK(fn.apply(t)));
+            return Eval.tailRec(initial,t-> narrowK(fn.apply(t)));
+        }
+
+        @Override
+        public <T> Higher<eval, Higher<eval, T>> nest(Higher<eval, T> ds) {
+            return Eval.later(()->ds);
+        }
+
+        @Override
+        public <T, R> Higher<eval, R> coflatMap(Function<? super Higher<eval, T>, R> mapper, Higher<eval, T> ds) {
+            return Eval.later(()->mapper.apply(ds));
+        }
+
+        @Override
+        public <T> T extract(Higher<eval, T> ds) {
+            return narrowK(ds).get();
         }
     }
     public static <T,R>Functor<eval> functor(){
@@ -201,6 +219,9 @@ public class EvalInstances {
     }
 
     public static <T,R> Monad<eval> monad(){
+        return INSTANCE;
+    }
+    public static <T,R> Comonad<eval> comonad(){
         return INSTANCE;
     }
     public static <T,R> MonadRec<eval> monadRec(){
