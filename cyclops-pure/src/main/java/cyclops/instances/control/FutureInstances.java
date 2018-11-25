@@ -221,15 +221,7 @@ public  class FutureInstances {
   }
 
   public static <T,R> MonadRec<future> monadRec(){
-
-
-    return new MonadRec<future>(){
-
-      @Override
-      public <T, R> Higher<future, R> tailRec(T initial, Function<? super T, ? extends Higher<future, ? extends Either<T, R>>> fn) {
-        return Future.tailRec(initial,fn.andThen(Future::narrowK));
-      }
-    };
+        return INSTANCE;
   }
 
 

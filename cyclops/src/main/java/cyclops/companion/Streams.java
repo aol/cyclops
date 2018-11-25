@@ -1445,6 +1445,7 @@ public class Streams {
      * @param stream  Stream to concat
      * @return Concatonated Stream
      */
+    @Deprecated
     public static <U> Stream<U> concat(final Object o, final Stream<U> stream) {
         Stream<U> first = null;
         if (o instanceof Stream) {
