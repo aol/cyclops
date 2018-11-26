@@ -315,5 +315,25 @@ public class SyncSequentialTest extends BaseSequentialTest {
          assertEquals(asList(3), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toList());
         assertEquals(asList(), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._2().toList());
     }
+    @Test
+    public void concatMapStream() {
+        assertThat(of(1, 2, 3).concatMap(i -> ReactiveSeq.of(i).filter(Objects::nonNull))
+                .collect(Collectors.toList()),
+            Matchers.equalTo(Arrays.asList(1, 2, 3)));
+    }
+
+    @Test
+    public void concatMapMaybe() {
+        assertThat(of(1, 2, 3).concatMap(Maybe::ofNullable)
+                .collect(Collectors.toList()),
+            equalTo(Arrays.asList(1, 2, 3)));
+    }
+
+    @Test
+    public void testLimitUntilInclusiveWithNulls() {
+
+
+        assertThat(of(1, 2, 3, 4, 5).takeUntilInclusive(i -> false).toList(), equalTo(asList(1, 2, 3, 4, 5)));
+    }
 
 }
