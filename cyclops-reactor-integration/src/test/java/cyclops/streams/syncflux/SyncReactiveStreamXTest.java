@@ -240,6 +240,10 @@ public  class SyncReactiveStreamXTest {
 	public void skipUntil(){
 		assertEquals(asList(3, 4, 5), of(1, 2, 3, 4, 5).dropUntil(i -> i % 3 == 0).toList());
 	}
+    @Test
+    public void skipUntilInclusive(){
+        assertEquals(asList(3, 4, 5), of(2, 3, 4, 5).dropUntilInclusive(i -> i % 3 == 0).toList());
+    }
 	@Test
     public void simpleZip(){
         of(1,2,3)
@@ -466,6 +470,13 @@ public  class SyncReactiveStreamXTest {
 	        assertEquals(asList(), s.get().dropUntil(i -> false).toList());
 	        assertTrue(s.get().dropUntil(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
 		  }
+        @Test
+        public void testSkipUntilInclusive() {
+            Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
+
+            assertEquals(asList(), s.get().dropUntilInclusive(i -> false).toList());
+            assertTrue(s.get().dropUntilInclusive(i -> true).toList().containsAll(asList( 2, 3, 4, 5)));
+        }
 
 	    @Test(expected= NullPointerException.class)
 	    public void testSkipUntilWithNulls() {

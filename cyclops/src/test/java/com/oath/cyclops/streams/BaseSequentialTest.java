@@ -610,6 +610,15 @@ public class BaseSequentialTest {
     public void dropUntilEmpty() {
         assertThat(of().dropUntil(p -> true).toList(), equalTo(Arrays.asList()));
     }
+    @Test
+    public void dropUntilInclusive() {
+        assertThat(of(1, 2, 3, 4, 5).dropUntilInclusive(p -> p == 2).toList().size(), lessThan(5));
+    }
+
+    @Test
+    public void dropUntilInclusiveEmpty() {
+        assertThat(of().dropUntil(p -> true).toList(), equalTo(Arrays.asList()));
+    }
 
     @Test
     public void dropWhile() {
@@ -1164,6 +1173,23 @@ public class BaseSequentialTest {
         Supplier<ReactiveSeq<Integer>> s = () -> ReactiveSeq.of(1, 2, null, 3, 4, 5);
 
         assertEquals(asList(1, 2, null, 3, 4, 5), s.get().dropUntil(i -> true).toList());
+    }
+    @Test
+    public void testSkipUntilInclusive() {
+        ReactiveSeq<Integer> s = of(1, 2, 3, 4, 5);
+
+        assertEquals(asList(), s.dropUntilInclusive(i -> false).toList());
+        assertEquals(asList(4, 5), s.dropUntilInclusive(i -> i % 3 == 0).toList());
+        assertEquals(asList(4, 5), s.dropUntilInclusive(i -> i == 3).toList());
+        assertEquals(asList( 5), s.dropUntilInclusive(i -> i == 4).toList());
+        assertEquals(asList( 2, 3, 4, 5), s.dropUntilInclusive(i -> true).toList());
+    }
+
+    @Test
+    public void testSkipUntilInclusiveWithNulls() {
+        Supplier<ReactiveSeq<Integer>> s = () -> ReactiveSeq.of(1, 2, null, 3, 4, 5);
+
+        assertEquals(asList(2, null, 3, 4, 5), s.get().dropUntilInclusive(i -> true).toList());
     }
 
     @Test
