@@ -247,9 +247,13 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             LazyEither4<LT1, LT2, LT3, RT> either) {
         return in -> visitAny(either, in);
     }
-
+    @Deprecated //use foldAny
     static <X, LT1 extends X, LT2 extends X, LT3 extends X, RT extends X, R> R visitAny(
             LazyEither4<LT1, LT2, LT3, RT> either, Function<? super X, ? extends R> fn) {
+        return foldAny(either,fn);
+    }
+    static <X, LT1 extends X, LT2 extends X, LT3 extends X, RT extends X, R> R foldAny(
+        LazyEither4<LT1, LT2, LT3, RT> either, Function<? super X, ? extends R> fn) {
         return either.fold(fn, fn, fn, fn);
     }
 

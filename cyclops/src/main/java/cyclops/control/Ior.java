@@ -76,8 +76,11 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
     static <X, LT extends X, M extends X, RT extends X,R>  Function<Function<? super X, R>,R> applyAny(Ior<LT,RT> either){
         return in->visitAny(either,in);
     }
-
+    @Deprecated //use foldAny
     static <X, PT extends X, ST extends X,R> R visitAny(Ior<ST,PT> either, Function<? super X, ? extends R> fn){
+        return foldAny(either,fn);
+    }
+    static <X, PT extends X, ST extends X,R> R foldAny(Ior<ST,PT> either, Function<? super X, ? extends R> fn){
         return either.fold(fn, fn, (a, b)-> fn.apply(a));
     }
 

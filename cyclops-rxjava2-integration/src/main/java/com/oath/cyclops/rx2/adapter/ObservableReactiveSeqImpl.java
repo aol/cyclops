@@ -14,6 +14,7 @@ import cyclops.data.tuple.Tuple4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import lombok.AllArgsConstructor;
@@ -297,7 +298,12 @@ public class ObservableReactiveSeqImpl<T> implements ReactiveSeq<T> {
 
     @Override
     public ReactiveSeq<T> takeWhile(Predicate<? super T> p) {
-        return observable(Observables.connectToReactiveSeq(observable).takeWhile(p));
+
+        return observable(observable.takeWhile(t->p.test(t)));
+    }
+    @Override
+    public ReactiveSeq<T> takeWhileInclusive(Predicate<? super T> p) {
+        return observable( Observables.connectToReactiveSeq(observable).takeWhileInclusive(p));
     }
 
 

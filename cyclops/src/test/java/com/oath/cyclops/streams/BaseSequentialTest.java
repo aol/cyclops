@@ -649,6 +649,16 @@ public class BaseSequentialTest {
         assertThat(of().takeWhile(p -> true).toList(), equalTo(Arrays.asList()));
     }
 
+    @Test
+    public void takeWhileInclusive() {
+        assertThat(of(1, 2, 3, 4, 5).takeWhileInclusive(p -> p < 6).toList().size(), greaterThan(1));
+    }
+
+    @Test
+    public void takeWhileInclusiveEmpty() {
+        assertThat(of().takeWhileInclusive(p -> true).toList(), equalTo(Arrays.asList()));
+    }
+
 
     @Test
     public void presentConvert(){
@@ -996,6 +1006,18 @@ public class BaseSequentialTest {
 
 
     }
+    @Test
+    public void takeWhileInclusiveTest() {
+        List<Integer> list = of(1, 2, 3, 4, 5, 6).takeWhileInclusive(it -> it < 4).peek(it -> System.out.println(it)).collect(Collectors.toList());
+
+        System.out.println("List " + list);
+        assertThat(list, hasItem(1));
+        assertThat(list, hasItem(2));
+        assertThat(list, hasItem(3));
+        assertThat(list, hasItem(4));
+
+
+    }
 
 
     @Test
@@ -1131,6 +1153,16 @@ public class BaseSequentialTest {
         assertEquals(asList(1, 2), s.get().takeWhile(i -> i < 3).toList());
         assertEquals(asList(1, 2, 3), s.get().takeWhile(i -> i < 4).toList());
         assertEquals(asList(1, 2, 3, 4, 5), s.get().takeWhile(i -> true).toList());
+    }
+    @Test
+    public void testLimitWhileInclusive() {
+        ReactiveSeq<Integer> s = ReactiveSeq.of(1, 2, 3, 4, 5);
+
+        assertEquals(asList(1), s.takeWhileInclusive(i -> false).toList());
+        assertEquals(asList(1, 2, 3), s.takeWhileInclusive(i -> i % 3 != 0).toList());
+        assertEquals(asList(1, 2,3), s.takeWhileInclusive(i -> i < 3).toList());
+        assertEquals(asList(1, 2, 3,4), s.takeWhileInclusive(i -> i < 4).toList());
+        assertEquals(asList(1, 2, 3, 4, 5), s.takeWhileInclusive(i -> true).toList());
     }
 
 
