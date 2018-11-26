@@ -5,6 +5,9 @@ import java.util.function.Supplier;
 import cyclops.futurestream.LazyReact;
 import cyclops.futurestream.FutureStream;
 
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertTrue;
+
 public class LazySeqNoAutoOptimizeTest extends LazySeqTest {
 	@Override
 	protected <U> FutureStream<U> of(U... array) {
@@ -22,4 +25,13 @@ public class LazySeqNoAutoOptimizeTest extends LazySeqTest {
 		return new LazyReact()
 								.ofAsync(array);
 	}
+
+    @Override
+    public void testSkipUntilWithNullsInclusive() {
+        Supplier<FutureStream<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
+
+        assertTrue(s.get().dropUntilInclusive(i -> true).toList().size()==5);
+    }
+
+
 }
