@@ -290,6 +290,10 @@ public class ObservableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     public ReactiveSeq<T> dropWhile(Predicate<? super T> p) {
         return observable(observable.skipWhile(t->p.test(t)));
     }
+    @Override
+    public ReactiveSeq<T> dropWhileInclusive(Predicate<? super T> p) {
+        return observable(Observables.connectToReactiveSeq(observable).dropWhileInclusive(p));
+    }
 
     @Override
     public ReactiveSeq<T> limit(long num) {

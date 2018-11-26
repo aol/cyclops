@@ -1,20 +1,33 @@
 package com.oath.cyclops.internal.stream.spliterators.push.mergelatest;
 
+import cyclops.control.Future;
+import cyclops.data.Seq;
+import cyclops.data.Vector;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
+import org.hamcrest.core.IsEqual;
+import org.junit.Assert;
 import org.junit.Test;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
+import reactor.test.StepVerifier;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.LockSupport;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasItems;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 /**
  * Created by johnmcclean on 27/01/2017.
@@ -230,4 +243,107 @@ public class MergeLatestTest {
          return sub.stream();
          **/
     }
+    @Test
+    public void fluxMerge() {
+        AtomicReference<Vector<Integer>> data = new AtomicReference(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        Spouts.mergeLatest(Flux.just(1),
+            Flux.range(2, 2),
+            Flux.just(4, 5, 6)
+                .hide()) .forEach(n->{
+            assertFalse(complete.get());
+            data.updateAndGet(s->s.plus(n));
+        },e->{
+            error.set(e);
+        },()->{
+            complete.set(true);
+        });
+        while(!complete.get()){
+            LockSupport.parkNanos(10l);
+        }
+
+        assertThat("Values " +  data,data.get(), hasItems(1,2,3,4,5,6));
+        Assert.assertThat(complete.get(), IsEqual.equalTo(true));
+        assertNull(error.get());
+
+    }
+    @Test
+    public void fluxStepverifier() {
+        StepVerifier.create(Spouts.mergeLatest(Future.ofResult(1),Flux.just(2, 3)))
+            .expectNext(1, 2, 3)
+            .verifyComplete();
+    }
+    @Test
+    public void mergeEmpty(){
+
+
+
+        AtomicReference<Vector<Integer>> data = new AtomicReference(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+        Spouts.<Integer>merge(Spouts.<ReactiveSeq<Integer>>of()) .forEach(z->{
+            assertFalse(complete.get());
+            data.updateAndGet(s->s.plus(z));
+        },e->{
+            error.set(e);
+        },()->{
+            complete.set(true);
+        });
+        Assert.assertThat(complete.get(), equalTo(true));
+    }
+    @Test
+    public void mergeLatestEmpty(){
+
+
+
+        AtomicReference<Vector<Integer>> data = new AtomicReference(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+        Spouts.<Integer>mergeLatest(Spouts.<ReactiveSeq<Integer>>of()) .forEach(z->{
+            assertFalse(complete.get());
+            data.updateAndGet(s->s.plus(z));
+        },e->{
+            error.set(e);
+        },()->{
+            complete.set(true);
+        });
+        Assert.assertThat(complete.get(), equalTo(true));
+    }
+
+
+    @Test
+    public void mergeOne(){
+        StepVerifier.create(Spouts.merge(Spouts.of(Spouts.of(1))))
+            .expectNext(1)
+            .verifyComplete();
+        StepVerifier.create(Spouts.mergeLatestList(Seq.of(Spouts.of(1))))
+            .expectNext(1)
+            .verifyComplete();
+        StepVerifier.create(Spouts.merge(Spouts.of(Spouts.of(1))))
+            .expectNext(1)
+            .verifyComplete();
+    }
+
+    @Test
+    public void mergePublisherPublisher(){
+        AtomicReference<Vector<Integer>> data = new AtomicReference(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        Spouts.mergeLatest(Flux.just(Flux.just(1, 2), Flux.just(3, 4))).forEach(z->{
+            assertFalse(complete.get());
+            data.updateAndGet(s->s.plus(z));
+        },e->{
+            error.set(e);
+        },()->{
+            complete.set(true);
+        });
+        assertThat("Values " +  data,data.get(), hasItems(1,2,3,4));
+        Assert.assertThat(complete.get(), IsEqual.equalTo(true));
+        assertNull(error.get());
+
+    }
+
 }

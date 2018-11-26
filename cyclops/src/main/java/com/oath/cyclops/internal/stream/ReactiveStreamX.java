@@ -354,6 +354,10 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public final ReactiveSeq<T> dropWhile(final Predicate<? super T> p) {
         return createSeq(new SkipWhileOperator<>(source, p));
     }
+    @Override
+    public final ReactiveSeq<T> dropWhileInclusive(final Predicate<? super T> p) {
+        return createSeq(new SkipWhileClosedOperator<>(source, p));
+    }
 
 
     @Override

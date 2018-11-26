@@ -8,7 +8,7 @@ import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 
 @Test
-public class MergeLatestTckPublisherTest extends PublisherVerification<Long>{
+public class  MergeLatestTckPublisherTest extends PublisherVerification<Long>{
 
 	public MergeLatestTckPublisherTest(){
 		  super(new TestEnvironment(300L));

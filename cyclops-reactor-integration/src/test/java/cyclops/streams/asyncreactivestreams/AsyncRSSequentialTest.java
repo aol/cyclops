@@ -2,6 +2,7 @@ package cyclops.streams.asyncreactivestreams;
 
 import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.async.adapters.Topic;
+import com.oath.cyclops.streams.BaseSequentialTest;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
@@ -10,7 +11,7 @@ import cyclops.reactive.FluxReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streamable;
 import cyclops.reactive.collections.mutable.ListX;
-import cyclops.streams.syncflux.BaseSequentialTest;
+
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.reactivestreams.Subscription;

@@ -279,6 +279,10 @@ public class FluxReactiveSeqImpl<T> implements ReactiveSeq<T> {
     public ReactiveSeq<T> dropWhile(Predicate<? super T> p) {
         return flux(flux.skipWhile(p));
     }
+    @Override
+    public ReactiveSeq<T> dropWhileInclusive(Predicate<? super T> p) {
+        return flux(Spouts.from(flux).dropWhileInclusive(p));
+    }
 
     @Override
     public ReactiveSeq<T> limit(long num) {

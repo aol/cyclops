@@ -312,17 +312,18 @@ public interface Spouts {
             return (ReactiveSeq<T>)pub;
         return reactiveStream(new PublisherToOperator<T>((Publisher<T>)pub));
     }
+    @Deprecated //use mergeLatest
     static <T> ReactiveSeq<T> merge(Publisher<? extends Publisher<T>> publisher){
-        return mergeLatest((Publisher[])Spouts.from(publisher).toArray());
+        return mergeLatest(publisher);
     }
 
 
 
     static <T> ReactiveSeq<T> mergeLatestList(Seq<? extends Publisher<? extends T>> publisher){
-        return mergeLatest((Publisher[])ReactiveSeq.fromPublisher(publisher).toArray(s->new Publisher[s]));
+        return mergeLatest((Publisher[])publisher.toArray(s->new Publisher[s]));
     }
     static <T> ReactiveSeq<T> mergeLatest(Publisher<? extends Publisher<T>> publisher){
-        return mergeLatest((Publisher[])ReactiveSeq.fromPublisher(publisher).toArray(s->new Publisher[s]));
+        return Spouts.from(publisher).mergeMap(Integer.MAX_VALUE,i->i);
     }
     static <T> ReactiveSeq<T> mergeLatest(int maxConcurrency,Publisher<T>... array){
         return Spouts.of(array).mergeMap(maxConcurrency, i->i);
@@ -350,116 +351,7 @@ public interface Spouts {
         return ambWith(array);
     }
     static <T> ReactiveSeq<T> ambWith(Publisher<? extends T>[] array){
-        ReactiveSubscriber<T> res = Spouts.reactiveSubscriber();
-
-        AtomicInteger first = new AtomicInteger(0);
-        AtomicBoolean[] complete = new AtomicBoolean[array.length];
-        Subscription[] subs = new Subscription[array.length];
-        for(int i=0;i<array.length;i++) {
-            complete[i] = new AtomicBoolean(false);
-        }
-        Subscription winner[] ={null};
-
-        ReactiveSubscriber<T> sub = Spouts.reactiveSubscriber();
-
-
-        for(int i=0;i<array.length;i++){
-            Publisher<T> next = (Publisher<T>)array[i];
-            final int index= i;
-            next.subscribe(new Subscriber<T>() {
-                boolean won = false;
-
-                @Override
-                public void onSubscribe(Subscription s) {
-                    subs[index] = s;
-
-                }
-
-                @Override
-                public void onNext(T t) {
-
-                    if (won) {
-                        sub.onNext(t);
-                    } else if (first.compareAndSet(0, index+1)) {
-                        winner[0] = subs[index];
-                        sub.onNext(t);
-                        won = true;
-                        first.get();//make sure won is visible across all threads
-                    }
-
-                }
-
-                @Override
-                public void onError(Throwable t) {
-                    complete[index].set(true);
-                    if (won || othersComplete(index))
-                        sub.onError(t);
-                }
-
-                @Override
-                public void onComplete() {
-
-                    complete[index].set(true);
-                    if (won || othersComplete(index)) {
-                        sub.onComplete();
-                    }
-                }
-
-                boolean othersComplete(int avoid){
-                    boolean allComplete = true;
-                    for(int i=0;i<array.length;i++) {
-                        if(i!=avoid) {
-                            allComplete = allComplete && complete[i].get();
-                            if(!allComplete)
-                                return false;
-                        }
-                    }
-                    return allComplete;
-                }
-            });
-        }
-
-
-        sub.onSubscribe(new StreamSubscription() {
-            int count = 0;
-
-            @Override
-            public void request(long n) {
-                if(count==0) {
-                    for(int i=0;i<array.length;i++) {
-                        subs[i].request(1l);
-                    }
-
-
-                    if(n-1>0)
-                        super.request(n-1);
-                    if(first.get()!=0){
-                        count=2;
-                    }else
-                        count=1;
-                }else if(count<2){
-                    if(first.get()!=0){
-                        count=2;
-                    }
-                    super.request(n);
-                }
-                else if(count==2){
-                    if(requested.get()>0)
-                        winner[0].request(requested.get());
-                    winner[0].request(n);
-                    count=2;
-                }
-                else{
-                    winner[0].request(n);
-                }
-            }
-
-            @Override
-            public void cancel() {
-                winner[0].cancel();
-            }
-        });
-        return sub.reactiveStream();
+       return  reactiveStream(new AmbOperator<T>((Publisher<T>[])array));
 
     }
     static  ReactiveSeq<Integer> interval(String cron,ScheduledExecutorService exec) {
@@ -532,10 +424,10 @@ public interface Spouts {
 
 
         s[0] = ReactiveSeq.fromStream(stream)
-            .takeWhile(e -> isOpen.get())
-            .schedule(cron, exec)
-            .connect()
-            .forEach(1, e -> sub.onNext(e));
+                            .takeWhile(e -> isOpen.get())
+                            .schedule(cron, exec)
+                            .connect()
+                            .forEach(0, e -> sub.onNext(e),t->sub.onError(t),()->sub.onComplete());
 
 
         return sub.reactiveStream();
