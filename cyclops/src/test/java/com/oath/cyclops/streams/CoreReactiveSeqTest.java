@@ -464,8 +464,6 @@ public  class CoreReactiveSeqTest {
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(list.get(0)));
 
 
-
-
 	}
 
     @Test
@@ -816,6 +814,14 @@ public  class CoreReactiveSeqTest {
 	        assertTrue( s.get().takeWhile(i -> i < 3).toList().size()!=5);
 	        assertTrue(s.get().takeWhile(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
 	    }
+        @Test
+        public void testLimitWhileInclusive() {
+            Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
+
+            assertEquals(asList(), s.get().takeWhileInclusive(i -> false).toList());
+            assertTrue( s.get().takeWhileInclusive(i -> i < 3).toList().size()!=5);
+            assertTrue(s.get().takeWhileInclusive(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
+        }
 
 	    @Test
 	    public void testLimitUntil() {

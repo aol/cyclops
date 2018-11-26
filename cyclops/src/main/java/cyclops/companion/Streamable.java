@@ -317,7 +317,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
 
     @Override
     default <T> Streamable<T> unit(final T t) {
-        return of(t);
+        return Streamable.of(t);
     }
 
 

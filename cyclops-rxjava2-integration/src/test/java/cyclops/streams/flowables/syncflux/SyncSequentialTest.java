@@ -3,6 +3,7 @@ package cyclops.streams.flowables.syncflux;
 
 import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.async.adapters.Topic;
+import com.oath.cyclops.streams.BaseSequentialTest;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;

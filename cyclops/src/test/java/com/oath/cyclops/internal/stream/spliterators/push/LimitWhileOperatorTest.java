@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.*;
 
-public class LimitWhileClosedOperatorTest {
+public class LimitWhileOperatorTest {
     Executor ex = Executors.newFixedThreadPool(10);
 
     @Test
@@ -27,7 +27,7 @@ public class LimitWhileClosedOperatorTest {
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
         Spouts.of(1,2,3,4,5)
-            .takeWhileInclusive(i -> true)
+            .takeWhile(i -> true)
             .forEach(n->{
                 assertFalse(complete.get());
                 data.updateAndGet(s->s.plus(n));
@@ -49,7 +49,7 @@ public class LimitWhileClosedOperatorTest {
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
         Spouts.of(1,2,3,4,5)
-            .takeWhileInclusive(i -> i<1)
+            .takeWhile(i -> i<=1)
             .forEach(n->{
                 assertFalse(complete.get());
                 data.updateAndGet(s->s.plus(n));
@@ -71,7 +71,7 @@ public class LimitWhileClosedOperatorTest {
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
         Spouts.of(1,2,3,4,5)
-            .takeWhileInclusive(i -> i<0)
+            .takeWhile(i -> i<0)
             .forEach(n->{
                 assertFalse(complete.get());
                 data.updateAndGet(s->s.plus(n));
@@ -81,7 +81,7 @@ public class LimitWhileClosedOperatorTest {
                 complete.set(true);
             });
 
-        assertThat(data.get(),equalTo(Vector.of(1)));
+        assertThat(data.get(),equalTo(Vector.of()));
         assertThat(complete.get(),equalTo(true));
         assertNull(error.get());
 
@@ -95,7 +95,7 @@ public class LimitWhileClosedOperatorTest {
         Spouts.of(1,2,3,4,5)
             .peek(System.out::println)
             .peek(p->peeks.incrementAndGet())
-            .takeWhileInclusive(i -> i<0)
+            .takeWhile(i -> i<=1)
             .forEach(n->{
                 assertFalse(complete.get());
                 data.updateAndGet(s->s.plus(n));
@@ -105,9 +105,11 @@ public class LimitWhileClosedOperatorTest {
                 complete.set(true);
             });
 
-        assertThat(peeks.get(),equalTo(1));
+
         assertThat(data.get(),equalTo(Vector.of(1)));
+
         assertThat(complete.get(),equalTo(true));
+        assertThat(peeks.get(),equalTo(2));
         assertNull(error.get());
 
     }
@@ -118,7 +120,7 @@ public class LimitWhileClosedOperatorTest {
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
         Subscription s = Spouts.of(1, 2, 3, 4, 5)
-            .takeWhileInclusive(i -> true)
+            .takeWhile(i -> true)
             .forEach(2, n -> {
                 assertFalse(complete.get());
                 data.updateAndGet(sq -> sq.plus(n));
@@ -147,7 +149,7 @@ public class LimitWhileClosedOperatorTest {
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
         Subscription s = Spouts.of(1, 2, 3, 4, 5)
-            .takeWhileInclusive(i -> i<3)
+            .takeWhile(i -> i<4)
             .forEach(2, n -> {
                 assertFalse(complete.get());
                 data.updateAndGet(sq -> sq.plus(n));
@@ -179,7 +181,7 @@ public class LimitWhileClosedOperatorTest {
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
         Spouts.of(1,2,3,4,5)
-            .takeWhileInclusive(i ->{ throw new RuntimeException();})
+            .takeWhile(i ->{ throw new RuntimeException();})
             .forEach(n->{
                 assertFalse(complete.get());
                 data.updateAndGet(s->s.plus(n));
@@ -200,7 +202,7 @@ public class LimitWhileClosedOperatorTest {
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
         Spouts.async(ReactiveSeq.of(1,2,3,4,5),ex)
-            .takeWhileInclusive(i -> true)
+            .takeWhile(i -> true)
             .forEach(n->{
                 assertFalse(complete.get());
                 data.updateAndGet(s->s.plus(n));
@@ -225,7 +227,7 @@ public class LimitWhileClosedOperatorTest {
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
         Spouts.async(ReactiveSeq.of(1,2,3,4,5),ex)
-            .takeWhileInclusive(i -> i<1)
+            .takeWhile(i -> i<1)
             .forEach(n->{
                 assertFalse(complete.get());
                 data.updateAndGet(s->s.plus(n));
@@ -239,7 +241,7 @@ public class LimitWhileClosedOperatorTest {
             LockSupport.parkNanos(10l);
         }
 
-        assertThat(data.get(),equalTo(Vector.of(1)));
+        assertThat(data.get(),equalTo(Vector.of()));
         assertThat(complete.get(),equalTo(true));
         assertNull(error.get());
 
@@ -251,7 +253,7 @@ public class LimitWhileClosedOperatorTest {
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
         Spouts.async(ReactiveSeq.of(1,2,3,4,5),ex)
-            .takeWhileInclusive(i -> i<0)
+            .takeWhile(i -> i<0)
             .forEach(n->{
                 assertFalse(complete.get());
                 data.updateAndGet(s->s.plus(n));
@@ -264,7 +266,7 @@ public class LimitWhileClosedOperatorTest {
             LockSupport.parkNanos(10l);
         }
 
-        assertThat(data.get(),equalTo(Vector.of(1)));
+        assertThat(data.get(),equalTo(Vector.of()));
         assertThat(complete.get(),equalTo(true));
         assertNull(error.get());
 
@@ -278,7 +280,7 @@ public class LimitWhileClosedOperatorTest {
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
         Subscription s =  Spouts.async(ReactiveSeq.of(1,2,3,4,5),ex)
-            .takeWhileInclusive(i -> true)
+            .takeWhile(i -> true)
             .forEach(2, n -> {
                 assertFalse(complete.get());
                 data.updateAndGet(sq -> sq.plus(n));
@@ -289,7 +291,7 @@ public class LimitWhileClosedOperatorTest {
             });
 
 
-        while(!complete.get()){
+        while(data.get().size()<5){
             LockSupport.parkNanos(10l);
         }
         assertThat(data.get(),equalTo(Vector.of(1,2,3,4,5)));
@@ -306,7 +308,7 @@ public class LimitWhileClosedOperatorTest {
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
         Subscription s = Spouts.async(ReactiveSeq.of(1,2,3,4,5),ex)
-            .takeWhileInclusive(i -> i<3)
+            .takeWhile(i -> i<3)
             .forEach(2, n -> {
                 assertFalse(complete.get());
                 data.updateAndGet(sq -> sq.plus(n));
@@ -316,11 +318,11 @@ public class LimitWhileClosedOperatorTest {
                 complete.set(true);
             });
 
-        while(!complete.get()){
-            LockSupport.parkNanos(10l);
+        while(data.get().size()<2){
+            LockSupport.parkNanos(100l);
         }
 
-        assertThat(data.get(),equalTo(Vector.of(1,2,3)));
+        assertThat(data.get(),equalTo(Vector.of(1,2)));
         assertThat(complete.get(),equalTo(true));
         assertNull(error.get());
 
@@ -334,7 +336,7 @@ public class LimitWhileClosedOperatorTest {
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
         Spouts.async(ReactiveSeq.of(1,2,3,4,5),ex)
-            .takeWhileInclusive(i ->{ throw new RuntimeException();})
+            .takeWhile(i ->{ throw new RuntimeException();})
             .forEach(n->{
                 assertFalse(complete.get());
                 data.updateAndGet(s->s.plus(n));

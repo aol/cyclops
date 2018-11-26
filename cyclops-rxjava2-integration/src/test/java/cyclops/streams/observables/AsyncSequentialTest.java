@@ -3,6 +3,7 @@ package cyclops.streams.observables;
 import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.async.adapters.Topic;
 
+import com.oath.cyclops.streams.BaseSequentialTest;
 import cyclops.companion.Semigroups;
 import cyclops.companion.rx2.Observables;
 import cyclops.control.Either;
