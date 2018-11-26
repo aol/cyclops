@@ -86,6 +86,13 @@ task packageTests(type: Jar) {
     from sourceSets.test.output
     classifier = 'tests'
 }
+test {
+    reports.html.destination = file("$buildDir/reports/test")
+    forkEvery = 100
+    testLogging {
+        events "started", "passed", "skipped", "failed"//, "standardOut", "standardError"
+    }
+}
 
 artifacts {
     testArtifacts packageTests

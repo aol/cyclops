@@ -9,9 +9,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static cyclops.data.tuple.Tuple.tuple;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -304,5 +302,18 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 		}
 		return i;
 	}
+    @Override
+    public void testSkipUntilWithNullsInclusive() {
+        Supplier<FutureStream<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
+
+        assertTrue(s.get().dropUntilInclusive(i -> true).toList().size()==5);
+    }
+    @Test
+    public void testSkipUntilInclusive() {
+        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
+
+        assertEquals(asList(), s.get().dropUntil(i -> false).toList());
+        assertTrue(s.get().dropUntilInclusive(i -> true).toList().size()==4);
+    }
 
 }

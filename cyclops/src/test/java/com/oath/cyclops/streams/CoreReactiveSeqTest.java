@@ -818,7 +818,7 @@ public  class CoreReactiveSeqTest {
         public void testLimitWhileInclusive() {
             Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
-            assertEquals(asList(), s.get().takeWhileInclusive(i -> false).toList());
+            assertEquals(asList(1), s.get().takeWhileInclusive(i -> false).toList());
             assertTrue( s.get().takeWhileInclusive(i -> i < 3).toList().size()!=5);
             assertTrue(s.get().takeWhileInclusive(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
         }

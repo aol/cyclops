@@ -304,6 +304,20 @@ public  class LFSNoOrderTest {
 
 	        assertTrue(s.get().dropUntil(i -> true).toList().containsAll(asList(1, 2, null, 3, 4, 5)));
 	    }
+        @Test
+        public void testSkipUntilInclusive() {
+            Supplier<FutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
+
+            assertEquals(asList(), s.get().dropUntilInclusive(i -> false).toList());
+            assertTrue(s.get().dropUntil(i -> true).toList().containsAll(asList(2, 3, 4, 5)));
+        }
+
+        @Test
+        public void testSkipUntilWithNullsInclusive() {
+            Supplier<FutureStream<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
+
+            assertTrue(s.get().dropUntilInclusive(i -> true).toList().containsAll(asList(2, null, 3, 4, 5)));
+        }
 
 	    @Test
 	    public void testLimitWhile() {

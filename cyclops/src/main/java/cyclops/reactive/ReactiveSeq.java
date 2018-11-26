@@ -1841,6 +1841,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return dropWhile(p.negate());
     }
 
+    default ReactiveSeq<T> dropUntilInclusive(final Predicate<? super T> p) {
+
+        return dropWhileInclusive(p.negate());
+    }
+
 
     @Override
     default ReactiveSeq<T> dropRight(final int num) {
