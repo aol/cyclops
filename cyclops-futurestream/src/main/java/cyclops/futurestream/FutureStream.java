@@ -2273,6 +2273,11 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     default FutureStream<U> takeUntil(final Predicate<? super U> predicate) {
         return fromStream(LazyFutureStreamFunctions.takeUntil(this, predicate));
     }
+    @Override
+    default FutureStream<U> takeUntilInclusive(final Predicate<? super U> p) {
+
+        return takeWhileInclusive(p.negate());
+    }
 
 
 

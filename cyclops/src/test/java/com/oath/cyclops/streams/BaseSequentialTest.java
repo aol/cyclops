@@ -640,6 +640,16 @@ public class BaseSequentialTest {
     }
 
     @Test
+    public void takeUntilInclusive() {
+        assertThat(of(1, 2, 3, 4, 5).takeUntilInclusive(p -> p == 2).toList().size(), greaterThan(0));
+    }
+
+    @Test
+    public void takeUntilInclusiveEmpty() {
+        assertThat(of().takeUntilInclusive(p -> true).toList(), equalTo(Arrays.asList()));
+    }
+
+    @Test
     public void takeWhile() {
         assertThat(of(1, 2, 3, 4, 5).takeWhile(p -> p < 6).toList().size(), greaterThan(1));
     }
@@ -1185,6 +1195,25 @@ public class BaseSequentialTest {
 
 
         assertThat(of(1, 2, null, 3, 4, 5).takeUntil(i -> false).toList(), equalTo(asList(1, 2, null, 3, 4, 5)));
+    }
+    @Test
+    public void testLimitInclusiveUntil() {
+        assertEquals(asList(1, 2, 3, 4, 5), of(1, 2, 3, 4, 5).takeUntilInclusive(i -> false).toList());
+        assertEquals(asList(1, 2,3), of(1, 2, 3, 4, 5).takeUntilInclusive(i -> i % 3 == 0).toList());
+        assertEquals(asList(1, 2,3), of(1, 2, 3, 4, 5).takeUntilInclusive(i -> i == 3).toList());
+        assertEquals(asList(1, 2, 3,4), of(1, 2, 3, 4, 5).takeUntilInclusive(i -> i == 4).toList());
+        assertEquals(asList(1), of(1, 2, 3, 4, 5).takeUntilInclusive(i -> true).toList());
+
+
+        assertEquals(asList(1), of(1, 2, 3, 4, 5).takeUntilInclusive(i -> true).toList());
+    }
+
+
+    @Test
+    public void testLimitUntilInclusiveWithNulls() {
+
+
+        assertThat(of(1, 2, null, 3, 4, 5).takeUntilInclusive(i -> false).toList(), equalTo(asList(1, 2, null, 3, 4, 5)));
     }
 
     @Test
