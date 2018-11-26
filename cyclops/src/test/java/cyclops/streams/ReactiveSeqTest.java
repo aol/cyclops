@@ -12,6 +12,7 @@ import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 import cyclops.control.Eval;
 import cyclops.control.Future;
 import cyclops.data.Bag;
+import cyclops.function.Predicates;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.companion.Streamable;

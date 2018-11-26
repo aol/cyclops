@@ -1828,6 +1828,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return (ReactiveSeq<T>) IterableX.super.takeUntil(p);
     }
 
+    default ReactiveSeq<T> takeUntilInclusive(final Predicate<? super T> p) {
+
+        return takeWhileInclusive(p.negate());
+    }
+
 
     @Override
     default ReactiveSeq<T> dropUntil(final Predicate<? super T> p) {
