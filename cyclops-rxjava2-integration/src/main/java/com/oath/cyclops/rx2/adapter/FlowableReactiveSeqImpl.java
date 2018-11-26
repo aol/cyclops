@@ -281,6 +281,10 @@ public class FlowableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     public ReactiveSeq<T> dropWhile(Predicate<? super T> p) {
         return flux(flowable.skipWhile(Functions.rxPredicate(p)));
     }
+    @Override
+    public ReactiveSeq<T> dropWhileInclusive(Predicate<? super T> p) {
+        return flux(Spouts.from(flowable).dropWhileInclusive(p));
+    }
 
     @Override
     public ReactiveSeq<T> limit(long num) {

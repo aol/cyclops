@@ -1821,6 +1821,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return (ReactiveSeq<T>) IterableX.super.dropWhile(p);
     }
 
+    ReactiveSeq<T> dropWhileInclusive(final Predicate<? super T> p);
 
     @Override
     default ReactiveSeq<T> takeUntil(final Predicate<? super T> p) {

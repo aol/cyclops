@@ -2225,6 +2225,11 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .dropWhile(predicate));
     }
+    @Override
+    default FutureStream<U> dropWhileInclusive(final Predicate<? super U> predicate) {
+        return fromStream(ReactiveSeq.oneShotStream(stream())
+            .dropWhileInclusive(predicate));
+    }
 
     /**
      * Returns a stream with all elements skipped for which a predicate

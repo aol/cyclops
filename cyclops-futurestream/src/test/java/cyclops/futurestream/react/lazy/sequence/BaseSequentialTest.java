@@ -75,7 +75,16 @@ public class BaseSequentialTest {
 	    public void dropWhileEmpty(){
 	        assertThat(of().dropWhile(p->true).toList(),equalTo(Arrays.asList()));
 	    }
-	    @Test
+        @Test
+        public void dropWhileInclusive(){
+            assertThat(of(1,2,3,4,5).dropWhileInclusive(p->p<6).toList().size(),lessThan(1));
+        }
+        @Test
+        public void dropWhileEmptyInclusive(){
+            assertThat(of().dropWhileInclusive(p->true).toList(),equalTo(Arrays.asList()));
+        }
+
+        @Test
 	    public void testTake(){
 	        assertThat(of(1,2,3,4,5).take(2).collect(Collectors.toList()).size(),equalTo(2));
 	    }

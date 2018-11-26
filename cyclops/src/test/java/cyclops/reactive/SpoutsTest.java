@@ -658,7 +658,17 @@ public class SpoutsTest {
     public void intervalCron() throws Exception {
         assertThat(Spouts.interval("* * * * * ?", Executors.newScheduledThreadPool(1))
                         .limit(2)
+            .peek(System.out::println)
                         .collect(Collectors.toList()).size(),greaterThan(0));
+    }
+    @Test
+    public void scheduleCron() throws Exception {
+
+        assertThat(Spouts.schedule(Stream.of(1,2,3),"* * * * * ?", Executors.newScheduledThreadPool(1))
+            .limit(5)
+            .peek(System.out::println)
+            .collect(Collectors.toList()).size(),equalTo(3));
+
     }
 
     @Test
