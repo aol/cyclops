@@ -238,6 +238,10 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         public T2 get() {
             return lazy.get();
         }
+        @Override
+        public void subscribe(Subscriber<? super T2> sub) {
+            lazy.subscribe(sub);
+        }
     }
 
     public static <T> Eval<T> coeval(final Future<Eval<T>> pub) {

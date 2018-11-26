@@ -1,7 +1,9 @@
 package com.oath.cyclops.types.reactive;
 
 
-public interface Completable<T> {
+import org.reactivestreams.Publisher;
+
+public interface Completable<T>{
 
     boolean isFailed();
 

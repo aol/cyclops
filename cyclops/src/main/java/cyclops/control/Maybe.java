@@ -220,6 +220,11 @@ public interface Maybe<T> extends Option<T> {
         public <R> R fold(Function<? super T2, ? extends R> fn1, Function<? super None<T2>, ? extends R> fn2) {
             return maybe.fold(fn1,fn2);
         }
+
+        @Override
+        public void subscribe(Subscriber<? super T2> sub) {
+            maybe.subscribe(sub);
+        }
     }
     static <T> Maybe<T> fromFuture(Future<T> future){
         return fromLazy(Eval.fromFuture(future.map(Maybe::of)
@@ -1031,6 +1036,7 @@ public interface Maybe<T> extends Option<T> {
 
         @Override
         public final void subscribe(final Subscriber<? super T> sub) {
+            System.out.println("Maybe subscribe!");
             lazy.subscribe(new Subscriber<Maybe<T>>() {
                 boolean onCompleteSent = false;
                 @Override

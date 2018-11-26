@@ -292,8 +292,9 @@ public class Future<T> implements To<Future<T>>,
      * @return Future populated syncrhonously from Publisher
      */
     public static <T> Future<T> fromPublisher(final Publisher<? extends T> pub) {
-      if(pub instanceof Future)
-        return (Future<T>)pub;
+        if (pub instanceof Future){
+            return (Future<T>) pub;
+        }
         Future<T> result = future();
 
         pub.subscribe(new Subscriber<T>() {
