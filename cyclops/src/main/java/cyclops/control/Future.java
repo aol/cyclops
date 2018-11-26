@@ -733,7 +733,11 @@ public class Future<T> implements To<Future<T>>,
      * @param failure Function to execute if this Future fails
      * @return Future with the eventual result of the executed Function
      */
+    @Deprecated //use foldAsync
     public <R> Future<R> visitAsync(Function<? super T,? extends R> success, Function<? super Throwable,? extends R> failure){
+       return foldAsync(success,failure);
+    }
+    public <R> Future<R> foldAsync(Function<? super T,? extends R> success, Function<? super Throwable,? extends R> failure){
         Future<R> f = map(success);
         return f.recover(failure);
     }

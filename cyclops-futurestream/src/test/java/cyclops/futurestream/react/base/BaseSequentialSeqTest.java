@@ -371,6 +371,19 @@ public abstract class BaseSequentialSeqTest {
 
 
 	}
+    @Test
+    public void limitWhileInclusiveTest(){
+        List<Integer> list = of(1,2,3,4,5,6).takeWhileInclusive(it -> it<4).peek(it -> System.out.println(it)).collect(Collectors.toList());
+
+        assertThat(list,hasItem(1));
+        assertThat(list,hasItem(2));
+        assertThat(list,hasItem(3));
+        assertThat(list,hasItem(4));
+
+
+
+    }
+
 
     @Test
     public void testScanLeftStringConcat() {
@@ -549,6 +562,16 @@ public abstract class BaseSequentialSeqTest {
 	         assertEquals(asList(1, 2, 3), s.get().takeWhile(i -> i < 4).toList());
 	         assertEquals(asList(1, 2, 3, 4, 5), s.get().takeWhile(i -> true).toList());
 	    }
+        @Test
+        public void testLimitWhileInclusive() {
+            Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
+
+            assertEquals(asList(1), s.get().takeWhileInclusive(i -> false).toList());
+            assertEquals(asList(1, 2,3), s.get().takeWhileInclusive(i -> i % 3 != 0).toList());
+            assertEquals(asList(1, 2,3), s.get().takeWhileInclusive(i -> i < 3).toList());
+            assertEquals(asList(1, 2, 3,4), s.get().takeWhileInclusive(i -> i < 4).toList());
+            assertEquals(asList(1, 2, 3, 4, 5), s.get().takeWhileInclusive(i -> true).toList());
+        }
 
 	    @Test
 	    public void testLimitUntil() {

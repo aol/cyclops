@@ -913,4 +913,33 @@ public class SpoutsTest {
         return sub.stream();
     }
 
+    @Test
+    public void takeWhile(){
+        assertThat(Spouts.of(1,2,3).takeWhile(i->i<3).toList(),equalTo(Arrays.asList(1,2)));
+        assertThat(Spouts.<Integer>of().takeWhile(i->i<3).toList(), equalTo(Arrays.asList()));
+        assertThat(Spouts.range(1,1_000_000).takeWhile(i->i<300_000).toList(),
+            Matchers.equalTo(ReactiveSeq.range(1,300_000).toList()));
+
+        AtomicInteger count = new AtomicInteger(0);
+        int size = Spouts.range(1,1_000_000)
+            .peek(i->count.incrementAndGet())
+            .takeWhile(i->i<300_000).toList().size();
+        assertThat(count.get(), Matchers.equalTo(300_000));
+        assertThat(size, Matchers.equalTo(299999));
+    }
+    @Test
+    public void takeWhileInclusive(){
+        assertThat(Spouts.of(1,2,3).takeWhileInclusive(i->i<3).toList(), equalTo(Arrays.asList(1,2,3)));
+        assertThat(Spouts.<Integer>of().takeWhileInclusive(i->i<3).toList(), equalTo(Arrays.asList()));
+        assertThat(Spouts.range(1,1_000_000).takeWhileInclusive(i->i<300_000).toList(),
+                            equalTo(ReactiveSeq.range(1,300_001).toList()));
+
+        AtomicInteger count = new AtomicInteger(0);
+        int size = Spouts.range(1,1_000_000)
+            .peek(i->count.incrementAndGet())
+            .takeWhileInclusive(i->i<300_000).toList().size();
+        assertThat(count.get(), equalTo(300_000));
+        assertThat(size, equalTo(300000));
+    }
+
 }

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -368,6 +369,35 @@ public  class BaseSequenceTest {
 											equalTo(asList(2, 3, 4, 5, 6, 7, 0, 0, 0, 0).size()));
 		}
 
+		@Test
+        public void takeWhile(){
+	        assertThat(ReactiveSeq.of(1,2,3).takeWhile(i->i<3).toList(),equalTo(Arrays.asList(1,2)));
+            assertThat(ReactiveSeq.<Integer>of().takeWhile(i->i<3).toList(),equalTo(Arrays.asList()));
+            assertThat(ReactiveSeq.range(1,1_000_000).takeWhile(i->i<300_000).toList(),
+                equalTo(ReactiveSeq.range(1,300_000).toList()));
+
+            AtomicInteger count = new AtomicInteger(0);
+            int size = ReactiveSeq.range(1,1_000_000)
+                        .peek(i->count.incrementAndGet())
+                       .takeWhile(i->i<300_000).toList().size();
+            assertThat(count.get(),equalTo(300_000));
+            assertThat(size,equalTo(299999));
+        }
+    @Test
+    public void takeWhileInclusive(){
+        assertThat(ReactiveSeq.of(1,2,3).takeWhileInclusive(i->i<0).toList(),equalTo(Arrays.asList(1)));
+        assertThat(ReactiveSeq.of(1,2,3).takeWhileInclusive(i->i<3).toList(),equalTo(Arrays.asList(1,2,3)));
+        assertThat(ReactiveSeq.<Integer>of().takeWhileInclusive(i->i<3).toList(),equalTo(Arrays.asList()));
+        assertThat(ReactiveSeq.range(1,1_000_000).takeWhileInclusive(i->i<300_000).toList(),
+            equalTo(ReactiveSeq.range(1,300_001).toList()));
+
+        AtomicInteger count = new AtomicInteger(0);
+        int size = ReactiveSeq.range(1,1_000_000)
+            .peek(i->count.incrementAndGet())
+            .takeWhileInclusive(i->i<300_000).toList().size();
+        assertThat(count.get(),equalTo(300_000));
+        assertThat(size,equalTo(300000));
+    }
 
 
 }

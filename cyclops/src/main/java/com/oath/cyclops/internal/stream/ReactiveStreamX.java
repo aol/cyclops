@@ -360,6 +360,10 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public final ReactiveSeq<T> takeWhile(final Predicate<? super T> p) {
         return createSeq(new LimitWhileOperator<>(source, p));
     }
+    @Override
+    public final ReactiveSeq<T> takeWhileInclusive(final Predicate<? super T> p) {
+        return createSeq(new LimitWhileClosedOperator<>(source, p));
+    }
 
     @Override
     public final ReactiveSeq<T> takeUntil(final Predicate<? super T> p) {
