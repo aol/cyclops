@@ -40,9 +40,6 @@ public class SkipWhileClosedOperator<T,R> extends BaseOperator<T,T> {
             }
         };
         sub[0] = source.subscribe(e-> {
-            if((Integer)e==4){
-                System.out.println("Woot!");
-            }
                try {
 
                         if(skipping[0]){

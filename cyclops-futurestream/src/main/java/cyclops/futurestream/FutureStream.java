@@ -2245,6 +2245,10 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .dropUntil(predicate));
     }
+    @Override
+    default ReactiveSeq<U> dropUntilInclusive(final Predicate<? super U> p){
+        return dropWhileInclusive(p.negate());
+    }
 
     /**
      * Returns a stream limited to all elements for which a predicate evaluates
