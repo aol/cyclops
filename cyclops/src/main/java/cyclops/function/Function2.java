@@ -5,6 +5,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import com.oath.cyclops.types.foldable.To;
 import cyclops.control.*;
@@ -25,6 +26,19 @@ public interface Function2<T1, T2, R> extends BiFunction<T1,T2,R>, To<Function2<
     }
     public static <T1, T2, R> Function2<? super T1,? super T2,? extends R> λv(final Function2<? super T1,? super T2,? extends R> triFunc){
         return triFunc;
+    }
+
+    static <T1,T2,R> Function2<T1,T2,R> _1(Function<T1,R> fn ) {
+        return (a,b)->fn.apply(a);
+    }
+    static <T1,T2,R> Function2<T1,T2,R> _2(Function<T2,R> fn ) {
+        return (a,b)->fn.apply(b);
+    }
+    static <T1,T2,R> Function2<T1,T2,R> constant(R d) {
+        return (a,b)->d;
+    }
+    static <T1,T2,R> Function2<T1,T2,R> _0(Supplier<R> d) {
+        return (a,b)->d.get();
     }
 
     public R apply(T1 a, T2 b);

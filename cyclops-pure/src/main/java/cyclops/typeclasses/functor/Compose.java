@@ -39,19 +39,7 @@ public class Compose<CRE,C2>{
     private final Functor<C2> g;
 
 
-    public  <T,R> Higher<CRE,Higher<C2,R>> mapWithIndex(BiFunction<? super T,Long,? extends R> f, Higher<CRE,Higher<C2,T>> ds) {
 
-        return map(a -> {
-
-            R r = State.state((Long s) -> Tuple.tuple(s + 1, f.apply(a, s))).run(0l)._2();
-            return r;
-        } ,ds);
-
-
-    }
-    public <T,R> Higher<CRE,Higher<C2,Tuple2<T,Long>>> zipWithIndex(Higher<CRE,Higher<C2,T>> ds) {
-        return mapWithIndex(Tuple::tuple, ds);
-    }
     /**
      * Compose two functors
      *
@@ -84,4 +72,10 @@ public class Compose<CRE,C2>{
     }
 
 
+    public Functor<CRE> outer(){
+        return f;
+    }
+    public Functor<C2> inter(){
+        return g;
+    }
 }

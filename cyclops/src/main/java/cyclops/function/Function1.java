@@ -5,6 +5,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 
 import cyclops.control.*;
@@ -33,6 +34,13 @@ public interface Function1<T,  R> extends Function<T,R>{
     }
     public static <T1,  R> Function1<? super T1,? extends R> λv(final Function1<? super T1,? extends R> triFunc){
         return triFunc;
+    }
+
+    static <T1,T2> Function1<T1,  T2> constant(T2 t) {
+        return __-> t;
+    }
+    static <T1,T2> Function1<T1,  T2> lazy(Supplier<T2> t) {
+        return __-> t.get();
     }
 
     default <R2> R2 toType(Function<? super Function1<? super T, ? extends R>, ? extends R2> reduce){

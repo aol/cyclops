@@ -87,7 +87,7 @@ public interface Foldable<CRE> {
         return foldMap(Monoids.lazySeqConcat(), t->LazySeq.of(t),ds);
     }
     default  <T> ReactiveSeq<T> stream(Higher<CRE, T> ds){
-        return seq(ds).stream();
+        return lazySeq(ds).stream();
     }
 
     default <T> T intercalate(Monoid<T> monoid, T value, Higher<CRE, T> ds ){

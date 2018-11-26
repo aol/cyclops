@@ -5,31 +5,35 @@ import com.oath.cyclops.hkt.DataWitness.option;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.MonoidKs;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
-import cyclops.function.Function3;
+import cyclops.data.tuple.Tuple2;
 import cyclops.function.Monoid;
 import cyclops.hkt.Active;
 import cyclops.hkt.Coproduct;
 import cyclops.hkt.Nested;
 import cyclops.hkt.Product;
 import cyclops.kinds.OptionalKind;
-import cyclops.typeclasses.*;
+import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.arrow.MonoidK;
-import cyclops.arrow.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.instances.General;
-import cyclops.typeclasses.monad.*;
+import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.MonadPlus;
+import cyclops.typeclasses.monad.MonadRec;
+import cyclops.typeclasses.monad.MonadZero;
+import cyclops.typeclasses.monad.Traverse;
+import cyclops.typeclasses.monad.TraverseByTraverse;
+import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
 
-import java.util.function.BiFunction;
 import java.util.function.Function;
-
-import static cyclops.control.Maybe.narrowK;
 
 /**
  * Companion class for creating Type Class instances for working with Maybes
@@ -151,252 +155,120 @@ public class MaybeInstances {
     };
   }
 
-  /**
-   *
-   * Transform a maybe, mulitplying every element by 2
-   *
-   * <pre>
-   * {@code
-   *  Maybe<Integer> maybe = Maybes.functor().map(i->i*2, Maybe.widen(Maybe.just(1));
-   *
-   *  //[2]
-   *
-   *
-   * }
-   * </pre>
-   *
-   * An example fluent api working with Maybes
-   * <pre>
-   * {@code
-   *   Maybe<Integer> maybe = Maybes.unit()
-  .unit("hello")
-  .applyHKT(h->Maybes.functor().map((String v) ->v.length(), h))
-  .convert(Maybe::narrowK3);
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A functor for Maybes
-   */
-  public static <T,R>Functor<option> functor(){
-    BiFunction<Maybe<T>,Function<? super T, ? extends R>,Maybe<R>> map = MaybeInstances::map;
-    return General.functor(map);
-  }
-  /**
-   * <pre>
-   * {@code
-   * Maybe<String> maybe = Maybes.unit()
-  .unit("hello")
-  .convert(Maybe::narrowK3);
+    private final OptionInstances.OptionTypeclasses INSTANCE = new OptionInstances.OptionTypeclasses();
 
-  //Maybe.just("hello"))
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A factory for Maybes
-   */
-  public static <T> Pure<option> unit(){
-    return General.<option,T>unit(MaybeInstances::of);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   * import static com.aol.cyclops.hkt.jdk.Maybe.widen;
-   * import static com.aol.cyclops.util.function.Lambda.l1;
-   * import static java.util.Maybe.just;
-   *
-  Maybes.zippingApplicative()
-  .ap(widen(asMaybe(l1(this::multiplyByTwo))),widen(asMaybe(1,2,3)));
-   *
-   * //[2,4,6]
-   * }
-   * </pre>
-   *
-   *
-   * Example fluent API
-   * <pre>
-   * {@code
-   * Maybe<Function<Integer,Integer>> maybeFn =Maybes.unit()
-   *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-   *                                                  .convert(Maybe::narrowK3);
+    @AllArgsConstructor
+    public static class OptionTypeclasses  implements MonadPlus<option>,
+                                                        MonadRec<option>,
+                                                        TraverseByTraverse<option>,
+                                                        Foldable<option>,
+                                                        Unfoldable<option>{
 
-  Maybe<Integer> maybe = Maybes.unit()
-  .unit("hello")
-  .applyHKT(h->Maybes.functor().map((String v) ->v.length(), h))
-  .applyHKT(h->Maybes.applicative().ap(maybeFn, h))
-  .convert(Maybe::narrowK3);
-
-  //Maybe.just("hello".length()*2))
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A zipper for Maybes
-   */
-  public static <T,R> Applicative<option> applicative(){
-    BiFunction<Maybe< Function<T, R>>,Maybe<T>,Maybe<R>> ap = MaybeInstances::ap;
-    return General.applicative(functor(), unit(), ap);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   * import static com.aol.cyclops.hkt.jdk.Maybe.widen;
-   * Maybe<Integer> maybe  = Maybes.monad()
-  .flatMap(i->widen(MaybeX.range(0,i)), widen(Maybe.just(1,2,3)))
-  .convert(Maybe::narrowK3);
-   * }
-   * </pre>
-   *
-   * Example fluent API
-   * <pre>
-   * {@code
-   *    Maybe<Integer> maybe = Maybes.unit()
-  .unit("hello")
-  .applyHKT(h->Maybes.monad().flatMap((String v) ->Maybes.unit().unit(v.length()), h))
-  .convert(Maybe::narrowK3);
-
-  //Maybe.just("hello".length())
-   *
-   * }
-   * </pre>
-   *
-   * @return Type class with monad arrow for Maybes
-   */
-  public static <T,R> Monad<option> monad(){
-
-    BiFunction<Higher<option,T>,Function<? super T, ? extends Higher<option,R>>,Higher<option,R>> flatMap = MaybeInstances::flatMap;
-    return General.monad(applicative(), flatMap);
-  }
-  public static <T,R> MonadRec<option> monadRec(){
-
-    return new MonadRec<option>(){
-
-      @Override
-      public <T, R> Higher<option, R> tailRec(T initial, Function<? super T, ? extends Higher<option, ? extends Either<T, R>>> fn) {
-        return Maybe.tailRec(initial,fn.andThen(Maybe::narrowK));
-      }
-    };
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   *  Maybe<String> maybe = Maybes.unit()
-  .unit("hello")
-  .applyHKT(h->Maybes.monadZero().filter((String t)->t.startsWith("he"), h))
-  .convert(Maybe::narrowK3);
-
-  //Maybe.just("hello"));
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A filterable monad (with default value)
-   */
-  public static <T,R> MonadZero<option> monadZero(){
-
-    return General.monadZero(monad(), Maybe.nothing());
-  }
-  /**
-   * <pre>
-   * {@code
-   *  Maybe<Integer> maybe = Maybes.<Integer>monadPlus()
-  .plus(Maybe.widen(Maybe.just()), Maybe.widen(Maybe.just(10)))
-  .convert(Maybe::narrowK3);
-  //Maybe.just(10))
-   *
-   * }
-   * </pre>
-   * @return Type class for combining Maybes by concatenation
-   */
-  public static <T> MonadPlus<option> monadPlus(){
-
-    return General.monadPlus(monadZero(), MonoidKs.firstPresentOption());
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   *  Monoid<Maybe<Integer>> m = Monoid.of(Maybe.widen(Maybe.just()), (a,b)->a.isEmpty() ? b : a);
-  Maybe<Integer> maybe = Maybes.<Integer>monadPlus(m)
-  .plus(Maybe.just(5), Maybe.just(10))
-  .convert(Maybe::narrowK3);
-  //Maybe[5]
-   *
-   * }
-   * </pre>
-   *
-   * @param m Monoid to use for combining Maybes
-   * @return Type class for combining Maybes
-   */
-  public static <T> MonadPlus<option> monadPlus(MonoidK<option> m){
-
-    return General.monadPlus(monadZero(),m);
-  }
-
-  /**
-   * @return Type class for traversables with traverse / sequence operations
-   */
-  public static <C2,T> Traverse<option> traverse(){
-
-    return General.traverseByTraverse(applicative(), MaybeInstances::traverseA);
-  }
-
-  /**
-   *
-   * <pre>
-   * {@code
-   * int sum  = Maybes.foldable()
-  .foldLeft(0, (a,b)->a+b, Maybe.widen(Maybe.just(1)));
-
-  //1
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return Type class for folding / reduction operations
-   */
-  public static <T,R> Foldable<option> foldable(){
-    BiFunction<Monoid<T>,Higher<option,T>,T> foldRightFn =  (m, l)-> narrowK(l).orElse(m.zero());
-    BiFunction<Monoid<T>,Higher<option,T>,T> foldLeftFn = (m, l)-> narrowK(l).orElse(m.zero());
-    Function3<Monoid<R>, Function<T, R>, Higher<option, T>, R> foldMapFn = (m, f, l)-> narrowK(l).map(f).fold(m);
-    return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
-  }
+        @Override
+        public <T> T foldRight(Monoid<T> monoid, Higher<option, T> ds) {
+            return Maybe.narrowK(ds).fold(monoid);
+        }
 
 
 
-  private <T> Maybe<T> of(T value){
-    return Maybe.of(value);
-  }
-  private static <T,R> Maybe<R> ap(Maybe<Function< T, R>> lt,  Maybe<T> maybe){
-    return lt.zip(maybe, (a,b)->a.apply(b)).toMaybe();
+        @Override
+        public <T> T foldLeft(Monoid<T> monoid, Higher<option, T> ds) {
+            return Maybe.narrowK(ds).fold(monoid);
+        }
 
-  }
-  private static <T,R> Higher<option,R> flatMap(Higher<option,T> lt, Function<? super T, ? extends  Higher<option,R>> fn){
-    return narrowK(lt).flatMap(fn.andThen(Maybe::narrowK));
-  }
-  private static <T,R> Maybe<R> map(Maybe<T> lt, Function<? super T, ? extends R> fn){
-    return lt.map(fn);
+        @Override
+        public <R, T> Higher<option, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
+            return Maybe.fromPublisher(fn.apply(b).map(t->t._1()));
+        }
 
-  }
+        @Override
+        public <T> MonoidK<option> monoid() {
+            return MonoidKs.firstPresentMaybe();
+        }
+
+        @Override
+        public <T, R> Higher<option, R> flatMap(Function<? super T, ? extends Higher<option, R>> fn, Higher<option, T> ds) {
+            return Maybe.narrowK(ds).flatMap(t-> Option.narrowK(fn.apply(t)));
+        }
+
+        @Override
+        public <C2, T, R> Higher<C2, Higher<option, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<option, T> ds) {
+            Maybe<T> maybe = Maybe.narrowK(ds);
+            return maybe.fold(some-> applicative.map(m->Option.of(m), fn.apply(some)),
+                ()->applicative.unit(Option.<R>none()));
+        }
+
+        @Override
+        public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<option, T> ds) {
+            Maybe<R>  opt  = Maybe.narrowK(ds).map(fn);
+            return opt.fold(mb);
+        }
+
+        @Override
+        public <T, R> Higher<option, R> ap(Higher<option, ? extends Function<T, R>> fn, Higher<option, T> apply) {
+            return Maybe.narrowK(apply).zip(Option.narrowK(fn), (a, b)->b.apply(a));
+        }
+
+        @Override
+        public <T> Higher<option, T> unit(T value) {
+            return Maybe.just(value);
+        }
+
+        @Override
+        public <T, R> Higher<option, R> map(Function<? super T, ? extends R> fn, Higher<option, T> ds) {
+            return Maybe.narrowK(ds).map(fn);
+        }
+
+        @Override
+        public <T, R> Higher<option, R> tailRec(T initial, Function<? super T, ? extends Higher<option, ? extends Either<T, R>>> fn) {
+            return Maybe.tailRec(initial,t-> Maybe.narrowK(fn.apply(t)));
+        }
+    }
+    public static <T,R>Functor<option> functor(){
+        return INSTANCE;
+    }
+
+    public static <T> Pure<option> unit(){
+        return INSTANCE;
+    }
+
+    public static <T,R> Applicative<option> applicative(){
+        return INSTANCE;
+    }
+
+    public static <T,R> Monad<option> monad(){
+        return INSTANCE;
+    }
+    public static <T,R> MonadRec<option> monadRec(){
+
+        return INSTANCE;
+    }
+
+    public static <T,R> MonadZero<option> monadZero(){
+
+        return INSTANCE;
+    }
+
+    public static <T> MonadPlus<option> monadPlus(){
+        return INSTANCE;
+    }
+
+    public static <T> MonadPlus<option> monadPlus(MonoidK<option> m){
+
+        return INSTANCE;
+    }
 
 
-  private static <C2,T,R> Higher<C2, Higher<option, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
-                                                                              Higher<option, T> ds){
+    public static <C2,T> Traverse<option> traverse(){
+        return INSTANCE;
+    }
 
-    Maybe<T> maybe = narrowK(ds);
-    Higher<C2, Maybe<R>> res = maybe.fold(some-> applicative.map(m->Maybe.of(m), fn.apply(some)),
-      ()->applicative.unit(Maybe.<R>nothing()));
 
-    return Maybe.widen2(res);
-  }
+    public static <T,R> Foldable<option> foldable(){
+        return INSTANCE;
+    }
+
+
+
 
 }
