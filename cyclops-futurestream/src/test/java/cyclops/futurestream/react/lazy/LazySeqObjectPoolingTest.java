@@ -308,5 +308,12 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 
         assertTrue(s.get().dropUntilInclusive(i -> true).toList().size()==5);
     }
+    @Test
+    public void testSkipUntilInclusive() {
+        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
+
+        assertEquals(asList(), s.get().dropUntil(i -> false).toList());
+        assertTrue(s.get().dropUntilInclusive(i -> true).toList().size()==4);
+    }
 
 }
