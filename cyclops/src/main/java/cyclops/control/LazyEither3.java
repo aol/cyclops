@@ -205,6 +205,10 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
         public <R> R fold(Function<? super RT, ? extends R> present, Supplier<? extends R> absent) {
             return either.fold(present,absent);
         }
+        @Override
+        public void subscribe(Subscriber<? super RT> sub) {
+            either.subscribe(sub);
+        }
     }
 
     static <LT1,LT2,RT> LazyEither3<LT1,LT2,RT> fromLazy(Eval<LazyEither3<LT1,LT2,RT>> lazy){

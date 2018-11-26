@@ -1,11 +1,13 @@
 package cyclops.control;
 
 import com.oath.cyclops.types.persistent.PersistentSet;
+import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.util.box.Mutable;
 
 
 import cyclops.companion.*;
 import cyclops.data.HashSet;
+import cyclops.data.Seq;
 import cyclops.function.Monoid;
 
 import cyclops.reactive.ReactiveSeq;
@@ -14,8 +16,11 @@ import cyclops.data.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -51,6 +56,56 @@ public class FutureTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+    @Test
+    public void nonblocking(){
+        Mono<String> mono = Mono.never();
+        Future<String> future = Future.fromPublisher(mono);
+        Future.fromPublisher(Maybe.maybe());
+        Future.fromPublisher(LazyEither.either());
+        Future.fromPublisher(LazyEither3.either3());
+        Future.fromPublisher(LazyEither4.either4());
+        Future.fromPublisher(LazyEither5.either5());
+        Future.fromPublisher(Eval.eval());
+
+
+    }
+    @Test
+    public void setCorrectly(){
+
+        Seq<Completable<String>> completables = Seq.of(Maybe.<String>maybe(),
+                                                        LazyEither.either(),
+                                                        LazyEither3.either3(),
+                                                        LazyEither4.either4(),
+                                                        LazyEither5.either5(),
+                                                        Eval.eval());
+
+
+        for(Completable<String> c : completables) {
+            Future<String> f = Future.fromPublisher((Publisher<String>)c);
+            c.complete("hello");
+            assertThat(f.get(),equalTo(Try.success("hello")));
+        }
+
+    }
+
+    
+    @Test
+    public void completableFuture(){
+        System.out.println("Thread " + Thread.currentThread().getId());
+        LazyEither.CompletableEither<String, String> completable = LazyEither.<String>either();
+        Try<String,Throwable> async = Try.fromEither(completable);
+
+        Future<String> future = Future.fromPublisher(completable)
+                                        .peek(System.out::println)
+                                        .peek(i->System.out.println("Thread " + Thread.currentThread().getId()));
+
+        new Thread(()->{
+            completable.complete("hello world");
+        }).start();
+
+        future.get();
+
     }
     @Test
     public void combine(){

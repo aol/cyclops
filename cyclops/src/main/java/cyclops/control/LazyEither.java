@@ -349,6 +349,10 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         public <R> R fold(Function<? super RT, ? extends R> present, Supplier<? extends R> absent) {
             return either.fold(i->absent.get(),present);
         }
+        @Override
+        public void subscribe(Subscriber<? super RT> sub) {
+            either.subscribe(sub);
+        }
     }
 
     static <ST,PT> LazyEither<ST,PT> fromEither(Either<ST,PT> xor){
