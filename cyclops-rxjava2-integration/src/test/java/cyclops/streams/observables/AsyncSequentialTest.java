@@ -24,7 +24,9 @@ import org.junit.Test;
 import org.reactivestreams.Subscription;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -504,5 +506,43 @@ public class AsyncSequentialTest extends BaseSequentialTest {
 
         });
     }
+    @Test
+    public void concatMapStream() {
+        assertThat(of(1, 2, 3).concatMap(i -> ReactiveSeq.of(i).filter(Objects::nonNull))
+                .collect(Collectors.toList()),
+            Matchers.equalTo(Arrays.asList(1, 2, 3)));
+    }
 
+    @Test
+    public void concatMapMaybe() {
+        assertThat(of(1, 2, 3).concatMap(Maybe::ofNullable)
+                .collect(Collectors.toList()),
+            equalTo(Arrays.asList(1, 2, 3)));
+    }
+
+    @Test
+    public void testLimitUntilInclusiveWithNulls() {
+
+
+        assertThat(of(1, 2, 3, 4, 5).takeUntilInclusive(i -> false).toList(), equalTo(asList(1, 2, 3, 4, 5)));
+    }
+    @Test
+    public void flatMapStream() {
+        for (int i = 0; i < ITERATIONS; i++) {
+            assertThat(of(1, 2, 3).flatMap(Stream::of)
+                    .collect(Collectors.toList()),
+                Matchers.equalTo(Arrays.asList(1, 2, 3)));
+        }
+    }
+    @Test @Ignore
+    public void testLimitUntilWithNulls() {
+
+
+    }
+    @Test
+    public void flatMapStreamFilter() {
+        assertThat(of(1, 2, 3).flatMap(i -> ReactiveSeq.of(i).filter(Objects::nonNull))
+                .collect(Collectors.toList()),
+            Matchers.equalTo(Arrays.asList(1, 2,3 )));
+    }
 }

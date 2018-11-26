@@ -311,6 +311,10 @@ public  class AsyncRSReactiveStreamXTest {
 	public void skipUntil(){
 		assertEquals(asList(3, 4, 5), of(1, 2, 3, 4, 5).dropUntil(i -> i % 3 == 0).toList());
 	}
+    @Test
+    public void skipUntilInclusive(){
+        assertEquals(asList(4, 5), of(1, 2, 3, 4, 5).dropUntilInclusive(i -> i % 3 == 0).toList());
+    }
 	@Test
     public void simpleZip(){
         of(1,2,3)
@@ -538,6 +542,13 @@ public  class AsyncRSReactiveStreamXTest {
 	        assertEquals(asList(), s.get().dropUntil(i -> false).toList());
 	        assertTrue(s.get().dropUntil(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
 		  }
+        @Test
+        public void testSkipUntilInclusive() {
+            Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
+
+            assertEquals(asList(), s.get().dropUntilInclusive(i -> false).toList());
+            assertTrue(s.get().dropUntilInclusive(i -> true).toList().containsAll(asList(2, 3, 4, 5)));
+        }
 
 	    @Test(expected= NullPointerException.class)
 	    public void testSkipUntilWithNulls() {
@@ -555,16 +566,16 @@ public  class AsyncRSReactiveStreamXTest {
 	        assertTrue(s.get().takeWhile(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
 	    }
 
-            @Test
-            public void testLimitWhileInclusive() {
-                Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
+        @Test
+        public void testLimitWhileInclusive() {
+            Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
-                assertEquals(asList(), s.get().takeWhileInclusive(i -> false).toList());
-                assertTrue( s.get().takeWhileInclusive(i -> i < 3).toList().size()!=5);
-                assertTrue(s.get().takeWhileInclusive(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
-            }
+            assertEquals(asList(1), s.get().takeWhileInclusive(i -> false).toList());
+            assertTrue(s.get().takeWhileInclusive(i -> i < 3).toList().size() != 5);
+            assertTrue(s.get().takeWhileInclusive(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
+        }
 
-    @Test
+        @Test
 	    public void testLimitUntil() {
 
 

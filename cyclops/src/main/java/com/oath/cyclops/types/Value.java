@@ -85,9 +85,7 @@ public interface Value<T> extends SealedOr<T>, Iterable<T>, Publisher<T> {
 
 
 
-    /* (non-Javadoc)
-     * @see org.reactivestreams.Publisher#forEachAsync(org.reactivestreams.Subscriber)
-     */
+
     @Override
     default void subscribe(final Subscriber<? super T> sub) {
         sub.onSubscribe(new Subscription() {

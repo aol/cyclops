@@ -219,6 +219,10 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         public <R> R fold(Function<? super RT, ? extends R> present, Supplier<? extends R> absent) {
             return either.fold(present,absent);
         }
+        @Override
+        public void subscribe(Subscriber<? super RT> sub) {
+            either.subscribe(sub);
+        }
     }
 
 
