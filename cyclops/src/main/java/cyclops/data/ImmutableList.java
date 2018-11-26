@@ -73,6 +73,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
     }
 
+    @Deprecated //internal method (to be hidden in future release)
     default boolean equalToDirectAccess(Iterable<T> iterable){
         int size = size();
         Iterator<T> it = iterable.iterator();
