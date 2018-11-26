@@ -296,5 +296,9 @@ public class SyncSequentialTest extends BaseSequentialTest {
          assertEquals(asList(3), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toList());
         assertEquals(asList(), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._2().toList());
     }
-
+    @Override
+    @Test(expected=NullPointerException.class)
+    public void testLimitUntilInclusiveWithNulls() {
+        super.testLimitUntilInclusiveWithNulls();
+    }
 }

@@ -429,4 +429,9 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
         assertThat(onComplete.get(), Matchers.equalTo(true));
     }
 
+    @Override
+    @Test(expected=NullPointerException.class)
+    public void testLimitUntilInclusiveWithNulls() {
+       super.testLimitUntilInclusiveWithNulls();
+    }
 }
