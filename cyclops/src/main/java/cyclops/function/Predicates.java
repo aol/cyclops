@@ -409,27 +409,27 @@ public class Predicates {
     return test -> ReactiveSeq.of(items)
                               .map(i -> test.contains(i))
                               .allMatch(v -> v);
-}
-
-@SafeVarargs
-public static <T1> Predicate<Iterable<? super T1>> startsWith(final T1... items) {
-    return test -> ReactiveSeq.fromIterable(test)
-                              .startsWith(ReactiveSeq.of(items));
-
-}
-
-@SafeVarargs
-public static <T1> Predicate<Iterable<? super T1>> endsWith(final T1... items) {
-
-    return test -> ReactiveSeq.fromIterable(test)
-                              .endsWith(ReactiveSeq.of(items));
-
-}
-
-public static <T1> Predicate<? super T1> instanceOf(final Class<?> clazz) {
-
-        return test -> clazz.isAssignableFrom(test.getClass());
     }
+
+    @SafeVarargs
+    public static <T1> Predicate<Iterable<? super T1>> startsWith(final T1... items) {
+        return test -> ReactiveSeq.fromIterable(test)
+                                  .startsWith(ReactiveSeq.of(items));
+
+    }
+
+    @SafeVarargs
+    public static <T1> Predicate<Iterable<? super T1>> endsWith(final T1... items) {
+
+        return test -> ReactiveSeq.fromIterable(test)
+                                  .endsWith(ReactiveSeq.of(items));
+
+    }
+
+    public static <T1> Predicate<? super T1> instanceOf(final Class<?> clazz) {
+
+            return test -> clazz.isAssignableFrom(test.getClass());
+        }
 
     @SafeVarargs
     public static <T1> Predicate<? super T1> allOf(final Predicate<? super T1>... preds) {
@@ -477,6 +477,11 @@ public static <T1> Predicate<? super T1> instanceOf(final Class<?> clazz) {
     public static <T> Predicate<T> sample(long time,TimeUnit unit){
         return new TimeSample<T>(unit.toNanos(time));
     }
+
+    public static <T> Predicate<T> narrow(Predicate<? super T> p) {
+        return (Predicate<T>)p;
+    }
+
     private static class TimeSample<T> implements Predicate<T>{
         private final AtomicReference<SimpleTimer> timer = new AtomicReference(null);
         private final  long nanos;
