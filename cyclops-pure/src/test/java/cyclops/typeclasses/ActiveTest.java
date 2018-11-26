@@ -6,8 +6,10 @@ import com.oath.cyclops.hkt.Higher;
 import cyclops.data.LazySeq;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
+import cyclops.data.tuple.Tuple;
 import cyclops.instances.data.LazySeqInstances;
 import cyclops.instances.data.SeqInstances;
+import cyclops.instances.data.VectorInstances;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.companion.Monoids;
@@ -67,13 +69,56 @@ public class ActiveTest {
 
     }
     @Test
+    public void zipWith2(){
+        ListX<Tuple2<Integer, Maybe<Integer>>> res = ListXInstances.allTypeclasses(ListX.of(1, 2, 3))
+            .zipWith(VectorXInstances.allTypeclasses(VectorX.of(10, 20)), Tuple::tuple)
+            .getSingle()
+            .convert(ListX::narrowK);
+
+        res.printOut();
+
+    }
+    @Test
     public void zipWithIndex(){
         ListX<Tuple2<Integer, Long>> l = ListXInstances.allTypeclasses(ListX.of(1, 2, 3))
                                               .zipWithIndex()
                                               .getSingle()
                                               .convert(ListX::narrowK);
+        System.out.println(l);
         assertThat(l,equalTo(ListX.of(1,2,3).zipWithIndex()));
     }
+    @Test
+    public void zipWithIndexVector(){
+        Vector<Tuple2<Integer, Long>> l = VectorInstances.allTypeclasses(Vector.of(1, 2, 3))
+                                                            .zipWithIndex()
+                                                            .getSingle()
+                                                            .convert(Vector::narrowK);
+        System.out.println(l);
+        assertThat(l,equalTo(Vector.of(1,2,3).zipWithIndex()));
+    }
+    @Test
+    public void zipWithIndexSeq(){
+        Seq<Tuple2<Integer, Long>> l = SeqInstances.allTypeclasses(Seq.of(1, 2, 3))
+                                                    .zipWithIndex()
+                                                    .getSingle()
+                                                    .convert(Seq::narrowK);
+        System.out.println(l);
+        assertThat(l,equalTo(Seq.of(1,2,3).zipWithIndex()));
+    }
+    @Test
+    public void zipWithIndexVectorX(){
+        VectorX<Tuple2<Integer, Long>> l = VectorXInstances.allTypeclasses(VectorX.of(1, 2, 3))
+            .zipWithIndex()
+            .getSingle()
+            .convert(VectorX::narrowK);
+        System.out.println(l);
+        assertThat(l,equalTo(Vector.of(1,2,3).zipWithIndex()));
+    }
+
+
+
+
+
     public static void main(String[] args){
 
         Active<list,Integer> list = ListXInstances.allTypeclasses(ListX.of(1,2,3));

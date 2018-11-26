@@ -1,32 +1,37 @@
 package cyclops.instances.jdk;
 
-import com.oath.cyclops.hkt.DataWitness;
+import com.oath.cyclops.hkt.DataWitness.completableFuture;
+import com.oath.cyclops.hkt.DataWitness.future;
 import com.oath.cyclops.hkt.Higher;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.MonoidKs;
 import cyclops.control.Either;
-import cyclops.control.Maybe;
+import cyclops.control.Future;
 import cyclops.control.Option;
-import cyclops.function.Function3;
 import cyclops.function.Monoid;
 import cyclops.instances.control.FutureInstances;
 import cyclops.kinds.CompletableFutureKind;
-import cyclops.arrow.MonoidKs;
-import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.instances.General;
-import lombok.experimental.UtilityClass;
-
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
 import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.arrow.MonoidK;
-import cyclops.typeclasses.monad.*;
-import cyclops.control.Future;
+import cyclops.typeclasses.functor.Functor;
+import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.MonadPlus;
+import cyclops.typeclasses.monad.MonadRec;
+import cyclops.typeclasses.monad.MonadZero;
+import cyclops.typeclasses.monad.Traverse;
+import cyclops.typeclasses.monad.TraverseByTraverse;
+import lombok.AllArgsConstructor;
+import lombok.experimental.UtilityClass;
+import lombok.experimental.Wither;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
+
+import static cyclops.kinds.CompletableFutureKind.narrowK;
 
 /**
  * Companion class for creating Type Class instances for working with CompletableFutures
@@ -35,287 +40,181 @@ import java.util.concurrent.CompletableFuture;
  */
 @UtilityClass
 public class CompletableFutureInstances {
-  public static InstanceDefinitions<DataWitness.completableFuture> definitions(){
-    return new InstanceDefinitions<DataWitness.completableFuture>() {
+  public static InstanceDefinitions<completableFuture> definitions(){
+    return new InstanceDefinitions<completableFuture>() {
       @Override
-      public <T, R> Functor<DataWitness.completableFuture> functor() {
+      public <T, R> Functor<completableFuture> functor() {
         return CompletableFutureInstances.functor();
       }
 
       @Override
-      public <T> Pure<DataWitness.completableFuture> unit() {
+      public <T> Pure<completableFuture> unit() {
         return CompletableFutureInstances.unit();
       }
 
       @Override
-      public <T, R> Applicative<DataWitness.completableFuture> applicative() {
+      public <T, R> Applicative<completableFuture> applicative() {
         return CompletableFutureInstances.applicative();
       }
 
       @Override
-      public <T, R> Monad<DataWitness.completableFuture> monad() {
+      public <T, R> Monad<completableFuture> monad() {
         return CompletableFutureInstances.monad();
       }
 
       @Override
-      public <T, R> Option<MonadZero<DataWitness.completableFuture>> monadZero() {
+      public <T, R> Option<MonadZero<completableFuture>> monadZero() {
         return Option.some(CompletableFutureInstances.monadZero());
       }
 
       @Override
-      public <T> Option<MonadPlus<DataWitness.completableFuture>> monadPlus() {
+      public <T> Option<MonadPlus<completableFuture>> monadPlus() {
         return Option.some(CompletableFutureInstances.monadPlus());
       }
 
       @Override
-      public <T> MonadRec<DataWitness.completableFuture> monadRec() {
+      public <T> MonadRec<completableFuture> monadRec() {
         return CompletableFutureInstances.monadRec();
       }
 
       @Override
-      public <T> Option<MonadPlus<DataWitness.completableFuture>> monadPlus(MonoidK<DataWitness.completableFuture> m) {
+      public <T> Option<MonadPlus<completableFuture>> monadPlus(MonoidK<completableFuture> m) {
         return Option.some(CompletableFutureInstances.monadPlus(m));
       }
 
       @Override
-      public <C2, T> Traverse<DataWitness.completableFuture> traverse() {
+      public <C2, T> Traverse<completableFuture> traverse() {
         return CompletableFutureInstances.traverse();
       }
 
       @Override
-      public <T> Foldable<DataWitness.completableFuture> foldable() {
+      public <T> Foldable<completableFuture> foldable() {
         return CompletableFutureInstances.foldable();
       }
 
       @Override
-      public <T> Option<Comonad<DataWitness.completableFuture>> comonad() {
-        return Maybe.just(CompletableFutureInstances.comonad());
+      public <T> Option<Comonad<completableFuture>> comonad() {
+        return  Option.none();
       }
 
       @Override
-      public <T> Option<Unfoldable<DataWitness.completableFuture>> unfoldable() {
-        return Maybe.nothing();
+      public <T> Option<Unfoldable<completableFuture>> unfoldable() {
+        return Option.none();
       }
     };
   }
+    private final CompletableFutureTypeclasses INSTANCE = new CompletableFutureTypeclasses();
 
-  /**
-   *
-   * Transform a future, mulitplying every element by 2
-   *
-   * <pre>
-   * {@code
-   *  CompletableFutureKind<Integer> future = CompletableFutures.functor().map(i->i*2, CompletableFutureKind.widen(CompletableFuture.completedFuture(1,2,3));
-   *
-   *  //[2,4,6]
-   *
-   *
-   * }
-   * </pre>
-   *
-   * An example fluent api working with CompletableFutures
-   * <pre>
-   * {@code
-   *   CompletableFutureKind<Integer> future = CompletableFutures.unit()
-  .unit("hello")
-  .applyHKT(h->CompletableFutures.functor().map((String v) ->v.length(), h))
-  .convert(CompletableFutureKind::narrowK3);
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A functor for CompletableFutures
-   */
-  public static <T,R>Functor<DataWitness.completableFuture> functor(){
-    BiFunction<CompletableFutureKind<T>,Function<? super T, ? extends R>,CompletableFutureKind<R>> map = CompletableFutureInstances::map;
-    return General.functor(map);
-  }
-  /**
-   * <pre>
-   * {@code
-   * CompletableFutureKind<String> future = CompletableFutures.unit()
-  .unit("hello")
-  .convert(CompletableFutureKind::narrowK3);
+    @AllArgsConstructor
+    @Wither
+    public static class CompletableFutureTypeclasses  implements MonadPlus<completableFuture>,
+                                                                MonadRec<completableFuture>,
+                                                                TraverseByTraverse<completableFuture>,
+                                                                Foldable<completableFuture>{
 
-  //CompletableFuture.completedFuture("hello"))
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A factory for CompletableFutures
-   */
-  public static <T> Pure<DataWitness.completableFuture> unit(){
-    return General.<DataWitness.completableFuture,T>unit(CompletableFutureInstances::of);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   * import static com.aol.cyclops.hkt.jdk.CompletableFutureKind.widen;
-   * import static com.aol.cyclops.util.function.Lambda.l1;
-   *
-  CompletableFutures.applicative()
-  .ap(widen(asCompletableFuture(l1(this::multiplyByTwo))),widen(asCompletableFuture(3)));
-   *
-   * //[6]
-   * }
-   * </pre>
-   *
-   *
-   * Example fluent API
-   * <pre>
-   * {@code
-   * CompletableFutureKind<Function<Integer,Integer>> futureFn =CompletableFutures.unit()
-   *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-   *                                                  .convert(CompletableFutureKind::narrowK3);
-
-  CompletableFutureKind<Integer> future = CompletableFutures.unit()
-  .unit("hello")
-  .applyHKT(h->CompletableFutures.functor().map((String v) ->v.length(), h))
-  .applyHKT(h->CompletableFutures.applicative().ap(futureFn, h))
-  .convert(CompletableFutureKind::narrowK3);
-
-  //CompletableFuture.completedFuture("hello".length()*2))
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A zipper for CompletableFutures
-   */
-  public static <T,R> Applicative<DataWitness.completableFuture> applicative(){
-    BiFunction<CompletableFutureKind< Function<T, R>>,CompletableFutureKind<T>,CompletableFutureKind<R>> ap = CompletableFutureInstances::ap;
-    return General.applicative(functor(), unit(), ap);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   * import static com.aol.cyclops.hkt.jdk.CompletableFutureKind.widen;
-   * CompletableFutureKind<Integer> future  = CompletableFutures.monad()
-  .flatMap(i->widen(CompletableFutureX.range(0,i)), widen(CompletableFuture.completedFuture(3)))
-  .convert(CompletableFutureKind::narrowK3);
-   * }
-   * </pre>
-   *
-   * Example fluent API
-   * <pre>
-   * {@code
-   *    CompletableFutureKind<Integer> future = CompletableFutures.unit()
-  .unit("hello")
-  .applyHKT(h->CompletableFutures.monad().flatMap((String v) ->CompletableFutures.unit().unit(v.length()), h))
-  .convert(CompletableFutureKind::narrowK3);
-
-  //CompletableFuture.completedFuture("hello".length())
-   *
-   * }
-   * </pre>
-   *
-   * @return Type class with monad arrow for CompletableFutures
-   */
-  public static <T,R> Monad<DataWitness.completableFuture> monad(){
-
-    BiFunction<Higher<DataWitness.completableFuture,T>,Function<? super T, ? extends Higher<DataWitness.completableFuture,R>>,Higher<DataWitness.completableFuture,R>> flatMap = CompletableFutureInstances::flatMap;
-    return General.monad(applicative(), flatMap);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   *  CompletableFutureKind<String> future = CompletableFutures.unit()
-  .unit("hello")
-  .applyHKT(h->CompletableFutures.monadZero().filter((String t)->t.startsWith("he"), h))
-  .convert(CompletableFutureKind::narrowK3);
-
-  //CompletableFuture.completedFuture("hello"));
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A filterable monad (with default value)
-   */
-  public static <T,R> MonadZero<DataWitness.completableFuture> monadZero(){
-
-    return General.monadZero(monad(), CompletableFutureKind.widen(new CompletableFuture<T>()));
-  }
-
-  public static <T> MonadPlus<DataWitness.completableFuture> monadPlus(){
-
-    return General.monadPlus(monadZero(), MonoidKs.firstCompleteCompletableFuture());
-  }
-
-  public static  <T> MonadPlus<DataWitness.completableFuture> monadPlus(MonoidK<DataWitness.completableFuture> m){
-
-    return General.monadPlus(monadZero(),m);
-  }
-
-  /**
-   * @return Type class for traversables with traverse / sequence operations
-   */
-  public static <C2,T> Traverse<DataWitness.completableFuture> traverse(){
-
-    return General.traverseByTraverse(applicative(), CompletableFutureInstances::traverseA);
-  }
-
-  /**
-   *
-   * <pre>
-   * {@code
-   * int sum  = CompletableFutures.foldable()
-  .foldLeft(0, (a,b)->a+b, CompletableFutureKind.widen(CompletableFuture.completedFuture(3)));
-
-  //3
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return Type class for folding / reduction operations
-   */
-  public static <T,R> Foldable<DataWitness.completableFuture> foldable(){
-    BiFunction<Monoid<T>,Higher<DataWitness.completableFuture,T>,T> foldRightFn =  (m, l)-> m.apply(m.zero(), CompletableFutureKind.narrowK(l).join());
-    BiFunction<Monoid<T>,Higher<DataWitness.completableFuture,T>,T> foldLeftFn = (m, l)->  m.apply(m.zero(), CompletableFutureKind.narrowK(l).join());
-    Function3<Monoid<R>, Function<T, R>, Higher<DataWitness.completableFuture, T>, R> foldMapFn = (m, f, l)-> Future.of(CompletableFutureKind.narrowK(l).thenApply(f)).fold(m);
-    return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
-  }
-  public static <T> Comonad<DataWitness.completableFuture> comonad(){
-    Function<? super Higher<DataWitness.completableFuture, T>, ? extends T> extractFn = maybe -> maybe.convert(CompletableFutureKind::narrowK).join();
-    return General.comonad(functor(), unit(), extractFn);
-  }
-
-  private <T> CompletableFutureKind<T> of(T value){
-    return CompletableFutureKind.widen(CompletableFuture.completedFuture(value));
-  }
-  private static <T,R> CompletableFutureKind<R> ap(CompletableFutureKind<Function< T, R>> lt, CompletableFutureKind<T> future){
-    return CompletableFutureKind.widen(lt.thenCombine(future, (a, b)->a.apply(b)));
-
-  }
-  private static <T,R> Higher<DataWitness.completableFuture,R> flatMap(Higher<DataWitness.completableFuture,T> lt, Function<? super T, ? extends  Higher<DataWitness.completableFuture,R>> fn){
-    return CompletableFutureKind.widen(CompletableFutureKind.narrow(lt).thenCompose(fn.andThen(CompletableFutureKind::narrowK)));
-  }
-  private static <T,R> CompletableFutureKind<R> map(CompletableFutureKind<T> lt, Function<? super T, ? extends R> fn){
-    return CompletableFutureKind.widen(lt.thenApply(fn));
-  }
+        private final MonoidK<completableFuture> monoidK;
+        public CompletableFutureTypeclasses(){
+            monoidK= MonoidKs.firstCompleteCompletableFuture();
+        }
+        @Override
+        public <T> T foldRight(Monoid<T> monoid, Higher<completableFuture, T> ds) {
+            return Future.of(narrowK(ds)).fold(monoid);
+        }
 
 
-  private static <C2,T,R> Higher<C2, Higher<DataWitness.completableFuture, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
-                                                                                         Higher<DataWitness.completableFuture, T> ds){
-    CompletableFuture<T> future = CompletableFutureKind.narrowK(ds);
-    return applicative.map(CompletableFutureKind::completedFuture, fn.apply(future.join()));
-  }
-  public static <T,R> MonadRec<DataWitness.completableFuture> monadRec(){
 
-    return new  MonadRec<DataWitness.completableFuture>(){
+        @Override
+        public <T> T foldLeft(Monoid<T> monoid, Higher<completableFuture, T> ds) {
+            return Future.of(narrowK(ds)).fold(monoid);
+        }
 
-      @Override
-      public <T, R> Higher<DataWitness.completableFuture, R> tailRec(T initial, Function<? super T, ? extends Higher<DataWitness.completableFuture, ? extends Either<T, R>>> fn) {
-        Higher<DataWitness.future, R> x = FutureInstances.monadRec().tailRec(initial, fn.andThen(CompletableFutureKind::narrowK).andThen(Future::of));
-        return CompletableFutureKind.narrowFuture(x);
-      }
-    };
-  }
+
+
+        @Override
+        public <T, R> Higher<completableFuture, R> flatMap(Function<? super T, ? extends Higher<completableFuture, R>> fn, Higher<completableFuture, T> ds) {
+            return CompletableFutureKind.widen(CompletableFutureKind.narrow(ds).thenCompose(fn.andThen(CompletableFutureKind::narrowK)));
+        }
+
+        @Override
+        public <C2, T, R> Higher<C2, Higher<completableFuture, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<completableFuture, T> ds) {
+            CompletableFuture<T> future = narrowK(ds);
+            return applicative.map(CompletableFutureKind::completedFuture, fn.apply(future.join()));
+        }
+
+        @Override
+        public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<completableFuture, T> ds) {
+            CompletableFuture<R>  opt  = narrowK(ds).thenApply(fn);
+            return Future.of(opt).fold(mb);
+        }
+
+        @Override
+        public <T, R> Higher<completableFuture, R> ap(Higher<completableFuture, ? extends Function<T, R>> fn, Higher<completableFuture, T> apply) {
+
+            return CompletableFutureKind.widen(narrowK(fn).thenCombine(narrowK(apply), (a, b)->a.apply(b)));
+        }
+
+        @Override
+        public <T> Higher<completableFuture, T> unit(T value) {
+            return CompletableFutureKind.widen(CompletableFuture.completedFuture(value));
+        }
+
+        @Override
+        public <T, R> Higher<completableFuture, R> map(Function<? super T, ? extends R> fn, Higher<completableFuture, T> ds) {
+            return CompletableFutureKind.widen(narrowK(ds).thenApply(fn));
+        }
+
+        @Override
+        public <T, R> Higher<completableFuture, R> tailRec(T initial, Function<? super T, ? extends Higher<completableFuture, ? extends Either<T, R>>> fn) {
+            Higher<future, R> x = FutureInstances.monadRec().tailRec(initial, fn.andThen(CompletableFutureKind::narrowK).andThen(Future::of));
+            return CompletableFutureKind.narrowFuture(x);
+        }
+
+
+        @Override
+        public <T> MonoidK<completableFuture> monoid() {
+            return monoidK;
+        }
+    }
+
+    public static <T,R> Functor<completableFuture> functor(){
+        return INSTANCE;
+    }
+
+    public static <T> Pure<completableFuture> unit(){
+        return INSTANCE;
+    }
+
+    public static <T,R> Applicative<completableFuture> applicative(){
+        return INSTANCE;
+    }
+
+    public static <T,R> Monad<completableFuture> monad(){
+        return INSTANCE;
+    }
+
+    public static <T,R> MonadZero<completableFuture> monadZero(){
+        return INSTANCE;
+    }
+
+    public static <T,R> MonadRec<completableFuture> monadRec(){
+        return INSTANCE;
+    }
+
+
+    public static <T> MonadPlus<completableFuture> monadPlus(){
+        return INSTANCE;
+    }
+
+    public static <T> MonadPlus<completableFuture> monadPlus(MonoidK<completableFuture> m){
+        return INSTANCE;
+    }
+
+
+    public static <L> Traverse<completableFuture> traverse() {
+        return INSTANCE;
+    }
+    public static <L> Foldable<completableFuture> foldable() {
+        return INSTANCE;
+    }
 
 }

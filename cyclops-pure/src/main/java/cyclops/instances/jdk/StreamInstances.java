@@ -2,12 +2,14 @@ package cyclops.instances.jdk;
 
 import com.oath.cyclops.hkt.DataWitness.stream;
 import com.oath.cyclops.hkt.Higher;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.MonoidKs;
 import cyclops.companion.Streams;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
+import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
-import cyclops.function.Function3;
 import cyclops.function.Monoid;
 import cyclops.kinds.StreamKind;
 import cyclops.reactive.ReactiveSeq;
@@ -16,15 +18,26 @@ import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.arrow.MonoidK;
-import cyclops.arrow.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.instances.General;
-import cyclops.typeclasses.monad.*;
+import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.MonadPlus;
+import cyclops.typeclasses.monad.MonadRec;
+import cyclops.typeclasses.monad.MonadZero;
+import cyclops.typeclasses.monad.Traverse;
+import cyclops.typeclasses.monad.TraverseByTraverse;
+import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
+import lombok.experimental.Wither;
 
-import java.util.function.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
+
+import static cyclops.kinds.StreamKind.narrowK;
+import static cyclops.kinds.StreamKind.widen;
+
 /**
  * Companion class for creating Type Class instances for working with Streams
  * @author johnmcclean
@@ -95,237 +108,152 @@ public  class StreamInstances {
       }
     };
   }
-  public static Unfoldable<stream> unfoldable(){
-    return new Unfoldable<stream>() {
-      @Override
-      public <R, T> Higher<stream, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
-        return StreamKind.widen(ReactiveSeq.unfold(b,fn));
-      }
-    };
-  }
-  /*
-   *
-   * Transform a list, mulitplying every element by 2
-   *
-   * <pre>
-   * {@code
-   *  StreamKind<Integer> list = Streams.functor().map(i->i*2, StreamKind.widen(Stream.of(1,2,3));
-   *
-   *  //[2,4,6]
-   *
-   *
-   * }
-   * </pre>
-   *
-   * An example fluent api working with Streams
-   * <pre>
-   * {@code
-   *   StreamKind<Integer> list = Streams.unit()
-  .unit("hello")
-  .applyHKT(h->Streams.functor().map((String v) ->v.length(), h))
-  .convert(StreamKind::narrow);
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A functor for Streams
-   */
-  public static <T,R>Functor<stream> functor(){
-    BiFunction<StreamKind<T>,Function<? super T, ? extends R>,StreamKind<R>> map = StreamInstances::map;
-    return General.functor(map);
-  }
-  /**
-   * <pre>
-   * {@code
-   * StreamKind<String> list = Streams.unit()
-  .unit("hello")
-  .convert(StreamKind::narrow);
+    private final static StreamTypeClasses INSTANCE = new StreamTypeClasses();
+    @AllArgsConstructor
+    @Wither
+    public static class StreamTypeClasses implements MonadPlus<stream>,
+                                                            MonadRec<stream>,
+                                                            TraverseByTraverse<stream>,
+                                                            Foldable<stream>,
+                                                            Unfoldable<stream>{
 
-  //Stream.of("hello"))
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A factory for Streams
-   */
-  public static <T> Pure<stream> unit(){
-    return General.<stream,T>unit(StreamInstances::of);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   * import static com.aol.cyclops.hkt.jdk.StreamKind.widen;
-   * import static com.aol.cyclops.util.function.Lambda.l1;
-   *
-  Streams.zippingApplicative()
-  .ap(widen(Stream.of(l1(this::multiplyByTwo))),widen(Stream.of(1,2,3)));
-   *
-   * //[2,4,6]
-   * }
-   * </pre>
-   *
-   *
-   * Example fluent API
-   * <pre>
-   * {@code
-   * StreamKind<Function<Integer,Integer>> listFn =Streams.unit()
-   *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-   *                                                  .convert(StreamKind::narrow);
+        private final MonoidK<stream> monoidK;
+        public StreamTypeClasses(){
+            monoidK = MonoidKs.combineStream();
+        }
+        @Override
+        public <T> Higher<stream, T> filter(Predicate<? super T> predicate, Higher<stream, T> ds) {
+            return widen(narrowK(ds).filter(predicate));
+        }
 
-  StreamKind<Integer> list = Streams.unit()
-  .unit("hello")
-  .applyHKT(h->Streams.functor().map((String v) ->v.length(), h))
-  .applyHKT(h->Streams.zippingApplicative().ap(listFn, h))
-  .convert(StreamKind::narrow);
+        @Override
+        public <T, R> Higher<stream, Tuple2<T, R>> zip(Higher<stream, T> fa, Higher<stream, R> fb) {
+            return widen(Streams.zipStream(narrowK(fa),narrowK(fb), Tuple::tuple));
+        }
 
-  //Stream.of("hello".length()*2))
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A zipper for Streams
-   */
-  public static <T,R> Applicative<stream> zippingApplicative(){
-    BiFunction<StreamKind< Function<T, R>>,StreamKind<T>,StreamKind<R>> ap = StreamInstances::ap;
-    return General.applicative(functor(), unit(), ap);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   * import static com.aol.cyclops.hkt.jdk.StreamKind.widen;
-   * StreamKind<Integer> list  = Streams.monad()
-  .flatMap(i->widen(StreamX.range(0,i)), widen(Stream.of(1,2,3)))
-  .convert(StreamKind::narrow);
-   * }
-   * </pre>
-   *
-   * Example fluent API
-   * <pre>
-   * {@code
-   *    StreamKind<Integer> list = Streams.unit()
-  .unit("hello")
-  .applyHKT(h->Streams.monad().flatMap((String v) ->Streams.unit().unit(v.length()), h))
-  .convert(StreamKind::narrow);
+        @Override
+        public <T1, T2, R> Higher<stream, R> zip(Higher<stream, T1> fa, Higher<stream, T2> fb, BiFunction<? super T1, ? super T2, ? extends R> f) {
+            return widen(Streams.zipStream(narrowK(fa),narrowK(fb),f));
+        }
 
-  //Stream.of("hello".length())
-   *
-   * }
-   * </pre>
-   *
-   * @return Type class with monad arrow for Streams
-   */
-  public static <T,R> Monad<stream> monad(){
+        @Override
+        public <T> MonoidK<stream> monoid() {
+            return monoidK;
+        }
 
-    BiFunction<Higher<stream,T>,Function<? super T, ? extends Higher<stream,R>>,Higher<stream,R>> flatMap = StreamInstances::flatMap;
-    return General.monad(zippingApplicative(), flatMap);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   *  StreamKind<String> list = Streams.unit()
-  .unit("hello")
-  .applyHKT(h->Streams.monadZero().filter((String t)->t.startsWith("he"), h))
-  .convert(StreamKind::narrow);
+        @Override
+        public <T, R> Higher<stream, R> flatMap(Function<? super T, ? extends Higher<stream, R>> fn, Higher<stream, T> ds) {
+            return widen(narrowK(ds).flatMap(i-> StreamKind.narrow(fn.apply(i))));
+        }
 
-  //Stream.of("hello"));
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A filterable monad (with default value)
-   */
-  public static <T,R> MonadZero<stream> monadZero(){
-    BiFunction<Higher<stream,T>,Predicate<? super T>,Higher<stream,T>> filter = StreamInstances::filter;
-    Supplier<Higher<stream, T>> zero = ()->StreamKind.widen(Stream.of());
-    return General.<stream,T,R>monadZero(monad(), zero,filter);
-  }
-  public static <T,R> MonadRec<stream> monadRec() {
+        @Override
+        public <T, R> Higher<stream, R> ap(Higher<stream, ? extends Function<T, R>> fn, Higher<stream, T> apply) {
+            return widen(Streams.zipStream(narrowK(apply),narrowK(fn),(a,b)->b.apply(a)));
+        }
 
-    return new MonadRec<stream>() {
-      @Override
-      public <T, R> Higher<stream, R> tailRec(T initial, Function<? super T, ? extends Higher<stream, ? extends Either<T, R>>> fn) {
-        return StreamKind.widen(ReactiveSeq.tailRec(initial, fn.andThen(s -> ReactiveSeq.fromStream(StreamKind.narrowK(s)))));
-      }
-    };
-  }
-  public static <T> MonadPlus<stream> monadPlus(){
+        @Override
+        public <T> Higher<stream, T> unit(T value) {
+            return StreamKind.of(value);
+        }
 
-    return General.monadPlus(monadZero(), MonoidKs.combineStream());
-  }
-
-  public static <T> MonadPlus<stream> monadPlus(MonoidK<stream> m){
-
-    return General.monadPlus(monadZero(),m);
-  }
-
-  /**
-   * @return Type class for traversables with traverse / sequence operations
-   */
-  public static <C2,T> Traverse<stream> traverse(){
-    BiFunction<Applicative<C2>,StreamKind<Higher<C2, T>>,Higher<C2, StreamKind<T>>> sequenceFn = (ap,list) -> {
-
-      Higher<C2,StreamKind<T>> identity = ap.unit(StreamKind.widen(Stream.of()));
-
-      BiFunction<Higher<C2,StreamKind<T>>,Higher<C2,T>,Higher<C2,StreamKind<T>>> combineToStream =   (acc,next) -> ap.apBiFn(ap.unit((a,b) -> StreamKind.widen(Stream.concat(a,Stream.of(b)))),acc,next);
-
-      BinaryOperator<Higher<C2,StreamKind<T>>> combineStreams = (a, b)-> ap.apBiFn(ap.unit((l1, l2)-> { return StreamKind.widen(Stream.concat(l1,l2));}),a,b); ;
-
-      return list.reduce(identity,
-        combineToStream,
-        combineStreams);
+        @Override
+        public <T, R> Higher<stream, R> map(Function<? super T, ? extends R> fn, Higher<stream, T> ds) {
+            return widen(narrowK(ds).map(fn));
+        }
 
 
-    };
-    BiFunction<Applicative<C2>,Higher<stream,Higher<C2, T>>,Higher<C2, Higher<stream,T>>> sequenceNarrow  =
-      (a,b) -> StreamKind.widen2(sequenceFn.apply(a, StreamKind.narrowK(b)));
-    return General.traverse(zippingApplicative(), sequenceNarrow);
-  }
+        @Override
+        public <T, R> Higher<stream, R> tailRec(T initial, Function<? super T, ? extends Higher<stream, ? extends Either<T, R>>> fn) {
+            return widen(ReactiveSeq.tailRec(initial, fn.andThen(s -> ReactiveSeq.fromStream(narrowK(s)))));
+        }
 
-  /**
-   *
-   * <pre>
-   * {@code
-   * int sum  = Streams.foldable()
-  .foldLeft(0, (a,b)->a+b, StreamKind.widen(Stream.of(1,2,3,4)));
+        @Override
+        public <C2, T, R> Higher<C2, Higher<stream, R>> traverseA(Applicative<C2> ap, Function<? super T, ? extends Higher<C2, R>> fn, Higher<stream, T> ds) {
+            ReactiveSeq<T> v = ReactiveSeq.fromStream(narrowK(ds));
+             return v.<Higher<C2, Higher<stream,R>>>foldLeft(ap.unit(StreamKind.<R>of()),
+                (a, b) -> ap.zip(fn.apply(b), a, (sn, vec) -> widen(Streams.append(narrowK(vec),sn))));
 
-  //10
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return Type class for folding / reduction operations
-   */
-  public static <T,R> Foldable<stream> foldable(){
-    BiFunction<Monoid<T>,Higher<stream,T>,T> foldRightFn =  (m, l)-> ReactiveSeq.fromStream(StreamKind.narrowK(l)).foldRight(m);
-    BiFunction<Monoid<T>,Higher<stream,T>,T> foldLeftFn = (m, l)-> ReactiveSeq.fromStream(StreamKind.narrowK(l)).reduce(m);
-    Function3<Monoid<R>, Function<T, R>, Higher<stream, T>, R> foldMapFn = (m, f, l)->StreamKind.narrowK(l).map(f).reduce(m.zero(),m);
-    return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
-  }
 
-  private static  <T> StreamKind<T> concat(Stream<T> l1, Stream<T> l2){
-    return StreamKind.widen(Stream.concat(l1,l2));
-  }
-  private <T> StreamKind<T> of(T value){
-    return StreamKind.widen(Stream.of(value));
-  }
-  private static <T,R> StreamKind<R> ap(StreamKind<Function< T, R>> lt, StreamKind<T> list){
-    return StreamKind.widen(Streams.zipStream(lt,list,(a, b)->a.apply(b)));
-  }
-  private static <T,R> Higher<stream,R> flatMap(Higher<stream,T> lt, Function<? super T, ? extends  Higher<stream,R>> fn){
-    return StreamKind.widen(StreamKind.narrow(lt).flatMap(fn.andThen(StreamKind::narrow)));
-  }
-  private static <T,R> StreamKind<R> map(StreamKind<T> lt, Function<? super T, ? extends R> fn){
-    return StreamKind.widen(lt.map(fn));
-  }
-  private static <T> StreamKind<T> filter(Higher<stream,T> lt, Predicate<? super T> fn){
-    return StreamKind.widen(StreamKind.narrowK(lt).filter(fn));
-  }
+        }
+
+        @Override
+        public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<stream, T> ds) {
+            Stream<T> x = narrowK(ds);
+            return x.reduce(mb.zero(),(a,b)->mb.apply(a,fn.apply(b)),mb);
+        }
+
+        @Override
+        public <T, R> Higher<stream, Tuple2<T, Long>> zipWithIndex(Higher<stream, T> ds) {
+            return widen(ReactiveSeq.fromStream(narrowK(ds)).zipWithIndex());
+        }
+
+        @Override
+        public <T> T foldRight(Monoid<T> monoid, Higher<stream, T> ds) {
+            return narrowK(ds).reduce(monoid.zero(),monoid);
+        }
+
+
+        @Override
+        public <T> T foldLeft(Monoid<T> monoid, Higher<stream, T> ds) {
+            return narrowK(ds).reduce(monoid.zero(),monoid);
+        }
+
+
+        @Override
+        public <R, T> Higher<stream, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
+            return widen(ReactiveSeq.unfold(b,fn));
+        }
+
+
+    }
+    public static Unfoldable<stream> unfoldable(){
+        return INSTANCE;
+    }
+
+    public static <T,R>Functor<stream> functor(){
+        return INSTANCE;
+    }
+
+    public static <T> Pure<stream> unit(){
+        return INSTANCE;
+    }
+
+    public static <T,R> Applicative<stream> zippingApplicative(){
+        return INSTANCE;
+    }
+
+    public static <T,R> Monad<stream> monad(){
+        return INSTANCE;
+    }
+
+    public static <T,R> MonadZero<stream> monadZero(){
+
+        return INSTANCE;
+    }
+
+    public static <T> MonadPlus<stream> monadPlus(){
+
+        return INSTANCE;
+    }
+    public static <T,R> MonadRec<stream> monadRec(){
+
+        return INSTANCE;
+    }
+
+    public static <T> MonadPlus<stream> monadPlus(MonoidK<stream> m){
+        return INSTANCE.withMonoidK(m);
+
+    }
+
+    public static <C2,T> Traverse<stream> traverse(){
+        return INSTANCE;
+    }
+
+
+    public static <T,R> Foldable<stream> foldable(){
+        return INSTANCE;
+    }
+
+
+
 }

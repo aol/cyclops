@@ -4,6 +4,7 @@ import com.oath.cyclops.hkt.DataWitness.reader;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
+import cyclops.arrow.MonoidK;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
@@ -13,17 +14,20 @@ import cyclops.hkt.Active;
 import cyclops.hkt.Coproduct;
 import cyclops.hkt.Nested;
 import cyclops.hkt.Product;
-import cyclops.typeclasses.*;
+import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.arrow.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.functor.ProFunctor;
-import cyclops.typeclasses.instances.General;
-import cyclops.typeclasses.monad.*;
+import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.MonadPlus;
+import cyclops.typeclasses.monad.MonadRec;
+import cyclops.typeclasses.monad.MonadZero;
+import cyclops.typeclasses.monad.Traverse;
 import lombok.experimental.UtilityClass;
-
 
 import java.util.function.Function;
 
@@ -197,8 +201,39 @@ public  class ReaderInstances {
     }, fn.apply(r.apply(t)));
   }
   public static <IN> Traverse<Higher<reader, IN>> traversable(IN t) {
+      return new Traverse<Higher<reader, IN>>() {
+          @Override
+          public <C2, T, R> Higher<C2, Higher<Higher<reader, IN>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<reader, IN>, T> ds) {
+              Reader<IN, T> r = narrowK(ds);
 
-    return General.traverseByTraverse(applicative(), (a,b,c)-> traverseA(t,a,b,c));
+              return applicative.map(i -> {
+                  Reader<IN,R> res = a->i;
+                  return res;
+              }, fn.apply(r.apply(t)));
+          }
+
+          @Override
+          public <C2, T> Higher<C2, Higher<Higher<reader, IN>, T>> sequenceA(Applicative<C2> applicative, Higher<Higher<reader, IN>, Higher<C2, T>> ds) {
+              return traverseA(applicative,Function.identity(),ds);
+          }
+
+          @Override
+          public <T, R> Higher<Higher<reader, IN>, R> ap(Higher<Higher<reader, IN>, ? extends Function<T, R>> fn, Higher<Higher<reader, IN>, T> apply) {
+              return ReaderInstances.<IN>applicative().ap(fn,apply);
+          }
+
+          @Override
+          public <T> Higher<Higher<reader, IN>, T> unit(T value) {
+              return ReaderInstances.<IN>applicative().unit(value);
+          }
+
+          @Override
+          public <T, R> Higher<Higher<reader, IN>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<reader, IN>, T> ds) {
+              return ReaderInstances.<IN>applicative().map(fn,ds);
+          }
+      };
+
+
 
   }
   public static <IN> Monad<Higher<reader, IN>> monad() {

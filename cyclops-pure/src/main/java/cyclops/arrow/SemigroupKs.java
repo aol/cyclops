@@ -10,6 +10,7 @@ import cyclops.data.Vector;
 import cyclops.kinds.CompletableFutureKind;
 import cyclops.kinds.OptionalKind;
 import cyclops.kinds.StreamKind;
+import cyclops.reactive.IO;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.collections.immutable.LinkedListX;
@@ -163,9 +164,17 @@ public interface SemigroupKs{
   }
 
 
-    /**
-     * @return Combination of two ReactiveSeq Streams b is appended to a
-     */
+    static SemigroupK<io> combineIO() {
+        return new SemigroupK<io>() {
+
+            @Override
+            public <T> Higher<io, T> apply(Higher<io, T> a, Higher<io, T> b) {
+                return  IO.fromPublisher(Spouts.concat(IO.narrowK(a).stream(),IO.narrowK(b).stream()));
+            }
+        };
+
+    }
+
     static SemigroupK<reactiveSeq> combineReactiveSeq() {
       return new SemigroupK<reactiveSeq>() {
 
