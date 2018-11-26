@@ -233,6 +233,10 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     public final ReactiveSeq<T> dropWhile(final Predicate<? super T> p) {
         return createSeq(new SkipWhileSpliterator<T>(get(),p), reversible);
     }
+    @Override
+    public final ReactiveSeq<T> dropWhileInclusive(final Predicate<? super T> p) {
+        return createSeq(new SkipWhileClosedSpliterator<T>(get(),p), reversible);
+    }
 
     @Override
     public final ReactiveSeq<T> dropUntil(final Predicate<? super T> p) {

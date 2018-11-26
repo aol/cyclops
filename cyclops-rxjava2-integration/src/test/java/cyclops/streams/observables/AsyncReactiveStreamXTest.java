@@ -457,6 +457,14 @@ public  class AsyncReactiveStreamXTest {
 
 	        assertEquals(asList(), s.get().dropWhile(i -> true).toList());
 	    }
+        @Test
+        public void testSkipWhileInclusive() {
+            Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
+
+            assertTrue(s.get().dropWhileInclusive(i -> false).toList().containsAll(asList(2, 3, 4, 5)));
+
+            assertEquals(asList(), s.get().dropWhile(i -> true).toList());
+        }
 
 	    @Test
 	    public void testSkipUntil() {

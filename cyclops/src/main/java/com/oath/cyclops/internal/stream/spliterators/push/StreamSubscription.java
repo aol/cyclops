@@ -1,5 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
+import cyclops.control.Either;
 import org.reactivestreams.Subscription;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -50,5 +51,9 @@ public class StreamSubscription implements Subscription {
     @Override
     public void cancel() {
         isOpen = false;
+    }
+
+    public long getRequested() {
+        return requested.get();
     }
 }

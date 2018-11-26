@@ -23,6 +23,8 @@ public class SkipWhileClosedOperator<T,R> extends BaseOperator<T,T> {
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         boolean[] skipping = {true};
+        boolean[] resetSkipping = {false};
+        boolean[] first = {true};
         StreamSubscription sub[] = {null};
         StreamSubscription res = new StreamSubscription(){
             @Override
@@ -38,7 +40,11 @@ public class SkipWhileClosedOperator<T,R> extends BaseOperator<T,T> {
             }
         };
         sub[0] = source.subscribe(e-> {
-                    try {
+            if((Integer)e==4){
+                System.out.println("Woot!");
+            }
+               try {
+
                         if(skipping[0]){
                             if(!predicate.test(e)){
                                 skipping[0] = false;
@@ -63,8 +69,10 @@ public class SkipWhileClosedOperator<T,R> extends BaseOperator<T,T> {
     @Override
     public void subscribeAll(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
         boolean[] skipping = {true};
+        boolean[] first = {true};
         source.subscribeAll(e->{
             try {
+
                 if (skipping[0]) {
                     if (!predicate.test(e)) {
                         skipping[0] = false;
