@@ -89,11 +89,13 @@ public class FutureTest {
 
     }
 
-    
+
     @Test
     public void completableFuture(){
         System.out.println("Thread " + Thread.currentThread().getId());
+
         LazyEither.CompletableEither<String, String> completable = LazyEither.<String>either();
+
         Try<String,Throwable> async = Try.fromEither(completable);
 
         Future<String> future = Future.fromPublisher(completable)
@@ -105,6 +107,7 @@ public class FutureTest {
         }).start();
 
         future.get();
+
 
     }
     @Test
