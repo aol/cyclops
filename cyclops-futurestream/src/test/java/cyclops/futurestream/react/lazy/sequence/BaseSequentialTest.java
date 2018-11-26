@@ -108,6 +108,14 @@ public class BaseSequentialTest {
 	    public void takeWhileEmpty(){
 	        assertThat(of().takeWhile(p->true).toList(),equalTo(Arrays.asList()));
 	    }
+        @Test
+        public void takeWhileInclusive(){
+            assertThat(of(1,2,3,4,5).takeWhileInclusive(p->p<6).toList().size(),greaterThan(1));
+        }
+        @Test
+        public void takeWhileInclusiveEmpty(){
+            assertThat(of().takeWhileInclusive(p->true).toList(),equalTo(Arrays.asList()));
+        }
 
 	@Test
 	public void presentConvert(){

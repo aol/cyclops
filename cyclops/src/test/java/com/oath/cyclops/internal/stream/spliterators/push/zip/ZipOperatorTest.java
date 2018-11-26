@@ -1,10 +1,19 @@
 package com.oath.cyclops.internal.stream.spliterators.push.zip;
 
 import com.oath.cyclops.internal.stream.spliterators.push.*;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
+import reactor.core.publisher.EmitterProcessor;
+import reactor.test.StepVerifier;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -44,6 +53,28 @@ public class ZipOperatorTest extends AbstractOperatorTest {
 
     }
 
+    @Test
+    public void reactorTest() {
+
+        EmitterProcessor<Integer> source1 = EmitterProcessor.create();
+        EmitterProcessor<Integer> source2 = EmitterProcessor.create();
+        ReactiveSeq<Integer> zippedFlux = Spouts.from(source1)
+                                                .zip((t1, t2) -> t1 + t2,source2);
+        AtomicReference<Integer> tap = new AtomicReference<>();
+        zippedFlux.forEachAsync(it -> tap.set(it));
+
+        source1.onNext(1);
+        source2.onNext(2);
+        source2.onNext(3);
+        source2.onNext(4);
+
+        assertThat(tap.get(),equalTo(3));
+
+        source2.onNext(5);
+        source1.onNext(6);
+
+        assertThat(tap.get(),equalTo(9));
+    }
 
 
 }
