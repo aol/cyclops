@@ -242,7 +242,7 @@ public  class SyncReactiveStreamXTest {
 	}
     @Test
     public void skipUntilInclusive(){
-        assertEquals(asList(3, 4, 5), of(2, 3, 4, 5).dropUntilInclusive(i -> i % 3 == 0).toList());
+        assertEquals(asList( 4, 5), of(2, 3, 4, 5).dropUntilInclusive(i -> i % 3 == 0).toList());
     }
 	@Test
     public void simpleZip(){
