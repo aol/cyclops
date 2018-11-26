@@ -88,7 +88,6 @@ public interface Value<T> extends SealedOr<T>, Iterable<T>, Publisher<T> {
 
     @Override
     default void subscribe(final Subscriber<? super T> sub) {
-        System.out.println("Value subscribe");
         sub.onSubscribe(new Subscription() {
 
             AtomicBoolean running = new AtomicBoolean(

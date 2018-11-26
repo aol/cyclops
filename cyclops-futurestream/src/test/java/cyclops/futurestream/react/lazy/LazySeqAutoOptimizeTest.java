@@ -1,5 +1,7 @@
 package cyclops.futurestream.react.lazy;
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -7,6 +9,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import cyclops.futurestream.FutureStream;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
 import cyclops.futurestream.LazyReact;
@@ -64,5 +67,12 @@ public class LazySeqAutoOptimizeTest extends LazySeqTest {
         Supplier<FutureStream<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
 
         assertTrue(s.get().dropUntilInclusive(i -> true).toList().size()==5);
+    }
+    @Test
+    public void testSkipUntilInclusive() {
+        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
+
+        assertEquals(asList(), s.get().dropUntil(i -> false).toList());
+        assertTrue(s.get().dropUntilInclusive(i -> true).toList().size()==4);
     }
 }

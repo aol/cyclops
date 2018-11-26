@@ -1036,7 +1036,6 @@ public interface Maybe<T> extends Option<T> {
 
         @Override
         public final void subscribe(final Subscriber<? super T> sub) {
-            System.out.println("Maybe subscribe!");
             lazy.subscribe(new Subscriber<Maybe<T>>() {
                 boolean onCompleteSent = false;
                 @Override
