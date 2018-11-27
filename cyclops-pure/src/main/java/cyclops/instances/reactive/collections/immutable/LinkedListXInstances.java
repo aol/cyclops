@@ -199,8 +199,8 @@ public class LinkedListXInstances {
         @Override
         public <C2, T, R> Higher<C2, Higher<linkedListX, R>> traverseA(Applicative<C2> ap, Function<? super T, ? extends Higher<C2, R>> fn, Higher<linkedListX, T> ds) {
             LinkedListX<T> v = narrowK(ds);
-            return v.<Higher<C2, Higher<linkedListX,R>>>foldLeft(ap.unit(LinkedListX.<R>empty()),
-                (a, b) -> ap.zip(fn.apply(b), a, (sn, vec) -> narrowK(vec).plus(sn)));
+            return v.<Higher<C2, Higher<linkedListX,R>>>foldRight(ap.unit(LinkedListX.<R>empty()),
+                (b,a) -> ap.zip(fn.apply(b), a, (sn, vec) -> narrowK(vec).plus(sn)));
 
 
         }
