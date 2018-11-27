@@ -5,6 +5,7 @@ import com.oath.cyclops.matching.Deconstruct.Deconstruct1;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.reactive.Completable;
+import com.oath.cyclops.util.ExceptionSoftener;
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.function.*;
 import com.oath.cyclops.hkt.DataWitness.eval;
@@ -886,7 +887,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
             @Override
             public T get() {
 
-                Eval<T> eval = input.fold(i->i,()->null);
+                Eval<T> eval = input.fold(i->i,e->{throw ExceptionSoftener.throwSoftenedException(e);});
                 return eval.get();
             }
 

@@ -10,12 +10,15 @@ import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import static cyclops.control.Eval.eval;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 public class EvalTest {
 
@@ -25,6 +28,21 @@ public class EvalTest {
         times = 0;
     }
 
+    @Test(expected = NoSuchElementException.class)
+     public void fromFuture(){
+      Future<Integer> f = Future.ofError(new NoSuchElementException());
+      Eval.fromPublisher(f).get();
+    }
+    @Test
+    public void fromFuture2(){
+        AtomicReference<Throwable> error = new AtomicReference<>(null);
+        Future<Integer> f = Future.ofError(new NoSuchElementException());
+        Future.fromPublisher(Eval.fromPublisher(f)).recover(e->{
+            error.set(e.getCause());return -1;
+        });
+
+        assertThat(error.get(),instanceOf(NoSuchElementException.class));
+    }
     Seq<String> order;
     @Test
     public void interleave(){
