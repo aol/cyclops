@@ -19,6 +19,8 @@
   - [Part 5 : No exceptions (Covering making illegal states unrepresentable, eager / lazy Either type, Try)](https://medium.com/@johnmcclean/dysfunctional-programming-in-java-5-no-exceptions-5f37ac594323)
   - [Part 6 : No locks or synchronized blocks (Covering Future, Sequence, FutureStreams and reactive-streams)](https://medium.com/@johnmcclean/dysfunctional-programming-in-java-6-no-locks-or-synchronized-blocks-ea5a47644689)
   - [Part 7 : Immutable Collections (Covering Vector, NonEmptyList and reactive processing)](https://medium.com/@johnmcclean/dysfunctional-programming-in-java-7-immutable-collections-83ba78aaf4dd)
+  
+  * [Tagless Final in Java](https://medium.com/@johnmcclean/powerful-extensible-code-with-tagless-final-in-java-4094f923cdea)
 
 # What's new in Cyclops X (cyclops 10)
 
