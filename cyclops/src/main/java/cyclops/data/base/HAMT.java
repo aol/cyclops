@@ -2,6 +2,7 @@ package cyclops.data.base;
 
 
 import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
+import cyclops.companion.Comparators;
 import cyclops.control.Option;
 import cyclops.data.ImmutableList;
 import cyclops.data.LazySeq;
@@ -59,6 +60,9 @@ public final class HAMT<K, V>  implements Serializable {
     int size();
     LazySeq<Tuple2<K,V>> lazyList();
     ReactiveSeq<Tuple2<K, V>> stream();
+    default ReactiveSeq<Tuple2<K, V>> streamNaturalOrder(){
+        return stream();
+    }
   }
 
 
@@ -284,7 +288,12 @@ public final class HAMT<K, V>  implements Serializable {
       return bucket.stream();
     }
 
-    public String toString(){
+      @Override
+      public ReactiveSeq<Tuple2<K, V>> streamNaturalOrder() {
+          return stream().sorted(Comparators.naturalOrderIdentityComparator());
+      }
+
+      public String toString(){
       return "[COLLISION : h:"+hash+","+bucket.toString()+"]";
     }
   }
