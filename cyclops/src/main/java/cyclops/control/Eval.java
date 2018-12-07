@@ -523,7 +523,49 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
 
+    default Eval<T> restartUntil(Predicate<? super T> p){
+        return flatMap(t->p.test(t) ? now(t) : restartUntil(p));
+    }
+    default Eval<T> onComplete(Consumer<? super T> r){
+        return Eval.always(()->{
+            T res = get();
+            r.accept(res);
+            return res;
+        });
+    }
+    default Eval<T> onErrorRestart(long retries){
+        return onErrorSwitch(Throwable.class,t->{
+            if (retries>0)
+                return onErrorRestart(retries-1);
+            throw ExceptionSoftener.throwSoftenedException(t);
+        });
+    }
+    default <C extends Throwable> Eval<T> onErrorSwitch(Class<C> type,Function<? super C,? extends Eval<T>> value){
+        return Eval.<Eval<T>>always(() -> {
+            try {
+                return Eval.always(this::get);
+            } catch (final Throwable t) {
+                if (type.isAssignableFrom(t.getClass())) {
+                    return value.apply((C) t);
+                }
+                throw ExceptionSoftener.throwSoftenedException(t);
 
+            }
+        }).flatMap(i->i);
+    }
+    default <C extends Throwable> Eval<T> onError(Class<C> type,Function<? super C,? extends T> value){
+        return Eval.always(()->{
+            try {
+                return get();
+            } catch (final Throwable t) {
+                if (type.isAssignableFrom(t.getClass())) {
+                    return value.apply((C)t);
+                }
+                throw ExceptionSoftener.throwSoftenedException(t);
+
+            }
+        });
+    }
 
     @Override
     default <R> R fold(final Function<? super T, ? extends R> present, final Supplier<? extends R> absent) {
@@ -629,7 +671,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
     default Future<T> toFuture(){
-        return Future.of(this);
+        return Future.fromPublisher(this);
     }
 
     static class Module {
@@ -887,7 +929,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
             @Override
             public T get() {
 
-                Eval<T> eval = input.fold(i->i,e->{throw ExceptionSoftener.throwSoftenedException(e);});
+                Eval<T> eval = input.fold(i->i,e->{throw ExceptionSoftener.throwSoftenedException(e.getCause());});
                 return eval.get();
             }
 
