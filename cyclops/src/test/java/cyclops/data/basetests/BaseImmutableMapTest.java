@@ -7,19 +7,23 @@ import cyclops.data.*;
 import cyclops.control.Option;
 import cyclops.data.ImmutableMap;
 import cyclops.reactive.ReactiveSeq;
+import lombok.AllArgsConstructor;
+import lombok.ToString;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public abstract  class BaseImmutableMapTest {
 
@@ -27,6 +31,78 @@ public abstract  class BaseImmutableMapTest {
     protected abstract  <K,V> ImmutableMap<K,V> of(K k1,V v1);
     protected abstract <K,V> ImmutableMap<K,V> of(K k1,V v1,K k2, V v2);
     protected abstract ImmutableMap<String,Integer> fromMap(Map<String, Integer> hello);
+
+    @Test
+    public void insertionOrder() {
+        ImmutableMap<Integer, Integer> map1 = empty();
+        ImmutableMap<Integer, Integer> map2 = empty();
+        for (int i = 0; i <= 100_000; i++) {
+            map1 = map1.put(i, i);
+            map2 = map2.put(100_000 - i, 100_000 - i);
+        }
+        assertEquals(map1,map2);
+        assertEquals(map1.hashCode(), map2.hashCode());
+
+    }
+    @AllArgsConstructor
+    @ToString
+    static class Collider{
+        int id;
+        int hash;
+
+        public int hashCode(){
+            return hash;
+        }
+
+        public boolean equals(Object o){
+            if(o instanceof Collider){
+                Collider c =(Collider)o;
+                return c.id==id;
+
+            }
+            return false;
+        }
+    }
+
+    @Test
+    public void collisions() {
+        ImmutableMap<Collider, Integer> map1 = empty();
+        ImmutableMap<Collider, Integer> map2 = empty();
+        int size = 10;
+        for (int i = 0; i <= size; i++) {
+            map1 = map1.put(new Collider(i,i%10), i);
+            map2 = map2.put(new Collider(size - i,(size - i)%10), size - i);
+        }
+        assertEquals(map1,map2);
+        assertEquals(map1.hashCode(), map2.hashCode());
+    }
+    @Test
+    public void equalsTest() {
+
+        assertThat(empty(),equalTo(cyclops.data.HashMap.empty()));
+        assertThat(this.<Integer,Integer>empty(),equalTo(cyclops.data.TreeMap.empty(Comparator.<Integer>naturalOrder())));
+        assertThat(this.<Integer,Integer>of(1,2),equalTo(cyclops.data.TreeMap.of(Comparator.<Integer>naturalOrder(),1,2)));
+        assertThat(this.<Integer,Integer>of(1,2),equalTo(cyclops.data.HashMap.of(1,2)));
+        assertThat(this.<Integer,Integer>of(1,2,3,4),equalTo(cyclops.data.TreeMap.of(Comparator.<Integer>naturalOrder(),1,2,3,4)));
+        assertThat(this.<Integer,Integer>of(1,2,3,4),equalTo(cyclops.data.HashMap.of(1,2,3,4)));
+
+    }
+    @Test
+    public void creation(){
+        assertThat(empty().put("hello","world"),equalTo(of("hello","world")));
+    }
+    @Test
+    public void lookup() {
+        assertThat(empty().put(1, 2).get(1),equalTo(Option.some(2)));
+        assertThat(empty().put(1, 2).get(2),equalTo(Option.none()));
+        assertThat(empty().put(1, 2).containsKey(1),equalTo(true));
+        assertThat(empty().put(1, 2).containsKey(2),equalTo(false));
+        assertThat(empty().put(1, 2).containsValue(1),equalTo(false));
+        assertThat(empty().put(1, 2).containsValue(2),equalTo(true));
+        assertThat(empty().put(1, 2).contains(Tuple.tuple(1,2)),equalTo(true));
+        assertThat(empty().put(1, 2).contains(Tuple.tuple(4,5)),equalTo(false));
+
+    }
 
 
     @Test
@@ -52,6 +128,7 @@ public abstract  class BaseImmutableMapTest {
         assertThat(allValues,hasItem("b"));
     }
 
+
   @Test
   public void removeMissingKey(){
     assertThat(of(1,"a",2,"b").remove(0),equalTo(of(1,"a",2,"b")));
@@ -59,6 +136,41 @@ public abstract  class BaseImmutableMapTest {
     assertThat(of(1,"a",2,"b").remove(5),equalTo(of(1,"a",2,"b")));
     assertThat(of(1,"a",2,"b").removeAll(5),equalTo(of(1,"a",2,"b")));
   }
+    @Test
+    public void removeAllKeys() {
+        ImmutableMap<Integer, Integer> test = this.<Integer,Integer>empty().put(1, 10).put(2, 20).put(3, 20);
+        assertThat(test.removeAllKeys(Vector.of(1, 2)),equalTo(of(3,20)));
+        assertThat(test.removeAllKeys(Vector.of()),equalTo(test));
+        assertThat(test.removeAllKeys(Vector.of(100,200,300)),equalTo(test));
+
+    }
+    @Test
+    public void removeAll() {
+        ImmutableMap<Integer, Integer> test = this.<Integer,Integer>empty().put(1, 10).put(2, 20).put(3, 20);
+        assertThat(test.removeAll(1, 2),equalTo(of(3,20)));
+        assertThat(test.removeAll(),equalTo(test));
+        assertThat(test.removeAll(100,200,300),equalTo(test));
+
+    }
+    @Test
+    public void removeAllKeysEmpty() {
+        ImmutableMap<Integer, Integer> test = this.<Integer,Integer>empty();
+        assertThat(test.removeAllKeys(Vector.of(1, 2)),equalTo(test));
+        assertThat(test.removeAllKeys(Vector.of()),equalTo(test));
+        assertThat(test.removeAllKeys(Vector.of(100,200,300)),equalTo(test));
+
+    }
+    @Test
+    public void removeAllEmpty() {
+        ImmutableMap<Integer, Integer> test = this.<Integer,Integer>empty();
+        assertThat(test.removeAll(1, 2),equalTo(test));
+        assertThat(test.removeAll(),equalTo(test));
+        assertThat(test.removeAll(100,200,300),equalTo(test));
+
+    }
+
+
+
     @Test
     public void addRemove(){
       for(int i=0;i<100_00;i++) {
@@ -102,10 +214,12 @@ public abstract  class BaseImmutableMapTest {
     @Test
     public void onEmpty(){
         assertThat(empty().onEmpty(Tuple.tuple("hello",10)).get("hello"),equalTo(Option.some(10)));
+        assertThat(empty().put("world",20).onEmpty(Tuple.tuple("hello",10)).get("hello"),equalTo(Option.none()));
     }
     @Test
     public void onEmptyGet(){
         assertThat(empty().onEmptyGet(()->Tuple.tuple("hello",10)).get("hello"),equalTo(Option.some(10)));
+        assertThat(empty().put("world",20).onEmptyGet(()->Tuple.tuple("hello",10)).get("hello"),equalTo(Option.none()));
     }
     @Test
     public void onEmptyThrow(){
@@ -268,6 +382,47 @@ public abstract  class BaseImmutableMapTest {
         putAndCompare(map);
     }
 
+
+    @Test
+    public void bipeek(){
+
+        AtomicReference<Vector<Integer>> key = new AtomicReference<>(Vector.empty());
+        AtomicReference<Vector<Integer>> value = new AtomicReference<>(Vector.empty());
+        ImmutableMap<Integer,Integer> map = empty();
+        HashSet<Integer> keys = HashSet.empty();
+        HashSet<Integer> values = HashSet.empty();
+        for(int i=0;i<80;i++){
+            map = map.put(i,i*2);
+            keys = keys.add(i);
+            values = values.add(i*2);
+        }
+        ImmutableMap<Integer,Integer> map2 =  map.bipeek(k->key.updateAndGet(v->v.append(k)), v->value.updateAndGet(vec->vec.append(v)));
+
+        assertThat(map2.keys().toHashSet(),equalTo(keys));
+        assertThat(map2.values().toHashSet(),equalTo(values));
+
+
+    }
+    @Test
+    public void peek(){
+
+        AtomicReference<Vector<Integer>> key = new AtomicReference<>(Vector.empty());
+        AtomicReference<Vector<Integer>> value = new AtomicReference<>(Vector.empty());
+        ImmutableMap<Integer,Integer> map = empty();
+
+        HashSet<Integer> values = HashSet.empty();
+        for(int i=0;i<80;i++){
+            map = map.put(i,i*2);
+            values = values.add(i*2);
+        }
+        ImmutableMap<Integer,Integer> map2 =  map.peek(v->value.updateAndGet(vec->vec.append(v)));
+
+
+        assertThat(map2.values().toHashSet(),equalTo(values));
+
+
+    }
+
     @Test
     public void map(){
         ImmutableMap<Integer,Integer> map = empty();
@@ -275,6 +430,7 @@ public abstract  class BaseImmutableMapTest {
             map = map.put(i,i*2);
         }
         ImmutableMap<Integer,Integer> map2 =  map.bimap(k->k*2,v->v*10);
+
         assertThat(map2.stream().map(t->t._1()).sumInt(i->i),equalTo(map.stream().map(t->t._1()).sumInt(i->i)*2));
         assertThat(map2.stream().map(t->t._2()).sumInt(i->i),equalTo(map.stream().map(t->t._2()).sumInt(i->i)*10));
 

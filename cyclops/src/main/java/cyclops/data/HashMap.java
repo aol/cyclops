@@ -2,6 +2,7 @@ package cyclops.data;
 
 import com.oath.cyclops.types.persistent.PersistentMap;
 import com.oath.cyclops.hkt.Higher2;
+import cyclops.companion.Comparators;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
@@ -230,10 +231,7 @@ public final class HashMap<K,V> implements ImmutableMap<K,V>,PersistentMap<K,V>,
         if (this == o) return true;
         if (o == null)
           return false;
-        if(o instanceof HashMap){
-          HashMap<?, ?> hashMap = (HashMap<?, ?>) o;
-          return Objects.equals(map, hashMap.map);
-        }
+
         if(o instanceof PersistentMap){
           PersistentMap<K,V> m = (PersistentMap<K,V>)o;
           return equalTo(m);
@@ -244,7 +242,7 @@ public final class HashMap<K,V> implements ImmutableMap<K,V>,PersistentMap<K,V>,
 
     @Override
     public int hashCode() {
-        return Objects.hash(map);
+        return map.streamNaturalOrder().foldLeft(0,(acc,t2)-> acc+t2.hashCode());
     }
 
     public static <K, V> HashMap<K,V> narrow(HashMap<? extends K, ? extends V> map) {
