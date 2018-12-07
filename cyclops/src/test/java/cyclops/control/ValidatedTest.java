@@ -84,9 +84,12 @@ public class ValidatedTest {
         Validated<String, Seq<Integer>> res = valid.sequence(Seq.of(invalid));
         assertTrue(res.isInvalid());
 
+
         String str = invalid.sequence(Seq.of(Validated.invalid("boo!"))).foldInvalidLeft(Monoids.stringConcat);
         assertThat(str,equalTo("failedboo!"));
     }
+
+
 
     @Test
     public void traverse(){

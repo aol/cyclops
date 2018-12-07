@@ -11,6 +11,9 @@ import org.junit.Test;
 import reactor.core.publisher.Flux;
 
 import java.util.NoSuchElementException;
+import java.util.Random;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
@@ -31,7 +34,19 @@ public class EvalTest {
     @Test(expected = NoSuchElementException.class)
      public void fromFuture(){
       Future<Integer> f = Future.ofError(new NoSuchElementException());
+
       Eval.fromPublisher(f).get();
+
+
+    }
+
+    @Test
+    public void toTry(){
+        Future<Integer> f = Future.ofError(new NoSuchElementException());
+        Try<Integer, Throwable> t = Eval.fromPublisher(f).toTry();
+        System.out.println(t);
+        assertThat(t.isFailure(),equalTo(true));
+        assertThat(t.failureGet().orElse(null),instanceOf(NoSuchElementException.class));
     }
     @Test
     public void fromFuture2(){
@@ -42,6 +57,47 @@ public class EvalTest {
         });
 
         assertThat(error.get(),instanceOf(NoSuchElementException.class));
+    }
+    @Test
+    public void fromFuture3(){
+        AtomicReference<Throwable> error = new AtomicReference<>(null);
+        Future<Integer> f = Future.ofError(new NoSuchElementException());
+        Eval.fromPublisher(f).toFuture().recover(e->{
+            error.set(e.getCause());return -1;
+        });
+
+        assertThat(error.get(),instanceOf(NoSuchElementException.class));
+    }
+    @Test
+    public void fromFuture5(){
+        AtomicReference<Throwable> error = new AtomicReference<>(null);
+        Future<Integer> f = Future.ofError(new NoSuchElementException());
+        Future<Integer> res = Future.of(Eval.fromPublisher(f), Executors.newCachedThreadPool()).recover(e->{
+            error.set(e.getCause());return -1;
+        });
+        System.out.println(res.get());
+
+        assertThat(error.get(),instanceOf(NoSuchElementException.class));
+    }
+
+    int i=0;
+    @Test
+    public void restartUntil(){
+        i=0;
+        Eval.always(()->++i)
+                .peek(System.out::println)
+                .restartUntil(n->n>500000)
+                .printOut();
+    }
+
+    @Test
+    public void onError(){
+       /** Eval.now(100)
+            .map(i->{throw new RuntimeException();})
+            .onError(120)
+            .printOut();
+        **/
+
     }
     Seq<String> order;
     @Test
