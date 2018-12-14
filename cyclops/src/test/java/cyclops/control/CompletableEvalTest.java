@@ -42,6 +42,27 @@ public class CompletableEvalTest {
 		none = now(null);
 	}
 
+	@Test
+    public void mapTest() throws InterruptedException {
+        CompletableEval<Integer,Integer> async = Eval.eval();
+        //  async.map(i->{throw new RuntimeException();})
+        //    .onError(i->120)
+        Eval<Integer> e = async.peek(System.out::println);
+
+
+        Thread t = new Thread(()->async.complete(10));
+        t.start();
+
+
+        t.join();
+
+        e.toFuture().forEach(c->{},a->{});
+        Thread.sleep(1000);
+
+//        e.get();
+
+    }
+
     @Test
     public void combine(){
 
