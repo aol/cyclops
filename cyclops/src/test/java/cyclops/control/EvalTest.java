@@ -6,22 +6,23 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.reactive.ReactiveSeq;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
 import java.util.NoSuchElementException;
-import java.util.Random;
-import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import static cyclops.control.Eval.eval;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 public class EvalTest {
 
@@ -92,11 +93,318 @@ public class EvalTest {
 
     @Test
     public void onError(){
-       /** Eval.now(100)
+
+        Eval.now(100)
             .map(i->{throw new RuntimeException();})
-            .onError(120)
+            .recover(i->120)
             .printOut();
-        **/
+
+
+    }
+    @Test
+    public void testForEach() throws InterruptedException {
+        count =0;
+        AtomicInteger result = new AtomicInteger(-1);
+        AtomicInteger values = new AtomicInteger(0);
+        AtomicLong processingThread = new AtomicLong(-1l);
+        long mainThread = Thread.currentThread().getId();
+        CompletableEval<Integer,Integer> async = Eval.eval();
+        Eval<Integer> res= async
+            .map(i -> {
+
+                System.out.println("Count " + count);
+                count++;
+                if(count<1000)
+                    throw new RuntimeException();
+                return count;
+            }).peek(i->System.out.println("T "+ Thread.currentThread().getId()))
+            .peek(i->processingThread.set(Thread.currentThread().getId()))
+            .onErrorRestart(100000);
+
+        Thread t = new Thread(()->async.complete(1));
+        res.forEach(c->{
+            values.incrementAndGet();
+            result.set(c);
+        });
+
+        t.start();
+
+
+        t.join();
+        assertThat(res.get(),equalTo(count));
+        assertThat(res.get(),equalTo(1000));
+        assertThat(mainThread, not(equalTo(processingThread.get())));
+        assertThat(-1, not(equalTo(processingThread.get())));
+        assertThat(values.get(),equalTo(1));
+        assertThat(result.get(),equalTo(1000));
+
+    }
+    @Test
+    public void testForEachWithErrorNoErrors() throws InterruptedException {
+        count =0;
+        AtomicReference<Throwable> error = new AtomicReference<>(null);
+        AtomicInteger result = new AtomicInteger(-1);
+        AtomicInteger values = new AtomicInteger(0);
+        AtomicLong processingThread = new AtomicLong(-1l);
+        long mainThread = Thread.currentThread().getId();
+        CompletableEval<Integer,Integer> async = Eval.eval();
+        Eval<Integer> res= async
+            .map(i -> {
+
+                System.out.println("Count " + count);
+                count++;
+                if(count<1000)
+                    throw new RuntimeException();
+                return count;
+            }).peek(i->System.out.println("T "+ Thread.currentThread().getId()))
+            .peek(i->processingThread.set(Thread.currentThread().getId()))
+            .onErrorRestart(100000);
+
+        Thread t = new Thread(()->async.complete(1));
+        res.forEach(c->{
+            values.incrementAndGet();
+            result.set(c);
+        },e->{
+            error.set(e);
+        });
+
+        t.start();
+
+
+        t.join();
+        assertThat(res.get(),equalTo(count));
+        assertThat(res.get(),equalTo(1000));
+        assertThat(mainThread, not(equalTo(processingThread.get())));
+        assertThat(-1, not(equalTo(processingThread.get())));
+        assertThat(values.get(),equalTo(1));
+        assertThat(result.get(),equalTo(1000));
+        assertThat(error.get(),equalTo(null));
+
+    }
+    @Test
+    public void testForEachWithOnComplete() throws InterruptedException {
+        count =0;
+        AtomicReference<Throwable> error = new AtomicReference<>(null);
+        AtomicInteger result = new AtomicInteger(-1);
+        AtomicInteger values = new AtomicInteger(0);
+        AtomicLong processingThread = new AtomicLong(-1l);
+        AtomicBoolean onComplete = new AtomicBoolean(false);
+        long mainThread = Thread.currentThread().getId();
+        CompletableEval<Integer,Integer> async = Eval.eval();
+        Eval<Integer> res= async
+            .map(i -> {
+
+                System.out.println("Count " + count);
+                count++;
+                if(count<1000)
+                    throw new RuntimeException();
+                return count;
+            }).peek(i->System.out.println("T "+ Thread.currentThread().getId()))
+            .peek(i->processingThread.set(Thread.currentThread().getId()))
+            .onErrorRestart(100000);
+
+        Thread t = new Thread(()->async.complete(1));
+        res.forEach(c->{
+            values.incrementAndGet();
+            result.set(c);
+        },e->{
+            error.set(e);
+        },()->onComplete.set(true));
+        assertThat(onComplete.get(),equalTo(false));
+        t.start();
+
+
+        t.join();
+        assertThat(res.get(),equalTo(count));
+        assertThat(res.get(),equalTo(1000));
+        assertThat(mainThread, not(equalTo(processingThread.get())));
+        assertThat(-1, not(equalTo(processingThread.get())));
+        assertThat(values.get(),equalTo(1));
+        assertThat(result.get(),equalTo(1000));
+        assertThat(error.get(),equalTo(null));
+        assertThat(onComplete.get(),equalTo(true));
+
+    }
+    @Test
+    public void testForEachWithOnCompleteWithErrors() throws InterruptedException {
+        count =0;
+        AtomicReference<Throwable> error = new AtomicReference<>(null);
+        AtomicInteger result = new AtomicInteger(-1);
+        AtomicInteger values = new AtomicInteger(0);
+        AtomicLong processingThread = new AtomicLong(-1l);
+        AtomicBoolean onComplete = new AtomicBoolean(false);
+        long mainThread = Thread.currentThread().getId();
+        CompletableEval<Integer,Integer> async = Eval.eval();
+        Eval<Integer> res= async .peek(i->processingThread.set(Thread.currentThread().getId()))
+            .map(i -> {
+
+                System.out.println("Count " + count);
+                count++;
+                if(count<1000)
+                    throw new RuntimeException();
+                return count;
+            }).peek(i->System.out.println("T "+ Thread.currentThread().getId()));
+
+
+
+        Thread t = new Thread(()->async.complete(1));
+        res.forEach(c->{
+            values.incrementAndGet();
+            result.set(c);
+        },e->{
+            error.set(e);
+        },()->onComplete.set(true));
+        assertThat(onComplete.get(),equalTo(false));
+        t.start();
+
+
+        t.join();
+        assertThat(mainThread, not(equalTo(processingThread.get())));
+        assertThat(-1, not(equalTo(processingThread.get())));
+        assertThat(values.get(),equalTo(0));
+        assertThat(result.get(),equalTo(-1));
+        assertThat(error.get(),instanceOf(RuntimeException.class));
+        assertThat(onComplete.get(),equalTo(false));
+
+    }
+    @Test
+    public void testForEachWithErrors() throws InterruptedException {
+        count =0;
+        AtomicReference<Throwable> error = new AtomicReference<>(null);
+        AtomicInteger result = new AtomicInteger(-1);
+        AtomicInteger values = new AtomicInteger(0);
+        AtomicLong processingThread = new AtomicLong(-1l);
+        long mainThread = Thread.currentThread().getId();
+        CompletableEval<Integer,Integer> async = Eval.eval();
+        Eval<Integer> res= async .peek(i->processingThread.set(Thread.currentThread().getId()))
+            .map(i -> {
+
+                System.out.println("Count " + count);
+                count++;
+                if(count<1000)
+                    throw new RuntimeException();
+                return count;
+            }).peek(i->System.out.println("T "+ Thread.currentThread().getId()));
+
+
+
+        Thread t = new Thread(()->async.complete(1));
+        res.forEach(c->{
+            values.incrementAndGet();
+            result.set(c);
+        },e->{
+            error.set(e);
+        });
+
+        t.start();
+
+
+        t.join();
+
+        assertThat(mainThread, not(equalTo(processingThread.get())));
+        assertThat(-1, not(equalTo(processingThread.get())));
+        assertThat(values.get(),equalTo(0));
+        assertThat(result.get(),equalTo(-1));
+        assertThat(error.get(),instanceOf(RuntimeException.class));
+
+    }
+
+
+    int count = 0;
+    @Test
+    public void onErrorRestart(){
+        count =0;
+        int res = Eval.now(10)
+            .map(i -> {
+                count++;
+                if(count<1000)
+                     throw new RuntimeException();
+                return count;
+        }).onErrorRestart(1000000).get();
+
+        assertThat(res,equalTo(count));
+        assertThat(res,equalTo(1000));
+    }
+    @Test
+    public void onErrorRestartAsync() throws InterruptedException {
+        count =0;
+        AtomicLong processingThread = new AtomicLong(-1l);
+        long mainThread = Thread.currentThread().getId();
+        CompletableEval<Integer,Integer> async = Eval.eval();
+        Eval<Integer> res= async
+            .map(i -> {
+
+                System.out.println("Count " + count);
+                count++;
+                if(count<1000)
+                    throw new RuntimeException();
+                return count;
+            }).peek(i->System.out.println("T "+ Thread.currentThread().getId()))
+            .peek(i->processingThread.set(Thread.currentThread().getId()))
+            .onErrorRestart(100000);
+        Thread t = new Thread(()->async.complete(1));
+        res.forEach(e->{});
+        t.start();
+
+
+        t.join();
+        assertThat(res.get(),equalTo(count));
+        assertThat(res.get(),equalTo(1000));
+        assertThat(mainThread, not(equalTo(processingThread.get())));
+        assertThat(-1, not(equalTo(processingThread.get())));
+    }
+    @Test
+    public void recoverAsync() throws InterruptedException {
+        CompletableEval<Integer,Integer> async = Eval.eval();
+        long mainThread = Thread.currentThread().getId();
+        AtomicLong processingThread = new AtomicLong(-1l);
+        System.out.println("Main "+ Thread.currentThread().getId());
+        Eval<Integer> error = async.<Integer>map(i -> {
+            throw new RuntimeException();
+        })
+            .recover(Throwable.class,i -> 120)
+            .peek(i->System.out.println("T "+ Thread.currentThread().getId()))
+            .peek(i->processingThread.set(Thread.currentThread().getId()))
+            .peek(System.out::println);
+
+        Thread t = new Thread(()->async.complete(10));
+        error.forEach(e->{});
+        t.start();
+
+
+        t.join();
+
+       // error.get();
+        Thread.sleep(100);
+        assertThat(mainThread, not(equalTo(processingThread.get())));
+        assertThat(-1, not(equalTo(processingThread.get())));
+
+    }
+    @Test
+    public void recoverWithAsync() throws InterruptedException {
+        CompletableEval<Integer,Integer> async = Eval.eval();
+        long mainThread = Thread.currentThread().getId();
+        AtomicLong processingThread = new AtomicLong(-1l);
+        System.out.println("Main "+ Thread.currentThread().getId());
+        Eval<Integer> error = async.<Integer>map(i -> {
+            throw new RuntimeException();
+        })
+            .recoverWith(Throwable.class,i -> Eval.now(120))
+            .peek(i->System.out.println("T "+ Thread.currentThread().getId()))
+            .peek(i->processingThread.set(Thread.currentThread().getId()))
+            .peek(System.out::println);
+
+        Thread t = new Thread(()->async.complete(10));
+        error.forEach(e->{});
+        t.start();
+
+
+        t.join();
+
+        // error.get();
+        Thread.sleep(100);
+        assertThat(mainThread, not(equalTo(processingThread.get())));
+        assertThat(-1, not(equalTo(processingThread.get())));
 
     }
     Seq<String> order;
@@ -325,7 +633,7 @@ public class EvalTest {
 	public void later(){
 		assertThat(Eval.later(()->1).map(i->i+2).get(),equalTo(3));
 	}
-	int count = 0;
+
 	@Test
 	public void laterCaches(){
 		count = 0;
