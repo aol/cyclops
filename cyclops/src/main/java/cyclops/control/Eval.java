@@ -201,6 +201,11 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         public final Eval<T2> lazy;
 
         @Override
+        public void forEach(Consumer<? super T2> onNext) {
+            toFuture().forEach(onNext);
+        }
+
+        @Override
         public boolean isFailed() {
             return complete.isCompletedExceptionally();
         }
@@ -834,17 +839,16 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
             }
 
-
             public Eval<T> onErrorRestart(long retries){
-                CompletableEval<Eval<T>,Eval<T>> res = eval();
+                CompletableEval<T,T> res = eval();
                 long[] attempts = {retries};
                 toFuture().forEach(
-                    t->res.complete(Eval.now(t)),
+                    t->res.complete(t),
                     e->{
                         while(attempts[0]>0){
                             Either<Throwable,T> either =toLazyEither();
                             if(either.isRight()) {
-                                res.complete(Eval.now(either.orElse(null)));
+                                res.complete(either.orElse(null));
                                 break;
                             }
                             attempts[0]--;
@@ -853,7 +857,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
                     });
-                return res.flatMap(i->i);
+                return res;
 
             }
 
