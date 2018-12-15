@@ -35,9 +35,7 @@ public class EvalTest {
     @Test(expected = NoSuchElementException.class)
      public void fromFuture(){
       Future<Integer> f = Future.ofError(new NoSuchElementException());
-
       Eval.fromPublisher(f).get();
-
 
     }
 
@@ -122,6 +120,7 @@ public class EvalTest {
             .onErrorRestart(100000);
 
         Thread t = new Thread(()->async.complete(1));
+        System.out.println(res.getClass());
         res.forEach(c->{
             values.incrementAndGet();
             result.set(c);
@@ -610,7 +609,26 @@ public class EvalTest {
     private Integer process(String process){
         return 2;
     }
+    @Test
+    public void oddCompletable() throws InterruptedException {
 
+        AtomicBoolean complete = new AtomicBoolean(false);
+
+        CompletableEval<Integer, Integer> ce = Eval.eval();
+        Eval<String> even = even(ce);
+
+        Thread t = new Thread(()->ce.complete(200000));
+
+        even.forEach(System.out::println,System.out::println,()->complete.set(true));
+
+        t.start();
+
+
+        t.join();
+        while(!complete.get()){
+            Thread.sleep(100);
+        }
+    }
     @Test
     public void odd(){
         System.out.println(even(Eval.now(200000)).get());
