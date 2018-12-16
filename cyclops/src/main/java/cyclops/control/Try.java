@@ -327,7 +327,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param pub Publisher to extract value from
      * @return Try populated with first value from Publisher
      */
-    public static <T> Try<T, Throwable> fromPublisher(final Publisher<T> pub) {
+    public static <T> Try<T, Throwable> CofromPublisher(final Publisher<T> pub) {
         return new Try<>(LazyEither.fromPublisher(pub),new Class[0]);
     }
 

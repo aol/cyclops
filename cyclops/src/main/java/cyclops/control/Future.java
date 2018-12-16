@@ -360,6 +360,30 @@ public class Future<T> implements To<Future<T>>,
                              f);
     }
 
+    @Override
+    public void forEach(Consumer<? super T> c) {
+         peek(c);
+    }
+
+    public void forEach(Consumer<? super T> onNext, Consumer<Throwable> onError){
+         forEach(onNext,onError,()->{});
+    }
+    public void forEach(Consumer<? super T> onNext, Consumer<Throwable> onError,Runnable onComplete){
+       peek(n->{
+            boolean success = false;
+            try {
+                onNext.accept(n);
+                success=true;
+            }catch(Throwable t){
+                onError.accept(t);
+            }
+            if(success)
+                onComplete.run();
+        }).recover(e->{
+           onError.accept(e);
+           return null;
+       });
+    }
 
     /**
      * Construct a Future syncrhonously from the Supplied Try

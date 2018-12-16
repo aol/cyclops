@@ -19,10 +19,8 @@ import cyclops.reactive.ReactiveSeq;
 import static cyclops.data.tuple.Tuple.tuple;
 
 /**
- * simple Trampoline implementation : inspired by excellent TotallyLazy Java 8 impl
- * and Mario Fusco presentation
  *
- * Allows Stack Free Recursion
+ *  Stack Free Recursion
  *
  * <pre>
  * {@code
@@ -187,30 +185,21 @@ public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> 
 
 
 
-    /**
-     * @return next stage in Trampolining
-     */
+
     default Trampoline<T> bounce() {
         return this;
     }
 
-    /**
-     * @return The result of Trampoline execution
-     */
+
     default T result() {
         return get();
     }
 
-    /* (non-Javadoc)
-     * @see java.util.function.Supplier#getValue()
-     */
     @Override
     T get();
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Value#iterator()
-     */
+
     @Override
     default Iterator<T> iterator() {
         return Arrays.asList(result())
@@ -267,12 +256,11 @@ public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> 
             }
 
             T trampoline(final Trampoline<T> trampoline) {
-
-                return Stream.iterate(trampoline, Trampoline::bounce)
-                             .filter(Trampoline::complete)
-                             .findFirst()
-                             .get()
-                             .result();
+                Trampoline<T> current = trampoline;
+                while(!current.complete()){
+                    current = current.bounce();
+                }
+                return current.get();
 
             }
         };

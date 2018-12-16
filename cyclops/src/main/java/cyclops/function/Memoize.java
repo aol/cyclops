@@ -23,7 +23,7 @@ import com.oath.cyclops.util.ExceptionSoftener;
 import lombok.val;
 
 public class Memoize {
-
+    private final static Object UNSET = new Object();
     /**
      * Convert a Supplier into one that caches it's result
      *
@@ -31,8 +31,22 @@ public class Memoize {
      * @return Memoised Supplier
      */
     public static <T> Function0<T> memoizeSupplier(final Supplier<T> s) {
-        final LazyImmutable<T> lazy = LazyImmutable.def();
-        return () -> lazy.computeIfAbsent( s);
+        AtomicReference value = new AtomicReference<>(
+            UNSET);
+        return ()->{
+            Object val = value.get();
+        if (val == UNSET) {
+            synchronized (UNSET){
+                if(value.get()==UNSET) {
+                    val = s.get();
+                    value.set(val);
+                }
+            }
+        }
+
+        return (T)val;
+        };
+
     }
 
     /**
