@@ -30,6 +30,10 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
                                             OnEmptySwitch<Tuple2<K, V>,ImmutableMap<K, V>> {
 
 
+    @Override
+    default boolean allMatch(final Predicate<? super Tuple2<K, V>> c) {
+        return Folds.super.allMatch(c);
+    }
 
     ImmutableMap<K,V> put(K key, V value);
     ImmutableMap<K,V> put(Tuple2<K, V> keyAndValue);
@@ -180,7 +184,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
 
     @Override
     default ImmutableMap<K,V> peek(Consumer<? super V> c) {
-        return (HashMap<K,V>)Transformable.super.peek(c);
+        return (ImmutableMap<K,V>)Transformable.super.peek(c);
     }
 
 

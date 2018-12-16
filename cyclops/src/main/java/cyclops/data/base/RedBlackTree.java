@@ -194,6 +194,7 @@ public interface RedBlackTree extends Serializable{
 
         @Override
         public Tree<K, V> plus(K key, V value) {
+
             int compRes = comp.compare(this.key,key);
             if (compRes>0) {
                 return balance(isBlack, left.plus(key, value), right, this.key, this.value);

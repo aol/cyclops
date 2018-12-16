@@ -185,7 +185,7 @@ public final class TreeMap<K,V> implements ImmutableMap<K,V> ,
     public TreeMap<K, V> removeAll(K... keys) {
         RedBlackTree.Tree<K,V> cur = map;
         for(K key : keys){
-            cur = map.minus(key);
+            cur = cur.minus(key);
         }
         return new TreeMap<>(cur, comparator);
     }
@@ -327,10 +327,13 @@ public final class TreeMap<K,V> implements ImmutableMap<K,V> ,
       return equalTo(m);
     }
     return false;
+
   }
 
-  @Override
+
+
+    @Override
   public int hashCode() {
-    return Objects.hash(map);
+        return map.stream().foldLeft(0,(acc,t2)-> acc+t2.hashCode());
   }
 }
