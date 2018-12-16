@@ -1150,7 +1150,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
        @Override
         public Maybe<PT> filter(final Predicate<? super PT> test) {
-            return Maybe.fromIterable(this).filter(test);
+            return Maybe.fromPublisher(this).filter(test);
 
         }
 
