@@ -83,19 +83,56 @@ public class EvalTest {
     @Test
     public void restartUntil(){
         i=0;
-        Eval.always(()->++i)
-                .peek(System.out::println)
+        assertThat(Eval.always(()->++i)
                 .restartUntil(n->n>500000)
-                .printOut();
+                .get(),equalTo(500001));
+    }
+    @Test(expected = NoSuchElementException.class)
+    public void restartUntilAsync() throws InterruptedException {
+        i=0;
+        CompletableEval<Integer,Integer> async = Eval.eval();
+        Thread t = new Thread(()->async.complete(1));
+
+
+        t.start();
+
+
+        t.join();
+
+
+
+        assertThat(async.peek(System.out::println)
+            .restartUntil(n->n>500000)
+            .get(),equalTo(500001));
+
+    }
+    @Test
+    public void restartUntilAsyncPassing() throws InterruptedException {
+        i=0;
+        CompletableEval<Integer,Integer> async = Eval.eval();
+        Thread t = new Thread(()->async.complete(1));
+
+
+        t.start();
+
+
+        t.join();
+
+
+
+        assertThat(async.peek(System.out::println)
+            .restartUntil(n->n>0)
+            .get(),equalTo(1));
+
     }
 
     @Test
     public void onError(){
 
-        Eval.now(100)
+        assertThat(Eval.now(100)
             .map(i->{throw new RuntimeException();})
             .recover(i->120)
-            .printOut();
+            .get(),equalTo(120));
 
 
     }
@@ -195,7 +232,7 @@ public class EvalTest {
 
                 System.out.println("Count " + count);
                 count++;
-                if(count<1000)
+                if(count<10000)
                     throw new RuntimeException();
                 return count;
             }).peek(i->System.out.println("T "+ Thread.currentThread().getId()))
@@ -215,11 +252,11 @@ public class EvalTest {
 
         t.join();
         assertThat(res.get(),equalTo(count));
-        assertThat(res.get(),equalTo(1000));
+        assertThat(res.get(),equalTo(10000));
         assertThat(mainThread, not(equalTo(processingThread.get())));
         assertThat(-1, not(equalTo(processingThread.get())));
         assertThat(values.get(),equalTo(1));
-        assertThat(result.get(),equalTo(1000));
+        assertThat(result.get(),equalTo(10000));
         assertThat(error.get(),equalTo(null));
         assertThat(onComplete.get(),equalTo(true));
 

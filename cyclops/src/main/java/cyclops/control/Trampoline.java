@@ -187,30 +187,21 @@ public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> 
 
 
 
-    /**
-     * @return next stage in Trampolining
-     */
+
     default Trampoline<T> bounce() {
         return this;
     }
 
-    /**
-     * @return The result of Trampoline execution
-     */
+
     default T result() {
         return get();
     }
 
-    /* (non-Javadoc)
-     * @see java.util.function.Supplier#getValue()
-     */
     @Override
     T get();
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Value#iterator()
-     */
+
     @Override
     default Iterator<T> iterator() {
         return Arrays.asList(result())
