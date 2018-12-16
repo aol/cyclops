@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -333,6 +334,36 @@ public abstract  class BaseImmutableMapTest {
 
 
         assertThat(map.remove((Object)1),equalTo("hello"));
+
+    }
+
+    @Test
+    public void getOrElseGet(){
+        AtomicBoolean called = new AtomicBoolean(false);
+        assertThat(this.empty().getOrElseGet("hello",()->{
+            called.set(true);
+            return 10;
+        }),equalTo(10));
+        assertTrue(called.get());
+        called.set(false);
+        assertThat(this.of("hello",100).getOrElseGet("hello",()->{
+            called.set(true);
+            return 10;
+        }),equalTo(100));
+        assertFalse(called.get());
+        called.set(false);
+        assertThat(this.of("hello",100).getOrElseGet("hello2",()->{
+            called.set(true);
+            return 10;
+        }),equalTo(10));
+        assertTrue(called.get());
+    }
+    @Test
+    public void getOrElse(){
+
+        assertThat(this.empty().getOrElse("hello",10),equalTo(10));
+        assertThat(this.of("hello",100).getOrElse("hello",10),equalTo(100));
+        assertThat(this.of("hello2",100).getOrElse("hello",10),equalTo(10));
 
     }
 }
