@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 
@@ -46,6 +47,19 @@ public class ImmutableTreeMapTest extends BaseImmutableMapTest {
         }
         assertThat(map.size(),equalTo(50000));
         putAndCompare(map);
+    }
+
+    @Test
+    public void insertionOrder() {
+        ImmutableMap<Integer, Integer> map1 = empty();
+        ImmutableMap<Integer, Integer> map2 = empty();
+        for (int i = 0; i <= 1000; i++) {
+            map1 = map1.put(i, i);
+            map2 = map2.put(1000 - i, 1000 - i);
+        }
+        assertEquals(map1,map2);
+        assertEquals(map1.hashCode(), map2.hashCode());
+
     }
 
 }

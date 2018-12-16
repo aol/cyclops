@@ -3,6 +3,7 @@ package cyclops.data.base;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct1;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
 import com.oath.cyclops.matching.Sealed4;
+import cyclops.companion.Comparators;
 import cyclops.control.Option;
 
 import cyclops.data.LazySeq;
@@ -55,6 +56,9 @@ public interface HashedPatriciaTrie<K, V>  {
 
         Node<K, V> minus(int hash, K key);
         ReactiveSeq<Tuple2<K,V>> stream();
+        default ReactiveSeq<Tuple2<K, V>> streamNaturalOrder(){
+            return stream();
+        }
 
     }
 
@@ -307,6 +311,10 @@ public interface HashedPatriciaTrie<K, V>  {
         @Override
         public Tuple1<LazySeq<Tuple2<K, V>>> unapply() {
             return Tuple.tuple(bucket);
+        }
+        @Override
+        public ReactiveSeq<Tuple2<K, V>> streamNaturalOrder() {
+            return stream().sorted(Comparators.naturalOrderIdentityComparator());
         }
     }
 
