@@ -839,6 +839,26 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
             }
 
+            @Override
+            public Eval<T> restartUntil(Predicate<? super T> p) {
+                CompletableEval<T,T> res = eval();
+
+                toFuture().forEach(
+                    t->{
+
+                        if(p.test(t)){
+                            res.complete(t);
+
+                        }
+                        else{
+                            res.completeExceptionally(new NoSuchElementException());
+                        }
+
+                    },
+                    e-> res.completeExceptionally(e));
+                return res;
+            }
+
             public Eval<T> onErrorRestart(long retries){
                 CompletableEval<T,T> res = eval();
                 long[] attempts = {retries};
