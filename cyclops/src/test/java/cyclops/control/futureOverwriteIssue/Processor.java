@@ -36,7 +36,7 @@ public class Processor {
     @Test
     public void testFailure() throws MalformedURLException {
 
-        for(int i=0;i<10000;i++) {
+        for(int i=0;i<100;i++) {
             System.out.println("*********** " + i);
             URLDataFileMetadata failingURL = new URLDataFileMetadata(10l, "url", new URL("http://oath23232.com"));
 
@@ -87,7 +87,8 @@ public class Processor {
         SleepingURLDataFileMetadata slowUrl = new SleepingURLDataFileMetadata(10l, "url", new URL("https://www.rte.ie/"));
 
         long start = System.currentTimeMillis();
-        Option<Error> x = proc.processUsersFiles(user, NonEmptyList.of(slowUrl)).swap().filter(i -> true);
+        Option<Error> x = proc.processUsersFiles(user, NonEmptyList.of(slowUrl))
+            .swap().filter(i -> true);
 
         System.out.println(System.currentTimeMillis() + " Blocked? ");
         System.out.println(System.currentTimeMillis() + " No... ");

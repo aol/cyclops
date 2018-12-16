@@ -7,7 +7,9 @@ import cyclops.reactive.ReactiveSeq;
 
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
+
 
 public interface PersistentMap<K,V> extends Iterable<Tuple2<K,V>> {
 
@@ -37,20 +39,22 @@ public interface PersistentMap<K,V> extends Iterable<Tuple2<K,V>> {
         return ReactiveSeq.fromIterable(this);
     }
 
+    default  boolean allMatch(Predicate<? super Tuple2<K,V>> c){
+        return !stream().filterNot(c)
+            .findFirst()
+            .isPresent();
+    }
     default boolean equalTo(PersistentMap<K,V> map){
       if(size()!=map.size())
         return false;
-      Iterator<Tuple2<K,V>> iterator = iterator();
-      while(iterator.hasNext()){
-        Tuple2<K, V> t2 = iterator.next();
-        if(!Objects.equals(map.getOrElse(t2._1(),null),t2._2())){
-          return false;
-        }
+        return allMatch(map::contains);
 
-      }
-      return true;
     }
 
+
+    default boolean contains(Tuple2<K, V> t) {
+        return get(t._1()).filter(v-> Objects.equals(v,t._2())).isPresent();
+    }
     default MapView<K,V> mapView(){
       return new MapView.Impl<>(this);
     }
