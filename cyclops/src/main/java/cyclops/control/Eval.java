@@ -5,6 +5,7 @@ import com.oath.cyclops.matching.Deconstruct.Deconstruct1;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.reactive.Completable;
+import com.oath.cyclops.util.ExceptionSoftener;
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.function.*;
 import com.oath.cyclops.hkt.DataWitness.eval;
@@ -200,6 +201,11 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         public final Eval<T2> lazy;
 
         @Override
+        public void forEach(Consumer<? super T2> onNext) {
+            toFuture().forEach(onNext);
+        }
+
+        @Override
         public boolean isFailed() {
             return complete.isCompletedExceptionally();
         }
@@ -334,7 +340,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /**
-     * Turn a toX of Evals into a single Eval with a List of values.
+     * Turn an Iterable of Evals into a single Eval with a ReactiveSeq of values.
      *
      * <pre>
      * {@code
@@ -456,7 +462,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
 
-
+    @Deprecated
     default Eval<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
         return unit(this.forEach2( t1 -> v2, (t1, t2) -> monoid
                                                             .apply(t1, t2)).orElseGet(() -> orElseGet(() -> monoid.zero())));
@@ -522,7 +528,55 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
 
+    default Eval<T> restartUntil(Predicate<? super T> p){
+        return flatMap(t->p.test(t) ? now(t) : restartUntil(p));
+    }
 
+    default Eval<T> onErrorRestart(long retries){
+        return recoverWith(Throwable.class, t->{
+            if (retries>0)
+                return onErrorRestart(retries-1);
+            throw ExceptionSoftener.throwSoftenedException(t);
+        });
+    }
+    default <C extends Throwable> Eval<T> recoverWith(Class<C> type, Function<? super C,? extends Eval<T>> value){
+        return Eval.<Eval<T>>always(() -> {
+            try {
+                T res = this.get();
+                return Eval.now(res);
+            } catch (final Throwable t) {
+                if (type.isAssignableFrom(t.getClass())) {
+                    return value.apply((C) t);
+                }
+                throw ExceptionSoftener.throwSoftenedException(t);
+
+            }
+        }).flatMap(i->i);
+    }
+    default void forEach(Consumer<? super T> onNext, Consumer<Throwable> onError,Runnable r){
+        toFuture().forEach(onNext,onError,r);
+    }
+    default void forEach(Consumer<? super T> onNext, Consumer<Throwable> onError){
+        toFuture().forEach(onNext,onError);
+    }
+    default Eval<T> recover(Function<Throwable,? extends T> value){
+        return recover(Throwable.class,value);
+
+    }
+    default <C extends Throwable> Eval<T> recover(Class<C> type, Function<? super C,? extends T> value){
+
+        return Eval.always(()->{
+            try {
+                return get();
+            } catch (final Throwable t) {
+                if (type.isAssignableFrom(t.getClass())) {
+                    return value.apply((C)t);
+                }
+                throw ExceptionSoftener.throwSoftenedException(t);
+
+            }
+        });
+    }
 
     @Override
     default <R> R fold(final Function<? super T, ? extends R> present, final Supplier<? extends R> absent) {
@@ -555,9 +609,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction)
-     */
+
     @Override
     default <T2, R1, R2, R3, R> Eval<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                  BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
@@ -566,9 +618,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         return (Eval<R>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction, com.oath.cyclops.util.function.QuadFunction)
-     */
+
     @Override
     default <T2, R1, R2, R3, R> Eval<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                  BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
@@ -579,9 +629,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         return (Eval<R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction)
-     */
+
     @Override
     default <T2, R1, R2, R> Eval<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
                                              BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
@@ -590,9 +638,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         return (Eval<R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.TriFunction)
-     */
+
     @Override
     default <T2, R1, R2, R> Eval<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
                                              BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
@@ -602,9 +648,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         return (Eval<R>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
-     */
+
     @Override
     default <R1, R> Eval<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
                                      BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
@@ -612,9 +656,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         return (Eval<R>)MonadicValue.super.forEach2(value1, yieldingFunction);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
-     */
+
     @Override
     default <R1, R> Eval<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
                                      BiFunction<? super T, ? super R1, Boolean> filterFunction,
@@ -628,7 +670,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
     default Future<T> toFuture(){
-        return Future.of(this);
+        return Future.fromPublisher(this);
     }
 
     static class Module {
@@ -785,9 +827,84 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
             }
 
 
-            public void forEach(Consumer<? super T> cons){
-                input.peek(e->e.forEach(cons));
+            public void forEach(Consumer<? super T> next){
+                input.forEach(e->e.forEach(next));
             }
+            public Eval<T> recover(Function<Throwable,? extends T> value){
+                CompletableEval<T,T> res = eval();
+                toFuture().forEach(
+                    t->res.complete(t),
+                    e->res.complete(value.apply(e)));
+                return res;
+
+            }
+
+            @Override
+            public Eval<T> restartUntil(Predicate<? super T> p) {
+                CompletableEval<T,T> res = eval();
+
+                toFuture().forEach(
+                    t->{
+
+                        if(p.test(t)){
+                            res.complete(t);
+
+                        }
+                        else{
+                            res.completeExceptionally(new NoSuchElementException());
+                        }
+
+                    },
+                    e-> res.completeExceptionally(e));
+                return res;
+            }
+
+            public Eval<T> onErrorRestart(long retries){
+                CompletableEval<T,T> res = eval();
+                long[] attempts = {retries};
+                toFuture().forEach(
+                    t->res.complete(t),
+                    e->{
+                        while(attempts[0]>0){
+                            Either<Throwable,T> either =toLazyEither();
+                            if(either.isRight()) {
+                                res.complete(either.orElse(null));
+                                break;
+                            }
+                            attempts[0]--;
+                        }
+                        res.completeExceptionally(e);
+
+
+                    });
+                return res;
+
+            }
+
+            public <C extends Throwable> Eval<T> recover(Class<C> type, Function<? super C,? extends T> value){
+                CompletableEval<T,T> res = eval();
+                toFuture().forEach(
+                    t->res.complete(t),
+                    e->{
+                        if (type.isAssignableFrom(e.getClass())) {
+                            res.complete(value.apply((C)e));
+                        }
+                    });
+                return res;
+
+            }
+            public <C extends Throwable> Eval<T> recoverWith(Class<C> type, Function<? super C,? extends Eval<T>> value){
+                CompletableEval<Eval<T>,Eval<T>> res = eval();
+                toFuture().forEach(
+                    t->res.complete(Eval.now(t)),
+                    e->{
+                        if (type.isAssignableFrom(e.getClass())) {
+                            res.complete(value.apply((C)e));
+                        }
+                    });
+                return res.flatMap(i->i);
+            }
+
             @Override
             public <R> Eval<R> map(final Function<? super T, ? extends R> mapper) {
                 return new FutureAlways<R>(input.map(e->e.map(mapper)));
@@ -811,9 +928,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
                 return Spouts.from(input).map(Eval::get).flatMap(i->Spouts.generate(()->i));
             }
 
-            /**
-             * @return This convertable converted to a Future
-             */
+
             @Override
            public Future<T> toFuture() {
                 return input.map(Eval::get);
@@ -821,12 +936,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
 
-            /**
-             * This convertable converted to a Future asyncrhonously using the supplied Executor
-             *
-             * @param ex Executor to execute the conversion on
-             * @return  This convertable converted to a Future asyncrhonously
-             */
+
             @Override
             public Future<T> future(final Executor ex) {
                 return toFuture();
@@ -886,7 +996,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
             @Override
             public T get() {
 
-                Eval<T> eval = input.fold(i->i,()->null);
+                Eval<T> eval = input.fold(i->i,e->{throw ExceptionSoftener.throwSoftenedException(e.getCause());});
                 return eval.get();
             }
 
