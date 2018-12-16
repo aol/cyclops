@@ -44,7 +44,7 @@ public abstract  class BaseImmutableMapTest {
     }
     @AllArgsConstructor
     @ToString
-    static class Collider{
+    static class Collider implements Comparable<Collider>{
         int id;
         int hash;
 
@@ -59,6 +59,11 @@ public abstract  class BaseImmutableMapTest {
 
             }
             return false;
+        }
+
+        @Override
+        public int compareTo(Collider o) {
+            return id-o.id;
         }
     }
 

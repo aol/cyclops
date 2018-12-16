@@ -157,7 +157,7 @@ public final class HashMap<K,V> implements ImmutableMap<K,V>,PersistentMap<K,V>,
     public HashMap<K, V> removeAll(K... keys) {
         HAMT.Node<K,V> cur = map;
         for(K key : keys){
-            cur = map.minus(0,key.hashCode(),key);
+            cur = cur.minus(0,key.hashCode(),key);
         }
         return new HashMap<>(cur);
     }
@@ -211,7 +211,7 @@ public final class HashMap<K,V> implements ImmutableMap<K,V>,PersistentMap<K,V>,
     public HashMap<K, V> removeAllKeys(Iterable<? extends K> keys) {
         HashMap<K,V> res = this;
         for(K e : keys){
-            res = this.remove(e);
+            res = res.remove(e);
         }
         return res;
     }

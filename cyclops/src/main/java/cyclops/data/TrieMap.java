@@ -77,7 +77,7 @@ public final class TrieMap<K,V> implements  ImmutableMap<K,V>,
     public TrieMap<K, V> removeAll(K[] keys) {
         HashedPatriciaTrie.Node<K,V> cur = map;
         for(K key : keys){
-            cur = map.minus(key.hashCode(),key);
+            cur = cur.minus(key.hashCode(),key);
         }
         return new TrieMap<>(cur);
     }
@@ -196,6 +196,6 @@ public final class TrieMap<K,V> implements  ImmutableMap<K,V>,
 
   @Override
   public int hashCode() {
-    return Objects.hash(map);
+      return map.streamNaturalOrder().foldLeft(0,(acc,t2)-> acc+t2.hashCode());
   }
 }

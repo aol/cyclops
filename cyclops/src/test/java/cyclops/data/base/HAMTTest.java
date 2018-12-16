@@ -225,28 +225,7 @@ public class HAMTTest {
 
     }
 
-
-
-  @Test //@Ignore
-  public void problemBitsetNode(){
-    Node<Integer, Integer>[] nodes = new Node[2];
-    nodes[0] = new HAMT.ValueNode<>(-1,-1,-1);
-    nodes[1] = new HAMT.ValueNode<>(31,31,31);
-    BitsetNode<Integer,Integer> node = new BitsetNode<Integer,Integer>( new Long(Long.parseLong("10000000000000000000000000000001", 2)).intValue(),
-      2,nodes);
-
-    System.out.println("index "+  node.bitpos(thirtyOne.hashCode(), 0));
-    System.out.println("index "+  node.bitpos(thirtyOne.hashCode(), 5));
-    System.out.println("index "+  node.bitpos(thirtyOne.hashCode(), 10));
-
-    System.out.println("index "+  node.bitpos(minusOne.hashCode(), 0));
-    System.out.println("index "+  node.bitpos(minusOne.hashCode(), 5));
-    System.out.println("index "+  node.bitpos(minusOne.hashCode(), 10));
-
-    assertTrue(node.get(10,minusOne.hashCode(),minusOne).isPresent());
-    assertTrue(node.get(10,thirtyOne.hashCode(),thirtyOne).isPresent());
-  }
-
+    
 
 
 
