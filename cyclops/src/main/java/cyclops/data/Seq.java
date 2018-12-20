@@ -161,6 +161,7 @@ public interface Seq<T> extends ImmutableList<T>,
     static <T> Seq<T> generate(Supplier<T> s, int max){
         return fromStream(ReactiveSeq.generate(s).limit(max));
     }
+    @Deprecated
     static <T> Seq<T> generate(Generator<T> s){
         return fromStream(ReactiveSeq.generate(s));
     }

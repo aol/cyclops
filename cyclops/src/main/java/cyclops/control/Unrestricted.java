@@ -23,6 +23,7 @@ import java.util.function.Function;
  * @param <T> Data type of Transformable
  */
 @NoArgsConstructor(access=AccessLevel.PRIVATE)
+@Deprecated
 public abstract class Unrestricted<T> {
 
     /**

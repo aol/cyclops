@@ -1317,6 +1317,7 @@ public interface Maybe<T> extends Option<T> {
 
 
 
+    @Deprecated
   public static class Comprehensions {
 
     public static <T,F,R1, R2, R3,R4,R5,R6,R7> Maybe<R7> forEach(Maybe<T> free,

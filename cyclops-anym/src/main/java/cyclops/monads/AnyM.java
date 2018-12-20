@@ -433,6 +433,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
         return AnyM.fromStream(ReactiveSeq.range(start, end));
     }
 
+    @Deprecated
     public static <T> AnyMSeq<reactiveSeq,T> generate(final Generator<T> generator) {
 
         return AnyM.fromStream(ReactiveSeq.generate(generator));

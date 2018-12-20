@@ -179,6 +179,7 @@ public class Vector<T> implements ImmutableList<T>,
     public static <T> Vector<T> generate(Supplier<T> s, int max){
         return fromStream(ReactiveSeq.generate(s).limit(max));
     }
+    @Deprecated
     public static <T> Vector<T> generate(Generator<T> s){
         return fromStream(ReactiveSeq.generate(s));
     }
