@@ -69,6 +69,7 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
     static <T> IntMap<T> generate(Supplier<T> s, int max){
         return fromStream(ReactiveSeq.generate(s).limit(max));
     }
+    @Deprecated
     static <T> IntMap<T> generate(Generator<T> s){
         return fromStream(ReactiveSeq.generate(s));
     }

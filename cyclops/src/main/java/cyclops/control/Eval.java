@@ -1062,7 +1062,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
     }
 
-
+    @Deprecated
   public static class Comprehensions {
 
     public static <T,F,R1, R2, R3,R4,R5,R6,R7> Eval<R7> forEach(Eval<T> eval,

@@ -98,6 +98,7 @@ public final class Identity<T> implements Higher<identity,T>, Iterable<T>, Decon
     }
 
 
+    @Deprecated
   public static class Comprehensions {
 
     public static <T,F,R1, R2, R3,R4,R5,R6,R7> Identity<R7> forEach(Identity<T> id,

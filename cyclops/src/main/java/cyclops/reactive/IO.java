@@ -207,6 +207,7 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
             .flatMap(Function.identity());
     }
 
+    @Deprecated
     public static class Comprehensions {
 
         public static <T, F, R1, R2, R3, R4, R5, R6, R7> IO<R7> forEach(IO<T> io,

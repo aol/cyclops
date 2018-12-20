@@ -53,6 +53,7 @@ import java.util.function.Supplier;
  *
  * @param <T>
  */
+@Deprecated
 public class Generator<T> implements Iterable<T>, ToStream<T> {
     private final Suspended suspended;
     private final Maybe<T> value;
