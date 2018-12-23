@@ -47,10 +47,12 @@ public class LazyStringTest {
 
     @Test
     public void unitIterable() {
+        assertThat(empty.unitIterable(str),equalTo(str));
     }
 
     @Test
     public void empty() {
+        assertThat(LazyString.empty(),equalTo(empty));
     }
 
     @Test
