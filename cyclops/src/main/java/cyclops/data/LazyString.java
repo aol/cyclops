@@ -35,6 +35,7 @@ public final class LazyString implements ImmutableList<Character>,Higher<lazyStr
         return fromLazySeq(LazySeq.fromStream( seq.chars().mapToObj(i -> (char) i)));
     }
 
+
     static Collector<Character, List<Character>, LazyString> collector() {
         Collector<Character, ?, List<Character>> c  = Collectors.toList();
         return Collectors.<Character, List<Character>, Iterable<Character>,LazyString>collectingAndThen((Collector)c,LazyString::fromIterable);
@@ -410,4 +411,13 @@ public final class LazyString implements ImmutableList<Character>,Higher<lazyStr
         return string.stream().join("");
     }
 
+    @Override
+    public int hashCode() {
+        return this.string.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.string.equals(obj);
+    }
 }
