@@ -69,6 +69,8 @@ public class LazyStringTest {
 
     @Test
     public void substring1() {
+        assertThat(str.substring(0,5).toString(),equalTo("hello"));
+        assertThat(empty.substring(0,5).toString(),equalTo(""));
     }
 
     @Test
