@@ -11,6 +11,7 @@ import static org.junit.Assert.*;
 
 public class LazyStringTest {
     LazyString str = LazyString.of("hello world");
+    LazyString strLines = LazyString.of("hello world\nboo hoo");
     LazyString caps = LazyString.of("HELLO WORLD");
     LazyString longStr = LazyString.of("the quick brown fox jumps over the dog");
     LazyString empty = LazyString.empty();
@@ -88,10 +89,15 @@ public class LazyStringTest {
 
     @Test
     public void words() {
+        assertThat(str.words().map(ls->ls.toString()),equalTo(LazySeq.of("hello", "world")));
+        assertThat(empty.words().map(ls->ls.toString()),equalTo(LazySeq.empty()));
     }
 
     @Test
     public void lines() {
+        assertThat(str.lines().map(ls->ls.toString()),equalTo(LazySeq.of("hello world")));
+        assertThat(strLines.lines().map(ls->ls.toString()),equalTo(LazySeq.of("hello world","boo hoo")));
+        assertThat(empty.lines().map(ls->ls.toString()),equalTo(LazySeq.empty()));
     }
 
     @Test
