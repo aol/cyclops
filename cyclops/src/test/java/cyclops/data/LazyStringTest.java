@@ -57,11 +57,15 @@ public class LazyStringTest {
 
     @Test
     public void op() {
+        assertThat(str.op(s->s.reverse()),equalTo(str.reverse()));
     }
 
     @Test
     public void substring() {
+        assertThat(str.substring(6).toString(),equalTo("world"));
+        assertThat(empty.substring(6).toString(),equalTo(""));
     }
+
 
     @Test
     public void substring1() {
