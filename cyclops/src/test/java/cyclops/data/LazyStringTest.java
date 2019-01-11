@@ -102,10 +102,14 @@ public class LazyStringTest {
 
     @Test
     public void mapChar() {
+        assertThat(str.mapChar(c->new Character((char)(c+1))),equalTo(LazyString.of("ifmmp!xpsme")));
+        assertThat(empty.mapChar(c->new Character((char)(c+1))),equalTo(LazyString.of("")));
     }
 
     @Test
     public void flatMapChar() {
+        assertThat(str.flatMapChar(c->LazyString.of(""+new Character((char)(c+1)))),equalTo(LazyString.of("ifmmp!xpsme")));
+        assertThat(empty.flatMapChar(c->LazyString.of(""+new Character((char)(c+1)))),equalTo(LazyString.of("")));
     }
 
     @Test
