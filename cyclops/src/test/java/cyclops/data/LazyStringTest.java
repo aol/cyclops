@@ -11,6 +11,7 @@ import static org.junit.Assert.*;
 
 public class LazyStringTest {
     LazyString str = LazyString.of("hello world");
+    LazyString caps = LazyString.of("HELLO WORLD");
     LazyString longStr = LazyString.of("the quick brown fox jumps over the dog");
     LazyString empty = LazyString.empty();
 
@@ -75,10 +76,14 @@ public class LazyStringTest {
 
     @Test
     public void toUpperCase() {
+        assertThat(str.toUpperCase().toString(),equalTo("HELLO WORLD"));
+        assertThat(empty.toUpperCase().toString(),equalTo(""));
     }
 
     @Test
     public void toLowerCase() {
+        assertThat(caps.toLowerCase().toString(),equalTo("hello world"));
+        assertThat(empty.toLowerCase().toString(),equalTo(""));
     }
 
     @Test
