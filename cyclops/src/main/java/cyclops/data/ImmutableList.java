@@ -118,7 +118,9 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
 
     default ImmutableList<T> subList(int start, int end){
-        return drop(start).take(end-start);
+        if(start>0)
+            return drop(start).take(end-start);
+        return take(end);
     }
     default LazySeq<T> lazySeq(){
         if(this instanceof LazySeq){

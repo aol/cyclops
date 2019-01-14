@@ -3,6 +3,7 @@ package cyclops.data;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -161,66 +162,138 @@ public class LazyStringTest {
 
     @Test
     public void onEmpty() {
+        assertThat(str.onEmpty('a'),equalTo(str));
+        assertThat(empty.onEmpty('a'),equalTo(LazyString.of("a")));
     }
 
     @Test
     public void onEmptyGet() {
+        assertThat(str.onEmptyGet(()->'a'),equalTo(str));
+        assertThat(empty.onEmptyGet(()->'a'),equalTo(LazyString.of("a")));
     }
 
     @Test
     public void onEmptySwitch() {
+        assertThat(str.onEmptySwitch(()->empty),equalTo(str));
+        assertThat(empty.onEmptySwitch(()->str),equalTo(str));
     }
 
     @Test
     public void stream() {
+        assertThat(str.stream().join(),equalTo("hello world"));
+        assertThat(empty.stream().join(),equalTo(""));
     }
 
     @Test
     public void take() {
+
+        assertThat(str.take(0).toString(), equalTo(""));
+        assertThat(str.take(-1).toString(), equalTo(""));
+        assertThat(str.take(1).toString(), equalTo("h"));
+        assertThat(str.take(2).toString(), equalTo("he"));
+        assertThat(str.take(2000).toString(), equalTo("hello world"));
+
+        assertThat(empty.take(0).toString(), equalTo(""));
+        assertThat(empty.take(-1).toString(), equalTo(""));
+        assertThat(empty.take(1).toString(), equalTo(""));
+        assertThat(empty.take(2).toString(), equalTo(""));
+        assertThat(empty.take(2000).toString(), equalTo(""));
+
     }
 
-    @Test
-    public void unitStream() {
-    }
 
     @Test
     public void emptyUnit() {
+        assertThat(str.emptyUnit(),equalTo(empty));
     }
 
     @Test
     public void replaceFirst() {
+        assertThat(str.replaceFirst('l','b').toString(),equalTo("heblo world"));
+        assertThat(empty.replaceFirst('l','b').toString(),equalTo(""));
     }
 
     @Test
     public void removeFirst() {
+        assertThat(str.removeFirst(i->i=='l').toString(),equalTo("helo world"));
+        assertThat(empty.removeFirst(i->i=='l').toString(),equalTo(""));
     }
 
     @Test
     public void subList() {
+        assertThat(str.subList(0,str.length()),equalTo(str));
+        assertThat(str.subList(-1100,Integer.MAX_VALUE),equalTo(str));
+        assertThat(str.subList(0,5).toString(),equalTo("hello"));
+        assertThat(str.subList(6,11).toString(),equalTo("world"));
+
+        assertThat(empty.subList(0,str.length()),equalTo(empty));
+        assertThat(empty.subList(-1100,Integer.MAX_VALUE),equalTo(empty));
+        assertThat(empty.subList(0,5).toString(),equalTo(""));
+        assertThat(empty.subList(6,11).toString(),equalTo(""));
     }
 
     @Test
     public void filterNot() {
+        assertThat(str.filterNot(i->i=='l').toString(),equalTo("heo word"));
     }
 
     @Test
     public void notNull() {
+
+        assertThat(LazyString.fromIterable(Vector.of('h',null,'e')).notNull().toString(),equalTo("he"));
+        assertThat(LazyString.fromLazySeq(LazySeq.of('h',null,'e')).notNull().toString(),equalTo("he"));
+
     }
 
+    boolean called;
     @Test
     public void peek() {
+        called = false;
+        LazyString s = str.take(1).peek(i->{
+            called = true;
+            assertThat(i,equalTo('h'));
+
+        });
+        assertFalse(called);
+        s.join();
+        assertTrue(called);
     }
 
     @Test
     public void tailOrElse() {
+        assertThat(str.tailOrElse(LazySeq.of('h')),equalTo(LazyString.of("ello world")));
+        assertThat(empty.tailOrElse(LazySeq.of('h')),equalTo(LazyString.of("h")));
     }
 
     @Test
     public void removeStream() {
+
+        assertThat(str.removeStream(Stream.of('a','b','c')),equalTo(str));
+        assertThat(str.removeStream(Stream.of('a','b','c','h')).toString(),equalTo("ello world"));
+        assertThat(str.removeStream(Stream.of('h','e','l','h')).toString(),equalTo("o word"));
+
+        assertThat(empty.removeStream(Stream.of('a','b','c')),equalTo(empty));
+        assertThat(empty.removeStream(Stream.of('a','b','c','h')).toString(),equalTo(""));
+        assertThat(empty.removeStream(Stream.of('h','e','l','h')).toString(),equalTo(""));
     }
 
     @Test
     public void removeAt() {
+        assertThat(str.removeAt(0),equalTo(LazyString.of("ello world")));
+        assertThat(str.removeAt(1),equalTo(LazyString.of("hllo world")));
+        assertThat(str.removeAt(10),equalTo(LazyString.of("hello worl")));
+        assertThat(str.removeAt(-1),equalTo(str));
+        assertThat(str.removeAt(100),equalTo(str));
+        assertThat(str.removeAt(Integer.MAX_VALUE),equalTo(str));
+        assertThat(str.removeAt(Integer.MAX_VALUE),equalTo(str));
+
+        assertThat(empty.removeAt(0),equalTo(LazyString.of("")));
+        assertThat(empty.removeAt(1),equalTo(LazyString.of("")));
+        assertThat(empty.removeAt(10),equalTo(LazyString.of("")));
+        assertThat(empty.removeAt(-1),equalTo(empty));
+        assertThat(empty.removeAt(100),equalTo(empty));
+        assertThat(empty.removeAt(Integer.MAX_VALUE),equalTo(empty));
+        assertThat(empty.removeAt(Integer.MAX_VALUE),equalTo(empty));
     }
 
     @Test
