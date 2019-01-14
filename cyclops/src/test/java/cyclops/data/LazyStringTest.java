@@ -298,22 +298,46 @@ public class LazyStringTest {
 
     @Test
     public void removeAll() {
+        assertThat(str.removeAll(),equalTo(str));
+        assertThat(str.removeAll('l'),equalTo(LazyString.of("heo word")));
+
+        assertThat(empty.removeAll(),equalTo(empty));
+        assertThat(empty.removeAll('l'),equalTo(empty));
     }
 
     @Test
     public void retainAll() {
+        assertThat(str.retainAll(),equalTo(empty));
+        assertThat(str.retainAll('l'),equalTo(LazyString.of("lll")));
+
+        assertThat(empty.retainAll(),equalTo(empty));
+        assertThat(empty.retainAll('l'),equalTo(empty));
     }
 
     @Test
     public void retainStream() {
+        assertThat(str.retainStream(Stream.of('a','b','c')),equalTo(empty));
+        assertThat(str.retainStream(Stream.of('a','b','c','h')).toString(),equalTo("h"));
+        assertThat(str.retainStream(Stream.of('h','e','l','h')).toString(),equalTo("helll"));
+
+        assertThat(empty.retainStream(Stream.of('a','b','c')),equalTo(empty));
+        assertThat(empty.retainStream(Stream.of('a','b','c','h')).toString(),equalTo(""));
+        assertThat(empty.retainStream(Stream.of('h','e','l','h')).toString(),equalTo(""));
     }
 
     @Test
     public void retainAll1() {
+        assertThat(str.retainAll(Vector.empty()),equalTo(empty));
+        assertThat(str.retainAll(Arrays.asList('l')),equalTo(LazyString.of("lll")));
+
+        assertThat(empty.retainAll(Vector.empty()),equalTo(empty));
+        assertThat(empty.retainAll(Vector.of('l')),equalTo(empty));
     }
 
     @Test
     public void distinct() {
+        assertThat(empty.distinct(),equalTo(empty));
+        assertThat(str.distinct(),equalTo(LazyString.of("helo wrd")));
     }
 
     @Test
