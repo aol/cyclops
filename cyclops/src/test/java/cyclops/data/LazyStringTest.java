@@ -7,6 +7,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.*;
 
@@ -127,22 +129,34 @@ public class LazyStringTest {
 
     @Test
     public void flatMap() {
+        assertThat(str.flatMap(i -> LazySeq.of(i + "1")).vector().join(),equalTo("h1e1l1l1o1 1w1o1r1l1d1"));
+        assertThat(empty.flatMap(i-> LazySeq.of(i + "1")).toString(),equalTo("[]"));
     }
 
     @Test
     public void concatMap() {
+        assertThat(str.concatMap(i -> LazySeq.of(i + "1")).vector().join(),equalTo("h1e1l1l1o1 1w1o1r1l1d1"));
+        assertThat(empty.concatMap(i-> LazySeq.of(i + "1")).toString(),equalTo("[]"));
     }
 
     @Test
     public void mergeMap() {
+
+        System.out.println(Vector.of("h1","e1","l1","l1","o1"," 1","w1","o1","r1","l1","d1"));
+        assertThat(str.mergeMap(i -> LazySeq.of(i + "1")).vector(),hasItems("h1","e1","l1","l1","o1"," 1","w1","o1","r1","l1","d1"));
+        assertThat(empty.mergeMap(i-> LazySeq.of(i + "1")).toString(),equalTo("[]"));
     }
 
     @Test
     public void mergeMap1() {
+        assertThat(str.mergeMap(10,i -> LazySeq.of(i + "1")).vector(),hasItems("h1","e1","l1","l1","o1"," 1","w1","o1","r1","l1","d1"));
+        assertThat(empty.mergeMap(10,i-> LazySeq.of(i + "1")).toString(),equalTo("[]"));
     }
 
     @Test
     public void fold() {
+        assertThat(str.fold(s->"10",n->"20"),equalTo("10"));
+        assertThat(empty.fold(s->"10",n->"20"),equalTo("20"));
     }
 
     @Test
