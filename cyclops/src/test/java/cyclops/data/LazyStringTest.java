@@ -3,6 +3,7 @@ package cyclops.data;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -114,10 +115,14 @@ public class LazyStringTest {
 
     @Test
     public void filter() {
+       assertThat(str.filter(i->!Objects.equals(i,'h')).toString(),equalTo("ello world"));
+       assertThat(empty.filter(i->!Objects.equals(i,'h')).toString(),equalTo(""));
     }
 
     @Test
     public void map() {
+        assertThat(str.map(i -> i + "1").vector().join(),equalTo("h1e1l1l1o1 1w1o1r1l1d1"));
+        assertThat(empty.map(i->i+"1").toString(),equalTo("[]"));
     }
 
     @Test
