@@ -3,6 +3,10 @@ package cyclops.control.futureOverwriteIssue;
 
 import cyclops.control.Either;
 import cyclops.control.LazyEither;
+import cyclops.control.LazyEither3;
+import cyclops.control.LazyEither4;
+import cyclops.control.LazyEither5;
+import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.NonEmptyList;
 import cyclops.data.Seq;
@@ -89,6 +93,66 @@ public class Processor {
         long start = System.currentTimeMillis();
         Option<Error> x = proc.processUsersFiles(user, NonEmptyList.of(slowUrl))
             .swap().filter(i -> true);
+
+        System.out.println(System.currentTimeMillis() + " Blocked? ");
+        System.out.println(System.currentTimeMillis() + " No... ");
+        long blocked = System.currentTimeMillis();
+
+        System.out.println(x + "Completed at  " + System.currentTimeMillis());
+        long completed = System.currentTimeMillis();
+        assertThat(blocked-start,lessThan(500l));
+        assertThat(completed-start,greaterThan(500l));
+        assertThat(x,equalTo(Option.none()));
+
+    }
+    @Test
+    public void testSleepingFilterSwap3() throws MalformedURLException {
+        Processor proc = new Processor();
+        SleepingURLDataFileMetadata slowUrl = new SleepingURLDataFileMetadata(10l, "url", new URL("https://www.rte.ie/"));
+
+        long start = System.currentTimeMillis();
+        Maybe<Throwable> x = LazyEither3.fromPublisher(proc.processUsersFiles(user, NonEmptyList.of(slowUrl)))
+            .swap1().filter(i -> true);
+
+        System.out.println(System.currentTimeMillis() + " Blocked? ");
+        System.out.println(System.currentTimeMillis() + " No... ");
+        long blocked = System.currentTimeMillis();
+
+        System.out.println(x + "Completed at  " + System.currentTimeMillis());
+        long completed = System.currentTimeMillis();
+        assertThat(blocked-start,lessThan(500l));
+        assertThat(completed-start,greaterThan(500l));
+        assertThat(x,equalTo(Option.none()));
+
+    }
+    @Test
+    public void testSleepingFilterSwap4() throws MalformedURLException {
+        Processor proc = new Processor();
+        SleepingURLDataFileMetadata slowUrl = new SleepingURLDataFileMetadata(10l, "url", new URL("https://www.rte.ie/"));
+
+        long start = System.currentTimeMillis();
+        Maybe<Throwable> x = LazyEither4.fromPublisher(proc.processUsersFiles(user, NonEmptyList.of(slowUrl)))
+            .swap1().filter(i -> true);
+
+        System.out.println(System.currentTimeMillis() + " Blocked? ");
+        System.out.println(System.currentTimeMillis() + " No... ");
+        long blocked = System.currentTimeMillis();
+
+        System.out.println(x + "Completed at  " + System.currentTimeMillis());
+        long completed = System.currentTimeMillis();
+        assertThat(blocked-start,lessThan(500l));
+        assertThat(completed-start,greaterThan(500l));
+        assertThat(x,equalTo(Option.none()));
+
+    }
+    @Test
+    public void testSleepingFilterSwap5() throws MalformedURLException {
+        Processor proc = new Processor();
+        SleepingURLDataFileMetadata slowUrl = new SleepingURLDataFileMetadata(10l, "url", new URL("https://www.rte.ie/"));
+
+        long start = System.currentTimeMillis();
+        Maybe<Throwable> x = LazyEither5.fromPublisher(proc.processUsersFiles(user, NonEmptyList.of(slowUrl)))
+            .swap1().filter(i -> true);
 
         System.out.println(System.currentTimeMillis() + " Blocked? ");
         System.out.println(System.currentTimeMillis() + " No... ");
