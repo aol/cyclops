@@ -569,6 +569,8 @@ public interface IterableX<T> extends Traversable<T>,
     }
     @Override
     default IterableX<T> updateAt(int pos, T value) {
+        if(pos<0)
+            return this;
         return (IterableX<T>)Traversable.super.updateAt(pos,value);
     }
 

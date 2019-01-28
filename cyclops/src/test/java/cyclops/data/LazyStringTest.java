@@ -1,5 +1,6 @@
 package cyclops.data;
 
+import cyclops.control.Option;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -59,6 +60,12 @@ public class LazyStringTest {
     @Test
     public void unitIterable() {
         assertThat(empty.unitIterable(str),equalTo(str));
+        assertThat(empty.unitIterable(str.lazySeq()),equalTo(str));
+    }
+    @Test
+    public void unitStream() {
+        assertThat(empty.unitStream(str.stream()),equalTo(str));
+
     }
 
     @Test
@@ -458,6 +465,10 @@ public class LazyStringTest {
 
     @Test
     public void appendAll() {
+        assertThat(empty.appendAll(str),equalTo(str));
+        assertThat(str.appendAll(empty),equalTo(str));
+        assertThat(str.appendAll(str).toString(),equalTo("hello worldhello world"));
+        assertThat(str.appendAll(LazyString.of("bob").stream()).toString(),equalTo("hello worldbob"));
     }
 
     @Test
@@ -468,16 +479,38 @@ public class LazyStringTest {
         assertThat(str.prependAll(LazyString.of("bob").stream()).toString(),equalTo("bobhello world"));
     }
 
-    @Test
-    public void insertAt() {
-    }
 
     @Test
+    public void hashCodeTest(){
+        assertThat(empty.hashCode(),equalTo(LazySeq.empty().hashCode()));
+    }
+    @Test
     public void deleteBetween() {
+        assertThat(empty.deleteBetween(0,100),equalTo(empty));
+        assertThat(empty.deleteBetween(-10000,10000),equalTo(empty));
+        assertThat(empty.deleteBetween(-10000,Integer.MAX_VALUE),equalTo(empty));
+
+        assertThat(str.deleteBetween(-10000,Integer.MAX_VALUE),equalTo(empty));
+        assertThat(str.deleteBetween(0,100),equalTo(empty));
+        assertThat(str.deleteBetween(-10000,10000),equalTo(empty));
+
+        assertThat(str.deleteBetween(2,5),equalTo(LazyString.of("he world")));
+        assertThat(str.deleteBetween(2,Integer.MAX_VALUE),equalTo(LazyString.of("he")));
     }
 
     @Test
     public void insertStreamAt() {
+        assertThat(empty.insertStreamAt(0,Stream.of('a','b')),equalTo(LazyString.of("ab")));
+        assertThat(empty.insertStreamAt(1,Stream.of('a','b')),equalTo(LazyString.of("ab")));
+        assertThat(empty.insertStreamAt(Integer.MAX_VALUE,Stream.of('a','b')),equalTo(LazyString.of("ab")));
+        assertThat(empty.insertStreamAt(-1,Stream.of('a','b')),equalTo(LazyString.of("ab")));
+        assertThat(empty.insertStreamAt(-10000,Stream.of('a','b')),equalTo(LazyString.of("ab")));
+
+        assertThat(str.insertStreamAt(0,Stream.of('a','b')),equalTo(LazyString.of("abhello world")));
+        assertThat(str.insertStreamAt(1,Stream.of('a','b')),equalTo(LazyString.of("habello world")));
+        assertThat(str.insertStreamAt(Integer.MAX_VALUE,Stream.of('a','b')),equalTo(LazyString.of("hello worldab")));
+        assertThat(str.insertStreamAt(-1,Stream.of('a','b')),equalTo(LazyString.of("abhello world")));
+        assertThat(str.insertStreamAt(-10000,Stream.of('a','b')),equalTo(LazyString.of("abhello world")));
     }
 
     @Test
@@ -497,50 +530,153 @@ public class LazyStringTest {
 
     @Test
     public void removeValue() {
+        assertThat(empty.removeValue('h'),equalTo(empty));
+        assertThat(str.removeValue('x'),equalTo(str));
+        assertThat(str.removeValue('l'),equalTo(LazyString.of("helo world")));
     }
 
     @Test
     public void removeAll1() {
+        assertThat(empty.removeAll('h'),equalTo(empty));
+        assertThat(str.removeAll('x'),equalTo(str));
+        assertThat(str.removeAll('l'),equalTo(LazyString.of("heo word")));
+        assertThat(str.removeAll('l','e'),equalTo(LazyString.of("ho word")));
+        assertThat(str.removeAll('l','e','o'),equalTo(LazyString.of("h wrd")));
+
+        assertThat(empty.removeAll(Seq.of('h')),equalTo(empty));
+        assertThat(str.removeAll(Vector.of('x')),equalTo(str));
+        assertThat(str.removeAll(Vector.of('l')),equalTo(LazyString.of("heo word")));
+        assertThat(str.removeAll(Vector.of('l','e')),equalTo(LazyString.of("ho word")));
+        assertThat(str.removeAll(Vector.of('l','e','o')),equalTo(LazyString.of("h wrd")));
+
+
     }
 
     @Test
     public void updateAt() {
+        assertThat(empty.updateAt(0,'h'),equalTo(empty));
+        assertThat(empty.updateAt(-100,'h'),equalTo(empty));
+        assertThat(empty.updateAt(100,'h'),equalTo(empty));
+        assertThat(empty.updateAt(Integer.MAX_VALUE,'h'),equalTo(empty));
+
+
+        assertThat(str.updateAt(0,'x'),equalTo(LazyString.of("xello world")));
+        assertThat(str.updateAt(1,'x'),equalTo(LazyString.of("hxllo world")));
+        assertThat(str.updateAt(-100,'x'),equalTo(str));
+        assertThat(str.updateAt(100,'x'),equalTo(str));
+        assertThat(str.updateAt(Integer.MAX_VALUE,'x'),equalTo(str));
     }
 
     @Test
     public void insertAt1() {
+        assertThat(empty.insertAt(0,'a'),equalTo(LazyString.of("a")));
+        assertThat(empty.insertAt(1,'a'),equalTo(LazyString.of("a")));
+        assertThat(empty.insertAt(Integer.MAX_VALUE,'a'),equalTo(LazyString.of("a")));
+        assertThat(empty.insertAt(-1,'a'),equalTo(LazyString.of("a")));
+        assertThat(empty.insertAt(-10000,'a'),equalTo(LazyString.of("a")));
+
+        assertThat(str.insertAt(0,'a'),equalTo(LazyString.of("ahello world")));
+        assertThat(str.insertAt(1,'a'),equalTo(LazyString.of("haello world")));
+        assertThat(str.insertAt(Integer.MAX_VALUE,'a'),equalTo(LazyString.of("hello worlda")));
+        assertThat(str.insertAt(-1,'a'),equalTo(LazyString.of("ahello world")));
+        assertThat(str.insertAt(-10000,'a'),equalTo(LazyString.of("ahello world")));
     }
 
     @Test
     public void insertAt2() {
+        assertThat(empty.insertAt(0,'a','b'),equalTo(LazyString.of("ab")));
+        assertThat(empty.insertAt(1,'a','b'),equalTo(LazyString.of("ab")));
+        assertThat(empty.insertAt(Integer.MAX_VALUE,'a','b'),equalTo(LazyString.of("ab")));
+        assertThat(empty.insertAt(-1,'a','b'),equalTo(LazyString.of("ab")));
+        assertThat(empty.insertAt(-10000,'a','b'),equalTo(LazyString.of("ab")));
+
+        assertThat(str.insertAt(0,'a','b'),equalTo(LazyString.of("abhello world")));
+        assertThat(str.insertAt(1,'a','b'),equalTo(LazyString.of("habello world")));
+        assertThat(str.insertAt(Integer.MAX_VALUE,'a','b'),equalTo(LazyString.of("hello worldab")));
+        assertThat(str.insertAt(-1,'a','b'),equalTo(LazyString.of("abhello world")));
+        assertThat(str.insertAt(-10000,'a','b'),equalTo(LazyString.of("abhello world")));
+    }
+    @Test
+    public void insertAt3() {
+        assertThat(empty.insertAt(0,Seq.of('a','b')),equalTo(LazyString.of("ab")));
+        assertThat(empty.insertAt(1,Seq.of('a','b')),equalTo(LazyString.of("ab")));
+        assertThat(empty.insertAt(Integer.MAX_VALUE,Seq.of('a','b')),equalTo(LazyString.of("ab")));
+        assertThat(empty.insertAt(-1,Seq.of('a','b')),equalTo(LazyString.of("ab")));
+        assertThat(empty.insertAt(-10000,Seq.of('a','b')),equalTo(LazyString.of("ab")));
+
+        assertThat(str.insertAt(0,Seq.of('a','b')),equalTo(LazyString.of("abhello world")));
+        assertThat(str.insertAt(1,Seq.of('a','b')),equalTo(LazyString.of("habello world")));
+        assertThat(str.insertAt(Integer.MAX_VALUE,Seq.of('a','b')),equalTo(LazyString.of("hello worldab")));
+        assertThat(str.insertAt(-1,Seq.of('a','b')),equalTo(LazyString.of("abhello world")));
+        assertThat(str.insertAt(-10000,Seq.of('a','b')),equalTo(LazyString.of("abhello world")));
     }
 
     @Test
     public void drop() {
+        assertThat(empty.drop(-1),equalTo(empty));
+        assertThat(empty.drop(-10000),equalTo(empty));
+        assertThat(empty.drop(Integer.MAX_VALUE),equalTo(empty));
+        assertThat(empty.drop(10),equalTo(empty));
+
+        assertThat(str.drop(-1),equalTo(str));
+        assertThat(str.drop(-10000),equalTo(str));
+        assertThat(str.drop(Integer.MAX_VALUE),equalTo(empty));
+        assertThat(str.drop(50),equalTo(empty));
+        assertThat(str.drop(5),equalTo(LazyString.of(" world")));
     }
 
     @Test
     public void reverse() {
+        assertThat(empty.reverse(),equalTo(empty));
+        assertThat(str.reverse().toString(),equalTo("dlrow olleh"));
     }
 
     @Test
     public void get() {
+        assertThat(empty.get(10),equalTo(Option.none()));
+        assertThat(empty.get(Integer.MAX_VALUE),equalTo(Option.none()));
+        assertThat(empty.get(-100),equalTo(Option.none()));
+
+        assertThat(str.get(100),equalTo(Option.none()));
+        assertThat(str.get(Integer.MAX_VALUE),equalTo(Option.none()));
+        assertThat(str.get(-100),equalTo(Option.none()));
+        assertThat(str.get(1),equalTo(Option.some('e')));
     }
 
     @Test
     public void getOrElse() {
+        assertThat(empty.getOrElse(10,'x'),equalTo('x'));
+        assertThat(empty.getOrElse(Integer.MAX_VALUE,'x'),equalTo('x'));
+        assertThat(empty.getOrElse(-100,'x'),equalTo('x'));
+
+        assertThat(str.getOrElse(100,'x'),equalTo('x'));
+        assertThat(str.getOrElse(Integer.MAX_VALUE,'x'),equalTo('x'));
+        assertThat(str.getOrElse(-100,'x'),equalTo('x'));
+        assertThat(str.getOrElse(1,'x'),equalTo('e'));
     }
 
     @Test
     public void getOrElseGet() {
+        assertThat(empty.getOrElseGet(10,()->'x'),equalTo('x'));
+        assertThat(empty.getOrElseGet(Integer.MAX_VALUE,()->'x'),equalTo('x'));
+        assertThat(empty.getOrElseGet(-100,()->'x'),equalTo('x'));
+
+        assertThat(str.getOrElseGet(100,()->'x'),equalTo('x'));
+        assertThat(str.getOrElseGet(Integer.MAX_VALUE,()->'x'),equalTo('x'));
+        assertThat(str.getOrElseGet(-100,()->'x'),equalTo('x'));
+        assertThat(str.getOrElseGet(1,()->'x'),equalTo('e'));
     }
 
     @Test
     public void prepend() {
+        assertThat(empty.prepend('a'),equalTo(LazyString.of("a")));
+        assertThat(str.prepend('a'),equalTo(LazyString.of("ahello world")));
     }
 
     @Test
     public void append() {
+        assertThat(empty.append('a'),equalTo(LazyString.of("a")));
+        assertThat(str.append('a'),equalTo(LazyString.of("hello worlda")));
     }
 
     @Test
@@ -553,6 +689,18 @@ public class LazyStringTest {
 
     @Test
     public void appendAll1() {
+        assertThat(empty.appendAll(str),equalTo(str));
+        assertThat(str.appendAll(empty),equalTo(str));
+        assertThat(str.appendAll(str).toString(),equalTo("hello worldhello world"));
+        assertThat(str.appendAll(LazyString.of("bob").stream()).toString(),equalTo("hello worldbob"));
+    }
+
+    @Test
+    public void appendAll2() {
+        assertThat(empty.appendAll(str.toArray(i->new Character[i])),equalTo(str));
+        assertThat(str.appendAll(empty.toArray(i->new Character[i])),equalTo(str));
+        assertThat(str.appendAll(str.toArray(i->new Character[i])).toString(),equalTo("hello worldhello world"));
+        assertThat(str.appendAll(LazyString.of("bob").stream().toArray(i->new Character[i])).toString(),equalTo("hello worldbob"));
     }
 
     @Test
@@ -565,6 +713,9 @@ public class LazyStringTest {
 
     @Test
     public void append1() {
+        assertThat(empty.append("a"),equalTo(LazyString.of("a")));
+        assertThat(str.append("a"),equalTo(LazyString.of("hello worlda")));
+        assertThat(str.append("ab"),equalTo(LazyString.of("hello worldab")));
     }
 
     @Test

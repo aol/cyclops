@@ -82,6 +82,17 @@ public abstract class AbstractIterableXTest {
         assertThat(result,equalTo(Arrays.asList("1!!","2!!","5!!","6!!")));
     }
     @Test
+    public void deleteBetweenEmpty(){
+        Assert.assertThat(empty.deleteBetween(0,100), IsEqual.equalTo(empty));
+        Assert.assertThat(empty.deleteBetween(-10000,10000), IsEqual.equalTo(empty));
+        Assert.assertThat(empty.deleteBetween(-10000,Integer.MAX_VALUE), IsEqual.equalTo(empty));
+    }
+    @Test
+    public void deleteBetweenMax(){
+        assertThat(of(1,2,3,4,5,6).deleteBetween(2,Integer.MAX_VALUE).size(),equalTo(2));
+        assertThat(of(1,2,3,4,5,6).deleteBetween(0,Integer.MAX_VALUE).size(),equalTo(0));
+    }
+    @Test
     public void insertAtIterable(){
         List<String> result = 	of(1,2,3).insertAt(1,of(100,200,300))
             .map(it ->it+"!!").collect(Collectors.toList());
@@ -2241,6 +2252,7 @@ public abstract class AbstractIterableXTest {
         assertEquals(of("x", "b", "c"), of("a", "b", "c").updateAt(0, "x"));
         assertEquals(of("a", "x", "c"), of("a", "b", "c").updateAt(1, "x"));
         assertEquals(of("a", "b", "x"), of("a", "b", "c").updateAt(2, "x"));
+
     }
     @Test
     public void withLarge(){
@@ -2368,6 +2380,11 @@ public abstract class AbstractIterableXTest {
         assertThat(vec.updateAt(100,10),equalTo(of(5,2,1)));
     }
 
+    @Test
+    public void updateAtLargeOutOfRange(){
+        assertThat(of(1,2,3).updateAt(100,-1), not(hasItem(-1)));
+        assertThat(of(1,2,3).updateAt(Integer.MAX_VALUE,-1),  not(hasItem(-1)));
+    }
     @Test
     public void largePlusAll(){
         assertThat(range(0,2000).insertAt(1010,of(-1,-2,-3)).size(),equalTo(2003));
