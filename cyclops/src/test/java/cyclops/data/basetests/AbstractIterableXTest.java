@@ -980,8 +980,12 @@ public abstract class AbstractIterableXTest {
                 .groupedUntil((s, i)->s.containsValue(4) ? true : false).toList());
         System.out.println(ReactiveSeq.of(1,2,3,4,5,6)
                 .groupedUntil((s, i)->s.containsValue(4) ? true : false).toList());
+        System.out.println(Spouts.of(1,2,3,4,5,6)
+            .groupedUntil((s, i)->s.containsValue(4) ? true : false).toList());
         System.out.println(Streamable.of(1,2,3,4,5,6)
                 .groupedUntil((s, i)->s.containsValue(4) ? true : false).toList());
+
+
         assertThat(of(1,2,3,4,5,6)
                 .groupedUntil((s, i)->s.containsValue(4) ? true : false)
                 .toList().size(),equalTo(2));
@@ -2243,7 +2247,7 @@ public abstract class AbstractIterableXTest {
         System.out.println("Vec1 " + vec);
         vec = vec.insertAt(Math.max(0,vec.size()),of(2));
 
-        System.out.println("Vec " + vec);
+        System.out.println("Vec " + vec.vector());
         assertThat(vec,equalTo(of(1,2)));
     }
 

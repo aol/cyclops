@@ -2722,7 +2722,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         }
         long check =  new Long(pos);
         boolean added[] = {false};
-       // AtomicBoolean added = new AtomicBoolean(false);
 
         return  ReactiveSeq.<T>concat(zipWithIndex().flatMap(t -> {
             if (t._2() < check && !added[0])

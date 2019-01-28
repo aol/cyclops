@@ -296,24 +296,24 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public ReactiveSeq<Vector<T>> groupedWhile(final BiPredicate<Vector<? super T>, ? super T> predicate) {
-        return createSeq(new GroupedStatefullyOperator<>(source, () -> Vector.empty(), Function.identity(), predicate));
+        return createSeq(new GroupedStatefullyOperator<>(source, () -> Vector.empty(), Function.identity(), predicate.negate()));
     }
 
     @Override
     public <C extends PersistentCollection<T>, R> ReactiveSeq<R> groupedWhile(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
                                                                               Function<? super C, ? extends R> finalizer) {
-        return this.<R>createSeq(new GroupedStatefullyOperator<>(source, factory, finalizer, predicate));
+        return this.<R>createSeq(new GroupedStatefullyOperator<>(source, factory, finalizer, predicate.negate()));
     }
 
     @Override
     public ReactiveSeq<Vector<T>> groupedUntil(final BiPredicate<Vector<? super T>, ? super T> predicate) {
-        return createSeq(new GroupedStatefullyOperator<>(source, () -> Vector.empty(), Function.identity(), predicate.negate()));
+        return createSeq(new GroupedStatefullyOperator<>(source, () -> Vector.empty(), Function.identity(), predicate));
     }
 
     @Override
     public <C extends PersistentCollection<T>, R> ReactiveSeq<R> groupedUntil(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
                                                                               Function<? super C, ? extends R> finalizer) {
-        return this.<R>createSeq(new GroupedStatefullyOperator<>(source, factory, finalizer, predicate.negate()));
+        return this.<R>createSeq(new GroupedStatefullyOperator<>(source, factory, finalizer, predicate));
     }
 
     @Override
@@ -832,7 +832,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public ReactiveSeq<T> dropRight(final int num) {
-
+        if(num<=0)
+            return this;
         if(num==1)
             return createSeq(new SkipLastOneOperator<>(source));
         return createSeq(new SkipLastOperator<>(source, num < 0 ? 0 : num));
@@ -840,6 +841,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public ReactiveSeq<T> takeRight(final int num) {
+        if(num<=0)
+            return Spouts.empty();
         if (num == 1)
             return createSeq(new LimitLastOneOperator<>(source));
         return createSeq(new LimitLastOperator<>(source, num < 0 ? 0 : num));
@@ -1495,7 +1498,54 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }
         return super.equals(obj);
     }
+    @Override
+    public ReactiveSeq<T> insertAt(int pos, ReactiveSeq<? extends T> values){
+        if(pos==0){
+            return prependStream(values);
+        }
+        long check =  new Long(pos);
+        boolean added[] = {false};
 
+        return  Spouts.<T>concat(zipWithIndex().flatMap(t -> {
+            if (t._2() < check && !added[0])
+                return Spouts.of(t._1());
+            if (!added[0]) {
+                added[0]=true;
+                return Spouts.concat(values, Spouts.of(t._1()));
+            }
+            return Spouts.of(t._1());
+        }), Spouts.deferFromStream(()-> {
+                return !added[0] ? values : Spouts.empty();
+            }
+        ));
+
+
+
+
+    }
+    @Override
+    public ReactiveSeq<T> insertAt(int pos, Iterable<? extends T> values){
+        if(pos==0){
+            return prependStream(Spouts.fromIterable(values));
+        }
+        long check =  new Long(pos);
+        boolean added[] = {false};
+        return  Spouts.<T>concat(zipWithIndex().flatMap(t -> {
+            if (t._2() < check && !added[0])
+                return Spouts.of(t._1());
+            if (!added[0]) {
+                added[0] = true;
+                return Spouts.concat(Spouts.fromIterable(values), Spouts.of(t._1()));
+            }
+            return Stream.of(t._1());
+        }), Spouts.deferFromStream(()-> {
+                return !added[0] ? Spouts.fromIterable(values) : Spouts.empty();
+            }
+        ));
+
+
+
+    }
 
 
 }
