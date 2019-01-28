@@ -1,6 +1,8 @@
 package com.oath.cyclops.internal.stream.spliterators;
 
 import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.Spliterators.AbstractSpliterator;
@@ -22,14 +24,14 @@ public class LimitLastSpliterator<T> extends AbstractSpliterator<T> implements C
     }
 
 
-    private final ArrayDeque<T> buffer;
+    private final Deque<T> buffer;
     private final int limit;
     private final Spliterator<T> source;
 
     public LimitLastSpliterator(final Spliterator<T> source, final int limit) {
         super(source.estimateSize(),source.characteristics() & Spliterator.ORDERED);
-        buffer = new ArrayDeque<>(
-                                  limit);
+        buffer = limit < 1_000 ? new ArrayDeque<>(
+                                  limit) : new LinkedList<>();
         this.source = source;;
         this.limit = limit;
     }

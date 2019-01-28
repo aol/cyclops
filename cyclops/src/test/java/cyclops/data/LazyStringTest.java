@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -342,34 +343,71 @@ public class LazyStringTest {
 
     @Test
     public void sorted() {
+        assertThat(empty.sorted(),equalTo(empty));
+        assertThat(str.sorted().toString(),equalTo(" dehllloorw"));
     }
 
     @Test
     public void sorted1() {
+        assertThat(empty.sorted(),equalTo(empty));
+        assertThat(str.sorted(new Comparator<Character>() {
+            @Override
+            public int compare(Character o1, Character o2) {
+                return -o1.compareTo(o2);
+            }
+        }).toString(),equalTo("wroolllhed "));
     }
 
     @Test
     public void takeWhile() {
+        assertThat(empty.takeWhile(i->true),equalTo(empty));
+        assertThat(empty.takeWhile(i->false),equalTo(empty));
+        assertThat(str.takeWhile(i->true),equalTo(str));
+        assertThat(str.takeWhile(i->false),equalTo(empty));
     }
 
     @Test
     public void dropWhile() {
+        assertThat(empty.dropWhile(i->true),equalTo(empty));
+        assertThat(empty.dropWhile(i->false),equalTo(empty));
+        assertThat(str.dropWhile(i->true),equalTo(empty));
+        assertThat(str.dropWhile(i->false),equalTo(str));
     }
 
     @Test
     public void takeUntil() {
+        assertThat(empty.takeUntil(i->true),equalTo(empty));
+        assertThat(empty.takeUntil(i->false),equalTo(empty));
+        assertThat(str.takeUntil(i->true),equalTo(empty));
+        assertThat(str.takeUntil(i->false),equalTo(str));
     }
 
     @Test
     public void dropUntil() {
+        assertThat(empty.dropUntil(i->true),equalTo(empty));
+        assertThat(empty.dropUntil(i->false),equalTo(empty));
+        assertThat(str.dropUntil(i->true),equalTo(str));
+        assertThat(str.dropUntil(i->false),equalTo(empty));
     }
+
 
     @Test
     public void dropRight() {
+        assertThat(empty.dropRight(2),equalTo(empty));
+        assertThat(empty.dropRight(Integer.MAX_VALUE),equalTo(empty));
+        assertThat(str.dropRight(Integer.MAX_VALUE),equalTo(empty));
+        assertThat(str.dropRight(-2),equalTo(str));
+        assertThat(str.dropRight(2).toString(),equalTo("hello wor"));
+
     }
 
     @Test
     public void takeRight() {
+        assertThat(empty.takeRight(2),equalTo(empty));
+        assertThat(empty.takeRight(Integer.MAX_VALUE),equalTo(empty));
+        assertThat(str.takeRight(Integer.MAX_VALUE),equalTo(str));
+        assertThat(str.takeRight(-2),equalTo(empty));
+        assertThat(str.takeRight(2).toString(),equalTo("ld"));
     }
 
     @Test
