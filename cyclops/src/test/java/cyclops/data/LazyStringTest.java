@@ -450,6 +450,10 @@ public class LazyStringTest {
 
     @Test
     public void prependStream() {
+        assertThat(empty.prependStream(str.stream()),equalTo(str));
+        assertThat(str.prependStream(empty.stream()),equalTo(str));
+        assertThat(str.prependStream(str.stream()).toString(),equalTo("hello worldhello world"));
+        assertThat(str.prependStream(LazyString.of("bob").stream()).toString(),equalTo("bobhello world"));
     }
 
     @Test
@@ -458,6 +462,10 @@ public class LazyStringTest {
 
     @Test
     public void prependAll() {
+        assertThat(empty.prependAll(str.stream()),equalTo(str));
+        assertThat(str.prependAll(empty.stream()),equalTo(str));
+        assertThat(str.prependAll(str.stream()).toString(),equalTo("hello worldhello world"));
+        assertThat(str.prependAll(LazyString.of("bob").stream()).toString(),equalTo("bobhello world"));
     }
 
     @Test
@@ -537,6 +545,10 @@ public class LazyStringTest {
 
     @Test
     public void prependAll1() {
+        assertThat(empty.prependAll(str),equalTo(str));
+        assertThat(str.prependAll(empty),equalTo(str));
+        assertThat(str.prependAll(str).toString(),equalTo("hello worldhello world"));
+        assertThat(str.prependAll(LazyString.of("bob")).toString(),equalTo("bobhello world"));
     }
 
     @Test
@@ -545,6 +557,10 @@ public class LazyStringTest {
 
     @Test
     public void prependAll2() {
+        assertThat(empty.prependAll(str.stream().toArray(i->new Character[i])),equalTo(str));
+        assertThat(str.prependAll(empty.stream().toArray(i->new Character[i])),equalTo(str));
+        assertThat(str.prependAll(str.stream().toArray(i->new Character[i])).toString(),equalTo("hello worldhello world"));
+        assertThat(str.prependAll(LazyString.of("bob").stream().toArray(i->new Character[i])).toString(),equalTo("bobhello world"));
     }
 
     @Test
