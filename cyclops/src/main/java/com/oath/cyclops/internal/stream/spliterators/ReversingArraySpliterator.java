@@ -7,8 +7,8 @@ import java.util.function.Consumer;
 import lombok.Getter;
 import lombok.Setter;
 
-//@AllArgsConstructor
-public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableSpliterator<T>, Indexable<T> {
+
+public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableSpliterator<T> {
 
     private final Object[] array;
     private int max;
@@ -104,22 +104,6 @@ public class ReversingArraySpliterator<T> implements Spliterator<T>, ReversableS
 
         return new ReversingArraySpliterator<T>(
                                                 array, start,max,reverse);
-    }
-
-    @Override
-    public Spliterator<T> skip(long offset) {
-    this.start = index= this.start+(int)offset;
-        return new ReversingArraySpliterator<T>(
-                array, start, max,reverse);
-
-
-    }
-
-    @Override
-    public Spliterator<T> take(long num) {
-        this.max = start+(int)num;
-        return new ReversingArraySpliterator<T>(
-                array, start, max,reverse);
     }
 
 

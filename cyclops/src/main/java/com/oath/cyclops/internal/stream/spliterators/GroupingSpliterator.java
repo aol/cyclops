@@ -66,7 +66,7 @@ public class GroupingSpliterator<T, C extends PersistentCollection<? super T>,R>
     public boolean tryAdvance(Consumer<? super R> action) {
         if(closed)
             return false;
-        for(int i=collection.size();i<groupSize;i++) {
+        for(int i=collection.size();collection.size()<groupSize;i++) {
             boolean canAdvance = source.tryAdvance(t -> {
                 collection = (C)collection.plus(t);
 
