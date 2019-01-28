@@ -401,7 +401,7 @@ public final class LazyString implements ImmutableList<Character>,Higher<lazyStr
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return string.isEmpty();
     }
 
     public int length(){

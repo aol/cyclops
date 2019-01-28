@@ -28,6 +28,7 @@ import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.companion.Streamable;
 
+import org.hamcrest.core.IsEqual;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -550,6 +551,19 @@ public abstract class AbstractIterableXTest {
 	    assertThat(of(1,2,3).slice(0,3),hasItems(1,2,3));
 	    assertThat(empty().slice(0,2).size(),equalTo(0));
 	}
+
+	@Test
+    public void sliceTest(){
+        Assert.assertThat(empty.slice(0,100), IsEqual.equalTo(empty));
+        Assert.assertThat(empty.slice(-100,100), IsEqual.equalTo(empty));
+        Assert.assertThat(empty.slice(-100,Integer.MAX_VALUE), IsEqual.equalTo(empty));
+
+        Assert.assertThat(of(1,2,3,4,5,6,7).slice(0,100), IsEqual.equalTo(of(1,2,3,4,5,6,7)));
+        Assert.assertThat(of(1,2,3,4,5,6,7).slice(-100,100), IsEqual.equalTo(of(1,2,3,4,5,6,7)));
+        Assert.assertThat(of(1,2,3,4,5,6,7).slice(-100,Integer.MAX_VALUE), IsEqual.equalTo(of(1,2,3,4,5,6,7)));
+
+        Assert.assertThat(of(1,2,3,4,5,6,7).slice(3,7).size(), IsEqual.equalTo(4));
+    }
 
 	@Test
     public void testTake(){
@@ -1609,54 +1623,54 @@ public abstract class AbstractIterableXTest {
     }
 
 
-
     @Test
-    public void notEqualNull(){
+    public void notEqualNull() {
         assertFalse(empty().equals(null));
     }
 
 
-	    @Test
-	    public void testReverse() {
-	        assertThat( of(1, 2, 3).reverse().toList().size(), is(asList(3, 2, 1).size()));
-	    }
+    @Test
+    public void testReverse() {
+        assertThat(of(1, 2, 3).reverse().toList().size(), is(asList(3, 2, 1).size()));
+    }
 
-	    @Test
-	    public void testShuffle() {
+    @Test
+    public void testShuffle() {
 
-	        Supplier<IterableX<Integer>> s = () ->of(1, 2, 3);
+        Supplier<IterableX<Integer>> s = () -> of(1, 2, 3);
 
-	        assertEquals(3, ((IterableX<Integer>)s.get().shuffle()).toList().size());
-	        assertThat(((IterableX<Integer>)s.get().shuffle()).toList(), hasItems(1, 2, 3));
+        assertEquals(3, ((IterableX<Integer>) s.get().shuffle()).toList().size());
+        assertThat(((IterableX<Integer>) s.get().shuffle()).toList(), hasItems(1, 2, 3));
 
+    }
 
-	    }
-	    @Test
-	    public void testShuffleRandom() {
-	        Random r = new Random();
-	        Supplier<IterableX<Integer>> s = () ->of(1, 2, 3);
+    @Test
+    public void shuffleEmpty() {
+        assertThat(empty().shuffle(), equalTo(empty()));
+    }
 
-	        assertEquals(3, ((IterableX<Integer>)s.get()).shuffle(r).toList().size());
-	        assertThat(((IterableX<Integer>)s.get()).shuffle(r).toList(), hasItems(1, 2, 3));
+    @Test
+    public void testShuffleRandom() {
+        Random r = new Random();
+        Supplier<IterableX<Integer>> s = () -> of(1, 2, 3);
 
-
-	    }
-
-
-
-
+        assertEquals(3, ((IterableX<Integer>) s.get()).shuffle(r).toList().size());
+        assertThat(((IterableX<Integer>) s.get()).shuffle(r).toList(), hasItems(1, 2, 3));
 
 
-	        @Test
-	        public void testMinByMaxBy2() {
-	            Supplier<IterableX<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+    }
 
-	            assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).orElse(-1));
-	            assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).orElse(-1));
 
-	            assertEquals(6, (int) s.get().maxBy(t -> "" + t).orElse(-1));
-	            assertEquals(1, (int) s.get().minBy(t -> "" + t).orElse(-1));
-	        }
+    @Test
+    public void testMinByMaxBy2() {
+        Supplier<IterableX<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+
+        assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).orElse(-1));
+        assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).orElse(-1));
+
+        assertEquals(6, (int) s.get().maxBy(t -> "" + t).orElse(-1));
+        assertEquals(1, (int) s.get().minBy(t -> "" + t).orElse(-1));
+    }
 
 
 
