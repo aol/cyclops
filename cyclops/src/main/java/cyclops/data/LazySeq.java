@@ -787,6 +787,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
     @Override
     default LazySeq<T> takeRight(int num) {
+          if(num>size())
+              return this;
         return (LazySeq<T>) ImmutableList.super.takeRight(num);
     }
 

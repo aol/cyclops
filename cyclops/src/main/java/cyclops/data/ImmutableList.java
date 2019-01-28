@@ -641,6 +641,8 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
     @Override
     default ImmutableList<T> dropRight(int num) {
+        if(num>size())
+            return emptyUnit();
         return unitStream(stream().dropRight(num));
     }
 

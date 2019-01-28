@@ -619,6 +619,22 @@ public abstract class AbstractIterableXTest {
 	    assertThat(of(1,2,3).dropRight(1).toList(),hasItems(1,2));
         assertThat(of(1,2,3).dropRight(1).toList().size(),equalTo(2));
 	}
+    @Test
+    public void dropRightLarge(){
+        assertThat(of(1,2,3).dropRight(Integer.MAX_VALUE).toList(),equalTo(Arrays.asList()));
+    }
+    @Test
+    public void dropRightNegative(){
+        assertThat(of(1,2,3).dropRight(-10000).toList(),equalTo(Arrays.asList(1,2,3)));
+    }
+    @Test
+    public void takeRightLarge(){
+        assertThat(of(1,2,3).takeRight(Integer.MAX_VALUE).toList(),equalTo(Arrays.asList(1,2,3)));
+    }
+    @Test
+    public void takeRightNegative(){
+        assertThat(of(1,2,3).takeRight(-10000).toList(),equalTo(Arrays.asList()));
+    }
 	@Test
 	public void dropRightEmpty(){
 		assertThat(of().dropRight(1),equalTo(of()));
