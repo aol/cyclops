@@ -67,12 +67,12 @@ public class SpoutsTest {
         System.out.println("Vec1 " + vec.vector());
         vec = vec.insertAt(Math.max(0,vec.size()),Spouts.of(2));
 
-        System.out.println("Vec " + vec.vector());
-        Iterator<Integer> it = vec.iterator();
+       // System.out.println("Vec " + vec.vector());
+        /**Iterator<Integer> it = vec.iterator();
         while(it.hasNext()){
             System.out.println(it.next());
-        }
-        assertThat(vec,equalTo(of(1,2)));
+        }**/
+        assertThat(vec,equalTo(Spouts.of(1,2)));
     }
     @Test
     public void rangeMaxConcurrencyM32() {

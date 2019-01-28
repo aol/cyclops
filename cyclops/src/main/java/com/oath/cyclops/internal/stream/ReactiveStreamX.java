@@ -1498,31 +1498,5 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }
         return super.equals(obj);
     }
-    @Override
-    public ReactiveSeq<T> insertAt(int pos, Iterable<? extends T> values){
-        return insertAt(1,ReactiveSeq.fromIterable(values));
-
-    }
-
-    @Override
-    public ReactiveSeq<T> insertAt(int pos, ReactiveSeq<? extends T> values){
-        if(pos==0){
-            return prependStream(Spouts.fromIterable(values));
-        }
-        long check =  new Long(pos);
-        boolean added[] = {false};
-        long index[] = {0};
-        return  flatMap(t -> {
-
-            if (index[0]++ < check && !added[0])
-                return Spouts.of(t);
-            if (!added[0]) {
-                added[0] = true;
-                return Spouts.concat(values, Spouts.of(t));
-            }
-            return Spouts.of(t);
-        }).onEmptySwitch(()->ReactiveSeq.narrow(values));
-
-    }
-
+   
 }
