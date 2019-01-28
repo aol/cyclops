@@ -722,7 +722,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public ReactiveSeq<T> prependStream(final Stream<? extends T> other) {
-        return Spouts.concat((Stream<T>) (other), this);
+        return Spouts.concat(other, this);
     }
 
     public ReactiveSeq<T> prependAll(final Iterable<? extends T> other) {
@@ -1499,53 +1499,30 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return super.equals(obj);
     }
     @Override
-    public ReactiveSeq<T> insertAt(int pos, ReactiveSeq<? extends T> values){
-        if(pos==0){
-            return prependStream(values);
-        }
-        long check =  new Long(pos);
-        boolean added[] = {false};
-
-        return  Spouts.<T>concat(zipWithIndex().flatMap(t -> {
-            if (t._2() < check && !added[0])
-                return Spouts.of(t._1());
-            if (!added[0]) {
-                added[0]=true;
-                return Spouts.concat(values, Spouts.of(t._1()));
-            }
-            return Spouts.of(t._1());
-        }), Spouts.deferFromStream(()-> {
-                return !added[0] ? values : Spouts.empty();
-            }
-        ));
-
-
-
+    public ReactiveSeq<T> insertAt(int pos, Iterable<? extends T> values){
+        return insertAt(1,ReactiveSeq.fromIterable(values));
 
     }
+
     @Override
-    public ReactiveSeq<T> insertAt(int pos, Iterable<? extends T> values){
+    public ReactiveSeq<T> insertAt(int pos, ReactiveSeq<? extends T> values){
         if(pos==0){
             return prependStream(Spouts.fromIterable(values));
         }
         long check =  new Long(pos);
         boolean added[] = {false};
-        return  Spouts.<T>concat(zipWithIndex().flatMap(t -> {
-            if (t._2() < check && !added[0])
-                return Spouts.of(t._1());
+        long index[] = {0};
+        return  flatMap(t -> {
+
+            if (index[0]++ < check && !added[0])
+                return Spouts.of(t);
             if (!added[0]) {
                 added[0] = true;
-                return Spouts.concat(Spouts.fromIterable(values), Spouts.of(t._1()));
+                return Spouts.concat(values, Spouts.of(t));
             }
-            return Stream.of(t._1());
-        }), Spouts.deferFromStream(()-> {
-                return !added[0] ? Spouts.fromIterable(values) : Spouts.empty();
-            }
-        ));
-
-
+            return Spouts.of(t);
+        }).onEmptySwitch(()->ReactiveSeq.narrow(values));
 
     }
-
 
 }

@@ -291,8 +291,8 @@ public  class AsyncRSReactiveStreamXTest {
     }
     @Test
     public void onEmptySwitchGet(){
-       // for(int i=0;i<ITERATIONS;i++){
-        for(int i=0;i<100_000;i++){
+	    for(int i=0;i<ITERATIONS;i++){
+        //for(int i=0;i<100_000;i++){
             System.out.println("Iteration " + i);
             assertThat(of()
                             .onEmptyGet(() -> 1).mergeMap(a->ReactiveSeq.of(1))
