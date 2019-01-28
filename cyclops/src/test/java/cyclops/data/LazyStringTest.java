@@ -4,12 +4,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.*;
@@ -412,18 +416,36 @@ public class LazyStringTest {
 
     @Test
     public void shuffle() {
+        assertThat(empty.shuffle(),equalTo(empty));
+        List<Character> list = str.shuffle().listView();
+        System.out.println(list);
+        assertThat(list,hasItems(str.lazySeq().listView().toArray(new Character[0])));
     }
 
     @Test
     public void shuffle1() {
+        assertThat(empty.shuffle(new Random()),equalTo(empty));
+        assertThat(str.shuffle(new Random()),hasItems(str.lazySeq().listView().toArray(new Character[0])));
+
     }
 
     @Test
     public void slice() {
+        assertThat(empty.slice(0,100),equalTo(empty));
+        assertThat(empty.slice(-100,100),equalTo(empty));
+        assertThat(empty.slice(-100,Integer.MAX_VALUE),equalTo(empty));
+
+        assertThat(str.slice(0,100),equalTo(str));
+        assertThat(str.slice(-100,100),equalTo(str));
+        assertThat(str.slice(-100,Integer.MAX_VALUE),equalTo(str));
+
+        assertThat(str.slice(3,7).toString(),equalTo("lo w"));
     }
 
     @Test
     public void sorted2() {
+        assertThat(empty.sorted(i->i.hashCode()),equalTo(empty));
+        assertThat(str.sorted(i->i.hashCode()).toString(),equalTo(" dehllloorw"));
     }
 
     @Test
@@ -452,10 +474,17 @@ public class LazyStringTest {
 
     @Test
     public void plusAll() {
+        assertThat(empty.plusAll(str),equalTo(str));
+        assertThat(str.plusAll(empty),equalTo(str));
+        assertThat(str.plusAll(str).toString(),equalTo("hello worldhello world"));
+        assertThat(str.plusAll(LazyString.of("bob")).toString(),equalTo("bobhello world"));
+
     }
 
     @Test
     public void plus() {
+        assertThat(empty.plus('a'),equalTo(LazyString.of("a")));
+        assertThat(str.plus('a'),equalTo(LazyString.of("ahello world")));
     }
 
     @Test
@@ -524,17 +553,25 @@ public class LazyStringTest {
 
     @Test
     public void size() {
+        assertThat(empty.size(),equalTo(0));
+        assertThat(str.size(),equalTo("hello world".length()));
     }
 
     @Test
     public void isEmpty() {
+        assertThat(empty.isEmpty(),equalTo(true));
+        assertThat(str.isEmpty(),equalTo(false));
     }
 
     @Test
     public void length() {
+        assertThat(empty.length(),equalTo(0));
+        assertThat(str.length(),equalTo("hello world".length()));
     }
 
     @Test
     public void toStringTest() {
+        assertThat(empty.toString(),equalTo(""));
+        assertThat(str.toString(),equalTo("hello world"));
     }
 }
