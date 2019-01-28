@@ -174,4 +174,18 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
         return sync.apply(this);
     }
 
+    @Override
+    public int hashCode() {
+        return vector().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof  ReactiveSeq){
+            ReactiveSeq it = (ReactiveSeq) obj;
+            return this.equalToIteration(it);
+
+        }
+        return super.equals(obj);
+    }
 }

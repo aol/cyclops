@@ -3774,22 +3774,32 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Remove all occurances of the specified element from the ReactiveSeq
+     * Remove first occurance of the specified element from the ReactiveSeq
      *
      * <pre>
      * {@code
      * 	ReactiveSeq.of(1,2,3,4,5,1,2,3).removeValue(1)
      *
-     *  //Streamable[2,3,4,5,2,3]
+     *  //ReactiveSeq[2,3,4,5,1,2,3]
      * }
      * </pre>
      *
      * @param t
-     *            element to removeValue
-     * @return Filtered Stream / ReactiveSeq
+     *            element to remove
+     * @return Filtered ReactiveSeq
      */
     default ReactiveSeq<T> removeValue(final T t) {
-        return this.filter(v -> v != t);
+        boolean[] found = {false};
+        return this.filter(v -> {
+            if(found[0])
+                return true;
+            if(v==t){
+                found[0]=true;
+                return false;
+            }
+            return true;
+
+        });
     }
 
 

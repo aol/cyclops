@@ -2,6 +2,8 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
 import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.function.Consumer;
 
 /**
@@ -20,7 +22,7 @@ public class SkipLastOperator<T,R> extends BaseOperator<T,T> {
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
 
-        ArrayDeque<T> buffer = new ArrayDeque<T>();
+        final Deque<T> buffer = skip < 1_000 ? new ArrayDeque<T>((int)skip) : new LinkedList<>() ;
         StreamSubscription sub[] = {null};
         StreamSubscription res = new StreamSubscription(){
             @Override

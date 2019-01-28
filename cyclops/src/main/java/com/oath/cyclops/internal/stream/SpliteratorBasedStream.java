@@ -222,10 +222,6 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     @Override
     public ReactiveSeq<T> skip(final long num) {
-        if(this.stream instanceof Indexable){
-            Indexable<T> indexable = (Indexable)stream;
-            return createSeq(indexable.skip(num),reversible);
-        }
         return createSeq(new SkipSpliterator<>(get(),num), reversible);
     }
 
@@ -246,13 +242,6 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     @Override
     public ReactiveSeq<T> limit(final long num) {
 
-
-       if(this.stream instanceof Indexable){
-           Indexable<T> indexable = (Indexable)stream;
-           Spliterator<T> limit = indexable.take(num);
-
-           return createSeq(limit,Optional.empty());
-       }
         return createSeq(new LimitSpliterator<T>(get(),num), reversible);
     }
 

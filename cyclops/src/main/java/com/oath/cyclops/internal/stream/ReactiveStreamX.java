@@ -726,7 +726,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     public ReactiveSeq<T> prependAll(final Iterable<? extends T> other) {
-        return Spouts.concat((Stream<T>) (other), this);
+        return Spouts.concat((Spouts.fromIterable( other)), this);
     }
 
     @Override
@@ -1480,6 +1480,22 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         });
         return maybe;
     }
+
+    @Override
+    public int hashCode() {
+        return vector().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof  ReactiveSeq){
+            ReactiveSeq it = (ReactiveSeq) obj;
+            return this.equalToIteration(it);
+
+        }
+        return super.equals(obj);
+    }
+
 
 
 }
