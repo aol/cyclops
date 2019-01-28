@@ -814,6 +814,8 @@ public interface Seq<T> extends ImmutableList<T>,
         @Override
         public Seq<T> updateAt(int i, T value) {
 
+            if(i>size()-1)
+                return this;
             if(i==0) {
                 if(Objects.equals(head,value))
                     return this;
