@@ -2247,7 +2247,7 @@ public abstract class AbstractIterableXTest {
         System.out.println("Vec1 " + vec);
         vec = vec.insertAt(Math.max(0,vec.size()),of(2));
 
-        System.out.println("Vec " + vec.vector());
+       // System.out.println("Vec " + vec.vector());
         assertThat(vec,equalTo(of(1,2)));
     }
 

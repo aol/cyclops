@@ -16,6 +16,7 @@ import cyclops.data.HashSet;
 import cyclops.data.ImmutableSet;
 import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -26,6 +27,7 @@ import java.util.stream.Stream;
 import static cyclops.data.tuple.Tuple.tuple;
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -391,6 +393,34 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
 
 
         assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
+    }
+    @Test
+    public void drop2Reversed(){
+        System.out.println(Spouts.range(0,10).vector());
+        System.out.println(ReactiveSeq.range(0,10).vector());
+        System.out.println(range(0,10).reverse().vector());
+        System.out.println("RS"  + ReactiveSeq.range(0,10).reverse().vector());
+        assertThat(range(0,10).reverse().drop(2).toList().size(),equalTo(8));
+        assertThat(range(0,10).reverse().drop(2).toList(),not(contains(10)));
+    }
+    @Test
+    public void drop2ReversedLong(){
+        System.out.println(Spouts.rangeLong(0,10).vector());
+        System.out.println(ReactiveSeq.range(0,10).vector());
+        System.out.println(range(0,10).reverse().vector());
+        System.out.println(ReactiveSeq.range(0,10).reverse().vector());
+        assertThat(rangeLong(0,10).reverse().drop(2).toList().size(),equalTo(8));
+        assertThat(rangeLong(0,10).reverse().drop(2).toList(),not(contains(10)));
+    }
+    @Test
+    public void take2ReversedLong(){
+        System.out.println(Spouts.rangeLong(0,10).vector());
+        System.out.println(ReactiveSeq.range(0,10).vector());
+        System.out.println(range(0,10).reverse().vector());
+        System.out.println(ReactiveSeq.range(0,10).reverse().vector());
+        System.out.println(ReactiveSeq.rangeLong(0,10).reverse().vector());
+        assertThat(rangeLong(0,10).reverse().take(2).toList().size(),equalTo(2));
+        assertThat(rangeLong(0,10).reverse().take(2).toList(),not(contains(10)));
     }
 
 }
