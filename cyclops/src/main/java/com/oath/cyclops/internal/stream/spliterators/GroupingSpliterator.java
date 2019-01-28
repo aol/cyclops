@@ -20,11 +20,10 @@ public class GroupingSpliterator<T, C extends PersistentCollection<? super T>,R>
     private final int groupSize;
     public GroupingSpliterator(final Spliterator<T> source, Supplier<? extends C> factory, Function<? super C, ? extends R> finalizer,int groupSize) {
         super(source.estimateSize(),source.characteristics() & Spliterator.ORDERED);
-        if(groupSize<=0)
-            throw new IllegalArgumentException("Group size must be greater than ");
+
         this.source = source;
         this.factory = factory;
-        this.groupSize = groupSize;
+        this.groupSize = groupSize >0 ? groupSize : 1;
         this.finalizer=finalizer;
         collection =factory.get();
 
