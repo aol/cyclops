@@ -1,6 +1,9 @@
 package cyclops.reactive;
 
 
+import com.oath.cyclops.util.ExceptionSoftener;
+
+import cyclops.companion.Semigroups;
 import cyclops.control.Future;
 import cyclops.control.Try;
 import org.hamcrest.MatcherAssert;
@@ -13,13 +16,19 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.SocketException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import static com.oath.cyclops.util.ExceptionSoftener.softenFunction;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
@@ -31,6 +40,41 @@ import static org.hamcrest.Matchers.is;
 public class IOTest {
   Executor ex = Executors.newFixedThreadPool(1);
   RuntimeException re = new RuntimeException();
+
+  static class My{
+      public String mayThrowCheckedException() throws Exception{
+            throw new RuntimeException("Erorr thrown");
+      }
+  }
+
+  @Test
+  public void getHost() throws MalformedURLException {
+      URL u = new URL("http://test.yahoo.com");
+      System.out.println(u.getHost());
+  }
+ @Test
+ public void errorHandling(){
+     List<My> myList = Arrays.asList(new My(), new My(), new My());
+     ReactiveSeq.fromIterable(myList);
+
+
+     IO.sync(myList)
+       .checkedMap(My::mayThrowCheckedException)
+       .forEach(System.out::println,System.err::println,()->System.out.println("Complete"));
+
+
+     String errorMessage = IO.sync(myList)
+                             .mapTry(softenFunction(My::mayThrowCheckedException))
+                             .map(Try::toEither)
+                             .map(e->e.mapLeft(Throwable::getMessage))
+                             .map(e->e.leftOrElse("No Exception"))
+                             .stream()
+                             .collect(Collectors.joining(","));
+
+     System.out.println(errorMessage);
+
+    
+ }
 
   @Test
   public void withCatch(){

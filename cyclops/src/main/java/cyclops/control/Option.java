@@ -866,6 +866,8 @@ public interface Option<T> extends To<Option<T>>,
             return fn2.apply(this);
         }
     }
+
+    @Deprecated
   public static class Comprehensions {
 
     public static <T,F,R1, R2, R3,R4,R5,R6,R7> Option<R7> forEach(Option<T> option,

@@ -61,6 +61,7 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     static <T> TrieSet<T> generate(Supplier<T> s, int max){
         return fromStream(ReactiveSeq.generate(s).limit(max));
     }
+    @Deprecated
     static <T> TrieSet<T> generate(Generator<T> s){
         return fromStream(ReactiveSeq.generate(s));
     }
