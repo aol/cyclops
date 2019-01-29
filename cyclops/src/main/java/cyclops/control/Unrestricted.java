@@ -23,7 +23,8 @@ import java.util.function.Function;
  * @param <T> Data type of Transformable
  */
 @NoArgsConstructor(access=AccessLevel.PRIVATE)
-@Deprecated
+@Deprecated //use Free  in  cyclops-pure
+            // or Tag-less final instead (https://medium.com/@johnmcclean/powerful-extensible-code-with-tagless-final-in-java-4094f923cdea)
 public abstract class Unrestricted<T> {
 
     /**

@@ -28,6 +28,7 @@ import java.util.stream.Collector;
  *
  * @param <T> Data types of elements managed by wrapped scalar Monad.
  */
+@Deprecated //use cyclops-pure Do instead
 public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>,
                                                                 AnyMValue<W,T>,
                                                                 Value<T>,
