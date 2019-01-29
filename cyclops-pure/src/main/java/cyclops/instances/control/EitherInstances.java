@@ -210,6 +210,42 @@ public class EitherInstances {
     }
 
 
+    public static <L> Functor<Higher<either, L>> functor() {
+        return INSTANCE;
+    }
+    public static <L> Pure<Higher<either, L>> unit() {
+        return INSTANCE;
+    }
+    public static <L> Applicative<Higher<either, L>> applicative() {
+        return INSTANCE;
+    }
+    public static <L> Monad<Higher<either, L>> monad() {
+        return INSTANCE;
+    }
+    public static <X,T,R> MonadRec<Higher<either, X>> monadRec() {
 
+        return INSTANCE;
+
+
+    }
+    public static BiFunctor<either> bifunctor(){
+        return new BiFunctor<either>() {
+            @Override
+            public <T, R, T2, R2> Higher2<either, R, R2> bimap(Function<? super T, ? extends R> fn, Function<? super T2, ? extends R2> fn2, Higher2<either, T, T2> ds) {
+                return narrowK(ds).bimap(fn,fn2);
+            }
+        };
+    }
+    public static <L> Traverse<Higher<either, L>> traverse() {
+        return INSTANCE;
+    }
+    public static <L> Foldable<Higher<either, L>> foldable() {
+        return INSTANCE;
+    }
+
+
+    public static <L> ApplicativeError<Higher<either, L>,L> applicativeError(){
+        return INSTANCE;
+    }
 
 }
