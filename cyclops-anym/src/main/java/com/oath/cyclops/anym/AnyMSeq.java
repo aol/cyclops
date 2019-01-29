@@ -44,6 +44,7 @@ import cyclops.function.Function3;
  *
  * @param <T> Data types of elements managed by wrapped non-scalar Monad.
  */
+@Deprecated //use cyclops-pure Do instead
 public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, TransformerTraversable<T>,IterableX<T>,  RecoverableTraversable<T>, Publisher<T> {
 
 

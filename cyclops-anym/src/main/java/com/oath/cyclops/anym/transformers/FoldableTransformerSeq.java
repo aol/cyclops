@@ -14,6 +14,7 @@ import cyclops.monads.WitnessType;
  *
  * @param <T> Data type of elements in nest Monad
  */
+@Deprecated
 public interface FoldableTransformerSeq<W extends WitnessType<W>,T> extends TransformerSeq<W,T>,
                                                                             NestedFoldable<W,T>,
   NestedCollectable<W,T>,

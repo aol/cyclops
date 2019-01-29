@@ -18,6 +18,7 @@ import cyclops.monads.WitnessType;
 import cyclops.function.Function4;
 import cyclops.function.Function3;
 
+@Deprecated
 public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Publisher<T>,
   Unwrapable,
   Unit<T>,
