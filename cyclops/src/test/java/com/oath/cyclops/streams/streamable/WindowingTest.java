@@ -150,12 +150,12 @@ public class WindowingTest {
 			assertThat( empty.grouped(10).count(),equalTo(0l));
 	}
 
-	@Test(expected=IllegalArgumentException.class)
+	@Test
 	public void groupedEmpty0() throws Exception {
 		empty.grouped(0).toList();
 
 	}
-	@Test(expected=IllegalArgumentException.class)
+	@Test
 	public void grouped0() throws Exception {
 		nonEmpty.grouped(0).toList();
 

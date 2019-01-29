@@ -1,6 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.ints;
 
-import com.oath.cyclops.internal.stream.spliterators.Indexable;
+
 import com.oath.cyclops.internal.stream.spliterators.ReversableSpliterator;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
 //@AllArgsConstructor
-public class ReversingIntArraySpliterator<Integer> implements Spliterator.OfInt,ReversableSpliterator<java.lang.Integer>, Indexable<java.lang.Integer> {
+public class ReversingIntArraySpliterator<Integer> implements Spliterator.OfInt,ReversableSpliterator<java.lang.Integer> {
 
     private final int[] array;
     private int max;
@@ -152,16 +152,6 @@ public class ReversingIntArraySpliterator<Integer> implements Spliterator.OfInt,
                 array, start,max,reverse);
     }
 
-    @Override
-    public Spliterator<java.lang.Integer> skip(long offset) {
-        this.start = index= this.start+(int)offset;
-        return this;
-    }
 
-    @Override
-    public Spliterator<java.lang.Integer> take(long num) {
-        this.max = start+(int)num;
-        return this;
-    }
 
 }

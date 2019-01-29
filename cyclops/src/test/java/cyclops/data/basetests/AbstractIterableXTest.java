@@ -28,6 +28,7 @@ import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.companion.Streamable;
 
+import org.hamcrest.core.IsEqual;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -79,6 +80,17 @@ public abstract class AbstractIterableXTest {
                 .map(it ->it+"!!").collect(Collectors.toList());
 
         assertThat(result,equalTo(Arrays.asList("1!!","2!!","5!!","6!!")));
+    }
+    @Test
+    public void deleteBetweenEmpty(){
+        Assert.assertThat(empty.deleteBetween(0,100), IsEqual.equalTo(empty));
+        Assert.assertThat(empty.deleteBetween(-10000,10000), IsEqual.equalTo(empty));
+        Assert.assertThat(empty.deleteBetween(-10000,Integer.MAX_VALUE), IsEqual.equalTo(empty));
+    }
+    @Test
+    public void deleteBetweenMax(){
+        assertThat(of(1,2,3,4,5,6).deleteBetween(2,Integer.MAX_VALUE).size(),equalTo(2));
+        assertThat(of(1,2,3,4,5,6).deleteBetween(0,Integer.MAX_VALUE).size(),equalTo(0));
     }
     @Test
     public void insertAtIterable(){
@@ -338,6 +350,7 @@ public abstract class AbstractIterableXTest {
 
     @Test
     public void minusOneLarge(){
+        assertThat(range(0,10_000).size(),equalTo(10_000));
         assertThat(range(0,10_000).removeValue(1).size(),equalTo(9999));
         assertThat(range(0,10_000).append(1).removeValue(1).size(),equalTo(10000));
     }
@@ -552,6 +565,19 @@ public abstract class AbstractIterableXTest {
 	}
 
 	@Test
+    public void sliceTest(){
+        Assert.assertThat(empty.slice(0,100), IsEqual.equalTo(empty));
+        Assert.assertThat(empty.slice(-100,100), IsEqual.equalTo(empty));
+        Assert.assertThat(empty.slice(-100,Integer.MAX_VALUE), IsEqual.equalTo(empty));
+
+        Assert.assertThat(of(1,2,3,4,5,6,7).slice(0,100), IsEqual.equalTo(of(1,2,3,4,5,6,7)));
+        Assert.assertThat(of(1,2,3,4,5,6,7).slice(-100,100), IsEqual.equalTo(of(1,2,3,4,5,6,7)));
+        Assert.assertThat(of(1,2,3,4,5,6,7).slice(-100,Integer.MAX_VALUE), IsEqual.equalTo(of(1,2,3,4,5,6,7)));
+
+        Assert.assertThat(of(1,2,3,4,5,6,7).slice(3,7).size(), IsEqual.equalTo(4));
+    }
+
+	@Test
     public void testTake(){
         assertThat(of(1,2,3,4,5).take(2).collect(Collectors.toList()).size(),is(2));
         assertThat(of(1,2,3,4,5).take(5).collect(Collectors.toList()).size(),is(5));
@@ -619,6 +645,22 @@ public abstract class AbstractIterableXTest {
 	    assertThat(of(1,2,3).dropRight(1).toList(),hasItems(1,2));
         assertThat(of(1,2,3).dropRight(1).toList().size(),equalTo(2));
 	}
+    @Test
+    public void dropRightLarge(){
+        assertThat(of(1,2,3).dropRight(Integer.MAX_VALUE).toList(),equalTo(Arrays.asList()));
+    }
+    @Test
+    public void dropRightNegative(){
+        assertThat(of(1,2,3).dropRight(-10000).toList(),equalTo(Arrays.asList(1,2,3)));
+    }
+    @Test
+    public void takeRightLarge(){
+        assertThat(of(1,2,3).takeRight(Integer.MAX_VALUE).toList(),equalTo(Arrays.asList(1,2,3)));
+    }
+    @Test
+    public void takeRightNegative(){
+        assertThat(of(1,2,3).takeRight(-10000).toList(),equalTo(Arrays.asList()));
+    }
 	@Test
 	public void dropRightEmpty(){
 		assertThat(of().dropRight(1),equalTo(of()));
@@ -938,8 +980,12 @@ public abstract class AbstractIterableXTest {
                 .groupedUntil((s, i)->s.containsValue(4) ? true : false).toList());
         System.out.println(ReactiveSeq.of(1,2,3,4,5,6)
                 .groupedUntil((s, i)->s.containsValue(4) ? true : false).toList());
+        System.out.println(Spouts.of(1,2,3,4,5,6)
+            .groupedUntil((s, i)->s.containsValue(4) ? true : false).toList());
         System.out.println(Streamable.of(1,2,3,4,5,6)
                 .groupedUntil((s, i)->s.containsValue(4) ? true : false).toList());
+
+
         assertThat(of(1,2,3,4,5,6)
                 .groupedUntil((s, i)->s.containsValue(4) ? true : false)
                 .toList().size(),equalTo(2));
@@ -1593,54 +1639,54 @@ public abstract class AbstractIterableXTest {
     }
 
 
-
     @Test
-    public void notEqualNull(){
+    public void notEqualNull() {
         assertFalse(empty().equals(null));
     }
 
 
-	    @Test
-	    public void testReverse() {
-	        assertThat( of(1, 2, 3).reverse().toList().size(), is(asList(3, 2, 1).size()));
-	    }
+    @Test
+    public void testReverse() {
+        assertThat(of(1, 2, 3).reverse().toList().size(), is(asList(3, 2, 1).size()));
+    }
 
-	    @Test
-	    public void testShuffle() {
+    @Test
+    public void testShuffle() {
 
-	        Supplier<IterableX<Integer>> s = () ->of(1, 2, 3);
+        Supplier<IterableX<Integer>> s = () -> of(1, 2, 3);
 
-	        assertEquals(3, ((IterableX<Integer>)s.get().shuffle()).toList().size());
-	        assertThat(((IterableX<Integer>)s.get().shuffle()).toList(), hasItems(1, 2, 3));
+        assertEquals(3, ((IterableX<Integer>) s.get().shuffle()).toList().size());
+        assertThat(((IterableX<Integer>) s.get().shuffle()).toList(), hasItems(1, 2, 3));
 
+    }
 
-	    }
-	    @Test
-	    public void testShuffleRandom() {
-	        Random r = new Random();
-	        Supplier<IterableX<Integer>> s = () ->of(1, 2, 3);
+    @Test
+    public void shuffleEmpty() {
+        assertThat(empty().shuffle(), equalTo(empty()));
+    }
 
-	        assertEquals(3, ((IterableX<Integer>)s.get()).shuffle(r).toList().size());
-	        assertThat(((IterableX<Integer>)s.get()).shuffle(r).toList(), hasItems(1, 2, 3));
+    @Test
+    public void testShuffleRandom() {
+        Random r = new Random();
+        Supplier<IterableX<Integer>> s = () -> of(1, 2, 3);
 
-
-	    }
-
-
-
-
+        assertEquals(3, ((IterableX<Integer>) s.get()).shuffle(r).toList().size());
+        assertThat(((IterableX<Integer>) s.get()).shuffle(r).toList(), hasItems(1, 2, 3));
 
 
-	        @Test
-	        public void testMinByMaxBy2() {
-	            Supplier<IterableX<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+    }
 
-	            assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).orElse(-1));
-	            assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).orElse(-1));
 
-	            assertEquals(6, (int) s.get().maxBy(t -> "" + t).orElse(-1));
-	            assertEquals(1, (int) s.get().minBy(t -> "" + t).orElse(-1));
-	        }
+    @Test
+    public void testMinByMaxBy2() {
+        Supplier<IterableX<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+
+        assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).orElse(-1));
+        assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).orElse(-1));
+
+        assertEquals(6, (int) s.get().maxBy(t -> "" + t).orElse(-1));
+        assertEquals(1, (int) s.get().minBy(t -> "" + t).orElse(-1));
+    }
 
 
 
@@ -2201,7 +2247,7 @@ public abstract class AbstractIterableXTest {
         System.out.println("Vec1 " + vec);
         vec = vec.insertAt(Math.max(0,vec.size()),of(2));
 
-        System.out.println("Vec " + vec);
+       // System.out.println("Vec " + vec.vector());
         assertThat(vec,equalTo(of(1,2)));
     }
 
@@ -2211,6 +2257,7 @@ public abstract class AbstractIterableXTest {
         assertEquals(of("x", "b", "c"), of("a", "b", "c").updateAt(0, "x"));
         assertEquals(of("a", "x", "c"), of("a", "b", "c").updateAt(1, "x"));
         assertEquals(of("a", "b", "x"), of("a", "b", "c").updateAt(2, "x"));
+
     }
     @Test
     public void withLarge(){
@@ -2339,6 +2386,11 @@ public abstract class AbstractIterableXTest {
     }
 
     @Test
+    public void updateAtLargeOutOfRange(){
+        assertThat(of(1,2,3).updateAt(100,-1), not(hasItem(-1)));
+        assertThat(of(1,2,3).updateAt(Integer.MAX_VALUE,-1),  not(hasItem(-1)));
+    }
+    @Test
     public void largePlusAll(){
         assertThat(range(0,2000).insertAt(1010,of(-1,-2,-3)).size(),equalTo(2003));
         assertThat(range(0,2000).insertAt(10010,of(-1,-2,-3)).size(),equalTo(2003));
@@ -2444,7 +2496,8 @@ public abstract class AbstractIterableXTest {
     public void batchBySizeSet(){
         System.out.println("List = " + of(1,1,1,1,1,1).grouped(3,()-> TreeSet.empty()).toList());
         assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).toList().get(0).size(),is(1));
-        assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).toList().size(),is(2));
+        System.out.println(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).toList());
+        assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).toList().size(),is(1));
     }
     @Test
     public void batchBySizeSetEmpty(){
@@ -2612,7 +2665,7 @@ public abstract class AbstractIterableXTest {
     @Test
     public void rangeLongReversedSkip(){
         System.out.println(rangeLong(0,5).reverse()
-                .drop(3));
+                .drop(3).vector()); //0,1,2,3,4  : 4,3,2,1,0  1,0
         assertThat(rangeLong(0,5).reverse()
                 .drop(3).toList(),equalTo(Arrays.asList(1l,0l)));
     }
@@ -2645,9 +2698,44 @@ public abstract class AbstractIterableXTest {
     }
 
     @Test
+    public void rangeTest(){
+        assertThat(range(0,10).vector(),hasItems(0,1,2,3,4,5,6,7,8,9));
+        assertThat(range(0,10).reverse().vector(),hasItems(0,1,2,3,4,5,6,7,8,9));
+        assertThat(range(0,10).reverse().vector(),not(hasItem(10)));
+    }
+
+    @Test
     public void take2Reversed(){
-        range(0,10).reverse().take(2).printOut();
+        System.out.println(Spouts.range(0,10).vector());
+        System.out.println(ReactiveSeq.range(0,10).vector());
+        System.out.println(range(0,10).reverse().vector());
+        System.out.println("RS"  + ReactiveSeq.range(0,10).reverse().vector());
         assertThat(range(0,10).reverse().take(2).toList(),equalTo(Arrays.asList(9,8)));
+    }
+    @Test
+    public void take2ReversedLong(){
+        System.out.println(Spouts.rangeLong(0,10).vector());
+        System.out.println(ReactiveSeq.range(0,10).vector());
+        System.out.println(range(0,10).reverse().vector());
+        System.out.println(ReactiveSeq.range(0,10).reverse().vector());
+        System.out.println(ReactiveSeq.rangeLong(0,10).reverse().vector());
+        assertThat(rangeLong(0,10).reverse().take(2).toList(),equalTo(Arrays.asList(9l,8l)));
+    }
+    @Test
+    public void drop2Reversed(){
+        System.out.println(Spouts.range(0,10).vector());
+        System.out.println(ReactiveSeq.range(0,10).vector());
+        System.out.println(range(0,10).reverse().vector());
+        System.out.println("RS"  + ReactiveSeq.range(0,10).reverse().vector());
+        assertThat(range(0,10).reverse().drop(2).toList(),equalTo(Arrays.asList(7,6,5,4,3,2,1,0)));
+    }
+    @Test
+    public void drop2ReversedLong(){
+        System.out.println(Spouts.rangeLong(0,10).vector());
+        System.out.println(ReactiveSeq.range(0,10).vector());
+        System.out.println(range(0,10).reverse().vector());
+        System.out.println(ReactiveSeq.range(0,10).reverse().vector());
+        assertThat(rangeLong(0,10).reverse().drop(2).toList(),equalTo(Arrays.asList(7l,6l,5l,4l,3l,2l,1l,0l)));
     }
     @Test
     public void rangeIntReversedSkip(){

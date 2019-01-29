@@ -1,6 +1,8 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
 import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.function.Consumer;
 
 /**
@@ -19,7 +21,7 @@ public class LimitLastOperator<T,R> extends BaseOperator<T,T> {
 
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        final ArrayDeque<T> buffer = new ArrayDeque<T>(limit);
+        final Deque<T> buffer = limit < 1_000 ? new ArrayDeque<T>(limit) : new LinkedList<>() ;
         StreamSubscription upstream[] = {null};
         Runnable[] thunk = {()->{}};
         StreamSubscription result = new StreamSubscription(){

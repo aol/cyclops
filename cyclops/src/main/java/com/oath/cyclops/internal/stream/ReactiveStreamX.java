@@ -296,24 +296,24 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public ReactiveSeq<Vector<T>> groupedWhile(final BiPredicate<Vector<? super T>, ? super T> predicate) {
-        return createSeq(new GroupedStatefullyOperator<>(source, () -> Vector.empty(), Function.identity(), predicate));
+        return createSeq(new GroupedStatefullyOperator<>(source, () -> Vector.empty(), Function.identity(), predicate.negate()));
     }
 
     @Override
     public <C extends PersistentCollection<T>, R> ReactiveSeq<R> groupedWhile(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
                                                                               Function<? super C, ? extends R> finalizer) {
-        return this.<R>createSeq(new GroupedStatefullyOperator<>(source, factory, finalizer, predicate));
+        return this.<R>createSeq(new GroupedStatefullyOperator<>(source, factory, finalizer, predicate.negate()));
     }
 
     @Override
     public ReactiveSeq<Vector<T>> groupedUntil(final BiPredicate<Vector<? super T>, ? super T> predicate) {
-        return createSeq(new GroupedStatefullyOperator<>(source, () -> Vector.empty(), Function.identity(), predicate.negate()));
+        return createSeq(new GroupedStatefullyOperator<>(source, () -> Vector.empty(), Function.identity(), predicate));
     }
 
     @Override
     public <C extends PersistentCollection<T>, R> ReactiveSeq<R> groupedUntil(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
                                                                               Function<? super C, ? extends R> finalizer) {
-        return this.<R>createSeq(new GroupedStatefullyOperator<>(source, factory, finalizer, predicate.negate()));
+        return this.<R>createSeq(new GroupedStatefullyOperator<>(source, factory, finalizer, predicate));
     }
 
     @Override
@@ -722,11 +722,11 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public ReactiveSeq<T> prependStream(final Stream<? extends T> other) {
-        return Spouts.concat((Stream<T>) (other), this);
+        return Spouts.concat(other, this);
     }
 
     public ReactiveSeq<T> prependAll(final Iterable<? extends T> other) {
-        return Spouts.concat((Stream<T>) (other), this);
+        return Spouts.concat((Spouts.fromIterable( other)), this);
     }
 
     @Override
@@ -832,7 +832,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public ReactiveSeq<T> dropRight(final int num) {
-
+        if(num<=0)
+            return this;
         if(num==1)
             return createSeq(new SkipLastOneOperator<>(source));
         return createSeq(new SkipLastOperator<>(source, num < 0 ? 0 : num));
@@ -840,6 +841,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public ReactiveSeq<T> takeRight(final int num) {
+        if(num<=0)
+            return Spouts.empty();
         if (num == 1)
             return createSeq(new LimitLastOneOperator<>(source));
         return createSeq(new LimitLastOperator<>(source, num < 0 ? 0 : num));
@@ -1481,5 +1484,19 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return maybe;
     }
 
+    @Override
+    public int hashCode() {
+        return vector().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof  ReactiveSeq){
+            ReactiveSeq it = (ReactiveSeq) obj;
+            return this.equalToIteration(it);
+
+        }
+        return super.equals(obj);
+    }
 
 }

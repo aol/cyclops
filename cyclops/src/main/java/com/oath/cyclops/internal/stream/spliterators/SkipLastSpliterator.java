@@ -1,6 +1,8 @@
 package com.oath.cyclops.internal.stream.spliterators;
 
 import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.Spliterators.AbstractSpliterator;
@@ -21,14 +23,14 @@ public class SkipLastSpliterator<T> extends AbstractSpliterator<T> implements Co
     }
 
 
-    private final ArrayDeque<T> buffer;
+    private final Deque<T> buffer;
     private final int skip;
     private final Spliterator<T> source;
 
     public SkipLastSpliterator(final Spliterator<T> source, final int skip) {
         super(source.estimateSize(),source.characteristics() & Spliterator.ORDERED);
-        buffer = new ArrayDeque<>(
-                skip);
+        buffer = skip <1_000 ? new ArrayDeque<>(
+                skip) : new LinkedList<>();
         this.source = source;;
         this.skip = skip;
     }

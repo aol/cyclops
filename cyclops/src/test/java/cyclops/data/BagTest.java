@@ -177,7 +177,7 @@ public class BagTest extends BaseImmutableSetTest {
     public void batchBySizeSet(){
         System.out.println("List = " + of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).toList());
         assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).toList().get(0).size(),is(1));
-        assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).toList().size(),is(2));
+        assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).toList().size(),is(1));
     }
     @Test
     public void testCycleNoOrder() {
