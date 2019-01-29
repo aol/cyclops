@@ -60,13 +60,13 @@ public class RangeTest {
     public void intStreamCompareReversed(){
 
 
-        assertThat(11,
+        assertThat(0,
                 equalTo(ReactiveSeq.range(-5,6).reverse().sumInt(i->i)));
 
     }
     @Test
     public void longStreamCompareReversed(){
-        assertThat(11L,
+        assertThat(0L,
                 equalTo(ReactiveSeq.rangeLong(-5,6).reverse().sumLong(i->i)));
     }
     @Test
@@ -118,12 +118,12 @@ public class RangeTest {
 	@Test
 	public void rangeLongReversed(){
 		assertThat(ReactiveSeq.rangeLong(0,Long.MAX_VALUE).reverse()
-				.limit(2).toList(),equalTo(Arrays.asList(9223372036854775807l, 9223372036854775806l)));
+				.limit(2).toList(),equalTo(Arrays.asList(9223372036854775806l, 9223372036854775805l)));
 	}
     @Test
     public void rangeLongReversedSkip(){
         assertThat(ReactiveSeq.rangeLong(0,5).reverse()
-                .skip(3).toList(),equalTo(Arrays.asList(2l,1l)));
+                .skip(3).toList(),equalTo(Arrays.asList(1l,0l)));
     }
     @Test
     public void rangeLongSkip(){
@@ -138,12 +138,12 @@ public class RangeTest {
 	@Test
 	public void rangeIntReversed(){
 		assertThat(ReactiveSeq.range(0,Integer.MAX_VALUE).reverse()
-				.limit(2).toList(),equalTo(Arrays.asList(2147483647, 2147483646)));
+				.limit(2).toList(),equalTo(Arrays.asList(2147483646, 2147483645)));
 	}
     @Test
     public void rangeIntReversedSkip2(){
         assertThat(ReactiveSeq.range(0,5).reverse()
-                .skip(3).toList(),equalTo(Arrays.asList(2,1)));
+                .skip(3).toList(),equalTo(Arrays.asList(1,0)));
     }
 
     @Test
@@ -155,13 +155,13 @@ public class RangeTest {
     @Test
     public void take2Reversed(){
         ReactiveSeq.range(0,Integer.MAX_VALUE).reverse().limit(2).printOut();
-        assertThat(ReactiveSeq.range(0,Integer.MAX_VALUE).reverse().limit(2).toList(),equalTo(Arrays.asList(2147483647, 2147483646)));
+        assertThat(ReactiveSeq.range(0,Integer.MAX_VALUE).reverse().limit(2).toList(),equalTo(Arrays.asList(2147483646, 2147483645)));
     }
     @Test
     public void rangeIntReversedSkip(){
 
         assertThat(ReactiveSeq.range(0,Integer.MAX_VALUE).reverse()
-                .limit(10).skip(8).toList(),equalTo(Arrays.asList(2147483639, 2147483638)));
+                .limit(10).skip(8).toList(),equalTo(Arrays.asList(2147483638, 2147483637)));
     }
 
     @Test

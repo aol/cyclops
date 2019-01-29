@@ -109,9 +109,7 @@ public interface Option<T> extends To<Option<T>>,
         return future.toOption();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#concatMap(java.util.function.Function)
-     */
+
     @Override
     default <R> Option<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
         return (Option<R>) MonadicValue.super.concatMap(mapper);
@@ -123,9 +121,7 @@ public interface Option<T> extends To<Option<T>>,
         return opt;
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
-     */
+
     @Override
     default <R> Option<R> mergeMap(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
         return this.flatMap(a -> {

@@ -787,6 +787,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
     @Override
     default LazySeq<T> takeRight(int num) {
+          if(num>size())
+              return this;
         return (LazySeq<T>) ImmutableList.super.takeRight(num);
     }
 
@@ -1173,7 +1175,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
         @Override
         public LazySeq<T> updateAt(int i, T value) {
-
+            if(i<0)
+                return this;
             return defer(()->{
                 if(i==0) {
                     if(Objects.equals(head,value))
@@ -1181,6 +1184,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
                     return cons(Eval.now(value), tail);
                 }
                 if(i>1000){
+                    if(i>size()-1)
+                        return this;
                     LazySeq<T> front = take(i);
                     LazySeq<T> back = drop(i);
 
@@ -1233,6 +1238,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
         @Override
         public LazySeq<T> updateAt(int i, T value) {
+            if(i<0)
+                return this;
             return ref.get().updateAt(i,value);
         }
 

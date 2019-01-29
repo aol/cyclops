@@ -194,7 +194,7 @@ public  class AsyncReactiveStreamXTest {
     public void testReverseRange() {
 
         assertThat( ReactiveSeq.range(0,10)
-        				.reverse().toList(), equalTo(asList(10,9,8,7,6,5,4,3,2,1)));
+        				.reverse().toList(), equalTo(asList(9,8,7,6,5,4,3,2,1,0)));
     }
 	@Test
 	public void testCycleLong() {

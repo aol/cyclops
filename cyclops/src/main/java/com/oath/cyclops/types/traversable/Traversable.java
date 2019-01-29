@@ -776,6 +776,8 @@ public interface Traversable<T> extends Publisher<T>,
         return traversable().insertAt(pos,values);
     }
     default Traversable<T> updateAt(int i, T e){
+        if(i<0)
+            return this;
         return traversable().updateAt(i,e);
     }
     default Traversable<T> removeAt(long pos){

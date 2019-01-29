@@ -46,8 +46,12 @@ public interface IterableX<T> extends Traversable<T>,
         Iterator<T> it2 = iterable.iterator();
         Iterator<T> it1 = iterator();
         while(it2.hasNext() && it1.hasNext()){
-            if(!Objects.equals(it2.next(),it1.next()))
+            T a = it2.next();
+            T b= it1.next();
+            if(!Objects.equals(a,b)) {
+
                 return false;
+            }
         }
         return it2.hasNext() == it1.hasNext();
     }
@@ -569,6 +573,8 @@ public interface IterableX<T> extends Traversable<T>,
     }
     @Override
     default IterableX<T> updateAt(int pos, T value) {
+        if(pos<0)
+            return this;
         return (IterableX<T>)Traversable.super.updateAt(pos,value);
     }
 

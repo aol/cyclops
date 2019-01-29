@@ -864,7 +864,8 @@ public class BaseSequentialTest {
     }
     @Test
     public void insertAtIOutOfRangeEmpty() {
-        for(int k=0;k<ITERATIONS;k++) {
+       // for(int k=0;k<ITERATIONS;k++) {
+        for(int k=0;k<10_000;k++) {
             List<String> result = of().insertAt(1, Arrays.asList(100))
                     .map(it -> it + "!!").collect(Collectors.toList());
 

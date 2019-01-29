@@ -1,41 +1,57 @@
 package com.oath.cyclops.internal.stream.spliterators.longs;
 
-import com.oath.cyclops.internal.stream.spliterators.Indexable;
+import java.util.Objects;
+import java.util.Spliterator;
+import java.util.function.Consumer;
+import java.util.function.IntConsumer;
+import java.util.function.LongConsumer;
+
 import com.oath.cyclops.internal.stream.spliterators.ReversableSpliterator;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Objects;
-import java.util.Spliterator;
-import java.util.function.Consumer;
-import java.util.function.LongConsumer;
-
-public class ReversingRangeLongSpliterator implements Spliterator.OfLong, ReversableSpliterator<Long>, Indexable<Long> {
+public class ReversingRangeLongSpliterator implements Spliterator.OfLong,ReversableSpliterator<Long> {
 
     private final long min;
     private final long max;
     private long index;
     private long start;
-    private final long step;
+    private long step;
+
 
     @Getter
     @Setter
     private boolean reverse;
 
-    public ReversingRangeLongSpliterator(final long min, final long max, final long step,final boolean reverse) {
+    public ReversingRangeLongSpliterator(final long min, final long max, final long step, final boolean reverse) {
         this.min = min;
         this.max = max;
-        this.step = step;
-
         this.reverse = reverse;
-        if(!reverse)
-            start =index = min;
-        else
-            start = index=max;
+        this.step =step;
+        if(!reverse) {
+            start = index = min;
+        }
+        else {
+            start = index = max - 1;
+        }
+    }
+    ReversingRangeLongSpliterator(final long min, final long max, final long step, final boolean reverse,long start) {
+        this.min = min;
+        this.max = max;
+        this.reverse = reverse;
+        this.step =step;
+        this.start = start;
+        if(!reverse) {
+            index = start;
+        }
+        else {
+            index = start;
+        }
+
     }
 
     @Override
-    public ReversableSpliterator invert() {
+    public ReversingRangeLongSpliterator invert() {
         return new ReversingRangeLongSpliterator(min,max,step,!reverse);
 
     }
@@ -51,7 +67,7 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
             }
         }
         if (reverse) {
-            if (index > min && index <= max) {
+            if (index >= min && index <= max) {
                 consumer.accept(index);
                 index = index-step;
                 return true;
@@ -71,19 +87,17 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
     }
 
     @Override
-    public OfLong trySplit() {
+    public Spliterator.OfLong trySplit() {
         return this;
     }
 
     @Override
-    public ReversableSpliterator copy() {
+    public ReversingRangeLongSpliterator copy() {
         return new ReversingRangeLongSpliterator(
-                min, max, step,reverse);
+            min, max, step,reverse,start);
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Spliterator.OfInt#forEachRemaining(java.util.function.IntConsumer)
-     */
+
     @Override
     public void forEachRemaining(LongConsumer action) {
         long index = this.index; //use local index making spliterator reusable
@@ -95,7 +109,7 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
             }
         }
         if (reverse) {
-            for( ;index > min && index <= max;) {
+            for( ;index >= min && index <= max;) {
                 action.accept(index);
                 index = index-step;
 
@@ -104,9 +118,7 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
         }
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Spliterator.OfInt#forEachRemaining(java.util.function.Consumer)
-     */
+
     @Override
     public void forEachRemaining(Consumer<? super Long> action) {
         long index = this.index; //use local index making spliterator reusable
@@ -117,7 +129,7 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
             }
         }
         if (reverse) {
-            for( ;index > min && index <= max;) {
+            for( ;index >= min && index <= max;) {
                 action.accept(index);
                 index = index-step;
             }
@@ -125,35 +137,6 @@ public class ReversingRangeLongSpliterator implements Spliterator.OfLong, Revers
         }
     }
 
-    @Override
-    public Spliterator<Long> skip(long offset) {
-        if(reverse){
-            return new ReversingRangeLongSpliterator(
-                    min, max-(int)offset,step, reverse);
-
-        }else{
-            return new ReversingRangeLongSpliterator(
-                    start+(int)offset, max,step, reverse);
-        }
-
-
-    }
-
-    @Override
-    public Spliterator<Long> take(long number) {
-        if(reverse){
-            return new ReversingRangeLongSpliterator(
-                    max-(int)number, max, step,reverse);
-
-        }
-        else{
-            return new ReversingRangeLongSpliterator(
-                    min, start+(int)number, step,reverse);
-
-        }
-
-
-    }
 
 
 }

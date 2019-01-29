@@ -2,6 +2,7 @@ package cyclops.reactive;
 
 import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Semigroups;
 import com.oath.cyclops.async.QueueFactories;
@@ -34,6 +35,7 @@ import static com.oath.cyclops.types.foldable.Evaluation.LAZY;
 import static cyclops.reactive.ReactiveSeq.of;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.isOneOf;
@@ -55,6 +57,22 @@ public class SpoutsTest {
         i=0;
         count=0;
         err = null;
+    }
+
+    @Test
+    public void plusAllSize(){
+
+        ReactiveSeq<Integer> vec = Spouts.empty();
+        vec = vec.insertAt(Math.max(0,vec.size()),Spouts.of(1));
+        System.out.println("Vec1 " + vec.vector());
+        vec = vec.insertAt(Math.max(0,vec.size()),Spouts.of(2));
+
+       // System.out.println("Vec " + vec.vector());
+        /**Iterator<Integer> it = vec.iterator();
+        while(it.hasNext()){
+            System.out.println(it.next());
+        }**/
+        assertThat(vec,equalTo(Spouts.of(1,2)));
     }
     @Test
     public void rangeMaxConcurrencyM32() {
