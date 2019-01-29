@@ -83,7 +83,7 @@ public class DoTest {
 
     @Test
     public void doEither(){
-        Do.forEach(EitherInstances.<String>monad())
+        Do.forEach(EitherInstances.<String>getInstance())
             .__(Either.<String,Integer>right(10))
             .yield(i->i+1);
 
