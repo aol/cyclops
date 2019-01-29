@@ -40,6 +40,7 @@ public  class ConstantInstances {
   }
 
 
+
   public static <T1,P> Applicative<Higher<constant,T1>> applicative(Monoid<T1> m){
     return new Applicative<Higher<constant,T1>>(){
 
