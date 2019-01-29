@@ -2,6 +2,7 @@ package cyclops.function;
 
 import java.util.function.BooleanSupplier;
 
+@Deprecated
 public interface BooleanFunction0 extends BooleanSupplier {
 
     default BooleanFunction0 before(Runnable r){

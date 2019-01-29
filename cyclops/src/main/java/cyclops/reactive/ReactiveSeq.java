@@ -3365,6 +3365,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return Spouts.from(publisher);
     }
 
+    @Deprecated
     public static <T> ReactiveSeq<T> generate(Generator<T> gen){
         return gen.stream();
     }

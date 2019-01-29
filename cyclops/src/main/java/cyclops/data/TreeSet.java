@@ -85,6 +85,7 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     static <T> TreeSet<T> generate(Supplier<T> s, int max){
         return fromStream(ReactiveSeq.generate(s).limit(max),Comparators.naturalOrderIdentityComparator());
     }
+    @Deprecated
     static <T> TreeSet<T> generate(Generator<T> s){
         return fromStream(ReactiveSeq.generate(s),Comparators.naturalOrderIdentityComparator());
     }

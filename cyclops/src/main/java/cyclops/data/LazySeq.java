@@ -131,6 +131,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     static <T> LazySeq<T> generate(Supplier<T> s,long times){
         return fromStream(ReactiveSeq.generate(s).limit(times));
     }
+    @Deprecated
     static <T> LazySeq<T> generate(Generator<T> s){
         return fromStream(ReactiveSeq.generate(s));
     }

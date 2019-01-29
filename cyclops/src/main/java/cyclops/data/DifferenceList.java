@@ -70,6 +70,7 @@ public final class DifferenceList<T> implements Folds<T>,
     public static <T> DifferenceList<T> generate(Supplier<T> s,long times){
         return fromStream(ReactiveSeq.generate(s).limit(times));
     }
+    @Deprecated
     public static <T> DifferenceList<T> generate(Generator<T> s){
         return fromStream(ReactiveSeq.generate(s));
     }
