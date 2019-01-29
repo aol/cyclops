@@ -5,24 +5,31 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher2;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
+import cyclops.arrow.MonoidK;
 import cyclops.control.Either;
 import cyclops.control.Ior;
-import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.function.Monoid;
 import cyclops.hkt.Active;
 import cyclops.hkt.Coproduct;
 import cyclops.hkt.Nested;
 import cyclops.hkt.Product;
-import cyclops.typeclasses.*;
+import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.arrow.MonoidK;
-import cyclops.arrow.SemigroupKs;
 import cyclops.typeclasses.functor.BiFunctor;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.monad.*;
+import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.ApplicativeError;
+import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.MonadPlus;
+import cyclops.typeclasses.monad.MonadRec;
+import cyclops.typeclasses.monad.MonadZero;
+import cyclops.typeclasses.monad.Traverse;
+import cyclops.typeclasses.monad.TraverseByTraverse;
+import lombok.AllArgsConstructor;
 
 import java.util.function.Function;
 
@@ -78,12 +85,12 @@ public class IorInstances {
 
       @Override
       public <T, R> Option<MonadZero<Higher<ior, L>>> monadZero() {
-        return Option.some(IorInstances.monadZero());
+        return Option.none();
       }
 
       @Override
       public <T> Option<MonadPlus<Higher<ior, L>>> monadPlus() {
-        return Option.some(IorInstances.monadPlus());
+        return Option.none();
       }
 
       @Override
@@ -93,7 +100,7 @@ public class IorInstances {
 
       @Override
       public <T> Option<MonadPlus<Higher<ior, L>>> monadPlus(MonoidK<Higher<ior, L>> m) {
-        return Option.some(IorInstances.monadPlus(m));
+        return Option.none();
       }
 
       @Override
@@ -108,253 +115,143 @@ public class IorInstances {
 
       @Override
       public <T> Option<Comonad<Higher<ior, L>>> comonad() {
-        return Maybe.nothing();
+        return Option.none();
       }
 
       @Override
       public <T> Option<Unfoldable<Higher<ior, L>>> unfoldable() {
-        return Maybe.nothing();
+        return Option.none();
       }
     };
   }
-  public static <L> Functor<Higher<ior, L>> functor() {
-    return new Functor<Higher<ior, L>>() {
 
-      @Override
-      public <T, R> Higher<Higher<ior, L>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<ior, L>, T> ds) {
-        Ior<L,T> ior = narrowK(ds);
-        return ior.map(fn);
-      }
-    };
-  }
-  public static <L> Pure<Higher<ior, L>> unit() {
-    return new Pure<Higher<ior, L>>() {
+    private final static IorTypeclasses INSTANCE = new IorTypeclasses<>();
 
-      @Override
-      public <T> Higher<Higher<ior, L>, T> unit(T value) {
-        return Ior.right(value);
-      }
-    };
-  }
-  public static <L> Applicative<Higher<ior, L>> applicative() {
-    return new Applicative<Higher<ior, L>>() {
+    public static final <L> IorTypeclasses<L> getInstance(){
+        return INSTANCE;
+    }
 
+    @AllArgsConstructor
+    public static class IorTypeclasses<L>  implements Monad<Higher<ior, L>>,
+                                                        MonadRec<Higher<ior, L>>,
+                                                        TraverseByTraverse<Higher<ior, L>>,
+                                                        Foldable<Higher<ior,L>> ,
+                                                        ApplicativeError<Higher<ior, L>,L>,
+                                                        BiFunctor<ior> {
 
-      @Override
-      public <T, R> Higher<Higher<ior, L>, R> ap(Higher<Higher<ior, L>, ? extends Function<T, R>> fn, Higher<Higher<ior, L>, T> apply) {
-        Ior<L,T>  ior = narrowK(apply);
-        Ior<L, ? extends Function<T, R>> iorFn = narrowK(fn);
-        return iorFn.zip(ior,(a,b)->a.apply(b));
+        @Override
+        public <T> T foldRight(Monoid<T> monoid, Higher<Higher<ior, L>, T> ds) {
+            Ior<L,T> ior = narrowK(ds);
+            return ior.fold(monoid);
+        }
 
-      }
+        @Override
+        public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<ior, L>, T> ds) {
+            Ior<L,T> ior = narrowK(ds);
+            return ior.fold(monoid);
+        }
+        @Override
+        public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<ior, L>, T> nestedA) {
+            return narrowK(nestedA).<R>map(fn).fold(mb);
+        }
 
-      @Override
-      public <T, R> Higher<Higher<ior, L>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<ior, L>, T> ds) {
-        return IorInstances.<L>functor().map(fn,ds);
-      }
+        @Override
+        public <T, R, T2, R2> Higher2<ior, R, R2> bimap(Function<? super T, ? extends R> fn, Function<? super T2, ? extends R2> fn2, Higher2<ior, T, T2> ds) {
+            return narrowK(ds).bimap(fn,fn2);
+        }
 
-      @Override
-      public <T> Higher<Higher<ior, L>, T> unit(T value) {
-        return IorInstances.<L>unit().unit(value);
-      }
-    };
-  }
-  public static BiFunctor<ior> bifunctor(){
-    return new BiFunctor<ior>() {
-      @Override
-      public <T, R, T2, R2> Higher2<ior, R, R2> bimap(Function<? super T, ? extends R> fn, Function<? super T2, ? extends R2> fn2, Higher2<ior, T, T2> ds) {
-        return narrowK(ds).bimap(fn,fn2);
-      }
-    };
-  }
-  public static <L> Monad<Higher<ior, L>> monad() {
-    return new Monad<Higher<ior, L>>() {
+        @Override
+        public <T> Higher<Higher<ior, L>, T> raiseError(L l) {
+            return null;
+        }
 
-      @Override
-      public <T, R> Higher<Higher<ior, L>, R> flatMap(Function<? super T, ? extends Higher<Higher<ior, L>, R>> fn, Higher<Higher<ior, L>, T> ds) {
-        Ior<L,T> ior = narrowK(ds);
-        return ior.flatMap(fn.andThen(Ior::narrowK));
-      }
+        @Override
+        public <T> Higher<Higher<ior, L>, T> handleErrorWith(Function<? super L, ? extends Higher<Higher<ior, L>, ? extends T>> fn, Higher<Higher<ior, L>, T> ds) {
+            return null;
+        }
 
-      @Override
-      public <T, R> Higher<Higher<ior, L>, R> ap(Higher<Higher<ior, L>, ? extends Function<T, R>> fn, Higher<Higher<ior, L>, T> apply) {
-        return IorInstances.<L>applicative().ap(fn,apply);
+        @Override
+        public <T, R> Higher<Higher<ior, L>, R> flatMap(Function<? super T, ? extends Higher<Higher<ior, L>, R>> fn, Higher<Higher<ior, L>, T> ds) {
+            Ior<L,T> ior = narrowK(ds);
+            return ior.flatMap(fn.andThen(Ior::narrowK));
+        }
 
-      }
+        @Override
+        public <C2, T, R> Higher<C2, Higher<Higher<ior, L>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<ior, L>, T> ds) {
+            Ior<L, T> maybe = narrowK(ds);
 
-      @Override
-      public <T, R> Higher<Higher<ior, L>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<ior, L>, T> ds) {
-        return IorInstances.<L>functor().map(fn,ds);
-      }
+            return maybe.fold(left -> applicative.unit(Ior.<L, R>left(left)),
+                right -> applicative.map(m -> Ior.right(m), fn.apply(right)),
+                (l, r) -> applicative.map(m -> Ior.both(l, m), fn.apply(r)));
+        }
 
-      @Override
-      public <T> Higher<Higher<ior, L>, T> unit(T value) {
-        return IorInstances.<L>unit().unit(value);
-      }
-    };
-  }
-  public static <L> Traverse<Higher<ior, L>> traverse() {
-    return new Traverse<Higher<ior, L>>() {
+        @Override
+        public <T, R> Higher<Higher<ior, L>, R> ap(Higher<Higher<ior, L>, ? extends Function<T, R>> fn, Higher<Higher<ior, L>, T> apply) {
+            Ior<L,T>  ior = narrowK(apply);
+            Ior<L, ? extends Function<T, R>> iorFn = narrowK(fn);
+            return iorFn.zip(ior,(a,b)->a.apply(b));
+        }
 
-      @Override
-      public <C2, T, R> Higher<C2, Higher<Higher<ior, L>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<ior, L>, T> ds) {
-        Ior<L,T> maybe = narrowK(ds);
+        @Override
+        public <T> Higher<Higher<ior, L>, T> unit(T value) {
+            return  Ior.right(value);
+        }
 
-        return maybe.fold(left->  applicative.unit(Ior.<L,R>left(left)),
-          right->applicative.map(m->Ior.right(m), fn.apply(right)),
-          (l,r)-> applicative.map(m->Ior.both(l,m), fn.apply(r)));
-      }
+        @Override
+        public <T, R> Higher<Higher<ior, L>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<ior, L>, T> ds) {
+            Ior<L,T> ior = narrowK(ds);
+            return ior.map(fn);
+        }
 
-      @Override
-      public <C2, T> Higher<C2, Higher<Higher<ior, L>, T>> sequenceA(Applicative<C2> applicative, Higher<Higher<ior, L>, Higher<C2, T>> ds) {
-        return traverseA(applicative,Function.identity(),ds);
-      }
-
-
-
-      @Override
-      public <T, R> Higher<Higher<ior, L>, R> ap(Higher<Higher<ior, L>, ? extends Function<T, R>> fn, Higher<Higher<ior, L>, T> apply) {
-        return IorInstances.<L>applicative().ap(fn,apply);
-
-      }
-
-      @Override
-      public <T, R> Higher<Higher<ior, L>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<ior, L>, T> ds) {
-        return IorInstances.<L>functor().map(fn,ds);
-      }
-
-      @Override
-      public <T> Higher<Higher<ior, L>, T> unit(T value) {
-        return IorInstances.<L>unit().unit(value);
-      }
-    };
-  }
-  public static <L> Foldable<Higher<ior, L>> foldable() {
-    return new Foldable<Higher<ior, L>>() {
+        @Override
+        public <T, R> Higher<Higher<ior, L>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<ior, L>, ? extends Either<T, R>>> fn) {
+            Ior<L,? extends Either<T, R>> next[] = new Ior[1];
+            next[0] = Ior.right(Either.left(initial));
+            boolean cont = true;
+            do {
+                cont = next[0].fold(p -> p.fold(s -> {
+                    next[0] = narrowK(fn.apply(s));
+                    return true;
+                }, pr -> false), () -> false);
+            } while (cont);
+            return next[0].map(x->x.orElse(null));
+        }
 
 
-      @Override
-      public <T> T foldRight(Monoid<T> monoid, Higher<Higher<ior, L>, T> ds) {
-        Ior<L,T> ior = narrowK(ds);
-        return ior.fold(monoid);
-      }
-
-      @Override
-      public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<ior, L>, T> ds) {
-        Ior<L,T> ior = narrowK(ds);
-        return ior.fold(monoid);
-      }
-
-      @Override
-      public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<ior, L>, T> nestedA) {
-        return narrowK(nestedA).<R>map(fn).fold(mb);
-      }
-    };
-  }
-  public static <L> MonadZero<Higher<ior, L>> monadZero() {
-    return new MonadZero<Higher<ior, L>>() {
-
-      @Override
-      public Higher<Higher<ior, L>, ?> zero() {
-        return Ior.left(null);
-      }
-
-      @Override
-      public <T, R> Higher<Higher<ior, L>, R> flatMap(Function<? super T, ? extends Higher<Higher<ior, L>, R>> fn, Higher<Higher<ior, L>, T> ds) {
-        Ior<L,T> ior = narrowK(ds);
-        return ior.flatMap(fn.andThen(Ior::narrowK));
-      }
-
-      @Override
-      public <T, R> Higher<Higher<ior, L>, R> ap(Higher<Higher<ior, L>, ? extends Function<T, R>> fn, Higher<Higher<ior, L>, T> apply) {
-        return IorInstances.<L>applicative().ap(fn,apply);
-
-      }
-
-      @Override
-      public <T, R> Higher<Higher<ior, L>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<ior, L>, T> ds) {
-        return IorInstances.<L>functor().map(fn,ds);
-      }
-
-      @Override
-      public <T> Higher<Higher<ior, L>, T> unit(T value) {
-        return IorInstances.<L>unit().unit(value);
-      }
-    };
-  }
-  public static <X,T,R> MonadRec<Higher<ior, X>> monadRec() {
-
-    return new MonadRec<Higher<ior, X>>(){
-      @Override
-      public <T, R> Higher<Higher<ior, X>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<ior, X>, ? extends Either<T, R>>> fn) {
-        Ior<X,? extends Either<T, R>> next[] = new Ior[1];
-        next[0] = Ior.right(Either.left(initial));
-        boolean cont = true;
-        do {
-          cont = next[0].fold(p -> p.fold(s -> {
-            next[0] = narrowK(fn.apply(s));
-            return true;
-          }, pr -> false), () -> false);
-        } while (cont);
-        return next[0].map(x->x.orElse(null));
-      }
+    }
 
 
-    };
+    public static <L> Functor<Higher<ior, L>> functor() {
+        return INSTANCE;
+    }
 
+    public static <L> Pure<Higher<ior, L>> unit() {
+        return INSTANCE;
+    }
 
-  }
-  public static <L> MonadPlus<Higher<ior, L>> monadPlus() {
+    public static <L> Applicative<Higher<ior, L>> applicative() {
+        return INSTANCE;
+    }
 
+    public static BiFunctor<ior> bifunctor() {
+        return INSTANCE;
+    }
 
-    MonoidK<Higher<ior, L>> m = new MonoidK<Higher<ior, L>>() {
-      @Override
-      public <T> Higher<Higher<ior, L>, T> zero() {
-        return IorInstances.<L>monadZero().zero();
-      }
+    public static <L> Monad<Higher<ior, L>> monad() {
+        return INSTANCE;
+    }
 
-      @Override
-      public <T> Higher<Higher<ior, L>, T> apply(Higher<Higher<ior, L>, T> t1, Higher<Higher<ior, L>, T> t2) {
-        return SemigroupKs.<L>firstPrimaryIor().apply(t1,t2);
-      }
-    };
-    return monadPlus(m);
-  }
-  public static <L,T> MonadPlus<Higher<ior, L>> monadPlus(MonoidK<Higher<ior, L>> m) {
-    return new MonadPlus<Higher<ior, L>>() {
+    public static <L> Traverse<Higher<ior, L>> traverse() {
+        return INSTANCE;
+    }
 
-      @Override
-      public MonoidK<Higher<ior, L>> monoid() {
-        return m;
-      }
+    public static <L> Foldable<Higher<ior, L>> foldable() {
+        return INSTANCE;
+    }
 
-      @Override
-      public Higher<Higher<ior, L>, ?> zero() {
-        return IorInstances.<L>monadZero().zero();
-      }
+    public static <X, T, R> MonadRec<Higher<ior, X>> monadRec() {
+        return INSTANCE;
+    }
 
-      @Override
-      public <T, R> Higher<Higher<ior, L>, R> flatMap(Function<? super T, ? extends Higher<Higher<ior, L>, R>> fn, Higher<Higher<ior, L>, T> ds) {
-        Ior<L,T> ior = narrowK(ds);
-        return ior.flatMap(fn.andThen(Ior::narrowK));
-      }
-
-      @Override
-      public <T, R> Higher<Higher<ior, L>, R> ap(Higher<Higher<ior, L>, ? extends Function<T, R>> fn, Higher<Higher<ior, L>, T> apply) {
-        return IorInstances.<L>applicative().ap(fn,apply);
-
-      }
-
-      @Override
-      public <T, R> Higher<Higher<ior, L>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<ior, L>, T> ds) {
-        return IorInstances.<L>functor().map(fn,ds);
-      }
-
-      @Override
-      public <T> Higher<Higher<ior, L>, T> unit(T value) {
-        return IorInstances.<L>unit().unit(value);
-      }
-    };
-  }
 
 }
