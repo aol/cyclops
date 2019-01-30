@@ -27,6 +27,7 @@ import cyclops.typeclasses.monad.MonadPlus;
 import cyclops.typeclasses.monad.MonadRec;
 import cyclops.typeclasses.monad.MonadZero;
 import cyclops.typeclasses.monad.Traverse;
+import cyclops.typeclasses.monad.TraverseByTraverse;
 import lombok.experimental.UtilityClass;
 
 import java.util.function.Function;
@@ -86,12 +87,12 @@ public  class ReaderInstances {
 
       @Override
       public <T, R> Option<MonadZero<Higher<reader, IN>>> monadZero() {
-        return Maybe.nothing();
+        return Option.none();
       }
 
       @Override
       public <T> Option<MonadPlus<Higher<reader, IN>>> monadPlus() {
-        return Maybe.nothing();
+        return Option.none();
       }
 
       @Override
@@ -101,7 +102,7 @@ public  class ReaderInstances {
 
       @Override
       public <T> Option<MonadPlus<Higher<reader, IN>>> monadPlus(MonoidK<Higher<reader, IN>> m) {
-        return Maybe.nothing();
+        return Option.none();
       }
 
 
@@ -117,58 +118,76 @@ public  class ReaderInstances {
 
       @Override
       public <T> Option<Comonad<Higher<reader, IN>>> comonad() {
-        return Maybe.nothing();
+        return Option.none();
       }
 
       @Override
       public <T> Option<Unfoldable<Higher<reader, IN>>> unfoldable() {
-        return Maybe.nothing();
+        return Option.none();
       }
     };
   }
 
-  public static <IN> Functor<Higher<reader, IN>> functor() {
-    return new Functor<Higher<reader, IN>>() {
+  private final static ReaderTypeclass INSTANCE = new ReaderTypeclass();
+
+  public static class ReaderTypeclass<IN> implements  Monad<Higher<reader, IN>>,
+                                                        MonadRec<Higher<reader, IN>>,
+                                                        ProFunctor<reader>{
+
+
       @Override
-      public <T, R> Higher<Higher<reader, IN>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<reader, IN>, T> ds) {
-        Reader<IN, T> fn1 = narrowK(ds);
-        Reader<IN, R> res = fn1.mapFn(fn);
-        return res;
+      public <A, B, C, D> Higher<Higher<reader, C>, D> dimap(Function<? super C, ? extends A> f, Function<? super B, ? extends D> g, Higher<Higher<reader, A>, B> ds) {
+          Reader<A, B> r = narrowK(ds);
+          Function<? super C, ? extends D> f1 = g.compose(r).compose(f);
+          Reader<C,D> r1 = in->f1.apply(in);
+          return r1;
       }
-    };
-  }
 
-  public static <IN> Pure<Higher<reader, IN>> unit() {
-    return new Pure<Higher<reader, IN>>() {
       @Override
-      public <R> Higher<Higher<reader, IN>, R> unit(R value) {
-        Reader<IN, R> fn = __ -> value;
-        return fn;
+      public <T, R> Higher<Higher<reader, IN>, R> flatMap(Function<? super T, ? extends Higher<Higher<reader, IN>, R>> fn, Higher<Higher<reader, IN>, T> ds) {
+          Reader<IN, T> mapper = narrowK(ds);
+          Reader<IN, R> res = mapper.flatMap(fn.andThen(Reader::narrowK));
+          return res;
       }
-    };
-  }
 
-  public static <IN> Applicative<Higher<reader, IN>> applicative() {
-    return new Applicative<Higher<reader, IN>>() {
+      @Override
+      public <T, R> Higher<Higher<reader, IN>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<reader, IN>, ? extends Either<T, R>>> fn) {
+          return null;
+      }
+
+
 
       @Override
       public <T, R> Higher<Higher<reader, IN>, R> ap(Higher<Higher<reader, IN>, ? extends Function<T, R>> fn, Higher<Higher<reader, IN>, T> apply) {
-        Reader<IN, ? extends Function<T, R>> f = narrowK(fn);
-        Reader<IN, T> ap = narrowK(apply);
-        Reader<IN, R> res = in -> f.apply(in).apply(ap.apply(in));
-        return res;
+          Reader<IN, ? extends Function<T, R>> f = narrowK(fn);
+          Reader<IN, T> ap = narrowK(apply);
+          Reader<IN, R> res = in -> f.apply(in).apply(ap.apply(in));
+          return res;
+      }
+
+      @Override
+      public <T> Higher<Higher<reader, IN>, T> unit(T value) {
+          Reader<IN, T> fn = __ -> value;
+          return fn;
       }
 
       @Override
       public <T, R> Higher<Higher<reader, IN>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<reader, IN>, T> ds) {
-        return ReaderInstances.<IN>functor().map(fn, ds);
+          Reader<IN, T> fn1 = narrowK(ds);
+          Reader<IN, R> res = fn1.mapFn(fn);
+          return res;
       }
+  }
+  public static <IN> Functor<Higher<reader, IN>> functor() {
+    return INSTANCE;
+  }
 
-      @Override
-      public <R> Higher<Higher<reader, IN>, R> unit(R value) {
-        return ReaderInstances.<IN>unit().unit(value);
-      }
-    };
+  public static <IN> Pure<Higher<reader, IN>> unit() {
+    return INSTANCE;
+  }
+
+  public static <IN> Applicative<Higher<reader, IN>> applicative() {
+    return INSTANCE;
   }
 
   public static <IN> Foldable<Higher<reader, IN>> foldable(IN t) {
@@ -237,73 +256,15 @@ public  class ReaderInstances {
 
   }
   public static <IN> Monad<Higher<reader, IN>> monad() {
-    return new Monad<Higher<reader, IN>>() {
-
-      @Override
-      public <T, R> Higher<Higher<reader, IN>, R> ap(Higher<Higher<reader, IN>, ? extends Function<T, R>> fn, Higher<Higher<reader, IN>, T> apply) {
-        return ReaderInstances.<IN>applicative().ap(fn, apply);
-      }
-
-      @Override
-      public <T, R> Higher<Higher<reader, IN>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<reader, IN>, T> ds) {
-        return ReaderInstances.<IN>functor().map(fn, ds);
-      }
-
-      @Override
-      public <T> Higher<Higher<reader, IN>, T> unit(T value) {
-        return ReaderInstances.<IN>unit().unit(value);
-      }
-
-      @Override
-      public <T, R> Higher<Higher<reader, IN>, R> flatMap(Function<? super T, ? extends Higher<Higher<reader, IN>, R>> fn, Higher<Higher<reader, IN>, T> ds) {
-        Reader<IN, T> mapper = narrowK(ds);
-        Reader<IN, R> res = mapper.flatMap(fn.andThen(Reader::narrowK));
-        return res;
-      }
-    };
+    return INSTANCE;
 
   }
 
   public static <IN,R> ProFunctor<reader> profunctor() {
-    return new ProFunctor<reader>() {
-
-      @Override
-      public <A, B, C, D> Higher<Higher<reader, C>, D> dimap(Function<? super C, ? extends A> f, Function<? super B, ? extends D> g, Higher<Higher<reader, A>, B> p) {
-        Reader<A, B> r = narrowK(p);
-        Function<? super C, ? extends D> f1 = g.compose(r).compose(f);
-        Reader<C,D> r1 = in->f1.apply(in);
-        return r1;
-      }
-    };
+    return INSTANCE;
   }
 
   public static <IN, T, R> MonadRec<Higher<reader, IN>> monadRec() {
-    return new MonadRec<Higher<reader, IN>>() {
-      @Override
-      public <T, R> Higher<Higher<reader, IN>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<reader, IN>, ? extends Either<T, R>>> fn) {
-
-        Reader<IN, Reader<IN, R>> reader = (IN in) -> {
-          Reader<IN, ? extends Either<T, R>> next[] = new Reader[1];
-          next[0] = __ -> Either.left(initial);
-          boolean cont = true;
-          do {
-
-            cont = next[0].apply(in).fold(s -> {
-              Reader<IN, ? extends Either<T, R>> x = narrowK(fn.apply(s));
-
-              next[0] = narrowK(fn.apply(s));
-              return true;
-            }, pr -> false);
-          } while (cont);
-          return next[0].mapFn(x->x.orElse(null));
-        };
-        return reader.flatMap(Function.identity());
-
-      }
-
-
-    };
-
-
+    return INSTANCE;
   }
 }
