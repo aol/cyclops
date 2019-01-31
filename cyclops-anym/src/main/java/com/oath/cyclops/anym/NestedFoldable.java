@@ -19,6 +19,7 @@ import cyclops.monads.WitnessType;
 import com.oath.cyclops.types.stream.ToStream;
 import org.reactivestreams.Subscription;
 
+@Deprecated //use cyclops-pure Do instead
 public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> {
     public AnyM<W,? extends IterableX<T>> nestedFoldables();
 

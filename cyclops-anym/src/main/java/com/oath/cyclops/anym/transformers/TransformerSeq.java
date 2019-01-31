@@ -27,6 +27,7 @@ import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streamable;
 import cyclops.monads.WitnessType;
 
+@Deprecated
 public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
                                                                     Traversable<T>,
                                                                     ToStream<T>,
