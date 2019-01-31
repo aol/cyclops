@@ -15,6 +15,7 @@ import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.arrow.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
+import lombok.AllArgsConstructor;
 
 import java.util.function.Function;
 
@@ -61,12 +62,12 @@ public class LazyEither4Instances {
 
       @Override
       public <T, R> Option<MonadZero<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>>> monadZero() {
-        return Option.some(LazyEither4Instances.monadZero());
+        return Option.none();
       }
 
       @Override
       public <T> Option<MonadPlus<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>>> monadPlus() {
-        return Maybe.nothing();
+        return Option.none();
       }
 
       @Override
@@ -76,7 +77,7 @@ public class LazyEither4Instances {
 
       @Override
       public <T> Option<MonadPlus<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>>> monadPlus(MonoidK<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>> m) {
-        return Maybe.nothing();
+        return Option.none();
       }
 
       @Override
@@ -91,179 +92,98 @@ public class LazyEither4Instances {
 
       @Override
       public <T> Option<Comonad<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>>> comonad() {
-        return Maybe.nothing();
+        return Option.none();
       }
 
       @Override
       public <T> Option<Unfoldable<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>>> unfoldable() {
-        return Maybe.nothing();
+        return Option.none();
       }
     };
 
   }
-  public static <L1,L2,L3> Functor<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>> functor() {
-    return new Functor<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>() {
+    final static LazyEither4Typeclasses INSTANCE = new LazyEither4Typeclasses<>();
+    @AllArgsConstructor
+    public static class LazyEither4Typeclasses<L1,L2,L3>  implements Monad<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>,
+                                                                    MonadRec<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>,
+                                                                    Traverse<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>,
+                                                                    Foldable<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>> {
+        @Override
+        public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>, T> nestedA) {
+            return foldLeft(mb, narrowK(nestedA).<R>map(fn));
+        }
+        @Override
+        public <T> T foldRight(Monoid<T> monoid, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>, T> ds) {
+            return narrowK(ds).fold(monoid);
+        }
 
-      @Override
-      public <T, R> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T> ds) {
-        return narrowK(ds).map(fn);
-      }
-    };
+        @Override
+        public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>, T> ds) {
+            return narrowK(ds).fold(monoid);
+        }
+
+        @Override
+        public <T, R> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>, R> flatMap(Function<? super T, ? extends Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>, R>> fn, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>, T> ds) {
+            return narrowK(ds).flatMap(fn.andThen(m->narrowK(m)));
+        }
+
+        @Override
+        public <C2, T, R> Higher<C2, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>, T> ds) {
+            LazyEither4<L1,L2,L3,T> maybe = narrowK(ds);
+            return maybe.fold(left->  applicative.unit(LazyEither4.<L1,L2,L3,R>left1(left)),
+                middle1->applicative.unit(LazyEither4.<L1,L2,L3,R>left2(middle1)),
+                middle2->applicative.unit(LazyEither4.<L1,L2,L3,R>left3(middle2)),
+                right->applicative.map(m-> LazyEither4.right(m), fn.apply(right)));
+        }
+
+        @Override
+        public <C2, T> Higher<C2, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>, T>> sequenceA(Applicative<C2> applicative, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>, Higher<C2, T>> ds) {
+            return null;
+        }
+
+        @Override
+        public <T, R> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>, R> ap(Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>, ? extends Function<T, R>> fn, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>, T> apply) {
+            return narrowK(fn).flatMap(x -> narrowK(apply).map(x));
+        }
+
+        @Override
+        public <T> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>, T> unit(T value) {
+            return LazyEither4.right(value);
+        }
+
+        @Override
+        public <T, R> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>, T> ds) {
+            return  narrowK(ds).map(fn);
+        }
+
+        @Override
+        public <T, R> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>, ? extends Either<T, R>>> fn) {
+            return narrowK(fn.apply(initial)).flatMap( eval ->
+                eval.fold(s->narrowK(tailRec(s,fn)), p-> LazyEither4.right(p)));
+        }
+    }
+  public static <L1,L2,L3> Functor<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>> functor() {
+    return INSTANCE;
   }
   public static <L1,L2,L3> Pure<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>> unit() {
-    return new Pure<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>() {
+    return INSTANCE;
 
-      @Override
-      public <T> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T> unit(T value) {
-        return LazyEither4.right(value);
-      }
-    };
   }
   public static <L1,L2,L3> Applicative<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>> applicative() {
-    return new Applicative<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>() {
-
-
-      @Override
-      public <T, R> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, R> ap(Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, ? extends Function<T, R>> fn, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T> apply) {
-        return  narrowK(fn).flatMap(x -> narrowK(apply).map(x));
-
-      }
-
-      @Override
-      public <T, R> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T> ds) {
-        return LazyEither4Instances.<L1,L2,L3>functor().map(fn,ds);
-      }
-
-      @Override
-      public <T> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T> unit(T value) {
-        return LazyEither4Instances.<L1,L2,L3>unit().unit(value);
-      }
-    };
+    return INSTANCE;
   }
   public static <L1,L2,L3> Monad<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>> monad() {
-    return new Monad<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>() {
-
-
-      @Override
-      public <T, R> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, R> ap(Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, ? extends Function<T, R>> fn, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T> apply) {
-        return LazyEither4Instances.<L1,L2,L3>applicative().ap(fn,apply);
-      }
-
-      @Override
-      public <T, R> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T> ds) {
-        return LazyEither4Instances.<L1,L2,L3>functor().map(fn,ds);
-      }
-
-      @Override
-      public <T> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T> unit(T value) {
-        return LazyEither4Instances.<L1,L2,L3>unit().unit(value);
-      }
-
-      @Override
-      public <T, R> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, R> flatMap(Function<? super T, ? extends Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, R>> fn, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T> ds) {
-        return narrowK(ds).flatMap(fn.andThen(m->narrowK(m)));
-      }
-    };
+    return INSTANCE;
   }
   public static <L1,L2,L3,T,R> MonadRec<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>> monadRec(){
-
-    return new MonadRec<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>(){
-
-      @Override
-      public <T, R> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, ? extends Either<T, R>>> fn) {
-        return narrowK(fn.apply(initial)).flatMap( eval ->
-          eval.fold(s->narrowK(tailRec(s,fn)), p-> LazyEither4.right(p)));
-      }
-
-
-    };
+    return INSTANCE;
   }
-  public static <L1,L2,L3> MonadZero<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>> monadZero() {
-    return new MonadZero<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>() {
 
-
-      @Override
-      public <T, R> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, R> ap(Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, ? extends Function<T, R>> fn, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T> apply) {
-        return LazyEither4Instances.<L1,L2,L3>applicative().ap(fn,apply);
-      }
-
-      @Override
-      public <T, R> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T> ds) {
-        return LazyEither4Instances.<L1,L2,L3>functor().map(fn,ds);
-      }
-
-      @Override
-      public Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, ?> zero() {
-        return LazyEither4.left1(null);
-      }
-
-      @Override
-      public <T> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T> unit(T value) {
-        return LazyEither4Instances.<L1,L2,L3>unit().unit(value);
-      }
-
-      @Override
-      public <T, R> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, R> flatMap(Function<? super T, ? extends Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, R>> fn, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T> ds) {
-        return LazyEither4Instances.<L1,L2,L3>monad().flatMap(fn,ds);
-      }
-    };
-  }
   public static  <L1,L2,L3> Traverse<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>> traverse() {
-    return new Traverse<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>> () {
-
-
-      @Override
-      public <T, R> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, R> ap(Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, ? extends Function<T, R>> fn, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T> apply) {
-        return LazyEither4Instances.<L1,L2,L3>applicative().ap(fn,apply);
-      }
-
-      @Override
-      public <T, R> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T> ds) {
-        return LazyEither4Instances.<L1,L2,L3>functor().map(fn,ds);
-      }
-
-      @Override
-      public <T> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T> unit(T value) {
-        return LazyEither4Instances.<L1, L2,L3>unit().unit(value);
-      }
-
-      @Override
-      public <C2, T, R> Higher<C2, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T> ds) {
-        LazyEither4<L1,L2,L3,T> maybe = narrowK(ds);
-        return maybe.fold(left->  applicative.unit(LazyEither4.<L1,L2,L3,R>left1(left)),
-          middle1->applicative.unit(LazyEither4.<L1,L2,L3,R>left2(middle1)),
-          middle2->applicative.unit(LazyEither4.<L1,L2,L3,R>left3(middle2)),
-          right->applicative.map(m-> LazyEither4.right(m), fn.apply(right)));
-      }
-
-      @Override
-      public <C2, T> Higher<C2, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T>> sequenceA(Applicative<C2> applicative, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, Higher<C2, T>> ds) {
-        return traverseA(applicative,Function.identity(),ds);
-      }
-
-
-    };
+    return INSTANCE;
   }
   public static <L1,L2,L3> Foldable<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>> foldable() {
-    return new Foldable<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>() {
-
-
-      @Override
-      public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>, T> nestedA) {
-        return foldLeft(mb, narrowK(nestedA).<R>map(fn));
-      }
-
-      @Override
-      public <T> T foldRight(Monoid<T> monoid, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T> ds) {
-        return narrowK(ds).fold(monoid);
-      }
-
-      @Override
-      public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T> ds) {
-        return narrowK(ds).fold(monoid);
-      }
-
-    };
+    return INSTANCE;
   }
 
 
