@@ -152,8 +152,26 @@ public  class ReaderInstances {
 
       @Override
       public <T, R> Higher<Higher<reader, IN>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<reader, IN>, ? extends Either<T, R>>> fn) {
-          return null;
-      }
+          Reader<IN, Reader<IN, R>> reader = (IN in) -> {
+              Reader<IN, ? extends Either<T, R>> next[] = new Reader[1];
+              next[0] = __ -> Either.left(initial);
+              boolean cont = true;
+              do {
+
+                  cont = next[0].apply(in).fold(s -> {
+                      Reader<IN, ? extends Either<T, R>> x = narrowK(fn.apply(s));
+
+                      next[0] = narrowK(fn.apply(s));
+                      return true;
+                  }, pr -> false);
+              } while (cont);
+              return next[0].mapFn(x->x.orElse(null));
+          };
+          return reader.flatMap(Function.identity());
+
+
+
+  }
 
 
 
