@@ -19,6 +19,7 @@ import cyclops.reactive.collections.mutable.ListX;
  *
  * @param <T> Data type of the elements stored inside the traversable manipulated by this monad transformer
  */
+@Deprecated
 public interface TransformerTraversable<T>{
 
 

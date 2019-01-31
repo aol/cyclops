@@ -15,6 +15,7 @@ import org.reactivestreams.Subscriber;
 
 import java.util.function.*;
 
+@Deprecated
 public abstract class NonEmptyTransformer<W extends WitnessType<W>,T> implements Publisher<T>,
                                                                             Unwrapable,Transformable<T>,
                                                                             Unit<T>,

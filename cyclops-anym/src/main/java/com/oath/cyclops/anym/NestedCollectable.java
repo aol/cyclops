@@ -28,6 +28,7 @@ import cyclops.reactive.collections.mutable.SetX;
  *
  * @param <T> Data type of the elements in the nested Monad
  */
+@Deprecated //use cyclops-pure Do instead
 public interface NestedCollectable<W extends WitnessType<W>,T> {
     public AnyM<W,? extends IterableX<T>> nestedCollectables();
 
