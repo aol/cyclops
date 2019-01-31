@@ -76,12 +76,12 @@ public class TryInstances {
 
       @Override
       public <T, R> Option<MonadZero<Higher<tryType, L>>> monadZero() {
-        return Maybe.nothing();
+        return Option.none();
       }
 
       @Override
       public <T> Option<MonadPlus<Higher<tryType, L>>> monadPlus() {
-        return Maybe.nothing();
+        return Option.none();
       }
 
       @Override
@@ -91,7 +91,7 @@ public class TryInstances {
 
       @Override
       public <T> Option<MonadPlus<Higher<tryType, L>>> monadPlus(MonoidK<Higher<tryType, L>> m) {
-        return Maybe.nothing();
+        return Option.none();
       }
 
 
@@ -107,163 +107,109 @@ public class TryInstances {
 
       @Override
       public <T> Option<Comonad<Higher<tryType, L>>> comonad() {
-        return Maybe.nothing();
+        return Option.none();
       }
 
       @Override
       public <T> Option<Unfoldable<Higher<tryType, L>>> unfoldable() {
-        return Maybe.nothing();
+        return Option.none();
       }
     };
   }
-  public static <L extends Throwable> Functor<Higher<tryType, L>> functor() {
-    return new Functor<Higher<tryType, L>>() {
 
-      @Override
-      public <T, R> Higher<Higher<tryType, L>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<tryType, L>, T> ds) {
-        Try<T,L> tryType = narrowK(ds);
-        return tryType.map(fn);
-      }
-    };
-  }
-  public static <L extends Throwable> Pure<Higher<tryType, L>> unit() {
-    return new Pure<Higher<tryType, L>>() {
+  private final TryTypeclasses INSTANCE = new TryTypeclasses();
 
-      @Override
-      public <T> Higher<Higher<tryType, L>, T> unit(T value) {
-        return Try.success(value);
-      }
-    };
-  }
-  public static <L extends Throwable> Applicative<Higher<tryType, L>> applicative() {
-    return new Applicative<Higher<tryType, L>>() {
-
-
-      @Override
-      public <T, R> Higher<Higher<tryType, L>, R> ap(Higher<Higher<tryType, L>, ? extends Function<T, R>> fn, Higher<Higher<tryType, L>, T> apply) {
-        Try<T,L>  tryType = narrowK(apply);
-        Try<? extends Function<T, R>, L> tryTypeFn = narrowK(fn);
-        return tryTypeFn.zip(tryType,(a,b)->a.apply(b));
-
-      }
-
-      @Override
-      public <T, R> Higher<Higher<tryType, L>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<tryType, L>, T> ds) {
-        return TryInstances.<L>functor().map(fn,ds);
-      }
-
-      @Override
-      public <T> Higher<Higher<tryType, L>, T> unit(T value) {
-        return TryInstances.<L>unit().unit(value);
-      }
-    };
-  }
-  public static <L extends Throwable> Monad<Higher<tryType, L>> monad() {
-    return new Monad<Higher<tryType, L>>() {
-
-      @Override
-      public <T, R> Higher<Higher<tryType, L>, R> flatMap(Function<? super T, ? extends Higher<Higher<tryType, L>, R>> fn, Higher<Higher<tryType, L>, T> ds) {
-        Try<T,L> tryType = narrowK(ds);
-        return tryType.flatMap(fn.andThen(Try::narrowK));
-      }
-
-      @Override
-      public <T, R> Higher<Higher<tryType, L>, R> ap(Higher<Higher<tryType, L>, ? extends Function<T, R>> fn, Higher<Higher<tryType, L>, T> apply) {
-        return TryInstances.<L>applicative().ap(fn,apply);
-
-      }
-
-      @Override
-      public <T, R> Higher<Higher<tryType, L>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<tryType, L>, T> ds) {
-        return TryInstances.<L>functor().map(fn,ds);
-      }
-
-      @Override
-      public <T> Higher<Higher<tryType, L>, T> unit(T value) {
-        return TryInstances.<L>unit().unit(value);
-      }
-    };
-  }
-  public static <X extends Throwable,T,R> MonadRec<Higher<tryType, X>> monadRec() {
-
-    return new MonadRec<Higher<tryType, X>>(){
-      @Override
-      public <T, R> Higher<Higher<tryType, X>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<tryType, X>, ? extends Either<T, R>>> fn) {
-        Try<? extends Either<T, R>,X> next[] = new Try[1];
-        next[0] = Try.success(Either.left(initial));
-        boolean cont = true;
-        do {
-          cont = next[0].fold(p -> p.fold(s -> {
-            next[0] = narrowK(fn.apply(s));
-            return true;
-          }, pr -> false), () -> false);
-        } while (cont);
-        return next[0].map(x->x.orElse(null));
-      }
-
-
-    };
-
-
-  }
-
-  public static <L extends Throwable> Traverse<Higher<tryType, L>> traverse() {
-    return new Traverse<Higher<tryType, L>>() {
-
-      @Override
-      public <C2, T, R> Higher<C2, Higher<Higher<tryType, L>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<tryType, L>, T> ds) {
-        Try<T, L> maybe = narrowK(ds);
-        Function<R, Try<R, L>> rightFn = r -> Try.success(r);
-
-        return maybe.fold(r->applicative.map(rightFn, fn.apply(r)),l->applicative.unit(Try.failure(l)));
-
-      }
-
-      @Override
-      public <C2, T> Higher<C2, Higher<Higher<tryType, L>, T>> sequenceA(Applicative<C2> applicative, Higher<Higher<tryType, L>, Higher<C2, T>> ds) {
-        return traverseA(applicative,Function.identity(),ds);
-      }
-
-
-
-      @Override
-      public <T, R> Higher<Higher<tryType, L>, R> ap(Higher<Higher<tryType, L>, ? extends Function<T, R>> fn, Higher<Higher<tryType, L>, T> apply) {
-        return TryInstances.<L>applicative().ap(fn,apply);
-
-      }
-
-      @Override
-      public <T, R> Higher<Higher<tryType, L>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<tryType, L>, T> ds) {
-        return TryInstances.<L>functor().map(fn,ds);
-      }
-
-      @Override
-      public <T> Higher<Higher<tryType, L>, T> unit(T value) {
-        return TryInstances.<L>unit().unit(value);
-      }
-    };
-  }
-  public static <L extends Throwable> Foldable<Higher<tryType, L>> foldable() {
-    return new Foldable<Higher<tryType, L>>() {
-
+  public static class TryTypeclasses<L extends Throwable,X> implements Monad<Higher<tryType, L>>,
+                                                    MonadRec<Higher<tryType, L>>,
+                                                    TraverseByTraverse<Higher<tryType, L>>,
+                                                    Foldable<Higher<tryType, L>>{
 
       @Override
       public <T> T foldRight(Monoid<T> monoid, Higher<Higher<tryType, L>, T> ds) {
-        Try<T,L> tryType = narrowK(ds);
-        return tryType.fold(monoid);
+          Try<T,L> tryType = narrowK(ds);
+          return tryType.fold(monoid);
       }
 
       @Override
       public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<tryType, L>, T> ds) {
-        Try<T,L> tryType = narrowK(ds);
-        return tryType.fold(monoid);
+          Try<T,L> tryType = narrowK(ds);
+          return tryType.fold(monoid);
+      }
+      @Override
+      public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<tryType, L>, T> nestedA) {
+          return foldLeft(mb, narrowK(nestedA).<R>map(fn));
       }
 
       @Override
-      public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<tryType, L>, T> nestedA) {
-        return foldLeft(mb, narrowK(nestedA).<R>map(fn));
+      public <T, R> Higher<Higher<tryType, L>, R> flatMap(Function<? super T, ? extends Higher<Higher<tryType, L>, R>> fn, Higher<Higher<tryType, L>, T> ds) {
+          Try<T,L> tryType = narrowK(ds);
+          return tryType.flatMap(fn.andThen(Try::narrowK));
       }
-    };
+
+      @Override
+      public <C2, T, R> Higher<C2, Higher<Higher<tryType, L>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<tryType, L>, T> ds) {
+          Try<T, L> maybe = narrowK(ds);
+          Function<R, Try<R, L>> rightFn = r -> Try.success(r);
+
+          return maybe.fold(r->applicative.map(rightFn, fn.apply(r)),l->applicative.unit(Try.failure(l)));
+      }
+
+
+
+      @Override
+      public <T, R> Higher<Higher<tryType, L>, R> ap(Higher<Higher<tryType, L>, ? extends Function<T, R>> fn, Higher<Higher<tryType, L>, T> apply) {
+          Try<T,L>  tryType = narrowK(apply);
+          Try<? extends Function<T, R>, L> tryTypeFn = narrowK(fn);
+          return tryTypeFn.zip(tryType,(a,b)->a.apply(b));
+      }
+
+      @Override
+      public <T> Higher<Higher<tryType, L>, T> unit(T value) {
+          return Try.success(value);
+      }
+
+      @Override
+      public <T, R> Higher<Higher<tryType, L>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<tryType, L>, T> ds) {
+          Try<T,L> tryType = narrowK(ds);
+          return tryType.map(fn);
+      }
+
+
+      @Override
+      public <T, R> Higher<Higher<tryType, L>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<tryType, L>, ? extends Either<T, R>>> fn) {
+          Try<? extends Either<T, R>,L> next[] = new Try[1];
+          next[0] = Try.success(Either.left(initial));
+          boolean cont = true;
+          do {
+              cont = next[0].fold(p -> p.fold(s -> {
+                  next[0] = narrowK(fn.apply(s));
+                  return true;
+              }, pr -> false), () -> false);
+          } while (cont);
+          return next[0].map(x->x.orElse(null));
+      }
+  }
+    public static <L extends Throwable> Functor<Higher<tryType, L>> functor() {
+    return INSTANCE;
+  }
+  public static <L extends Throwable> Pure<Higher<tryType, L>> unit() {
+    return INSTANCE;
+  }
+  public static <L extends Throwable> Applicative<Higher<tryType, L>> applicative() {
+    return INSTANCE;
+  }
+  public static <L extends Throwable> Monad<Higher<tryType, L>> monad() {
+    return INSTANCE;
+  }
+  public static <X extends Throwable,T,R> MonadRec<Higher<tryType, X>> monadRec() {
+    return INSTANCE;
+  }
+
+  public static <L extends Throwable> Traverse<Higher<tryType, L>> traverse() {
+    return INSTANCE;
+  }
+  public static <L extends Throwable> Foldable<Higher<tryType, L>> foldable() {
+    return INSTANCE;
   }
 
 
