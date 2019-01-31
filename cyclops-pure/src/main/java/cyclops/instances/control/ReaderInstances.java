@@ -146,7 +146,7 @@ public  class ReaderInstances {
         return fn;
       }
     };
-  }
+r  }
 
   public static <IN> Applicative<Higher<reader, IN>> applicative() {
     return new Applicative<Higher<reader, IN>>() {
