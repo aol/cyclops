@@ -83,6 +83,7 @@ The core Cyclops module provides a range of general purpose and purely functiona
 
 ## <a name="pure">Pure
 
+* [Powerful, extensible code with Tagless Final in … Java!](https://medium.com/@johnmcclean/powerful-extensible-code-with-tagless-final-in-java-4094f923cdea)
 * [Simulating Higher Kinded Types in Java](https://medium.com/@johnmcclean/simulating-higher-kinded-types-in-java-b52a18b72c74) : The approach taken to implement Higher Kinded types in Cyclops Pure
 * [DSLs with the Free Monad in Java 8 : Part 1](https://medium.com/modernnerd-code/dsls-with-the-free-monad-in-java-8-part-i-701408e874f8) : Introduction to Free
 * [DSLs with the Free Monad in Java 8 : Part 2](https://medium.com/@johnmcclean/dsls-with-the-free-monad-in-java-8-part-ii-f0010f012ae1) : Higher kinded Free in Java as implemented in Cyclops Pure
@@ -93,108 +94,4 @@ The core Cyclops module provides a range of general purpose and purely functiona
 * [Cyclops Higher Kinded Types](https://github.com/aol/cyclops/wiki/Higher-Kinded-Types) : Higher Kinded Types in Cyclops
 * [Applicative Type Class in Cyclops](https://github.com/aol/cyclops/wiki/Type-Classes-:-Applicative) : Applicative type class in Cyclops
 
-## Using Typeclasses
-
-### Directly
-
-Typeclasses can be used directly (although this results in verbose and somewhat cumbersome code)
-e.g. using the Pure and Functor typeclasses for Flux
-
-```java
-
-   Pure<flux> pure = Fluxs.Instances.unit();
-   Functor<flux> functor = Fluxs.Instances.functor();
-
-   FluxKind<Integer> flux = pure.unit("hello")
-                                  .applyHKT(h->functor.map((String v) ->v.length(), h))
-                                  .convert(FluxKind::narrowK);
-
-
-   assertThat(list.collectList().block(),equalTo(Arrays.asList("hello".length())));
-```
-
-### Via Active
-
-The Active class represents a Higher Kinded encoding of a Reactor (or cyclops-react/ JDK/ Vavr / rx etc) type *and* it's associated type classes
-
-The code above which creates a new Flux containing a single element "hello" and transforms it to a Flux of Integers (the length of each word), can be written much more succintly with Active
-
-```java
-
-Active<flux,Integer> active = Fluxs.allTypeClasses(Flux.empty());
-
-Active<flux,Integer> hello = active.unit("hello")
-                                   .map(String::length);
-
-Flux<Integer> stream = FluxKind.narrow(hello.getActive());
-
-```
-
-### Via Nested
-
-The Nested class represents a Nested data structure, for example a Mono with a Flux *and* the associated typeclass instances for both types.
-
-```java
-import cyclops.companion.reactor.Monos.MonoNested;
-
-Nested<mono,flux,Integer> monoFlux  = MonoNested.list(Mono.just(Flux.just(1,10,2,3)))
-                                                                       .map(i -> i * 20);
-
-Mono<Integer> opt  = monoFlux.foldsUnsafe()
-                               .foldLeft(Monoids.intMax)
-                               .convert(MonoKind::narrowK);
-
-
-//[200]
-
-```
-
-### Via Coproduct
-
-Coproduct is a Sum type for HKT encoded types that also stores the associated type classes
-
-```java
-import static
-Coproduct<flux,mono,Integer> nums = Monos.coproduct(10,Fluxs.Instances.definitions());
-
-
-int value = nums.map(i->i*2)
-                .foldUnsafe()
-                .foldLeft(0,(a,b)->a+b);
-
-//20
-
-```
-
-
-## Direct examples with Mono
-
-We can use MonoKind to encode Mono at a higher level of abstraction.
-```java
-MonoKind<Integer> mono = MonoKind.widen(Mono.just(1));
-```
-MonoKind implements the Higher interface which captures that our type is both a Mono and takes a data type of Integer
-
-```java
-Higher<mono, Integer> higher = mono;
-```
-
-We can use the Traverse and Applicative typeclasses to sequence a Mono with a Maybe into a Maybe with a Mono.
-```java
-Traverse<mono> traverse = Monos.Instances.traverse();
-Applicative<Maybe.µ> applicative = MaybeInstances.applicative();
-```
-
-```java
-Traverse<mono> traverse = Monos.Instances.traverse();
-Applicative<Maybe.µ> applicative = MaybeInstances.applicative();
-
-Higher<Maybe.µ, Higher<mono, Integer>> result = traverse.sequenceA(applicative, MonoKind.widen(Mono.just(Maybe.just(1))));
-```
-Our result is a little ugly - we should convert it back into a more readable form.
-
-```java
-Maybe<Mono<Integer>> nk = res.convert(Maybe::narrowK)
-                             .map(h -> h.convert(MonoKind::narrow));
-```
 
