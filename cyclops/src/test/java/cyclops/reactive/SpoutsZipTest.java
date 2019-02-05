@@ -301,5 +301,111 @@ public class SpoutsZipTest {
 
     }
 
+    @Test
+    public void emptyNonEmpty() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> values = new AtomicReference<Vector<Integer>>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+
+        Spouts.<Integer>empty().zip(Spouts.of(1,2,3,4,5,6), (a, b) -> a + b)
+            .forEach(n->{
+                data.set(true);
+                values.updateAndGet(v->v.plus(n));
+            },e->{
+                error.set(e);
+            },()->{
+                complete.set(true);
+            });
+
+        assertFalse(data.get());
+        assertTrue(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(),equalTo(Vector.empty()));
+    }
+    @Test
+    public void emptyNonEmptyIncremental() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> values = new AtomicReference<Vector<Integer>>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+
+        Subscription sub = Spouts.<Integer>empty().zip(Spouts.of(1,2,3,4,5,6), (a, b) -> a + b)
+            .forEach(0, n -> {
+                data.set(true);
+                values.updateAndGet(v -> v.plus(n));
+            }, e -> {
+                error.set(e);
+            }, () -> {
+                complete.set(true);
+            });
+        assertFalse(data.get());
+        assertFalse(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(),equalTo(Vector.empty()));
+
+        sub.request(1l);
+
+        assertFalse(data.get());
+        assertTrue(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(),equalTo(Vector.empty()));
+    }
+    @Test
+    public void nonEmptyEmpty() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> values = new AtomicReference<Vector<Integer>>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+
+        Spouts.of(1,2,3,4,5,6).zip(Spouts.<Integer>empty(), (a, b) -> a + b)
+            .forEach(n->{
+                data.set(true);
+                values.updateAndGet(v->v.plus(n));
+            },e->{
+                error.set(e);
+            },()->{
+                complete.set(true);
+            });
+
+        assertFalse(data.get());
+        assertTrue(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(),equalTo(Vector.empty()));
+    }
+    @Test
+    public void nonEmptyEmptyIncremental() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> values = new AtomicReference<Vector<Integer>>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+
+        Subscription sub = Spouts.of(1,2,3,4,5,6).zip(Spouts.<Integer>empty(), (a, b) -> a + b)
+            .forEach(0, n -> {
+                data.set(true);
+                values.updateAndGet(v -> v.plus(n));
+            }, e -> {
+                error.set(e);
+            }, () -> {
+                complete.set(true);
+            });
+        assertFalse(data.get());
+        assertFalse(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(),equalTo(Vector.empty()));
+
+        sub.request(1l);
+
+        assertFalse(data.get());
+        assertTrue(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(),equalTo(Vector.empty()));
+    }
+
+
 
 }

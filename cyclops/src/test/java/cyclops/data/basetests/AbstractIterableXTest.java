@@ -357,9 +357,113 @@ public abstract class AbstractIterableXTest {
         assertThat(values.get(), Matchers.hasItems(2,4));
 
     }
+    @Test
+    public void emptyNonEmpty() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> values = new AtomicReference<Vector<Integer>>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
 
-        @Test
+        this.<Integer>empty().zip(of(1,2,3,4,5,6), (a, b) -> a + b)
+            .forEach(n->{
+                data.set(true);
+                values.updateAndGet(v->v.plus(n));
+            },e->{
+                error.set(e);
+            },()->{
+                complete.set(true);
+            });
+
+        assertFalse(data.get());
+        assertTrue(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.equalTo(Vector.empty()));
+    }
+
+    @Test
+    public void emptyNonEmptyIncremental() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> values = new AtomicReference<Vector<Integer>>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+
+        Subscription sub = this.<Integer>empty().zip(of(1,2,3,4,5,6), (a, b) -> a + b)
+            .forEach(0, n -> {
+                data.set(true);
+                values.updateAndGet(v -> v.plus(n));
+            }, e -> {
+                error.set(e);
+            }, () -> {
+                complete.set(true);
+            });
+        assertFalse(data.get());
+        assertFalse(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.equalTo(Vector.empty()));
+
+        sub.request(1l);
+
+        assertFalse(data.get());
+        assertTrue(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.equalTo(Vector.empty()));
+    }
+    @Test
+    public void nonEmptyEmpty() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> values = new AtomicReference<Vector<Integer>>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+
+        this.of(1,2,3,4,5,6).zip(this.<Integer>empty(), (a, b) -> a + b)
+            .forEach(n->{
+                data.set(true);
+                values.updateAndGet(v->v.plus(n));
+            },e->{
+                error.set(e);
+            },()->{
+                complete.set(true);
+            });
+
+        assertFalse(data.get());
+        assertTrue(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.equalTo(Vector.empty()));
+    }
+    @Test
+    public void nonEmptyEmptyIncremental() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> values = new AtomicReference<Vector<Integer>>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+
+        Subscription sub = this.of(1,2,3,4,5,6).zip(this.<Integer>empty(), (a, b) -> a + b)
+            .forEach(0, n -> {
+                data.set(true);
+                values.updateAndGet(v -> v.plus(n));
+            }, e -> {
+                error.set(e);
+            }, () -> {
+                complete.set(true);
+            });
+        assertFalse(data.get());
+        assertFalse(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.equalTo(Vector.empty()));
+
+        sub.request(1l);
+
+        assertFalse(data.get());
+        assertTrue(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.equalTo(Vector.empty()));
+    }
+
+    @Test
     public void deleteBetween(){
         List<String> result = 	of(1,2,3,4,5,6).deleteBetween(2,4)
                 .map(it ->it+"!!").collect(Collectors.toList());
