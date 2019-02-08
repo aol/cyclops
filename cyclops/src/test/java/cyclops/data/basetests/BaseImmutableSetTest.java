@@ -14,6 +14,7 @@ import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.data.HashSet;
 import cyclops.data.ImmutableSet;
+import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -421,6 +422,33 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
         System.out.println(ReactiveSeq.rangeLong(0,10).reverse().vector());
         assertThat(rangeLong(0,10).reverse().take(2).toList().size(),equalTo(2));
         assertThat(rangeLong(0,10).reverse().take(2).toList(),not(contains(10)));
+    }
+    @Test
+    public void pushFlatMap() {
+
+        IterableX<Integer> odds =of(1, 3, 5, 7, 9);
+        IterableX<Integer> even = of(2, 4, 6);
+
+        IterableX<Vector<Tuple2<Integer,Integer>>> zipped = Spouts.from(odds.zip(  (t1, t2) -> Tuple.tuple(t1, t2),even)).reduceAll(Vector.empty(),(a, b)->a.plus(b));
+
+
+        Vector<Tuple2<Integer, Integer>> x = zipped.elementAt(0l).orElse(null);
+        System.out.println(x);
+        assertThat(x,containsInAnyOrder(Tuple.tuple(1, 2),
+            Tuple.tuple(3, 4),
+            Tuple.tuple(5, 6)));
+
+        IterableX<Vector<Tuple2<Integer,Integer>>> zipped2 = Spouts.from(odds.mergeMap(it -> of(it)
+            .zip( (t1, t2) -> Tuple.tuple(t1, t2),even)
+        )).reduceAll(Vector.empty(),(a, b)->a.plus(b));
+
+        Vector<Tuple2<Integer, Integer>> x2 = zipped2.elementAt(0l).orElse(null);
+        System.out.println("X2 is  " +x2);
+        assertThat(x2,containsInAnyOrder(Tuple.tuple(1, 2),
+            Tuple.tuple(3, 2),
+            Tuple.tuple(5, 2),
+            Tuple.tuple(7, 2),
+            Tuple.tuple(9, 2)));
     }
 
 }
