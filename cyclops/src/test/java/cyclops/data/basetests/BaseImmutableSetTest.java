@@ -438,7 +438,7 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
             Tuple.tuple(3, 4),
             Tuple.tuple(5, 6)));
 
-        IterableX<Vector<Tuple2<Integer,Integer>>> zipped2 = Spouts.from(odds.mergeMap(it -> of(it)
+        IterableX<Vector<Tuple2<Integer,Integer>>> zipped2 = Spouts.from(odds.concatMap(it -> of(it)
             .zip( (t1, t2) -> Tuple.tuple(t1, t2),even)
         )).reduceAll(Vector.empty(),(a, b)->a.plus(b));
 
