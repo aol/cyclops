@@ -53,7 +53,7 @@ public class ReduceAllOperator<T,A,R> extends BaseOperator<T,R> {
                         current[0]= accumulator.apply((R)current[0],e);
 
 
-                        upstream[0].request(1l);
+                        request( upstream[0],1l);
 
                     } catch (Throwable t) {
 
@@ -64,7 +64,7 @@ public class ReduceAllOperator<T,A,R> extends BaseOperator<T,R> {
                     onError.accept(t);
                     sub.requested.decrementAndGet();
                      if(sub.isActive())
-                        upstream[0].request(1);
+                         request( upstream[0],1);
 
                 },()->{
                     try {

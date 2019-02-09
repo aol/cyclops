@@ -71,7 +71,7 @@ public class SlidingOperator<T,R> extends BaseOperator<T,R> {
                                     .size() > 0; i++)
                                 list.mutate(var -> var.removeAt(0));
                         }else if(sub.isOpen){
-                            upstream[0].request(1l);
+                            request( upstream[0],1l);
                             sent[0]=false;
                         }
 
@@ -85,7 +85,7 @@ public class SlidingOperator<T,R> extends BaseOperator<T,R> {
                     onError.accept(t);
                     sub.requested.decrementAndGet();
                     if(sub.isActive())
-                        upstream[0].request(1);
+                        request( upstream[0],1);
                 },()->{
                     if(!sent[0] && list.get().size()>0)
                         onNext.accept(finalizer.apply(list.get()));

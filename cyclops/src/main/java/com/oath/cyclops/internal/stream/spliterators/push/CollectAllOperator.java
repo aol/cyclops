@@ -1,5 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
 
@@ -50,7 +51,11 @@ public class CollectAllOperator<T,A,R> extends BaseOperator<T,R> {
                     try {
                         A nextA = (A)next[0];
                         collector.accumulator().accept(nextA,e);
-                        upstream[0].request(1l);
+
+                        while(upstream[0]==null){
+                            LockSupport.parkNanos(10l);
+                        }
+                        request(upstream[0],1l);
 
                     } catch (Throwable t) {
 
@@ -60,7 +65,7 @@ public class CollectAllOperator<T,A,R> extends BaseOperator<T,R> {
                 ,t->{onError.accept(t);
                     sub.requested.decrementAndGet();
                     if(sub.isActive())
-                     upstream[0].request(1);
+                        request(upstream[0],1);
                 },()->{
                     A nextA = (A)next[0];
                     try {
