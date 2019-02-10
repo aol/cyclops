@@ -51,7 +51,7 @@ public class CollectAllOperator<T,A,R> extends BaseOperator<T,R> {
                     try {
                         A nextA = (A)next[0];
                         collector.accumulator().accept(nextA,e);
-                        
+
                         request(upstream[0],1l);
 
                     } catch (Throwable t) {

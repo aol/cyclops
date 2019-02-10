@@ -3694,6 +3694,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     ReactiveSeq<T> recover(final Function<? super Throwable, ? extends T> fn);
 
+    ReactiveSeq<T> recoverWith(final Supplier<Publisher<? extends T>> fn);
+
+    default ReactiveSeq<T> onError(Consumer<? super Throwable > c){
+        return recover(in->{
+            c.accept(in);
+            throw ExceptionSoftener.throwSoftenedException(in);
+        });
+    }
+
     /**
      * Recover from a particular exception type
      *

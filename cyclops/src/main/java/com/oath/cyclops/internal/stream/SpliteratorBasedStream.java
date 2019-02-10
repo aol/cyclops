@@ -2,6 +2,7 @@ package com.oath.cyclops.internal.stream;
 
 
 import com.oath.cyclops.internal.stream.spliterators.push.CollectingSinkSpliterator;
+import com.oath.cyclops.internal.stream.spliterators.push.OnErrorBreakOperator;
 import com.oath.cyclops.internal.stream.spliterators.push.ValueEmittingSpliterator;
 import com.oath.cyclops.types.futurestream.Continuation;
 import com.oath.cyclops.types.persistent.PersistentCollection;
@@ -660,6 +661,19 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     @Override
     public ReactiveSeq<T> recover(final Function<? super Throwable, ? extends T> fn) {
         return createSeq(new RecoverSpliterator<T,Throwable>(get(),fn,Throwable.class), this.reversible);
+    }
+
+    @Override
+    public ReactiveSeq<T> recoverWith(Supplier<Publisher<? extends T>> fn) {
+        Object value = new Object();
+        OnErrorBreakSpliterator op = new OnErrorBreakSpliterator(get(), t -> value,Throwable.class);
+        ReactiveSeq x = createSeq(op).flatMap(a -> {
+            if (a == value) {
+                return Spouts.from(fn.get());
+            }
+            return ReactiveSeq.of(a);
+        });
+        return x;
     }
 
     @Override

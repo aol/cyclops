@@ -693,6 +693,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return res;
     }
 
+
     @Override
     public ReactiveSeq<T> onEmptyGet(final Supplier<? extends T> supplier) {
 
@@ -860,6 +861,18 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public ReactiveSeq<T> recover(final Function<? super Throwable, ? extends T> fn) {
         return createSeq(new RecoverOperator<>(source, fn));
+    }
+    @Override
+    public ReactiveSeq<T> recoverWith(final Supplier<Publisher<? extends T>> fn) {
+        Object value = new Object();
+         OnErrorBreakOperator<ReactiveSeq<T>> op = new OnErrorBreakOperator(source, t -> value);
+        ReactiveSeq x = createSeq(op).flatMap(a -> {
+            if (a == value) {
+                return Spouts.from(fn.get());
+            }
+            return Spouts.of(a);
+        });
+        return x;
     }
 
     @Override
