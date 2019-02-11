@@ -664,12 +664,12 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     }
 
     @Override
-    public ReactiveSeq<T> recoverWith(Supplier<Publisher<? extends T>> fn) {
+    public ReactiveSeq<T> recoverWith(final Publisher<? extends T> fn) {
         Object value = new Object();
         OnErrorBreakSpliterator op = new OnErrorBreakSpliterator(get(), t -> value,Throwable.class);
         ReactiveSeq x = createSeq(op).flatMap(a -> {
             if (a == value) {
-                return Spouts.from(fn.get());
+                return Spouts.from(fn);
             }
             return ReactiveSeq.of(a);
         });

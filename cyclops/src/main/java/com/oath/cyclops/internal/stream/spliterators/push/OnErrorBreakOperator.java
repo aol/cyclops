@@ -28,23 +28,28 @@ public class OnErrorBreakOperator<T> extends BaseOperator<T,T> {
                     try {
                         onNext.accept(e);
                     } catch (Throwable t) {
-                        upstream[0].cancel();
+
                         try{
 
                             onNext.accept(recover.apply(t));
 
                         }catch(Throwable t2) {
                             onError.accept(t2);
+                        }finally{
+                             upstream[0].cancel();
+                             onComplete.run();
                         }
                     }
                 }
                 ,e->{
-                    upstream[0].cancel();
+
                     try{
                         onNext.accept(recover.apply(e));
                     } catch (Throwable t) {
                         onError.accept(t);
                     }
+                    upstream[0].cancel();
+                    onComplete.run();
 
                 },onComplete);
         return upstream[0];

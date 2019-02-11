@@ -17,6 +17,7 @@ import reactor.core.publisher.Flux;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -79,6 +80,7 @@ public class ExtensionOperatorsTest {
         assertThat(Spouts.of(1, 2, 3).combinations(2).map(s->s.toList()).toList(),
                 equalTo(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3))));
     }
+
 	@Test
 	public void onEmptySwitchEmpty(){
 		assertThat(Spouts.of()
