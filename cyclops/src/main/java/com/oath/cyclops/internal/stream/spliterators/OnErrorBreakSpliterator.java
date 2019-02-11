@@ -23,14 +23,18 @@ public class OnErrorBreakSpliterator<T, X extends Throwable> implements Copyable
 
 
 
+    boolean closed =false;
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
 
+        if(closed)
+            return false;
          try {
              return source.tryAdvance(action);
          }catch(Throwable t){
              if (type.isAssignableFrom(t.getClass())) {
                  action.accept(fn.apply((X)t));
+                 closed = true;
                  return false;
              }
              throw ExceptionSoftener.throwSoftenedException(t);

@@ -863,12 +863,12 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return createSeq(new RecoverOperator<>(source, fn));
     }
     @Override
-    public ReactiveSeq<T> recoverWith(final Supplier<Publisher<? extends T>> fn) {
+    public ReactiveSeq<T> recoverWith(final Publisher<? extends T> fn) {
         Object value = new Object();
-         OnErrorBreakOperator<ReactiveSeq<T>> op = new OnErrorBreakOperator(source, t -> value);
+         OnErrorBreakOperator<T> op = new OnErrorBreakOperator(source, t -> value);
         ReactiveSeq x = createSeq(op).flatMap(a -> {
             if (a == value) {
-                return Spouts.from(fn.get());
+                return Spouts.from(fn);
             }
             return Spouts.of(a);
         });
