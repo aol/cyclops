@@ -3694,7 +3694,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     ReactiveSeq<T> recover(final Function<? super Throwable, ? extends T> fn);
 
-    ReactiveSeq<T> recoverWith(final Publisher<? extends T> fn);
+    default ReactiveSeq<T> recoverWith(final Publisher<? extends T> fn){
+        return recoverWith(i->fn);
+    }
+    ReactiveSeq<T> recoverWith(final Function<Throwable,? extends Publisher<? extends T>> fn);
 
     default ReactiveSeq<T> onError(Consumer<? super Throwable > c){
         return recover(in->{
