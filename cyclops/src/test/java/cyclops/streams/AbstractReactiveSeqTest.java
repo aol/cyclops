@@ -56,6 +56,42 @@ public abstract class AbstractReactiveSeqTest {
 
         assertThat(result,equalTo(Arrays.asList(100,200,300)));
     }
+    @Test
+    public void recoverWithMiddleList(){
+
+        List<Integer> result = of(1, 2, 3).<Integer>map(i -> {
+            if(i==2)
+                throw new RuntimeException();
+            return i;
+        })
+            .recoverWith(Spouts.of(100,200,300))
+            .toList();
+
+
+
+
+        assertThat(result,equalTo(Arrays.asList(1,100,200,300)));
+    }
+    @Test
+    public void recoverWithMiddleIterator(){
+
+        Iterator<Integer> it = of(1, 2, 3).<Integer>map(i -> {
+            if(i==2)
+                throw new RuntimeException();
+            return i;
+        })
+            .recoverWith(Spouts.of(100,200,300))
+            .iterator();
+
+        List<Integer> result = new ArrayList<>();
+        while(it.hasNext()){
+            result.add(it.next());
+        }
+
+
+
+        assertThat(result,equalTo(Arrays.asList(1,100,200,300)));
+    }
 
     @Test
     public void recoverWithNoErrorList(){
