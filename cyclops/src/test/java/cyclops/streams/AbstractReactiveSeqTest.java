@@ -121,6 +121,90 @@ public abstract class AbstractReactiveSeqTest {
         assertThat(result,equalTo(Arrays.asList(1,2,3)));
     }
 
+    @Test
+    public void recoverWith(){
+        AtomicInteger count = new AtomicInteger(0);
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> result = new AtomicReference<>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        of(1, 2, 3).<Integer>map(i -> {
+            throw new RuntimeException();
+        })
+            .recoverWith(Spouts.of(100,200,300))
+            .forEach(n -> {
+                data.set(true);
+                result.updateAndGet(v->v.plus(n));
+            }, e -> {
+                error.set(e);
+            }, () -> {
+                complete.set(true);
+            });
+
+        assertThat(data.get(), equalTo(true));
+        assertThat(complete.get(), equalTo(true));
+        assertThat(error.get(), equalTo(null));
+        assertThat(result.get(),equalTo(Vector.of(100,200,300)));
+
+
+
+    }
+    @Test
+    public void recoverWithIncremental(){
+        AtomicInteger count = new AtomicInteger(0);
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> result = new AtomicReference<>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        Subscription sub = of(1, 2, 3).<Integer>map(i -> {
+            throw new RuntimeException();
+        })
+            .recoverWith(Spouts.of(100,200,300))
+            .forEach(0,n -> {
+                data.set(true);
+                result.updateAndGet(v->v.plus(n));
+            }, e -> {
+                error.set(e);
+            }, () -> {
+                complete.set(true);
+            });
+
+        assertThat(data.get(), equalTo(false));
+        assertThat(complete.get(), equalTo(false));
+        assertThat(error.get(), equalTo(null));
+        assertThat(result.get(),equalTo(Vector.empty()));
+
+        sub.request(1l);
+        assertThat(data.get(), equalTo(true));
+        assertThat(complete.get(), equalTo(false));
+        assertThat(error.get(), equalTo(null));
+        assertThat(result.get(),equalTo(Vector.of(100)));
+
+        sub.request(1000l);
+        assertThat(data.get(), equalTo(true));
+        assertThat(complete.get(), equalTo(true));
+        assertThat(error.get(), equalTo(null));
+        assertThat(result.get(),equalTo(Vector.of(100,200,300)));
+
+
+    }
+
+    @Test
+    public void recoverWithEmptyList(){
+
+        List<Integer> result = of().<Integer>map(i -> {
+            throw new RuntimeException();
+        })
+            .recoverWith(Spouts.of(100,200,300))
+            .toList();
+
+
+
+
+        assertThat(result,equalTo(Arrays.asList()));
+    }
     /** onError tests **/
 
     @Test
@@ -171,7 +255,7 @@ public abstract class AbstractReactiveSeqTest {
         AtomicReference<Vector<Integer>> result = new AtomicReference<>(Vector.empty());
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
-        ReactiveSeq<Integer> rs = ReactiveSeq.of(1, 2, 3);
+
 
 
             of(1, 2, 3).<Integer>map(i -> {
@@ -205,7 +289,7 @@ public abstract class AbstractReactiveSeqTest {
         AtomicReference<Vector<Integer>> result = new AtomicReference<>(Vector.empty());
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
-        ReactiveSeq<Integer> rs = ReactiveSeq.of(1, 2, 3);
+
 
 
         Subscription sub =of(1, 2, 3).<Integer>map(i -> {
@@ -291,7 +375,7 @@ public abstract class AbstractReactiveSeqTest {
         AtomicReference<Vector<Integer>> result = new AtomicReference<>(Vector.empty());
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
-        ReactiveSeq<Integer> rs = ReactiveSeq.of(1, 2, 3);
+
 
 
         empty().<Integer>map(i -> {
@@ -326,7 +410,7 @@ public abstract class AbstractReactiveSeqTest {
         AtomicReference<Vector<Integer>> result = new AtomicReference<>(Vector.empty());
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
-        ReactiveSeq<Integer> rs = ReactiveSeq.of(1, 2, 3);
+
 
 
         Subscription sub = empty().<Integer>map(i -> {
