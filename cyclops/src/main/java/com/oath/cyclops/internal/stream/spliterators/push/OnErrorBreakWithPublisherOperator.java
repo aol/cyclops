@@ -1,18 +1,21 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
+import cyclops.reactive.Spouts;
+import org.reactivestreams.Publisher;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class OnErrorBreakOperator<T> extends BaseOperator<T,T> {
+public class OnErrorBreakWithPublisherOperator<T> extends BaseOperator<T, Publisher<? extends T>> {
 
 
 
-    final Function<? super Throwable,? extends T> recover;
+    final Function<? super Throwable,? extends Publisher<? extends T>> recover;
 
-    public OnErrorBreakOperator(Operator<T> source, Function<Throwable,? extends T> recover){
+    public OnErrorBreakWithPublisherOperator(Operator<T> source, Function<Throwable,? extends Publisher<? extends T>> recover){
         super(source);
 
         this.recover = recover;
@@ -22,11 +25,11 @@ public class OnErrorBreakOperator<T> extends BaseOperator<T,T> {
 
 
     @Override
-    public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
+    public StreamSubscription subscribe(Consumer<? super Publisher<? extends T>> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         StreamSubscription[] upstream = {null};
         upstream[0] = source.subscribe(e-> {
                     try {
-                        onNext.accept(e);
+                        onNext.accept(Spouts.of(e));
                     } catch (Throwable t) {
 
                         try{
@@ -56,7 +59,7 @@ public class OnErrorBreakOperator<T> extends BaseOperator<T,T> {
     }
 
     @Override
-    public void subscribeAll(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
+    public void subscribeAll(Consumer<? super Publisher<? extends T>> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
         subscribe(onNext,onError,onCompleteDs).request(Long.MAX_VALUE);
     }
 }
