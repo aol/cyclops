@@ -1,6 +1,7 @@
 package cyclops.streams;
 
 import cyclops.data.Vector;
+import cyclops.function.Lambda;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.junit.Test;
@@ -30,11 +31,29 @@ public abstract class AbstractReactiveSeqTest {
         List<Integer> result = of(1, 2, 3).<Integer>map(i -> {
                 throw new RuntimeException();
             })
-                .recoverWith(Spouts.of(100,200,300))
+                .recoverWith(e->Spouts.of(100,200,300))
                 .toList();
 
 
 
+
+        assertThat(result,equalTo(Arrays.asList(100,200,300)));
+    }
+    @Test
+    public void recoverWithRecursiveList(){
+
+        AtomicInteger count = new AtomicInteger(0);
+        List<Integer> result = of(1, 2, 3).<Integer>map(i -> {
+            throw new RuntimeException();
+        })
+            .recoverWith(e->Spouts.of(100,200,300).peek(i-> {
+                if (count.incrementAndGet() < 200)
+                    throw new RuntimeException();
+            }))
+            .toList();
+
+
+        assertThat(count.get(),equalTo(202));
 
         assertThat(result,equalTo(Arrays.asList(100,200,300)));
     }
@@ -44,7 +63,7 @@ public abstract class AbstractReactiveSeqTest {
         Iterator<Integer> it = of(1, 2, 3).<Integer>map(i -> {
             throw new RuntimeException();
         })
-            .recoverWith(Spouts.of(100,200,300))
+            .recoverWith(e->Spouts.of(100,200,300))
             .iterator();
 
         List<Integer> result = new ArrayList<>();
@@ -64,7 +83,7 @@ public abstract class AbstractReactiveSeqTest {
                 throw new RuntimeException();
             return i;
         })
-            .recoverWith(Spouts.of(100,200,300))
+            .recoverWith(e->Spouts.of(100,200,300))
             .toList();
 
 
@@ -80,7 +99,7 @@ public abstract class AbstractReactiveSeqTest {
                 throw new RuntimeException();
             return i;
         })
-            .recoverWith(Spouts.of(100,200,300))
+            .recoverWith(e->Spouts.of(100,200,300))
             .iterator();
 
         List<Integer> result = new ArrayList<>();
@@ -97,7 +116,7 @@ public abstract class AbstractReactiveSeqTest {
     public void recoverWithNoErrorList(){
 
         List<Integer> result = of(1, 2, 3).<Integer>map(i -> i)
-            .recoverWith(of(100,200,300))
+            .recoverWith(e->of(100,200,300))
             .toList();
 
 
@@ -109,7 +128,7 @@ public abstract class AbstractReactiveSeqTest {
     public void recoverWithNoErrorIterator(){
 
         Iterator<Integer> it =  of(1, 2, 3).<Integer>map(i -> i)
-            .recoverWith(of(100,200,300))
+            .recoverWith(e->of(100,200,300))
             .iterator();
 
         List<Integer> result = new ArrayList<>();
@@ -132,7 +151,7 @@ public abstract class AbstractReactiveSeqTest {
         of(1, 2, 3).<Integer>map(i -> {
             throw new RuntimeException();
         })
-            .recoverWith(Spouts.of(100,200,300))
+            .recoverWith(e->Spouts.of(100,200,300))
             .forEach(n -> {
                 data.set(true);
                 result.updateAndGet(v->v.plus(n));
@@ -161,7 +180,7 @@ public abstract class AbstractReactiveSeqTest {
         Subscription sub = of(1, 2, 3).<Integer>map(i -> {
             throw new RuntimeException();
         })
-            .recoverWith(Spouts.of(100,200,300))
+            .recoverWith(e->Spouts.of(100,200,300))
             .forEach(0,n -> {
                 data.set(true);
                 result.updateAndGet(v->v.plus(n));
@@ -197,7 +216,7 @@ public abstract class AbstractReactiveSeqTest {
         List<Integer> result = of().<Integer>map(i -> {
             throw new RuntimeException();
         })
-            .recoverWith(Spouts.of(100,200,300))
+            .recoverWith(e->Spouts.of(100,200,300))
             .toList();
 
 

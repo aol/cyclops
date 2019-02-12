@@ -1,5 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
+import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.reactivestreams.Publisher;
 
@@ -13,7 +14,7 @@ public class OnErrorBreakWithPublisherOperator<T> extends BaseOperator<T, Publis
 
 
 
-    final Function<? super Throwable,? extends Publisher<? extends T>> recover;
+    final Function<Throwable,? extends Publisher<? extends T>> recover;
 
     public OnErrorBreakWithPublisherOperator(Operator<T> source, Function<Throwable,? extends Publisher<? extends T>> recover){
         super(source);
@@ -33,8 +34,8 @@ public class OnErrorBreakWithPublisherOperator<T> extends BaseOperator<T, Publis
                     } catch (Throwable t) {
 
                         try{
-
-                            onNext.accept(recover.apply(t));
+                            ReactiveSeq<T> rs = Spouts.from(recover.apply(t));
+                            onNext.accept(rs.recoverWith(recover));
 
                         }catch(Throwable t2) {
                             onError.accept(t2);
@@ -47,7 +48,9 @@ public class OnErrorBreakWithPublisherOperator<T> extends BaseOperator<T, Publis
                 ,e->{
 
                     try{
-                        onNext.accept(recover.apply(e));
+                        ReactiveSeq<T> rs = Spouts.from(recover.apply(e));
+                        onNext.accept(rs.recoverWith(recover));
+
                     } catch (Throwable t) {
                         onError.accept(t);
                     }

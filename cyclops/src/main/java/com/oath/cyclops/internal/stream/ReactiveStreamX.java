@@ -865,7 +865,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public ReactiveSeq<T> recoverWith(final Function<Throwable,? extends Publisher<? extends T>> fn) {
-        return createSeq(new OnErrorBreakWithPublisherOperator<>(source, t -> fn.apply(t))).flatMap(Spouts::from);
+        return createSeq(new OnErrorBreakWithPublisherOperator<>(source, t -> fn.apply(t)))
+                    .flatMap(a->Spouts.from(a));
+        //NB needs to be flatMap rather than mergeMap as an entirely new Stream is created in OnErrorBreakWithPublisher
 
     }
 

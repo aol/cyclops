@@ -79,6 +79,17 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
         return io.map(t -> t.fold(i -> i, s));
     }
 
+    IO<T> recover(final Function<Throwable, ? extends T> fn);
+
+    IO<T> recoverWith(final Function<Throwable,? extends IO<? extends T>> fn);
+
+    IO<T> onError(Consumer<? super Throwable > c);
+
+    IO<T> onComplete(final Runnable fn);
+
+    @Override
+    IO<T> peek(Consumer<? super T> peek);
+
     public static <T> IO<T> flatten(IO<IO<T>> io) {
         return io.flatMap(i -> i);
     }
@@ -457,6 +468,9 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
 
         public static <T, X extends Throwable> IO<T> recover(IO<Try<T, X>> io, Supplier<? extends T> s) {
             return io.map(t -> t.fold(i -> i, s));
+        }
+        public IO<T> recoverWith(final Function<Throwable,? extends IO<? extends T>> fn) {
+            return fromPublisher(Spouts.from(this.fn).recoverWith(fn));
         }
 
         public static <T> IO<T> flatten(IO<IO<T>> io) {

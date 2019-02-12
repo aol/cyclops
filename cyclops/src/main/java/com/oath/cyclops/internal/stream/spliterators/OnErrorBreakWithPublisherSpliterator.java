@@ -1,6 +1,7 @@
 package com.oath.cyclops.internal.stream.spliterators;
 
 import com.oath.cyclops.util.ExceptionSoftener;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.reactivestreams.Publisher;
 
@@ -31,8 +32,8 @@ public class OnErrorBreakWithPublisherSpliterator<T, X extends Throwable> implem
          try {
              return source.tryAdvance(in->action.accept(Spouts.of(in)));
          }catch(Throwable t){
-
-                 action.accept(fn.apply((X)t));
+                ReactiveSeq<T> rs = Spouts.from(fn.apply(t));
+                 action.accept(rs);
                  closed = true;
                  return false;
 

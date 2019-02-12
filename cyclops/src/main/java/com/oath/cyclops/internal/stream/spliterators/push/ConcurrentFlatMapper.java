@@ -56,17 +56,19 @@ public class ConcurrentFlatMapper<T, R> {
 
         if(!sub.isOpen)
             return;
+
         if (processAll)
             return;
 
         if(n==Long.MAX_VALUE){
             processAll =true;
             requested.set(Long.MAX_VALUE);
+        }else {
+            requested.accumulateAndGet(n, (a, b) -> {
+                long sum = a + b;
+                return sum < 0L ? Long.MAX_VALUE : sum;
+            });
         }
-        requested.accumulateAndGet(n,(a,b)->{
-            long sum = a+b;
-            return sum <0L ? Long.MAX_VALUE : sum;
-        });
 
         handleMainPublisher();
     }
