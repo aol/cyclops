@@ -28,6 +28,7 @@ import org.reactivestreams.Subscriber;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -83,12 +84,35 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
 
     IO<T> recoverWith(final Function<Throwable,? extends IO<? extends T>> fn);
 
+    default IO<T> recoverWithEmpty(){
+        return recoverWith(i->IO.sync(ReactiveSeq.empty()));
+    }
+
+    default IO<T> recoverWith(final BiFunction<Integer,Throwable,? extends IO<? extends T>> fn){
+        AtomicInteger count = new AtomicInteger(0);
+        return recoverWith(t->{
+            return fn.apply(count.getAndIncrement(),t);
+        });
+    }
+
+    default <X extends Throwable> IO<T> recoverWith(Class<X> type, final BiFunction<Integer,X,? extends IO<? extends T>> fn){
+        AtomicInteger count = new AtomicInteger(0);
+        return recoverWith(t->{
+            if (type.isAssignableFrom(t.getClass())) {
+                return fn.apply(count.getAndIncrement(), (X)t);
+            }
+            throw ExceptionSoftener.throwSoftenedException(t);
+        });
+    }
+
     IO<T> onError(Consumer<? super Throwable > c);
 
     IO<T> onComplete(final Runnable fn);
 
     @Override
-    IO<T> peek(Consumer<? super T> peek);
+    default IO<T> peek(Consumer<? super T> peek){
+        return (IO<T>)ReactiveTransformable.super.peek(peek);
+    }
 
     public static <T> IO<T> flatten(IO<IO<T>> io) {
         return io.flatMap(i -> i);
@@ -469,9 +493,27 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
         public static <T, X extends Throwable> IO<T> recover(IO<Try<T, X>> io, Supplier<? extends T> s) {
             return io.map(t -> t.fold(i -> i, s));
         }
+
+        @Override
+        public IO<T> recover(Function<Throwable, ? extends T> fn) {
+            return fromPublisher(Spouts.from(this.fn).recover(fn));
+        }
+
         public IO<T> recoverWith(final Function<Throwable,? extends IO<? extends T>> fn) {
             return fromPublisher(Spouts.from(this.fn).recoverWith(fn));
         }
+
+        @Override
+        public IO<T> onError(Consumer<? super Throwable> c) {
+            return fromPublisher(Spouts.from(this.fn).onError(c));
+        }
+
+        @Override
+        public IO<T> onComplete(Runnable fn) {
+            return fromPublisher(Spouts.from(this.fn).onComplete(fn));
+        }
+
+
 
         public static <T> IO<T> flatten(IO<IO<T>> io) {
             return io.flatMap(i -> i);
@@ -592,6 +634,24 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
             return io.flatMap(i -> i);
         }
 
+        @Override
+        public IO<T> recover(Function<Throwable, ? extends T> fn) {
+            return new SyncIO<>(this.fn.recover(fn));
+        }
+
+        public IO<T> recoverWith(final Function<Throwable,? extends IO<? extends T>> fn) {
+            return new SyncIO<>(this.fn.recoverWith(fn));
+        }
+
+        @Override
+        public IO<T> onError(Consumer<? super Throwable> c) {
+            return new SyncIO<>(this.fn.onError(c));
+        }
+
+        @Override
+        public IO<T> onComplete(Runnable fn) {
+            return new SyncIO<>(this.fn.onComplete(fn));
+        }
 
         @Override
         public <R> IO<R> map(Function<? super T, ? extends R> s) {

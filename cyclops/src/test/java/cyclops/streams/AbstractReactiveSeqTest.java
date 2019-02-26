@@ -58,6 +58,108 @@ public abstract class AbstractReactiveSeqTest {
         assertThat(result,equalTo(Arrays.asList(100,200,300)));
     }
     @Test
+    public void recoverWithRecursive(){
+
+        AtomicInteger count = new AtomicInteger(0);
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> result = new AtomicReference<>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+        of(1, 2, 3).<Integer>map(i -> {
+            throw new RuntimeException();
+        })
+            .recoverWith(e->Spouts.of(100,200,300).peek(i-> {
+                if (count.incrementAndGet() < 200)
+                    throw new RuntimeException();
+            }))
+            .forEach(n -> {
+                data.set(true);
+                result.updateAndGet(v->v.plus(n));
+            }, e -> {
+                error.set(e);
+            }, () -> {
+                complete.set(true);
+            });
+
+        assertThat(data.get(), equalTo(true));
+        assertThat(complete.get(), equalTo(true));
+        assertThat(error.get(), equalTo(null));
+        assertThat(result.get(),equalTo(Vector.of(100,200,300)));
+
+
+        assertThat(count.get(),equalTo(202));
+
+
+    }
+    @Test
+    public void recoverWithRecursiveIncremental(){
+
+        AtomicInteger count = new AtomicInteger(0);
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> result = new AtomicReference<>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+        Subscription sub = of(1, 2, 3).<Integer>map(i -> {
+            throw new RuntimeException();
+        })
+            .recoverWith(e->Spouts.of(100,200,300).peek(i-> {
+                if (count.incrementAndGet() < 200)
+                    throw new RuntimeException();
+            }))
+            .forEach(0,n -> {
+                data.set(true);
+                result.updateAndGet(v->v.plus(n));
+            }, e -> {
+                error.set(e);
+            }, () -> {
+                complete.set(true);
+            });
+        assertThat(data.get(), equalTo(false));
+        assertThat(complete.get(), equalTo(false));
+        assertThat(error.get(), equalTo(null));
+        assertThat(result.get(),equalTo(Vector.empty()));
+
+        sub.request(1l);
+        assertThat(data.get(), equalTo(true));
+        assertThat(complete.get(), equalTo(false));
+        assertThat(error.get(), equalTo(null));
+        assertThat(result.get(),equalTo(Vector.of(100)));
+
+        sub.request(10l);
+        assertThat(data.get(), equalTo(true));
+        assertThat(complete.get(), equalTo(true));
+        assertThat(error.get(), equalTo(null));
+        assertThat(result.get(),equalTo(Vector.of(100,200,300)));
+
+
+        assertThat(count.get(),equalTo(202));
+
+
+    }
+    @Test
+    public void recoverWithRecursiveListIterator(){
+
+        AtomicInteger count = new AtomicInteger(0);
+        Iterator<Integer> it = of(1, 2, 3).<Integer>map(i -> {
+            throw new RuntimeException();
+        })
+            .recoverWith(e->Spouts.of(100,200,300).peek(i-> {
+                if (count.incrementAndGet() < 200)
+                    throw new RuntimeException();
+            }))
+            .iterator();
+        List<Integer> result = new ArrayList<>();
+        while(it.hasNext()){
+            result.add(it.next());
+        }
+
+
+
+        assertThat(count.get(),equalTo(202));
+
+        assertThat(result,equalTo(Arrays.asList(100,200,300)));
+    }
+    @Test
     public void recoverWithIterator(){
 
         Iterator<Integer> it = of(1, 2, 3).<Integer>map(i -> {
