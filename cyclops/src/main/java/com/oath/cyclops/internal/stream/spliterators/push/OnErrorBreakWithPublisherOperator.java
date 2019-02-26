@@ -15,11 +15,13 @@ public class OnErrorBreakWithPublisherOperator<T> extends BaseOperator<T, Publis
 
 
     final Function<Throwable,? extends Publisher<? extends T>> recover;
+    final Integer count;
 
     public OnErrorBreakWithPublisherOperator(Operator<T> source, Function<Throwable,? extends Publisher<? extends T>> recover){
         super(source);
 
         this.recover = recover;
+        count = 0;
 
 
     }
