@@ -3697,9 +3697,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> recover(final Function<? super Throwable, ? extends T> fn);
 
     ReactiveSeq<T> recoverWith(final Function<Throwable,? extends Publisher<? extends T>> fn);
-    default ReactiveSeq<T> recoverWithEmpty(){
-        return recoverWith(i->Spouts.empty());
-    }
+
 
     default ReactiveSeq<T> recoverWith(final BiFunction<Integer,Throwable,? extends Publisher<? extends T>> fn){
         AtomicInteger count = new AtomicInteger(0);
