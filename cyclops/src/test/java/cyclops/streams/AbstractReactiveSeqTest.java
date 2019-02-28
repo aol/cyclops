@@ -318,6 +318,39 @@ public abstract class AbstractReactiveSeqTest {
         List<Integer> result = of().<Integer>map(i -> {
             throw new RuntimeException();
         })
+            .recoverWith(e->Spouts.empty())
+            .toList();
+
+
+
+
+        assertThat(result,equalTo(Arrays.asList()));
+    }
+    @Test
+    public void recoverWithEmptyIterator(){
+
+        Iterator<Integer> it = of().<Integer>map(i -> {
+            throw new RuntimeException();
+        })
+            .recoverWith(e->Spouts.empty())
+            .iterator();
+
+        List<Integer> result = new ArrayList<>();
+        while(it.hasNext()){
+            result.add(it.next());
+        }
+
+
+
+        assertThat(result,equalTo(Arrays.asList()));
+    }
+
+    @Test
+    public void recoverWithEmpty(){
+
+        List<Integer> result = of().<Integer>map(i -> {
+            throw new RuntimeException();
+        })
             .recoverWith(e->Spouts.of(100,200,300))
             .toList();
 
@@ -326,6 +359,7 @@ public abstract class AbstractReactiveSeqTest {
 
         assertThat(result,equalTo(Arrays.asList()));
     }
+
     /** onError tests **/
 
     @Test
