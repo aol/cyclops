@@ -29,7 +29,7 @@ public class LazyFilterOperator<T> extends BaseOperator<T,T> {
                         if(predicate.test(e))
                             onNext.accept(e);
                         else{
-                            upstream[0].request(1);
+                            request( upstream[0],1);
                         }
                     } catch (Throwable t) {
 

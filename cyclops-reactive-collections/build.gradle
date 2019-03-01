@@ -33,6 +33,7 @@ dependencies {
     provided 'org.projectlombok:lombok:1.16.12'
     testCompile project(':cyclops').sourceSets.test.output
     testCompile 'org.reactivestreams:reactive-streams-tck:1.0.0'
+    testCompile group: 'io.projectreactor', name: 'reactor-test', version: '3.2.2.RELEASE'
     testCompile 'org.mockito:mockito-core:1.9.5'
     testCompile 'io.projectreactor:reactor-core:3.0.7.RELEASE'
     testCompile 'org.hamcrest:hamcrest-all:1.3'

@@ -2,9 +2,11 @@ package com.oath.cyclops.internal.stream;
 
 
 import com.oath.cyclops.async.adapters.Queue;
+import com.oath.cyclops.internal.stream.spliterators.Zipping3Spliterator;
 import com.oath.cyclops.types.futurestream.Continuation;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.stream.Connectable;
+import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.util.ExceptionSoftener;
 
 import com.oath.cyclops.internal.stream.spliterators.push.*;
@@ -17,6 +19,8 @@ import cyclops.data.Seq;
 import cyclops.companion.Streams;
 import cyclops.control.*;
 import cyclops.data.Vector;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.function.Monoid;
 
 import cyclops.reactive.ReactiveSeq;
@@ -693,7 +697,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public ReactiveSeq<T> onEmptyGet(final Supplier<? extends T> supplier) {
 
 
-         return createSeq(new OnEmptyOperator<T>(source, supplier)).flatMap(a->ReactiveSeq.of(a));
+         return createSeq(new OnEmptyOperator<T>(source, supplier));
     }
 
     @Override
@@ -1067,6 +1071,16 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return createSeq(new ZippingOperator<>(source, right, zipper), async);
     }
 
+    @Override
+    public final <S, U,R> ReactiveSeq<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third,
+                                              final Function3<? super T, ? super S, ? super U,? extends R> fn3) {
+        return this.zip(second).zip(third,(a,b)->fn3.apply(a._1(),a._2(),b));
+    }
+
+    @Override
+    public final <T2, T3, T4, R> ReactiveSeq<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return zip3(second,third).zip(fourth,(a,b)->fn.apply(a._1(),a._2(),a._3(),b));
+    }
 
     @Override
     public Connectable<T> schedule(final String cron, final ScheduledExecutorService ex) {
