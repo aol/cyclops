@@ -28,6 +28,7 @@ import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.companion.Streamable;
 
+import org.hamcrest.Matchers;
 import org.hamcrest.core.IsEqual;
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,6 +36,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 import org.reactivestreams.Subscription;
+import reactor.test.StepVerifier;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -43,6 +45,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -74,6 +77,472 @@ public abstract class AbstractIterableXTest {
 
 	static Executor ex = Executors.newFixedThreadPool(1);
     boolean set = false;
+
+    @Test
+    public void zip2Seq() {
+        IterableX<Integer> it1 = of(1);
+        IterableX<Integer> it2 = of(2);
+
+
+
+        IterableX<Seq<Integer>> zipped = it1.zip(it2, Seq::of);
+
+
+        StepVerifier.create(zipped)
+            .consumeNextWith(t -> assertThat(t,contains(1,2)))
+            .expectComplete()
+            .verify();
+    }
+    @Test
+    public void zip3Seq() {
+        IterableX<Integer> it1 = of(1);
+        IterableX<Integer> it2 = of(2);
+        IterableX<Integer> it3 = of(3);
+
+
+        IterableX<Seq<Integer>> zipped = it1.zip3(it2, it3, Seq::of);
+
+
+        StepVerifier.create(zipped)
+            .consumeNextWith(t -> assertThat(t,contains(1,2,3)))
+            .expectComplete()
+            .verify();
+    }
+    @Test
+    public void zip4Seq() {
+        IterableX<Integer> it1 = of(1);
+        IterableX<Integer> it2 = of(2);
+        IterableX<Integer> it3 = of(3);
+        IterableX<Integer> it4 = of(4);
+
+
+        IterableX<Seq<Integer>> zipped = it1.zip4(it2, it3, it4, Seq::of);
+
+
+        StepVerifier.create(zipped)
+            .consumeNextWith(t -> assertThat(t,contains(1,2,3,4)))
+            .expectComplete()
+            .verify();
+    }
+    @Test
+    public void zip2Tuple() {
+        IterableX<Integer> it1 = of(1);
+        IterableX<Integer> it2 = of(2);
+
+
+        IterableX<Tuple2<Integer, Integer>> zipped = it1.zip(it2);
+
+
+        StepVerifier.create(zipped)
+            .consumeNextWith(t -> assertThat(Seq.of(t._1(),t._2()),contains(1,2)))
+            .expectComplete()
+            .verify();
+    }
+    @Test
+    public void zip3Tuple() {
+        IterableX<Integer> it1 = of(1);
+        IterableX<Integer> it2 = of(2);
+        IterableX<Integer> it3 = of(3);
+
+
+        IterableX<Tuple3<Integer, Integer, Integer>> zipped = it1.zip3(it2, it3);
+
+
+        StepVerifier.create(zipped)
+            .consumeNextWith(t -> assertThat(Seq.of(t._1(),t._2(),t._3()),contains(1,2,3)))
+            .expectComplete()
+            .verify();
+    }
+    @Test
+    public void zip4Tuple() {
+        IterableX<Integer> it1 = of(1);
+        IterableX<Integer> it2 = of(2);
+        IterableX<Integer> it3 = of(3);
+        IterableX<Integer> it4 = of(4);
+
+
+        IterableX<Tuple4<Integer, Integer, Integer, Integer>> zipped = it1.zip4(it2, it3, it4);
+
+
+        StepVerifier.create(zipped)
+            .consumeNextWith(t -> assertThat(Seq.of(t._1(),t._2(),t._3(),t._4()),contains(1,2,3,4)))
+            .expectComplete()
+            .verify();
+    }
+    @Test
+    public void zipWithSelf() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> values = new AtomicReference<Vector<Integer>>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+
+        of(1, 2).zip(of(1, 2), (a, b) -> a + b)
+            .forEach(n -> {
+                data.set(true);
+                values.updateAndGet(v -> v.plus(n));
+            }, e -> {
+                error.set(e);
+            }, () -> {
+                complete.set(true);
+            });
+
+        assertTrue(data.get());
+        assertTrue(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(),hasItems(2,4));
+    }
+    @Test
+    public void zipWithSelfIncremental() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> values = new AtomicReference<Vector<Integer>>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+
+        Subscription sub = of(1, 2).zip(of(1, 2), (a, b) -> a + b)
+            .forEach(0, n -> {
+                data.set(true);
+                values.updateAndGet(v -> v.plus(n));
+            }, e -> {
+                error.set(e);
+            }, () -> {
+                complete.set(true);
+            });
+
+        assertFalse(data.get());
+        assertFalse(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.equalTo(Vector.empty()));
+
+        sub.request(1);
+
+        assertTrue(data.get());
+        assertFalse(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.equalTo(Vector.of(2)));
+
+        sub.request(10);
+
+        assertTrue(data.get());
+        assertTrue(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.equalTo(Vector.of(2,4)));
+
+    }
+
+    @Test
+    public void zipTwoAndThree(){
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> values = new AtomicReference<Vector<Integer>>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+
+
+        of(1, 2).zip(of(1, 2, 3), (a, b) -> a + b)
+            .forEach(n->{
+                data.set(true);
+                values.updateAndGet(v->v.plus(n));
+            },e->{
+                error.set(e);
+            },()->{
+                complete.set(true);
+            });
+
+        assertTrue(data.get());
+        assertTrue(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.hasItems(2,4));
+
+    }
+    @Test
+    public void zipTwoAndThreeIncremental() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> values = new AtomicReference<Vector<Integer>>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+
+        Subscription sub = of(1, 2).zip(of(1, 2,3), (a, b) -> a + b)
+            .forEach(0, n -> {
+                data.set(true);
+                values.updateAndGet(v -> v.plus(n));
+            }, e -> {
+                error.set(e);
+            }, () -> {
+                complete.set(true);
+            });
+
+        assertFalse(data.get());
+        assertFalse(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.equalTo(Vector.empty()));
+
+        sub.request(1);
+
+        assertTrue(data.get());
+        assertFalse(complete.get());
+        assertNull(error.get());
+        assertThat(values.get().size(), Matchers.equalTo(1));
+
+        sub.request(10);
+
+        assertTrue(data.get());
+        assertTrue(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.hasItems(2,4));
+
+    }
+    @Test
+    public void zipThreeAndTwo(){
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> values = new AtomicReference<Vector<Integer>>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+
+
+        of(1, 2,3).zip(of(1, 2), (a, b) -> a + b)
+            .forEach(n->{
+                data.set(true);
+                values.updateAndGet(v->v.plus(n));
+            },e->{
+                error.set(e);
+            },()->{
+                complete.set(true);
+            });
+
+        assertTrue(data.get());
+        assertTrue(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.hasItems(2,4));
+
+    }
+    @Test
+    public void zipThreeAndTwoIncremental() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> values = new AtomicReference<Vector<Integer>>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+
+        Subscription sub = Spouts.of(1, 2, 3).zip(Spouts.of(1, 2), (a, b) -> a + b)
+            .forEach(0, n -> {
+                data.set(true);
+                values.updateAndGet(v -> v.plus(n));
+            }, e -> {
+                error.set(e);
+            }, () -> {
+                complete.set(true);
+            });
+
+        assertFalse(data.get());
+        assertFalse(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.equalTo(Vector.empty()));
+
+        sub.request(1);
+
+        assertTrue(data.get());
+        assertFalse(complete.get());
+        assertNull(error.get());
+        assertThat(values.get().size(), Matchers.equalTo(1));
+
+        sub.request(10);
+
+        assertTrue(data.get());
+        assertTrue(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.hasItems(2,4));
+
+    }
+    @Test
+    public void emptyNonEmpty() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> values = new AtomicReference<Vector<Integer>>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+
+        this.<Integer>empty().zip(of(1,2,3,4,5,6), (a, b) -> a + b)
+            .forEach(n->{
+                data.set(true);
+                values.updateAndGet(v->v.plus(n));
+            },e->{
+                error.set(e);
+            },()->{
+                complete.set(true);
+            });
+
+        assertFalse(data.get());
+        assertTrue(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.equalTo(Vector.empty()));
+    }
+
+    @Test
+    public void emptyNonEmptyIncremental() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> values = new AtomicReference<Vector<Integer>>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+
+        Subscription sub = this.<Integer>empty().zip(of(1,2,3,4,5,6), (a, b) -> a + b)
+            .forEach(0, n -> {
+                data.set(true);
+                values.updateAndGet(v -> v.plus(n));
+            }, e -> {
+                error.set(e);
+            }, () -> {
+                complete.set(true);
+            });
+        assertFalse(data.get());
+        assertFalse(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.equalTo(Vector.empty()));
+
+        sub.request(1l);
+
+        assertFalse(data.get());
+        assertTrue(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.equalTo(Vector.empty()));
+    }
+    @Test
+    public void nonEmptyEmpty() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> values = new AtomicReference<Vector<Integer>>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+
+        this.of(1,2,3,4,5,6).zip(this.<Integer>empty(), (a, b) -> a + b)
+            .forEach(n->{
+                data.set(true);
+                values.updateAndGet(v->v.plus(n));
+            },e->{
+                error.set(e);
+            },()->{
+                complete.set(true);
+            });
+
+        assertFalse(data.get());
+        assertTrue(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.equalTo(Vector.empty()));
+    }
+    @Test
+    public void nonEmptyEmptyIncremental() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> values = new AtomicReference<Vector<Integer>>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+
+        Subscription sub = this.of(1,2,3,4,5,6).zip(this.<Integer>empty(), (a, b) -> a + b)
+            .forEach(0, n -> {
+                data.set(true);
+                values.updateAndGet(v -> v.plus(n));
+            }, e -> {
+                error.set(e);
+            }, () -> {
+                complete.set(true);
+            });
+        assertFalse(data.get());
+        assertFalse(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.equalTo(Vector.empty()));
+
+        sub.request(1l);
+
+        assertFalse(data.get());
+        assertTrue(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.equalTo(Vector.empty()));
+    }
+    @Test
+    public void pairZipWise() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Tuple2<Integer,String>>> values = new AtomicReference<>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        of(1).zip(of("test"))
+            .zip(of("test2")).map(t -> Tuple.tuple(t._1()
+                ._1(),
+            t._1()
+                ._2() + t._2())).forEach( n -> {
+            data.set(true);
+            values.updateAndGet(v -> v.plus(n));
+        }, e -> {
+            error.set(e);
+        }, () -> {
+            complete.set(true);
+        });
+        assertTrue(data.get());
+        assertTrue(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.equalTo(Vector.of(Tuple.tuple(1,"testtest2"))));
+    }
+    @Test
+    public void pairWiseZipIncremental() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Tuple2<Integer,String>>> values = new AtomicReference<>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        Subscription sub = of(1).zip(of("test"))
+            .zip(of("test2")).map(t -> Tuple.tuple(t._1()
+                    ._1(),
+                t._1()
+                    ._2() + t._2())).forEach(0, n -> {
+                data.set(true);
+                values.updateAndGet(v -> v.plus(n));
+            }, e -> {
+                error.set(e);
+            }, () -> {
+                complete.set(true);
+            });
+        assertFalse(data.get());
+        assertFalse(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.equalTo(Vector.empty()));
+
+        sub.request(10l);
+        assertTrue(data.get());
+        assertTrue(complete.get());
+        assertNull(error.get());
+        assertThat(values.get(), Matchers.equalTo(Vector.of(Tuple.tuple(1,"testtest2"))));
+    }
+    @Test
+    public void pushFlatMap() {
+
+        IterableX<Integer> odds =of(1, 3, 5, 7, 9);
+        IterableX<Integer> even = of(2, 4, 6);
+
+        IterableX<Vector<Tuple2<Integer,Integer>>> zipped = Spouts.from(odds.zip(  (t1, t2) -> Tuple.tuple(t1, t2),even)).reduceAll(Vector.empty(),(a, b)->a.plus(b));
+
+
+        Vector<Tuple2<Integer, Integer>> x = zipped.elementAt(0l).orElse(null);
+        System.out.println(x);
+        assertThat(x,contains(Tuple.tuple(1, 2),
+            Tuple.tuple(3, 4),
+            Tuple.tuple(5, 6)));
+
+        IterableX<Vector<Tuple2<Integer,Integer>>> zipped2 = Spouts.from(odds.concatMap(it -> of(it)
+            .zip( (t1, t2) -> Tuple.tuple(t1, t2),even)
+        )).reduceAll(Vector.empty(),(a, b)->a.plus(b));
+
+        Vector<Tuple2<Integer, Integer>> x2 = zipped2.elementAt(0l).orElse(null);
+        System.out.println("X2 is  " +x2);
+        assertThat(x2,contains(Tuple.tuple(1, 2),
+            Tuple.tuple(3, 2),
+            Tuple.tuple(5, 2),
+            Tuple.tuple(7, 2),
+            Tuple.tuple(9, 2)));
+    }
     @Test
     public void deleteBetween(){
         List<String> result = 	of(1,2,3,4,5,6).deleteBetween(2,4)
