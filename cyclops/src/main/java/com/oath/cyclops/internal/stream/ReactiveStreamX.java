@@ -115,24 +115,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public Iterator<T> iterator() {
         if (async == Type.NO_BACKPRESSURE) {
 
-            Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
-                    .build();
-
-            AtomicBoolean wip = new AtomicBoolean(false);
-            Subscription[] sub = {null};
-
-            Continuation cont = new Continuation(() -> {
-                if (wip.compareAndSet(false, true)) {
-                    this.source.subscribeAll(queue::offer,
-                            i -> queue.close(),
-                            () -> queue.close());
-                }
-                return Continuation.empty();
-            });
-            queue.addContinuation(cont);
-
-
-            return queue.stream().iterator();
+           return new NoBackPressureIterator<>(source).nobackPressure();
 
         }
         return new OperatorToIterable<>(source, this.defaultErrorHandler, async == BACKPRESSURE).iterator();

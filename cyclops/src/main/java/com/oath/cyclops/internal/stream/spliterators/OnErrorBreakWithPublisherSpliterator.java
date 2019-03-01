@@ -12,10 +12,10 @@ import java.util.function.Function;
 
 public class OnErrorBreakWithPublisherSpliterator<T, X extends Throwable> implements CopyableSpliterator<Publisher<? extends T>>{
     private final Spliterator<T> source;
-    private final  Function<? super Throwable,? extends Publisher<? extends T>>  fn;
+    private final  Function<Throwable,? extends Publisher<? extends T>>  fn;
 
 
-    public OnErrorBreakWithPublisherSpliterator(Spliterator<T> source, Function<? super Throwable,? extends Publisher<? extends T>> fn) {
+    public OnErrorBreakWithPublisherSpliterator(Spliterator<T> source, Function<Throwable,? extends Publisher<? extends T>> fn) {
         this.source = source;
         this.fn = fn;
 
@@ -33,7 +33,7 @@ public class OnErrorBreakWithPublisherSpliterator<T, X extends Throwable> implem
              return source.tryAdvance(in->action.accept(Spouts.of(in)));
          }catch(Throwable t){
                 ReactiveSeq<T> rs = Spouts.from(fn.apply(t));
-                 action.accept(rs);
+                 action.accept(rs.recoverWith(fn));
                  closed = true;
                  return false;
 

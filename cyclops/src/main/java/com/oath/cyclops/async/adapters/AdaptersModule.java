@@ -340,7 +340,7 @@ public interface AdaptersModule {
                     subscription.closeQueueIfFinished(queue);
                     return true;
                 } catch (final Queue.ClosedQueueException e) {
-                    //e.printStackTrace();
+
                     if (e.isDataPresent()) {
 
                         ancillaryData = e.getCurrentData();

@@ -31,6 +31,8 @@ public class OnErrorBreakWithPublisherOperator<T> extends BaseOperator<T, Publis
     public StreamSubscription subscribe(Consumer<? super Publisher<? extends T>> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         StreamSubscription[] upstream = {null};
         upstream[0] = source.subscribe(e-> {
+                if(!upstream[0].isOpen)
+                    return;
                     try {
                         onNext.accept(Spouts.of(e));
                     } catch (Throwable t) {
@@ -48,7 +50,9 @@ public class OnErrorBreakWithPublisherOperator<T> extends BaseOperator<T, Publis
                     }
                 }
                 ,e->{
-
+                    if(!upstream[0].isOpen)
+                        return;
+                    upstream[0].cancel();
                     try{
                         ReactiveSeq<T> rs = Spouts.from(recover.apply(e));
                         onNext.accept(rs.recoverWith(recover));
@@ -56,7 +60,7 @@ public class OnErrorBreakWithPublisherOperator<T> extends BaseOperator<T, Publis
                     } catch (Throwable t) {
                         onError.accept(t);
                     }
-                    upstream[0].cancel();
+
                     onComplete.run();
 
                 },onComplete);
