@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 
+@Deprecated
 public class Concat<IN> {
 
     final AtomicLong produced = new AtomicLong(0);

@@ -11,7 +11,7 @@ Cyclops core consists of the following features
 
 Currently part of the core but migrating to their own module as part of Cyclops X
 
-* JDK Companion clasess
+* JDK Companion classes
 * Reactive collections
 
 
@@ -156,12 +156,12 @@ A Future implementation with more standard method names (map / flatMap / zip as 
 
 CompletableFuture<Result> future;
 CompletableFuture<String> result = future.thenApply(this::process)
-                                         .thenCompose(this::asyncProces);
+                                         .thenCompose(this::asyncProcess);
 
 
 Future<Result> future;
 Future<String> result = future.map(this::process)
-                              .flatMap(this::asyncProces);
+                              .flatMap(this::asyncProcess);
 ```
 
 # Replace basic Suppliers with Eval for Lazy Evaluation
@@ -196,7 +196,7 @@ Immutable<String,Integer> removed = map.remove("key");
 
 cyclops-react defines an interface ReactiveSeq for advanced Streaming operations. Multiple implementations are provided for synchronous / asynchronous and sequential / parallel streaming within cyclops-react. Use ReactiveSeq.XXX creational methods to build synchronous Streams, or Spouts.XXX creational methods to build asynchronous Streams. For parallel Streaming consider FutureStream.builder().
 
-For alternative implenations backed by popular 3rd party Streaming libraries (such as RxJava Observables and Reactor Flux) see [cyclops integration modules](https://github.com/aol/cyclops). It is also possible to fluently use operators defined in 3rd party libraries with ReactiveSeq (e.g. to fluently make use of any operator defined on Flux).
+For alternative implementations backed by popular 3rd party Streaming libraries (such as RxJava Observables and Reactor Flux) see [cyclops integration modules](https://github.com/aol/cyclops). It is also possible to fluently use operators defined in 3rd party libraries with ReactiveSeq (e.g. to fluently make use of any operator defined on Flux).
 
 Sequential Streams, with retry and forEach result + error.
 
@@ -420,7 +420,7 @@ ReactiveSeq<Integer> seq = Observables.of(1,2,3)
 | CompletableFutures    | Extension methods, for comprehensions and Higher kinded type classes            | Higher kinded                 |
 | Streams     | Extension methods, for comprehensions and Higher kinded type classes            | Higher kinded                 |
 | Eithers     | Methods to generate an Either based on cyclops Adapter types            |                  |
-| Functions     | Useful functions and for comprehenions for functions            |                  |
+| Functions     | Useful functions and for comprehensions for functions            |                  |
 | BiFunctions     | useful combiners that don't obey the Semigroup laws           |                  |
 | Semigroups     | Combiners for a wide range of types           |                  |
 | Monoids     | Combiners with an identity value for a wide range of types            |              |
@@ -441,7 +441,7 @@ ReactiveSeq<Integer> seq = Observables.of(1,2,3)
 | Predicates     | Useful Predicates          |                  |
 | FluentFunctions     | A fluent API for working with Functions - composition, lifting, AOP and more           |                  |
 | PartialFunction |  Function for which a result does not exist for all inputs       |                  |
-| Lambda    | An API for working with anomyous lambda expressions (type inferencing)          |                  |
+| Lambda    | An API for working with anonymous lambda expressions (type inferencing)          |                  |
 | Effect    | An advanced Runnable that only causes side effects          |                  |
 | Ordering    | A more powerful and easier to use Comparator          |                  |
 | Memoize     | An API for caching pure functions         |                 |
@@ -467,8 +467,8 @@ ReactiveSeq<Integer> seq = Observables.of(1,2,3)
 | type | description | characteristics |
 |------|-------------|-----------------|
 | Adapter     | Interface for data transfer Adapters to connected Streams. Closing the adapter, closes the streams (impls - Queue, Topic, Signal)           |    Async             |
-| Queue     | Facilitates asyncrhonous data transfer to mulitiple connected Streams, via any java.util.Queue impl, Continuations toallow consumers to become producers.           |    Async             |
-| Topic     | Asynchronous data transfer to multiple connected Streams, all connected Streams recieve each message           |   Async              |
+| Queue     | Facilitates asynchronous data transfer to multiple connected Streams, via any java.util.Queue impl, Continuations to allow consumers to become producers.           |    Async             |
+| Topic     | Asynchronous data transfer to multiple connected Streams, all connected Streams receive each message           |   Async              |
 | Signal    | Asynchronous data transfer - changes in data are broadcast to connected Streams           |   Async              |
 | QueueFactories    | Factories for generating wait-free and blocking queues           |   Async              |
 
@@ -534,7 +534,7 @@ Classes / Interfaces that represent the API (cyclops-react)
 * [Awesome Fluent Functions](https://medium.com/@johnmcclean/can-we-make-working-with-functions-easier-in-java-8-81ed9d1050f2#.apum92khr)
 * [Easier Try with Cyclops](http://rdafbn.blogspot.com/2015/06/java-8-easier-with-cyclops-try.html)
 * [4 flavors of Java 8 Functions](https://medium.com/@johnmcclean/4-flavours-of-java-8-functions-6cafbcf5bb4f)
-* [Memoise Functions in Java 8](http://rdafbn.blogspot.com/2015/06/memoize-functions-in-java-8.html)
+* [Memoize Functions in Java 8](http://rdafbn.blogspot.com/2015/06/memoize-functions-in-java-8.html)
 * [Strategy Pattern in Java 8 ](http://rdafbn.blogspot.com/2015/06/startegy-pattern-in-java-8.html)
 * [Dependency injection using the Reader Monad in Java8](https://medium.com/@johnmcclean/dependency-injection-using-the-reader-monad-in-java8-9056d9501c75)
 * [Scheduling a Stream](https://medium.com/@johnmcclean/how-to-schedule-emission-from-a-stream-in-java-aa2dafda7c07#.pi12so6zn)
