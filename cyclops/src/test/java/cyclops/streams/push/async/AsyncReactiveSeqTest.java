@@ -3,6 +3,7 @@ package cyclops.streams.push.async;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.streams.AbstractReactiveSeqTest;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Iterator;
@@ -12,6 +13,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+@Ignore
 public class AsyncReactiveSeqTest extends AbstractReactiveSeqTest {
 
     @Override
