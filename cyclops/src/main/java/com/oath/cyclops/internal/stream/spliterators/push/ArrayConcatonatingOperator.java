@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 /**
  * Created by johnmcclean on 12/01/2017.
  */
+@Deprecated
 public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
 
 

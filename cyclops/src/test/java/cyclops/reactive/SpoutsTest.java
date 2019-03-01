@@ -207,13 +207,15 @@ public class SpoutsTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Subscription c = Spouts.range(0, 1000).mergeMap(v -> v % 2 == 0 ? Spouts.of(v) : ReactiveSeq.of(v)).forEach(0, n -> {
-            data.incrementAndGet();
-        }, e -> {
-            error.set(e);
-        }, () -> {
-            complete.set(true);
-        });
+        Subscription c = Spouts.range(0, 1000)
+                                .mergeMap(v -> v % 2 == 0 ? Spouts.of(v) : ReactiveSeq.of(v))
+                                .forEach(0, n -> {
+                                                data.incrementAndGet();
+                                            }, e -> {
+                                                error.set(e);
+                                            }, () -> {
+                                                complete.set(true);
+                                            });
         assertThat(data.get(),equalTo(0));
         assertFalse(complete.get());
         assertThat(error.get(),equalTo(null));
