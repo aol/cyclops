@@ -14,8 +14,10 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.LockSupport;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -53,7 +55,7 @@ public abstract class AbstractReactiveSeqTest {
             .toList();
 
 
-        assertThat(count.get(),equalTo(202));
+        assertThat(count.get(),greaterThan(200));
 
         assertThat(result,equalTo(Arrays.asList(100,200,300)));
     }
@@ -81,6 +83,9 @@ public abstract class AbstractReactiveSeqTest {
                 complete.set(true);
             });
 
+        while(!complete.get()){
+            LockSupport.parkNanos(10l);
+        }
         assertThat(data.get(), equalTo(true));
         assertThat(complete.get(), equalTo(true));
         assertThat(error.get(), equalTo(null));
@@ -107,8 +112,8 @@ public abstract class AbstractReactiveSeqTest {
                     throw new RuntimeException();
             }))
             .forEach(0,n -> {
-                data.set(true);
                 result.updateAndGet(v->v.plus(n));
+                data.set(true);
             }, e -> {
                 error.set(e);
             }, () -> {
@@ -120,6 +125,9 @@ public abstract class AbstractReactiveSeqTest {
         assertThat(result.get(),equalTo(Vector.empty()));
 
         sub.request(1l);
+        while(!data.get()){
+            LockSupport.parkNanos(10l);
+        }
         assertThat(data.get(), equalTo(true));
         assertThat(complete.get(), equalTo(false));
         assertThat(error.get(), equalTo(null));
@@ -255,14 +263,17 @@ public abstract class AbstractReactiveSeqTest {
         })
             .recoverWith(e->Spouts.of(100,200,300))
             .forEach(n -> {
-                data.set(true);
+
                 result.updateAndGet(v->v.plus(n));
+                data.set(true);
             }, e -> {
                 error.set(e);
             }, () -> {
                 complete.set(true);
             });
-
+        while(!complete.get()){
+            LockSupport.parkNanos(10l);
+        }
         assertThat(data.get(), equalTo(true));
         assertThat(complete.get(), equalTo(true));
         assertThat(error.get(), equalTo(null));
@@ -284,8 +295,9 @@ public abstract class AbstractReactiveSeqTest {
         })
             .recoverWith(e->Spouts.of(100,200,300))
             .forEach(0,n -> {
-                data.set(true);
+
                 result.updateAndGet(v->v.plus(n));
+                data.set(true);
             }, e -> {
                 error.set(e);
             }, () -> {
@@ -298,12 +310,18 @@ public abstract class AbstractReactiveSeqTest {
         assertThat(result.get(),equalTo(Vector.empty()));
 
         sub.request(1l);
+        while(!data.get()){
+            LockSupport.parkNanos(10l);
+        }
         assertThat(data.get(), equalTo(true));
         assertThat(complete.get(), equalTo(false));
         assertThat(error.get(), equalTo(null));
         assertThat(result.get(),equalTo(Vector.of(100)));
 
         sub.request(1000l);
+        while(!complete.get()){
+            LockSupport.parkNanos(10l);
+        }
         assertThat(data.get(), equalTo(true));
         assertThat(complete.get(), equalTo(true));
         assertThat(error.get(), equalTo(null));
@@ -418,14 +436,17 @@ public abstract class AbstractReactiveSeqTest {
             })
                 .onError(e -> count.incrementAndGet())
                 .forEach(n -> {
-                    data.set(true);
                     result.updateAndGet(v->v.plus(n));
+                    data.set(true);
                 }, e -> {
                     error.set(e);
                 }, () -> {
                     complete.set(true);
                 });
 
+            while(!complete.get()){
+                LockSupport.parkNanos(10l);
+            }
             assertThat(data.get(), equalTo(false));
             assertThat(complete.get(), equalTo(true));
             assertThat(error.get(), instanceOf(RuntimeException.class));
@@ -438,7 +459,7 @@ public abstract class AbstractReactiveSeqTest {
 
     }
     @Test
-    public void onErrorIncremental(){
+    public void onErrorIncremental() throws InterruptedException {
         AtomicInteger count = new AtomicInteger(0);
         AtomicBoolean data = new AtomicBoolean(false);
         AtomicReference<Vector<Integer>> result = new AtomicReference<>(Vector.empty());
@@ -452,8 +473,9 @@ public abstract class AbstractReactiveSeqTest {
         })
             .onError(e -> count.incrementAndGet())
             .forEach(0,n -> {
-                data.set(true);
+
                 result.updateAndGet(v->v.plus(n));
+                data.set(true);
             }, e -> {
                 error.set(e);
             }, () -> {
@@ -466,12 +488,18 @@ public abstract class AbstractReactiveSeqTest {
         assertThat(result.get(),equalTo(Vector.empty()));
 
         sub.request(1l);
+        while(error.get()==null){
+            LockSupport.parkNanos(10l);
+        }
         assertThat(data.get(), equalTo(false));
         assertThat(complete.get(), equalTo(false));
         assertThat(error.get(), instanceOf(RuntimeException.class));
         assertThat(result.get(),equalTo(Vector.empty()));
 
         sub.request(100l);
+        while(!complete.get()){
+            LockSupport.parkNanos(10l);
+        }
         assertThat(data.get(), equalTo(false));
         assertThat(complete.get(), equalTo(true));
         assertThat(error.get(), instanceOf(RuntimeException.class));
@@ -538,14 +566,17 @@ public abstract class AbstractReactiveSeqTest {
         })
             .onError(e -> count.incrementAndGet())
             .forEach(n -> {
-                data.set(true);
+
                 result.updateAndGet(v->v.plus(n));
+                data.set(true);
             }, e -> {
                 error.set(e);
             }, () -> {
                 complete.set(true);
             });
-
+        while(!complete.get()){
+            LockSupport.parkNanos(10l);
+        }
         assertThat(data.get(), equalTo(false));
         assertThat(complete.get(), equalTo(true));
         assertThat(error.get(), equalTo(null));
@@ -573,8 +604,8 @@ public abstract class AbstractReactiveSeqTest {
         })
             .onError(e -> count.incrementAndGet())
             .forEach(0,n -> {
-                data.set(true);
                 result.updateAndGet(v->v.plus(n));
+                data.set(true);
             }, e -> {
                 error.set(e);
             }, () -> {
@@ -587,6 +618,9 @@ public abstract class AbstractReactiveSeqTest {
         assertThat(result.get(),equalTo(Vector.empty()));
 
         sub.request(1l);
+        while(!complete.get()){
+            LockSupport.parkNanos(10l);
+        }
         assertThat(data.get(), equalTo(false));
         assertThat(complete.get(), equalTo(true));
         assertThat(error.get(), equalTo(null));

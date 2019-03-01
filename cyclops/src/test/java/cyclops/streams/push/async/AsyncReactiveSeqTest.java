@@ -5,6 +5,7 @@ import cyclops.reactive.Spouts;
 import cyclops.streams.AbstractReactiveSeqTest;
 import org.junit.Test;
 
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -56,7 +57,28 @@ public class AsyncReactiveSeqTest extends AbstractReactiveSeqTest {
 
     }
 
+    @Test
+    public void onErrorIterator(){
+        AtomicInteger count = new AtomicInteger(0);
 
+        try {
+            Iterator<Integer> it = of(1, 2, 3).<Integer>map(i -> {
+                throw new RuntimeException();
+            })
+                .onError(e -> count.incrementAndGet())
+                .iterator();
+            while(it.hasNext()){
+                System.out.println(it.next());
+            }
+            fail("exception expected");
+        }catch(Exception e){
+
+        }
+
+
+        assertThat(count.get(),equalTo(3));
+
+    }
 
 
 }
