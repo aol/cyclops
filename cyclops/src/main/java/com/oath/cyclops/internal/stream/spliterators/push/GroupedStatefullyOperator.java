@@ -64,7 +64,7 @@ public class GroupedStatefullyOperator<T,C extends PersistentCollection<? super 
                             next[0] = factory.get();
 
                         }else{
-                            request( upstream[0],1l);
+                            request( upstream,1l);
                         }
 
                     } catch (Throwable t) {
@@ -75,7 +75,7 @@ public class GroupedStatefullyOperator<T,C extends PersistentCollection<? super 
                 ,t->{onError.accept(t);
                     sub.requested.decrementAndGet();
                     if(sub.isActive())
-                        request( upstream[0],1);
+                        request( upstream,1);
                 },()->{
                     if(next[0].size()>0) {
                         try {

@@ -315,6 +315,9 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
     public IO<T> io() {
         return apply(IO::of);
     }
+    IO<T> io(Function<T,IO<T>> convert) {
+        return apply(convert);
+    }
 
     @Deprecated
     public static class Comprehensions {

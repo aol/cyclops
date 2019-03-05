@@ -12,11 +12,11 @@ public  abstract class BaseOperator<T,R> implements Operator<R> {
     final Operator<T> source;
 
 
-    protected void request(StreamSubscription upstream ,long req){
-        while(upstream==null){
+    protected void request(StreamSubscription[] upstream ,long req){
+        while(upstream[0]==null){
             LockSupport.parkNanos(10l);
         }
-        upstream.request(req);
+        upstream[0].request(req);
     }
 
  }

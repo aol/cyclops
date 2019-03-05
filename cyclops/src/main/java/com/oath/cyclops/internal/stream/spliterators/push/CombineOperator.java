@@ -69,7 +69,7 @@ public class CombineOperator<T,A,R> extends BaseOperator<T,ReactiveSeq<T>> {
                         }
 
 
-                       request( upstream[0],1l);
+                       request( upstream,1l);
 
                     } catch (Throwable t) {
 
@@ -79,7 +79,7 @@ public class CombineOperator<T,A,R> extends BaseOperator<T,ReactiveSeq<T>> {
                 ,t->{onError.accept(t);
                     sub.requested.decrementAndGet();
                     if(sub.isActive())
-                        request( upstream[0],1);
+                        request( upstream,1);
                 },()->{
                     if(current[0]!= UNSET)
                         onNext.accept(Spouts.of((T)current[0]));

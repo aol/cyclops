@@ -37,11 +37,21 @@ import static org.hamcrest.Matchers.is;
 
 
 
-public class IOTest {
+public class IOTest extends AbstractIOTestBase{
   Executor ex = Executors.newFixedThreadPool(1);
   RuntimeException re = new RuntimeException();
 
-  static class My{
+    @Override
+    public IO<Integer> of(Integer... values) {
+        return IO.fromPublisher(Spouts.of(values));
+    }
+
+    @Override
+    public IO<Integer> empty() {
+        return IO.fromPublisher(Spouts.empty());
+    }
+
+    static class My{
       public String mayThrowCheckedException() throws Exception{
             throw new RuntimeException("Erorr thrown");
       }

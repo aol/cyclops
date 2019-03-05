@@ -52,7 +52,7 @@ public class CollectAllOperator<T,A,R> extends BaseOperator<T,R> {
                         A nextA = (A)next[0];
                         collector.accumulator().accept(nextA,e);
 
-                        request(upstream[0],1l);
+                        request(upstream,1l);
 
                     } catch (Throwable t) {
 
@@ -62,7 +62,7 @@ public class CollectAllOperator<T,A,R> extends BaseOperator<T,R> {
                 ,t->{onError.accept(t);
                     sub.requested.decrementAndGet();
                     if(sub.isActive())
-                        request(upstream[0],1);
+                        request(upstream,1);
                 },()->{
                     A nextA = (A)next[0];
                     try {

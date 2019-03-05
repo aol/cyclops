@@ -25,6 +25,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
@@ -80,13 +81,15 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
         return io.map(t -> t.fold(i -> i, s));
     }
 
-    IO<T> recover(final Function<Throwable, ? extends T> fn);
-
-    IO<T> recoverWith(final Function<Throwable,? extends IO<? extends T>> fn);
-
-    default IO<T> recoverWithEmpty(){
-        return recoverWith(i->IO.sync(ReactiveSeq.empty()));
+    default IO<T> recover(final Function<Throwable, ? extends T> fn){
+        return unit(stream().recover(fn));
     }
+
+    default IO<T> recoverWith(final Function<Throwable,? extends IO<? extends T>> fn){
+        return unit(stream().recoverWith(fn));
+    }
+
+
 
     default IO<T> recoverWith(final BiFunction<Integer,Throwable,? extends IO<? extends T>> fn){
         AtomicInteger count = new AtomicInteger(0);
@@ -105,9 +108,17 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
         });
     }
 
-    IO<T> onError(Consumer<? super Throwable > c);
+    default IO<T> onError(Consumer<? super Throwable > c){
+        return unit(stream().onError(c));
+    }
 
-    IO<T> onComplete(final Runnable fn);
+    default IO<T> onComplete(final Runnable fn){
+        return unit(stream().onComplete(fn));
+    }
+
+    default <R> IO<R> unit(Publisher<R> pub){
+        return fromPublisher(pub);
+    }
 
     @Override
     default IO<T> peek(Consumer<? super T> peek){
@@ -122,12 +133,16 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
         return map(ExceptionSoftener.softenFunction(checkedFunction));
     }
 
-    <R> IO<R> map(Function<? super T, ? extends R> s);
+    default <R> IO<R> map(Function<? super T, ? extends R> s){
+        return unit(stream().map(s));
+    }
 
     default <R> IO<R> checkedFlatMap(CheckedFunction<? super T, IO<? extends R>> checkedFunction){
         return flatMap(ExceptionSoftener.softenFunction(checkedFunction));
     }
-    <R> IO<R> flatMap(Function<? super T, IO<? extends R>> s);
+    default<R> IO<R> flatMap(Function<? super T, IO<? extends R>> s){
+        return unit(stream().flatMap(t -> s.apply(t).stream()));
+    }
 
     default <R> IO<R> concatMap(Function<? super T, Iterable<? extends R>> s){
         return flatMap(i->sync(s.apply(i)));
@@ -137,7 +152,9 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
         return concatMap(ExceptionSoftener.softenFunction(s));
     }
 
-    <R> IO<R> mergeMap(int maxConcurrency,Function<? super T, Publisher<? extends R>> s);
+    default <R> IO<R> mergeMap(int maxConcurrency,Function<? super T, Publisher<? extends R>> s){
+        return unit(stream().mergeMap(maxConcurrency,t -> s.apply(t)));
+    }
 
     default <R> IO<R> checkedRetry(CheckedFunction<? super T,? extends R> checkedFunction){
         return retry(ExceptionSoftener.softenFunction(checkedFunction));
@@ -180,8 +197,9 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
     }
 
 
+
     default IO<T> ensuring(Consumer<T> action){
-        return Managed.of(this,action).io();
+        return Managed.of(this,action).io(in->unit(Spouts.of(in)));
     }
 
     default <B,R> IO<R> zip(IO<B> that, BiFunction<? super T, ? super B,? extends R> fn){
@@ -189,11 +207,12 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
     }
 
     default <B,R> IO<R> par(IO<B> that, BiFunction<? super T, ? super B,? extends R> fn){
-        return IO.fromPublisher(stream().zip(fn,that));
+        ReactiveSeq<? extends R> x = stream().zip(fn, that);
+        return unit(ReactiveSeq.narrow(x));
     }
 
     default IO<T> race(IO<T> that){
-        return fromPublisher(Spouts.amb(Seq.of(publisher(),that.publisher())));
+        return unit(Spouts.amb(Seq.of(publisher(),that.publisher())));
     }
 
 
@@ -206,7 +225,10 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
     }
 
     default void forEach(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete) {
-        Spouts.from(publisher()).forEach(consumerElement, consumerError, onComplete);
+        stream().forEach(consumerElement, consumerError, onComplete);
+    }
+    default Subscription forEach(int n, Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete) {
+        return stream().forEach(n,consumerElement, consumerError, onComplete);
     }
 
     default Try<T, Throwable> run() {
@@ -468,7 +490,7 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public final class ReactiveSeqIO<T> implements IO<T> {
-        private final Publisher<T> fn;
+        private final ReactiveSeq<T> fn;
 
         public static <T> IO<T> of(T s) {
             return new ReactiveSeqIO<T>(ReactiveSeq.narrow(Spouts.of(s)));
@@ -479,11 +501,11 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
         }
 
         public static <T> IO<T> of(Supplier<? extends T> s, Executor ex) {
-            return new ReactiveSeqIO<T>(Future.narrow(Future.of(s, ex)));
+            return new ReactiveSeqIO<T>(Spouts.from(Future.narrow(Future.of(s, ex))));
         }
 
         public static <T> IO<T> fromPublisher(Publisher<T> p) {
-            return new ReactiveSeqIO<T>(p);
+            return new ReactiveSeqIO<T>(Spouts.from(p));
         }
 
         public static <T, X extends Throwable> IO<Try<T, X>> withCatch(Try.CheckedSupplier<T, X> cf, Class<? extends X>... classes) {
@@ -496,21 +518,21 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
 
         @Override
         public IO<T> recover(Function<Throwable, ? extends T> fn) {
-            return fromPublisher(Spouts.from(this.fn).recover(fn));
+            return new ReactiveSeqIO<T>(this.fn.recover(fn));
         }
 
         public IO<T> recoverWith(final Function<Throwable,? extends IO<? extends T>> fn) {
-            return fromPublisher(Spouts.from(this.fn).recoverWith(fn));
+            return new ReactiveSeqIO<T>(this.fn.recoverWith(fn));
         }
 
         @Override
         public IO<T> onError(Consumer<? super Throwable> c) {
-            return fromPublisher(Spouts.from(this.fn).onError(c));
+            return new ReactiveSeqIO<T>(this.fn.onError(c));
         }
 
         @Override
         public IO<T> onComplete(Runnable fn) {
-            return fromPublisher(Spouts.from(this.fn).onComplete(fn));
+            return fromPublisher(this.fn.onComplete(fn));
         }
 
 
@@ -531,16 +553,16 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
 
         @Override
         public <R> IO<R> map(Function<? super T, ? extends R> s) {
-            return fromPublisher(Spouts.from(fn).map(t -> s.apply(t)));
+            return fromPublisher(fn.map(t -> s.apply(t)));
         }
 
         @Override
         public <R> IO<R> flatMap(Function<? super T, IO<? extends R>> s) {
-            return fromPublisher(Spouts.from(fn).mergeMap(t -> s.apply(t).publisher()));
+            return fromPublisher(fn.mergeMap(t -> s.apply(t).publisher()));
         }
         @Override
         public <R> IO<R> mergeMap(int maxConcurrency, Function<? super T, Publisher<? extends R>> s) {
-            return fromPublisher(Spouts.from(fn).mergeMap(maxConcurrency,t -> s.apply(t)));
+            return fromPublisher(fn.mergeMap(maxConcurrency,t -> s.apply(t)));
         }
 
 
@@ -556,7 +578,7 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
 
         @Override
         public void forEach(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete) {
-            Spouts.from(fn).forEach(consumerElement, consumerError, onComplete);
+            fn.forEach(consumerElement, consumerError, onComplete);
         }
 
         @Override
@@ -587,7 +609,7 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
 
         @Override
         public ReactiveSeq<T> stream() {
-            return Spouts.from(fn);
+            return fn;
         }
 
         @Override

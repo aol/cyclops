@@ -75,7 +75,7 @@ public class GroupedByTimeOperator<T,C extends PersistentCollection<? super T>,R
 
                         }
                         else{
-                            request( upstream[0],1l);
+                            request( upstream,1l);
                         }
 
                     } catch (Throwable t) {
@@ -86,7 +86,7 @@ public class GroupedByTimeOperator<T,C extends PersistentCollection<? super T>,R
                 ,t->{onError.accept(t);
                     sub.requested.decrementAndGet();
                     if(sub.isActive())
-                        request( upstream[0],1);
+                        request( upstream,1);
                 },()->{
                     if(next[0].size()>0) {
                         try {

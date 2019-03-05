@@ -27,7 +27,7 @@ public class FilterOperator<T> extends BaseOperator<T,T> {
                         if(predicate.test(e))
                             onNext.accept(e);
                         else{
-                            request( upstream[0],1);
+                            request( upstream,1);
                         }
                     } catch (Throwable t) {
 
