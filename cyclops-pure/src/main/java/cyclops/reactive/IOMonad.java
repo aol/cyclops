@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -70,6 +71,7 @@ public class IOMonad<W,T> implements IO<T> {
         return new IOMonad<W,T>(converter.monad(),hkt,converter,converter);
     }
 
+
     @Override
     public <R> IO<R> map(Function<? super T, ? extends R> s) {
         return new IOMonad<W,R>(monad,monad.map(s,pub),toPublsher,fromPublsher);
@@ -82,7 +84,8 @@ public class IOMonad<W,T> implements IO<T> {
 
     @Override
     public <R> IO<R> mergeMap(int maxConcurrency, Function<? super T, Publisher<? extends R>> s) {
-       return flatMap(s.andThen(IO::fromPublisher));
+        ReactiveSeq<R> r = Spouts.from(this.toPublsher.<T>toPublisherFn().apply(pub)).mergeMap(maxConcurrency, s);
+        return new IOMonad<W,R>(monad,fromPublsher.<R>fromPublisherFn().apply(r),toPublsher,fromPublsher);
 
     }
 

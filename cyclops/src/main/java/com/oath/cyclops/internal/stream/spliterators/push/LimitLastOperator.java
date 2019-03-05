@@ -43,7 +43,7 @@ public class LimitLastOperator<T,R> extends BaseOperator<T,T> {
                     if (buffer.size() == limit) {
                         buffer.poll();
                     }
-                    request( upstream[0],1l);
+                    request( upstream,1l);
 
                     buffer.offer(e);
                 }

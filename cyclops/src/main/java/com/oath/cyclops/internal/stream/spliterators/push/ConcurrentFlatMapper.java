@@ -17,7 +17,7 @@ public class ConcurrentFlatMapper<T, R> {
 
     volatile Seq<ActiveSubscriber> activeList = Seq.empty();
     static final AtomicReferenceFieldUpdater<ConcurrentFlatMapper, Seq> queueUpdater =
-            AtomicReferenceFieldUpdater.newUpdater(ConcurrentFlatMapper.class, Seq.class, "activeList");
+        AtomicReferenceFieldUpdater.newUpdater(ConcurrentFlatMapper.class, Seq.class, "activeList");
 
     final Consumer<? super R> onNext;
     final Consumer<? super Throwable> onError;
@@ -40,8 +40,8 @@ public class ConcurrentFlatMapper<T, R> {
 
 
     public ConcurrentFlatMapper(StreamSubscription s, Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete,
-                       Function<? super T, ? extends Publisher<? extends R>> mapper,
-                       int maxConcurrency) {
+                                Function<? super T, ? extends Publisher<? extends R>> mapper,
+                                int maxConcurrency) {
         this.sub = s;
         this.onNext = onNext;
         this.onError = onError;
@@ -56,19 +56,17 @@ public class ConcurrentFlatMapper<T, R> {
 
         if(!sub.isOpen)
             return;
-
         if (processAll)
             return;
 
         if(n==Long.MAX_VALUE){
             processAll =true;
             requested.set(Long.MAX_VALUE);
-        }else {
-            requested.accumulateAndGet(n, (a, b) -> {
-                long sum = a + b;
-                return sum < 0L ? Long.MAX_VALUE : sum;
-            });
         }
+        requested.accumulateAndGet(n,(a,b)->{
+            long sum = a+b;
+            return sum <0L ? Long.MAX_VALUE : sum;
+        });
 
         handleMainPublisher();
     }

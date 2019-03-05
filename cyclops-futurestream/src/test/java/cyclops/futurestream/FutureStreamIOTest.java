@@ -2,6 +2,8 @@ package cyclops.futurestream;
 
 import cyclops.control.Future;
 import cyclops.control.Try;
+import cyclops.reactive.AbstractIOTestBase;
+import cyclops.reactive.IO;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import reactor.core.scheduler.Schedulers;
@@ -14,7 +16,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 
 
-public class FutureStreamIOTest {
+public class FutureStreamIOTest extends AbstractIOTestBase {
     Executor ex = Executors.newFixedThreadPool(1);
     RuntimeException re = new RuntimeException();
     @Test
@@ -25,6 +27,17 @@ public class FutureStreamIOTest {
     }
 
     boolean closed = false;
+
+    @Override
+    public IO<Integer> of(Integer... values) {
+        return FutureStreamIO.of(FutureStream.builder().of(values));
+    }
+
+    @Override
+    public IO<Integer> empty() {
+        return FutureStreamIO.of(FutureStream.builder().of());
+    }
+
     class MyCloseable implements AutoCloseable{
 
         @Override

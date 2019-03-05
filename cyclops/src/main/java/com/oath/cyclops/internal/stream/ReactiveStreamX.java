@@ -71,7 +71,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     //zip can check the provided Stream settings for async usage
     //flatMapP should assume async
 
-    public static enum Type {SYNC, BACKPRESSURE, NO_BACKPRESSURE}
+    public static enum Type {SYNC, BACKPRESSURE, @Deprecated NO_BACKPRESSURE}
 
 
     public ReactiveStreamX(Operator<T> source) {
@@ -694,8 +694,6 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public ReactiveSeq<T> onEmptyGet(final Supplier<? extends T> supplier) {
-
-
          return createSeq(new OnEmptyOperator<T>(source, supplier));
     }
 

@@ -1,5 +1,6 @@
 package cyclops.futurestream;
 
+import com.oath.cyclops.async.adapters.Signal;
 import com.oath.cyclops.internal.react.async.future.FastFuture;
 import com.oath.cyclops.internal.react.exceptions.SimpleReactProcessingException;
 import com.oath.cyclops.internal.react.stream.CloseableIterator;
@@ -36,6 +37,7 @@ import cyclops.function.Monoid;
 
 import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streamable;
+import cyclops.reactive.Spouts;
 import cyclops.reactive.collections.mutable.ListX;
 import lombok.val;
 import cyclops.data.tuple.Tuple2;
@@ -2412,10 +2414,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
 
-    /*
-     *	@return Convert to standard JDK 8 Stream
-     * @see com.oath.cyclops.react.stream.traits.FutureStream#stream()
-     */
+
     @Override
     default ReactiveSeq<U> stream() {
           return Streams.oneShotStream(toQueue().jdkStream(getSubscription()));
@@ -3353,6 +3352,31 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     default FutureStream<U> removeAll(Iterable<? extends U> value) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                 .removeAll(value));
+    }
+
+    @Override
+    default ReactiveSeq<U> recoverWith(final Function<Throwable, ? extends Publisher<? extends U>> fn) {
+        return map(i-> Spouts.of(i)).onFail(e -> {
+            Publisher<? extends U> a = fn.apply(e.getCause());
+            FutureStream<U> b = FutureStream.<U>builder().fromPublisher(a);
+            return b;
+        }).flatMap(i->i);
+    }
+
+    @Override
+    default ReactiveSeq<U> recoverWith(final BiFunction<Integer, Throwable, ? extends Publisher<? extends U>> fn) {
+        return (FutureStream<U>)ReactiveSeq.super.recoverWith(fn);
+
+    }
+
+    @Override
+    default <X extends Throwable> ReactiveSeq<U> recoverWith(Class<X> type, final BiFunction<Integer, X, ? extends Publisher<? extends U>> fn) {
+        return (FutureStream<U>)ReactiveSeq.super.recoverWith(type,fn);
+    }
+
+    @Override
+    default FutureStream<U> onError(Consumer<? super Throwable> c) {
+        return capture((Consumer<Throwable>)c);
     }
 
 
