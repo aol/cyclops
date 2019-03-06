@@ -108,6 +108,16 @@ public final class FutureStreamIO<T> implements IO<T> {
         return flowable;
     }
 
+    @Override
+    public <R> IO<R> unit(Publisher<R> pub) {
+        return FutureStreamIO.of(new LazyReact().sequentialBuilder().fromPublisher(pub));
+    }
+
+    @Override
+    public IO<T> recoverWith(Function<Throwable, ? extends IO<? extends T>> fn) {
+        return of(flowable.recoverWith(fn));
+    }
+
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     public static abstract class FutureStreamManaged<T> extends Managed<T> {
 

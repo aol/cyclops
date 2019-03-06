@@ -3353,7 +3353,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default ReactiveSeq<U> recoverWith(final Function<Throwable, ? extends Publisher<? extends U>> fn) {
+    default FutureStream<U> recoverWith(final Function<Throwable, ? extends Publisher<? extends U>> fn) {
 
         return fromStream(ReactiveSeq.oneShotStream(stream()).recoverWith(fn));
 
