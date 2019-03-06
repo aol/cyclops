@@ -2660,9 +2660,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return collect(Collectors.toSet());
     }
 
-    /*
-     * @see cyclops2.stream.ReactiveSeq#toList()
-     */
+
     @Override
     default List<U> toList() {
         return collect(Collectors.toList());

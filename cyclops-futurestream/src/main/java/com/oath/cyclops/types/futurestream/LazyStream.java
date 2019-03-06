@@ -137,7 +137,8 @@ public interface LazyStream<U> extends BlockingStream<U> {
 
         return (R) batcher.getAllResults()
                           .stream()
-                          .map(cf -> BlockingStreamHelper.getSafe(cf, getErrorHandler()))
+            .map(cf -> BlockingStreamHelper.extractNonFiltered(cf, getErrorHandler()))
+                          //.map(cf -> BlockingStreamHelper.getSafe(cf, getErrorHandler()))
                           .filter(v -> v != MissingValue.MISSING_VALUE)
                           .collect((Collector) collector);
 
