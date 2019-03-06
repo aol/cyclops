@@ -5,6 +5,7 @@ import cyclops.control.Try;
 import cyclops.reactive.AbstractIOTestBase;
 import cyclops.reactive.IO;
 import org.hamcrest.MatcherAssert;
+import org.junit.Ignore;
 import org.junit.Test;
 import reactor.core.scheduler.Schedulers;
 
@@ -15,7 +16,7 @@ import java.util.concurrent.Executors;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 
-
+@Ignore
 public class FutureStreamIOTest extends AbstractIOTestBase {
     Executor ex = Executors.newFixedThreadPool(1);
     RuntimeException re = new RuntimeException();

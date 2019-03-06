@@ -3360,13 +3360,13 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default ReactiveSeq<U> recoverWith(final BiFunction<Integer, Throwable, ? extends Publisher<? extends U>> fn) {
+    default FutureStream<U> recoverWith(final BiFunction<Integer, Throwable, ? extends Publisher<? extends U>> fn) {
         return (FutureStream<U>)ReactiveSeq.super.recoverWith(fn);
 
     }
 
     @Override
-    default <X extends Throwable> ReactiveSeq<U> recoverWith(Class<X> type, final BiFunction<Integer, X, ? extends Publisher<? extends U>> fn) {
+    default <X extends Throwable> FutureStream<U> recoverWith(Class<X> type, final BiFunction<Integer, X, ? extends Publisher<? extends U>> fn) {
         return (FutureStream<U>)ReactiveSeq.super.recoverWith(type,fn);
     }
 
