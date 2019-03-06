@@ -25,6 +25,7 @@ import cyclops.data.Vector;
 import cyclops.futurestream.react.lazy.DuplicationTest;
 import com.oath.cyclops.util.SimpleTimer;
 import cyclops.futurestream.LazyReact;
+import org.junit.Before;
 import org.junit.Test;
 
 import cyclops.reactive.collections.mutable.ListX;
@@ -119,6 +120,11 @@ public class BatchingTest {
 	volatile int otherCount;
 	volatile int count3;
 	volatile int peek;
+
+	@Before
+    public void setup(){
+	    count2 = new AtomicInteger(0);
+    }
 	@Test
 	public void windowByTimeFiltered() {
 

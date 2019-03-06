@@ -511,10 +511,9 @@ public class Queue<T> implements Adapter<T> {
     public T get() {
 
         T res =  ensureOpen(this.timeout, this.timeUnit);
-        System.out.println("Res  " + res);
         if(res instanceof  Error){
             Error e = (Error)(res);
-            throw ExceptionSoftener.throwSoftenedException(e.t);
+            throw ExceptionSoftener.throwSoftenedException(e);
         }
         return res;
 
@@ -550,8 +549,13 @@ public class Queue<T> implements Adapter<T> {
     }
 
     @AllArgsConstructor
-    private static final class Error{
+    public static final class Error extends RuntimeException{
         Throwable t;
+
+        @Override
+        public synchronized Throwable fillInStackTrace() {
+            return this;
+        }
     }
 
     /**

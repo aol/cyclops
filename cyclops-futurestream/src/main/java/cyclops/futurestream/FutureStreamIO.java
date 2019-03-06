@@ -59,7 +59,7 @@ public final class FutureStreamIO<T> implements IO<T> {
 
     @Override
     public <R> IO<R> flatMap(Function<? super T, IO<? extends R>> s) {
-        return of(flowable.mergeMap(s));
+        return of(flowable.flatMap(in->FutureStream.builder().fromPublisher(s.apply(in))));
     }
 
     @Override
@@ -182,7 +182,7 @@ public final class FutureStreamIO<T> implements IO<T> {
 
 
         public <R> Managed<R> map(Function<? super T, ? extends R> mapper){
-            return of(apply(mapper.andThen(IO::of)),__->{});
+            return of(apply(mapper.andThen(FutureStreamIO::of)),__->{});
         }
         public  <R> Managed<R> flatMap(Function<? super T, cyclops.reactive.Managed<R>> f){
 

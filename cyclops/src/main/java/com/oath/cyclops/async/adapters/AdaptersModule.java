@@ -353,12 +353,14 @@ public interface AdaptersModule {
                     return false;
                 }catch(Queue.QueueTimeoutException e){
                     timeoutRetry =true;
+                } catch(Queue.Error e){
+                    throw ExceptionSoftener.throwSoftenedException(e.t);
+
                 } catch(final Exception e) {
 
 
                     closed.set(true);
-                    throw ExceptionSoftener.throwSoftenedException(e);
-              //      return false;
+                    return false;
                 } finally {
 
                 }
