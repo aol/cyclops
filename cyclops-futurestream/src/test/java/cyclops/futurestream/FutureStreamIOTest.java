@@ -30,7 +30,7 @@ public class FutureStreamIOTest extends AbstractIOTestBase {
 
     @Override
     public IO<Integer> of(Integer... values) {
-        return FutureStreamIO.of(FutureStream.builder().of(values));
+        return FutureStreamIO.of(new LazyReact().sequentialBuilder().of(values));
     }
 
     @Override
