@@ -311,7 +311,7 @@ public class SequentialTest {
 
 
 	}
-	@Test
+	@Test(expected = ClassCastException.class)
 	public void cast(){
 		LazyReact.sequentialBuilder().of(1,2,3).cast(String.class).collect(Collectors.toList())
 		.stream().map(i->i.getClass())

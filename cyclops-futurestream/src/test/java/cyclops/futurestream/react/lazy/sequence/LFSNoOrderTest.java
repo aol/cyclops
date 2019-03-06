@@ -238,10 +238,15 @@ public  class LFSNoOrderTest {
 	}
 	    @Test
 	    public void testCastException() {
-	    	of(1, "a", 2, "b", 3, null)
-	    			.peek(it ->System.out.println(it))
+	    	of(1, "a", 2, "b", 3)
+	    			.peek(it ->System.out.println(" it is " +it))
 	    			.cast(Integer.class)
-	    			.peek(i->System.out.println(i.getClass()))
+                    .recover(t->{
+                        return -10;
+                    })
+	    			.peek(i->{
+	    			    System.out.println(i.getClass());
+                    })
 	    				.peek(it ->System.out.println(it))
 	    				.toList()
 	    				.stream().map(i->i.getClass())
