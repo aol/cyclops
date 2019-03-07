@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 import static cyclops.companion.rx2.Observables.anyM;
 
+@Deprecated
 public interface ObservableAnyM {
 
     public static  <W1 extends WitnessType<W1>,T> XorM<W1,observable,T> xorM(Observable<T> type){

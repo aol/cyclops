@@ -56,6 +56,7 @@ public interface Spouts {
      * @param <T> Stream data type
      * @return Async Stream Subscriber
      */
+    @Deprecated
     static <T> AsyncSubscriber<T> asyncSubscriber(){
         return new AsyncSubscriber<T>();
     }
@@ -78,6 +79,7 @@ public interface Spouts {
      * @param <T>
      * @return
      */
+    @Deprecated
     static <T> ReactiveSeq<T> async(Consumer<? super PushSubscriber<T>> sub){
         AsyncSubscriber<T> s = asyncSubscriber();
         return s.registerAndstream(()->{
@@ -85,6 +87,7 @@ public interface Spouts {
                 LockSupport.parkNanos(1l);
             }
             sub.accept(s);
+
         });
     }
 
@@ -97,6 +100,7 @@ public interface Spouts {
      * @param <T>
      * @return
      */
+    @Deprecated
     static <T> ReactiveSeq<T> async(Stream<T> seq, Executor exec){
           return async(s->{
 
@@ -165,12 +169,15 @@ public interface Spouts {
     static <T> ReactiveSeq<T> reactiveBuffer(Queue<T> buffer,BufferOverflowPolicy policy, Consumer<? super Subscriber<T>> onNext){
         return Spouts.reactiveStream(new BufferingSinkOperator<T>(buffer, onNext, policy));
     }
+    @Deprecated
     static <T> ReactiveSeq<T> asyncBuffer(int buffer, Consumer<? super PushSubscriber<T>> onNext){
         return Spouts.asyncStream(new BufferingSinkOperator<T>(new ManyToManyConcurrentArrayQueue<T>(buffer),c-> onNext.accept(PushSubscriber.of(c)), BufferOverflowPolicy.DROP));
     }
+    @Deprecated
     static <T> ReactiveSeq<T> asyncBufferBlock(int buffer, Consumer<? super PushSubscriber<T>> onNext){
         return Spouts.asyncStream(new BufferingSinkOperator<T>(new ManyToManyConcurrentArrayQueue<T>(buffer), c-> onNext.accept(PushSubscriber.of(c)), BufferOverflowPolicy.BLOCK));
     }
+    @Deprecated
     static <T> ReactiveSeq<T> asyncBuffer(Queue<T> buffer,BufferOverflowPolicy policy, Consumer<? super PushSubscriber<T>> onNext){
         return Spouts.asyncStream(new BufferingSinkOperator<T>(buffer, c-> onNext.accept(PushSubscriber.of(c)), policy));
     }
@@ -249,6 +256,7 @@ public interface Spouts {
     static <T> ReactiveSeq<T> reactiveStream(Operator<T> s){
         return new ReactiveStreamX<>(s,Type.BACKPRESSURE);
     }
+    @Deprecated
     static <T> ReactiveSeq<T> asyncStream(Operator<T> s){
         return new ReactiveStreamX<>(s,Type.NO_BACKPRESSURE);
     }
@@ -476,29 +484,6 @@ public interface Spouts {
 
         ReactiveSeq<Stream<T>> rs = ReactiveSeq.of((Stream[]) streams);
         return concat(rs.map(ReactiveSeq::fromStream));
-        /**
-        Operator<T>[] operators = new Operator[streams.length];
-        int index = 0;
-
-        Type async = Type.SYNC;
-        for(Stream<T> next : (Stream<T>[])streams){
-            if(next instanceof ReactiveStreamX){
-                ReactiveStreamX rsx = ((ReactiveStreamX) next);
-                operators[index] = rsx.getSource();
-                if(rsx.getType()== Type.BACKPRESSURE){
-                    async = Type.BACKPRESSURE;
-                }
-                if(async== Type.SYNC && rsx.getType()== Type.NO_BACKPRESSURE){
-                    async = Type.NO_BACKPRESSURE;
-                }
-            }else{
-                operators[index] = new SpliteratorToOperator<T>(next.spliterator());
-            }
-            index++;
-        }
-
-        return new ReactiveStreamX<>(new ArrayConcatonatingOperator<T>(operators)).withAsync(async);
-         **/
     }
 
 

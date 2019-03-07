@@ -71,7 +71,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     //zip can check the provided Stream settings for async usage
     //flatMapP should assume async
 
-    public static enum Type {SYNC, BACKPRESSURE, NO_BACKPRESSURE}
+    public static enum Type {SYNC, BACKPRESSURE, @Deprecated NO_BACKPRESSURE}
 
 
     public ReactiveStreamX(Operator<T> source) {
@@ -114,9 +114,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public Iterator<T> iterator() {
         if (async == Type.NO_BACKPRESSURE) {
-
             Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
-                    .build();
+                .build();
 
             AtomicBoolean wip = new AtomicBoolean(false);
             Subscription[] sub = {null};
@@ -124,8 +123,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             Continuation cont = new Continuation(() -> {
                 if (wip.compareAndSet(false, true)) {
                     this.source.subscribeAll(queue::offer,
-                            i -> queue.close(),
-                            () -> queue.close());
+                        i -> queue.close(),
+                        () -> queue.close());
                 }
                 return Continuation.empty();
             });
@@ -133,7 +132,6 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
 
             return queue.stream().iterator();
-
         }
         return new OperatorToIterable<>(source, this.defaultErrorHandler, async == BACKPRESSURE).iterator();
     }
@@ -693,10 +691,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return res;
     }
 
+
     @Override
     public ReactiveSeq<T> onEmptyGet(final Supplier<? extends T> supplier) {
-
-
          return createSeq(new OnEmptyOperator<T>(source, supplier));
     }
 
@@ -860,6 +857,14 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public ReactiveSeq<T> recover(final Function<? super Throwable, ? extends T> fn) {
         return createSeq(new RecoverOperator<>(source, fn));
+    }
+
+    @Override
+    public ReactiveSeq<T> recoverWith(final Function<Throwable,? extends Publisher<? extends T>> fn) {
+        return createSeq(new OnErrorBreakWithPublisherOperator<>(source, t -> fn.apply(t)))
+                    .flatMap(a->Spouts.from(a));
+        //NB needs to be flatMap rather than mergeMap as an entirely new Stream is created in OnErrorBreakWithPublisher
+
     }
 
     @Override

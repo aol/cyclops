@@ -77,7 +77,7 @@ public class GroupedByTimeAndSizeOperator<T,C extends PersistentCollection<? sup
                             start[0] = System.nanoTime();
                             sub.requested.decrementAndGet();
                         }else{
-                            request( upstream[0],1l);
+                            request( upstream,1l);
                         }
 
                     } catch (Throwable t) {
@@ -88,7 +88,7 @@ public class GroupedByTimeAndSizeOperator<T,C extends PersistentCollection<? sup
                 ,t->{onError.accept(t);
                     sub.requested.decrementAndGet();
                     if(sub.isActive())
-                        request( upstream[0],1);
+                        request( upstream,1);
                 },()->{
                     if(next[0].size()>0) {
                         try {

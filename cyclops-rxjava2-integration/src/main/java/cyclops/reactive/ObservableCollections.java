@@ -16,6 +16,7 @@ import io.reactivex.Observable;
 /*
     Factory methods for asynchronously populating Reactive Collections via Observables
  */
+@Deprecated
 public interface ObservableCollections {
 
     static <T> LinkedListX<T> linkedListX(Observable<T> observable){

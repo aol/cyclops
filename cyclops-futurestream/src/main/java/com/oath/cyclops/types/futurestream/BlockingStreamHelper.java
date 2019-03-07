@@ -100,6 +100,33 @@ public class BlockingStreamHelper {
 
         return MissingValue.MISSING_VALUE;
     }
+    @SuppressWarnings("rawtypes")
+    public static Object extractNonFiltered(final FastFuture next, final Optional<Consumer<Throwable>> errorHandler) {
+
+        try {
+            return next.join();
+        } catch (final SimpleReactCompletionException e) {
+            Throwable t = e;
+
+            while(t instanceof SimpleReactCompletionException){
+                t= t.getCause();
+            }
+            while(t instanceof SimpleReactFailedStageException){
+                t= t.getCause();
+            }
+            if(t instanceof FilteredExecutionPathException){
+                return MissingValue.MISSING_VALUE;
+            }else{
+                throw ExceptionSoftener.throwSoftenedException(t);
+            }
+        } catch (final RuntimeException e) {
+            capture(e, errorHandler);
+        } catch (final Exception e) {
+            capture(e, errorHandler);
+        }
+
+        return MissingValue.MISSING_VALUE;
+    }
 
     @SuppressWarnings("rawtypes")
     static Object getSafe(final CompletableFuture next, final Optional<Consumer<Throwable>> errorHandler) {

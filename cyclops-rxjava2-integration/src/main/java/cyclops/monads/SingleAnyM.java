@@ -3,7 +3,7 @@ package cyclops.monads;
 import com.oath.cyclops.anym.AnyMValue;
 import cyclops.monads.transformers.rx2.SingleT;
 import io.reactivex.Single;
-
+@Deprecated
 public interface SingleAnyM {
 
     public static  <W1 extends WitnessType<W1>,T> XorM<W1,Rx2Witness.single,T> xorM(Single<T> type){
