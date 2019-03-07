@@ -8,7 +8,7 @@ import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
-
+@Deprecated
 public interface Rx2Witness {
 
     public static <T> Maybe<T> maybe(AnyM<maybe, ? extends T> anyM){

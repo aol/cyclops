@@ -13,7 +13,7 @@ import org.reactivestreams.Publisher;
 
 import java.util.function.Function;
 import java.util.stream.Stream;
-
+@Deprecated
 public interface FlowableAnyM {
     public static  <W1 extends WitnessType<W1>,T> XorM<W1,Rx2Witness.flowable,T> xorM(Flowable<T> type){
         return XorM.right(anyM(type));
