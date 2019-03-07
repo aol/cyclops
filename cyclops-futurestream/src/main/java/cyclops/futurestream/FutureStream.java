@@ -1,5 +1,6 @@
 package cyclops.futurestream;
 
+import com.oath.cyclops.async.adapters.Signal;
 import com.oath.cyclops.internal.react.async.future.FastFuture;
 import com.oath.cyclops.internal.react.exceptions.SimpleReactProcessingException;
 import com.oath.cyclops.internal.react.stream.CloseableIterator;
@@ -16,6 +17,7 @@ import com.oath.cyclops.types.reactive.FutureStreamSynchronousPublisher;
 import com.oath.cyclops.types.reactive.ReactiveStreamsTerminalFutureOperations;
 import com.oath.cyclops.types.stream.Connectable;
 import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.Future;
 import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.Adapter;
@@ -36,6 +38,7 @@ import cyclops.function.Monoid;
 
 import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streamable;
+import cyclops.reactive.Spouts;
 import cyclops.reactive.collections.mutable.ListX;
 import lombok.val;
 import cyclops.data.tuple.Tuple2;
@@ -2412,10 +2415,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
 
-    /*
-     *	@return Convert to standard JDK 8 Stream
-     * @see com.oath.cyclops.react.stream.traits.FutureStream#stream()
-     */
+
     @Override
     default ReactiveSeq<U> stream() {
           return Streams.oneShotStream(toQueue().jdkStream(getSubscription()));
@@ -2660,9 +2660,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return collect(Collectors.toSet());
     }
 
-    /*
-     * @see cyclops2.stream.ReactiveSeq#toList()
-     */
+
     @Override
     default List<U> toList() {
         return collect(Collectors.toList());
@@ -3091,18 +3089,14 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                      .groupedUntil(predicate, factory));
     }
 
-    /*
-     * @see cyclops2.stream.ReactiveSeq#recover(java.util.function.Function)
-     */
+
     @Override
     default FutureStream<U> recover(final Function<? super Throwable, ? extends U> fn) {
         return this.onFail(e -> fn.apply(e.getCause()));
 
     }
 
-    /*
-     * @see cyclops2.stream.ReactiveSeq#recover(java.lang.Class, java.util.function.Function)
-     */
+
     @Override
     default <EX extends Throwable> FutureStream<U> recover(final Class<EX> exceptionClass, final Function<? super EX, ? extends U> fn) {
         return this.onFail(exceptionClass, e -> fn.apply((EX) e.getCause()));
@@ -3115,7 +3109,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * e.g.
      * <pre>
      * {@code
-     *     Subscription next = FutureStream.of(1,2,3,4)
+     *     Subscription next = FutureStream.builder().of(1,2,3,4)
      *          					    .forEach(2,System.out::println);
      *
      *     System.out.println("First batch processed!");
@@ -3151,9 +3145,10 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription
      * <pre>
      * {@code
-     *     Subscription next = FutureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .map(Supplier::getValue)
-     *          					    .forEach(2,System.out::println, e->e.printStackTrace());
+     *     Subscription next = FutureStream.builder()
+     *                                    .of(()->1,()->2,()->{throw new RuntimeException()},()->4)
+     *                                    .map(Supplier::getValue)
+     *          					      .forEach(2,System.out::println, e->e.printStackTrace());
      *
      *     System.out.println("First batch processed!");
      *
@@ -3353,6 +3348,32 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     default FutureStream<U> removeAll(Iterable<? extends U> value) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                 .removeAll(value));
+    }
+
+    @Override
+    default FutureStream<U> recoverWith(final Function<Throwable, ? extends Publisher<? extends U>> fn) {
+
+        return fromStream(ReactiveSeq.oneShotStream(stream()).recoverWith(fn));
+
+    }
+
+    @Override
+    default FutureStream<U> recoverWith(final BiFunction<Integer, Throwable, ? extends Publisher<? extends U>> fn) {
+        return (FutureStream<U>)ReactiveSeq.super.recoverWith(fn);
+
+    }
+
+    @Override
+    default <X extends Throwable> FutureStream<U> recoverWith(Class<X> type, final BiFunction<Integer, X, ? extends Publisher<? extends U>> fn) {
+        return (FutureStream<U>)ReactiveSeq.super.recoverWith(type,fn);
+    }
+
+    @Override
+    default FutureStream<U> onError(Consumer<? super Throwable> c) {
+        return recover(in->{
+            c.accept(in);
+            throw ExceptionSoftener.throwSoftenedException(in);
+        });
     }
 
 

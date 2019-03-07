@@ -447,7 +447,7 @@ public abstract class BaseSequentialSeqTest {
 
 
 	 Throwable ex;
-	    @Test
+	    @Test(expected =  ClassCastException.class)
 	    public void testCastException() {
 	    	ex = null;
 	    	of(1, "a", 2, "b", 3, null).capture(e-> ex =e)

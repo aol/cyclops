@@ -42,6 +42,7 @@ import java.util.concurrent.locks.LockSupport;
  * @param <T> Subscriber type
  */
 @AllArgsConstructor//(access=AccessLevel.PRIVATE)
+@Deprecated
 public class AsyncSubscriber<T> implements Subscriber<T>, PushSubscriber<T> {
 
 

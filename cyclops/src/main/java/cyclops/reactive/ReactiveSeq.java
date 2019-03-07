@@ -37,6 +37,7 @@ import cyclops.data.Seq;
 
 import cyclops.data.Vector;
 import cyclops.data.HashMap;
+import cyclops.function.Curry;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -59,6 +60,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.*;
@@ -3693,6 +3695,32 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq that can recover from an Exception
      */
     ReactiveSeq<T> recover(final Function<? super Throwable, ? extends T> fn);
+
+    ReactiveSeq<T> recoverWith(final Function<Throwable,? extends Publisher<? extends T>> fn);
+
+
+    default ReactiveSeq<T> recoverWith(final BiFunction<Integer,Throwable,? extends Publisher<? extends T>> fn){
+        AtomicInteger count = new AtomicInteger(0);
+        return recoverWith(t->{
+            return fn.apply(count.getAndIncrement(),t);
+        });
+    }
+    default <X extends Throwable> ReactiveSeq<T> recoverWith(Class<X> type, final BiFunction<Integer,X,? extends Publisher<? extends T>> fn){
+        AtomicInteger count = new AtomicInteger(0);
+        return recoverWith(t->{
+            if (type.isAssignableFrom(t.getClass())) {
+                return fn.apply(count.getAndIncrement(), (X)t);
+            }
+            throw ExceptionSoftener.throwSoftenedException(t);
+        });
+    }
+
+    default ReactiveSeq<T> onError(Consumer<? super Throwable > c){
+        return recover(in->{
+            c.accept(in);
+            throw ExceptionSoftener.throwSoftenedException(in);
+        });
+    }
 
     /**
      * Recover from a particular exception type

@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
-
+@Deprecated
 public final class SingleT<W extends WitnessType<W>,T> implements To<SingleT<W,T>>,  ReactiveTransformable<T>, Filters<T>, Folds<T> {
 
     private final AnyM<W,Single<T>> run;

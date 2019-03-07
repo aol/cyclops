@@ -3,19 +3,28 @@ package cyclops.reactive;
 import cyclops.control.Future;
 import cyclops.control.Try;
 
+import cyclops.data.Vector;
 import org.hamcrest.MatcherAssert;
+import org.junit.Ignore;
 import org.junit.Test;
+import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
 import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.LockSupport;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.*;
 
 
-public class FluxIOTest {
+public class FluxIOTest extends AbstractIOTestBase{
+
     Executor ex = Executors.newFixedThreadPool(1);
     RuntimeException re = new RuntimeException();
     @Test
@@ -26,6 +35,17 @@ public class FluxIOTest {
     }
 
     boolean closed = false;
+
+    @Override
+    public IO<Integer> of(Integer... values) {
+        return FluxIO.fromPublisher(Flux.just(values));
+    }
+
+    @Override
+    public IO<Integer> empty() {
+        return FluxIO.fromPublisher(Flux.empty());
+    }
+
     class MyCloseable implements AutoCloseable{
 
         @Override
@@ -140,4 +160,76 @@ public class FluxIOTest {
             .run(),equalTo(Try.success(20)));
     }
 
+    @Test
+    public void onError(){
+        AtomicInteger count = new AtomicInteger(0);
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicReference<Vector<Integer>> result = new AtomicReference<>(Vector.empty());
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+
+
+        of(1, 2, 3).<Integer>map(i -> {
+            throw new RuntimeException();
+        })
+            .onError(e -> count.incrementAndGet())
+            .forEach(n -> {
+                result.updateAndGet(v->v.plus(n));
+                data.set(true);
+            }, e -> {
+                error.set(e);
+            }, () -> {
+                complete.set(true);
+            });
+
+        while(error.get()==null){
+            LockSupport.parkNanos(10l);
+        }
+        assertThat(data.get(), equalTo(false));
+        assertThat(complete.get(), equalTo(false));
+        assertThat(error.get(), instanceOf(RuntimeException.class));
+        assertThat(result.get(),equalTo(Vector.empty()));
+
+
+
+
+        assertThat(count.get(),equalTo(1));
+
+    }
+
+    @Override @Test @Ignore
+    public void onErrorList() {
+
+    }
+
+    @Override @Test @Ignore
+    public void onErrorIterator() {
+
+    }
+
+    @Override @Test @Ignore
+    public void onErrorIncremental() throws InterruptedException {
+
+    }
+
+    @Override @Test @Ignore
+    public void onErrorEmptyList() {
+
+    }
+
+    @Override @Test @Ignore
+    public void onErrorEmptyIterator() {
+
+    }
+
+    @Override @Test @Ignore
+    public void onErrorEmpty() {
+
+    }
+
+    @Override @Test @Ignore
+    public void onErrorEmptyIncremental() {
+
+    }
 }

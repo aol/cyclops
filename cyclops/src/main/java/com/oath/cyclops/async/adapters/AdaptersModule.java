@@ -18,6 +18,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.reactive.ReactiveSeq;
 
 
@@ -340,7 +341,7 @@ public interface AdaptersModule {
                     subscription.closeQueueIfFinished(queue);
                     return true;
                 } catch (final Queue.ClosedQueueException e) {
-                    //e.printStackTrace();
+
                     if (e.isDataPresent()) {
 
                         ancillaryData = e.getCurrentData();
@@ -352,6 +353,9 @@ public interface AdaptersModule {
                     return false;
                 }catch(Queue.QueueTimeoutException e){
                     timeoutRetry =true;
+                } catch(Queue.Error e){
+                    throw ExceptionSoftener.throwSoftenedException(e.t);
+
                 } catch(final Exception e) {
 
 

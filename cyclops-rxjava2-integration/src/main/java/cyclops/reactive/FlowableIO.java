@@ -111,7 +111,11 @@ public final class FlowableIO<T> implements IO<T> {
 
     @Override
     public ReactiveSeq<T> stream() {
-        return Spouts.from(flowable);
+        return FlowableReactiveSeq.reactiveSeq(flowable);
     }
 
+    @Override
+    public <R> IO<R> unit(Publisher<R> pub) {
+        return new FlowableIO<>(Flowable.fromPublisher(pub));
+    }
 }

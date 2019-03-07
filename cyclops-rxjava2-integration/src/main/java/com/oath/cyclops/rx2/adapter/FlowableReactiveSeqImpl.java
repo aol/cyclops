@@ -785,5 +785,14 @@ public class FlowableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     public void forEachAsync(Consumer<? super T> action) {
         this.flowable.subscribe(a->action.accept(a));
     }
+    @Override
+    public ReactiveSeq<T> recoverWith(Function<Throwable, ? extends Publisher<? extends T>> fn) {
+        return flux(Spouts.from(flowable).recoverWith(fn));
+    }
+
+    @Override
+    public ReactiveSeq<T> onError(Consumer<? super Throwable> c) {
+        return flux(Spouts.from(flowable).onError(c));
+    }
 
 }

@@ -510,7 +510,12 @@ public class Queue<T> implements Adapter<T> {
 
     public T get() {
 
-        return ensureOpen(this.timeout, this.timeUnit);
+        T res =  ensureOpen(this.timeout, this.timeUnit);
+        if(res instanceof  Error){
+            Error e = (Error)(res);
+            throw ExceptionSoftener.throwSoftenedException(e);
+        }
+        return res;
 
     }
 
@@ -535,6 +540,21 @@ public class Queue<T> implements Adapter<T> {
 
         } catch (final IllegalStateException e) {
             return false;
+        }
+    }
+
+    public boolean addError(Throwable t){
+        queue.add((T) new Error(t));
+        return true;
+    }
+
+    @AllArgsConstructor
+    public static final class Error extends RuntimeException{
+        Throwable t;
+
+        @Override
+        public synchronized Throwable fillInStackTrace() {
+            return this;
         }
     }
 

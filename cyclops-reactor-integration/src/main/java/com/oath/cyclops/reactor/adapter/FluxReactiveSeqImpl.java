@@ -35,7 +35,7 @@ import java.util.stream.*;
 public class FluxReactiveSeqImpl<T> implements ReactiveSeq<T> {
     @Wither
     @Getter
-    Flux<T> flux;
+    private final Flux<T> flux;
 
     public <R> FluxReactiveSeqImpl<R> flux(Flux<R> flux){
         return new FluxReactiveSeqImpl<>(flux);
@@ -641,6 +641,16 @@ public class FluxReactiveSeqImpl<T> implements ReactiveSeq<T> {
     @Override
     public ReactiveSeq<T> recover(Function<? super Throwable, ? extends T> fn) {
         return flux(Spouts.from(flux).recover(fn));
+    }
+
+    @Override
+    public ReactiveSeq<T> recoverWith(Function<Throwable, ? extends Publisher<? extends T>> fn) {
+        return flux(Spouts.from(flux).recoverWith(fn));
+    }
+
+    @Override
+    public ReactiveSeq<T> onError(Consumer<? super Throwable> c) {
+        return flux(Spouts.from(flux).onError(c));
     }
 
     @Override

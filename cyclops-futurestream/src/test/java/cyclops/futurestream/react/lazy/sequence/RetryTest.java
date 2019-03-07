@@ -81,7 +81,7 @@ public class RetryTest {
 					.recover(IOException.class,e->"hello")
 					.firstValue(null),equalTo("hello"));
 	}
-	@Test(expected=NoSuchElementException.class)
+	@Test(expected=IOException.class)
 	public void recoverIOUnhandledThrown(){
 		assertThat(DuplicationTest.of(1,2,3,4)
 					.map(i->i+2)

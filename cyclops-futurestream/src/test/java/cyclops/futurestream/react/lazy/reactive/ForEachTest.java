@@ -116,7 +116,9 @@ public class ForEachTest {
 		stream.forEach(i->list.add(i),
 								e->error=e);
 
-		ExceptionSoftener.softenRunnable(()->Thread.sleep(100)).run();
+		ExceptionSoftener.softenRunnable(()->Thread.sleep(1000)).run();
+
+
 		assertThat(list,hasItems(1,2,3,4,5));
 		assertThat(list.size(),equalTo(5));
 

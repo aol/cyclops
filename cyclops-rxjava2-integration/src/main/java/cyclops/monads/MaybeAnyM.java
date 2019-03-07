@@ -6,7 +6,7 @@ import cyclops.monads.transformers.rx2.MaybeT;
 import io.reactivex.Maybe;
 
 
-
+@Deprecated
 public interface MaybeAnyM {
 
     public static  <W1 extends WitnessType<W1>,T> XorM<W1,maybe,T> xorM(Maybe<T> type){
