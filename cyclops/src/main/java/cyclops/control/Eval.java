@@ -248,6 +248,15 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         public void subscribe(Subscriber<? super T2> sub) {
             lazy.subscribe(sub);
         }
+        public ReactiveSeq<T2> streamWhile(Predicate<? super T2> p){
+            return Spouts.generate(this).takeWhile(p);
+        }
+        public ReactiveSeq<T2> streamUntil(Predicate<? super T2> p){
+            return Spouts.generate(this).takeUntil(p);
+        }
+        public ReactiveSeq<T2> streamUntil(long time,TimeUnit unit){
+            return Spouts.generate(this).take(time,unit);
+        }
     }
 
     public static <T> Eval<T> coeval(final Future<Eval<T>> pub) {
@@ -905,6 +914,16 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
                 return res.flatMap(i->i);
             }
 
+            public ReactiveSeq<T> streamWhile(Predicate<? super T> p){
+                return Spouts.generate(this).takeWhile(p);
+            }
+            public ReactiveSeq<T> streamUntil(Predicate<? super T> p){
+                return Spouts.generate(this).takeUntil(p);
+            }
+            public ReactiveSeq<T> streamUntil(long time,TimeUnit unit){
+                return Spouts.generate(this).take(time,unit);
+            }
+
             @Override
             public <R> Eval<R> map(final Function<? super T, ? extends R> mapper) {
                 return new FutureAlways<R>(input.map(e->e.map(mapper)));
@@ -1013,17 +1032,13 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
 
-            /* (non-Javadoc)
-             * @see java.lang.Object#hashCode()
-             */
+
             @Override
             public int hashCode() {
                 return get().hashCode();
             }
 
-            /* (non-Javadoc)
-             * @see java.lang.Object#equals(java.lang.Object)
-             */
+
             @Override
             public boolean equals(final Object obj) {
                 if (!(obj instanceof Eval))
