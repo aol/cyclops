@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
+@Deprecated
 public final class MaybeT<W extends WitnessType<W>,T> implements To<MaybeT<W,T>>, ReactiveTransformable<T>,Filters<T>, Folds<T> {
 
     private final AnyM<W,Maybe<T>> run;

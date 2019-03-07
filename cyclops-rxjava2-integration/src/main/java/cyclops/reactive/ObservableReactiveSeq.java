@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 /*
  Factory methods for creating Observable backed ReactiveSeq instances
  */
+@Deprecated
 public interface ObservableReactiveSeq {
 
     public static <T> ReactiveSeq<T> reactiveSeq(Observable<T> observable) {

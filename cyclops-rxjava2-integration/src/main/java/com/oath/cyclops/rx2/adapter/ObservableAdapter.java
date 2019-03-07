@@ -15,6 +15,7 @@ import java.util.function.Predicate;
 
 
 @AllArgsConstructor
+@Deprecated
 public class ObservableAdapter extends AbstractMonadAdapter<observable> {
 
 

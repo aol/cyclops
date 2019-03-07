@@ -34,10 +34,11 @@ import java.util.stream.*;
 
 
 @AllArgsConstructor
+@Deprecated
 public class ObservableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     @Wither
     @Getter
-    Observable<T> observable;
+    final Observable<T> observable;
 
     public <R> ObservableReactiveSeqImpl<R> observable(Observable<R> observable){
         return new ObservableReactiveSeqImpl<>(observable);
@@ -756,5 +757,15 @@ public class ObservableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     @Override
     public void forEachAsync(Consumer<? super T> action) {
         observable.subscribe(a->action.accept(a));
+    }
+
+    @Override
+    public ReactiveSeq<T> recoverWith(Function<Throwable, ? extends Publisher<? extends T>> fn) {
+        return observable(Observables.connectToReactiveSeq(observable).recoverWith(fn));
+    }
+
+    @Override
+    public ReactiveSeq<T> onError(Consumer<? super Throwable> c) {
+        return observable(Observables.connectToReactiveSeq(observable).onError(c));
     }
 }
