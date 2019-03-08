@@ -1,6 +1,6 @@
 # Getting Cyclops X (10)
 
-* The latest version is [cyclops:10.1.0](http://mvnrepository.com/artifact/com.oath.cyclops/cyclops/10.1.0)
+* The latest version is [cyclops:10.3.0](http://mvnrepository.com/artifact/com.oath.cyclops/cyclops/10.3.0)
 
 
 * Stackoverflow tag [cyclops-react](http://stackoverflow.com/search?q=cyclops-react)
