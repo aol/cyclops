@@ -10,16 +10,7 @@ import cyclops.control.State;
 import cyclops.data.LazySeq;
 import cyclops.data.Seq;
 import cyclops.data.tuple.Tuple2;
-import cyclops.function.Curry;
-import cyclops.function.Function1;
-import cyclops.function.Function2;
-import cyclops.function.Function3;
-import cyclops.function.Function4;
-import cyclops.function.Function5;
-import cyclops.function.Monoid;
-import cyclops.function.Predicate3;
-import cyclops.function.Predicate4;
-import cyclops.function.Predicate5;
+import cyclops.function.*;
 import cyclops.instances.control.StateInstances;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.foldable.Foldable;
@@ -456,6 +447,7 @@ public class Do<W> {
                             } );
                         }));
                     }
+
                     @AllArgsConstructor
                     public class Do5<T5> {
                         private final Function4<T1,T2,T3,T4,Higher<W, T5>> e;
@@ -515,6 +507,227 @@ public class Do<W> {
                                     });
                                 } );
                             }));
+                        }
+
+                        @AllArgsConstructor
+                        public class Do6<T6> {
+                            private final Function5<T1,T2,T3,T4,T5, Higher<W, T6>> fh;
+
+                            public <R> Do6<R> map(Function<? super T6, ? extends R> mapper){
+                                return new Do6<>((a,b,c,d,e)->monad.map_(fh.apply(a,b,c,d,e),mapper));
+                            }
+
+                            public <R> Do6<R> ap(Higher<W,Function<T6,R>> applicative){
+                                return new Do6<R>((a,b,c,d,e)->monad.ap(applicative,fh.apply(a,b,c,d,e)));
+                            }
+                            public Do6<T6> peek(Consumer<? super T6> mapper){
+                                return map(t->{
+                                    mapper.accept(t);
+                                    return t;
+                                });
+                            }
+                            public <T7,R> Do6<R> zip(Higher<W, T7> fb, BiFunction<? super T6,? super T7,? extends R> fa){
+                                return new Do6<R>((a,b,c,d,e)->monad.zip(fh.apply(a,b,c,d,e),fb,fa));
+                            }
+
+                            public Do6<String> show(Show<W> show){
+                                return new Do6<String>((a1,b1,c1,d1,e1)->monad.unit(show.show(monad.flatMap_(a.get(),
+                                    t1 -> monad.flatMap_(b.apply(t1),t2->monad.flatMap_(c.apply(t1,t2),
+                                        t3->monad.flatMap_(d.apply(t1,t2,t3),t4->e.apply(t1,t2,t3,t4))))))));
+                            }
+
+                            public Do6<T6> guard(MonadZero<W> monadZero,
+                                                 Predicate6<? super T1,? super T2, ? super T3, ? super T4, ? super T5, ? super T6> fn) {
+                                return new Do6<>((t1,t2,t3,t4,t5)->monadZero.filter(p->fn.test(t1,t2,t3,t4,t5,p), fh.apply(t1,t2,t3,t4,t5)));
+                            }
+
+                            public <R> Do1<R> yield(Function6<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? extends R> fn) {
+                                return Do.forEach(monad).__(()-> monad.flatMap_(a.get(), in -> {
+
+
+                                    Higher<W, R> hk2 = monad.flatMap_(b.apply(in), in2 -> {
+                                        Higher<W, R> hk3 = monad.flatMap_(c.apply(in,in2), in3 -> {
+                                            Higher<W, R> hk4 = monad.flatMap_(d.apply(in,in2,in3), in4 -> {
+                                                Higher<W,R> hk5 = monad.flatMap_(e.apply(in,in2,in3,in4), in5 -> {
+                                                    Higher<W,R> hk6 = monad.map_(fh.apply(in,in2,in3,in4,in5),in6->fn.apply(in, in2, in3, in4,in5,in6));
+                                                    return hk6;
+                                                });
+                                                return hk5;
+                                            });
+                                            return hk4;
+                                        });
+                                        return hk3;
+                                    });
+                                    return hk2;
+                                }));
+
+                            }
+
+                            public <R> R fold(Function<? super Higher<W,T6>,? extends R> fn){
+                                return fn.apply(monad.flatMap_(a.get(),t1->{
+                                    return monad.flatMap_(b.apply(t1),t2->{
+                                        return monad.flatMap_(c.apply(t1,t2),t3->{
+                                            return monad.flatMap_(d.apply(t1,t2,t3),t4->{
+                                                return monad.flatMap_(e.apply(t1,t2,t3,t4),t5 -> {
+                                                    return fh.apply(t1,t2,t3,t4,t5);
+                                                });
+                                            });
+                                        });
+                                    } );
+                                }));
+                            }
+
+                            @AllArgsConstructor
+                            public class Do7<T7> {
+                                private final Function6<T1,T2,T3,T4,T5,T6, Higher<W, T7>> gh;
+
+                                public <R> Do7<R> map(Function<? super T7, ? extends R> mapper){
+                                    return new Do7<>((a,b,c,d,e,f)->monad.map_(gh.apply(a,b,c,d,e,f),mapper));
+                                }
+
+                                public <R> Do7<R> ap(Higher<W,Function<T7,R>> applicative){
+                                    return new Do7<R>((a,b,c,d,e,f)->monad.ap(applicative,gh.apply(a,b,c,d,e,f)));
+                                }
+                                public Do7<T7> peek(Consumer<? super T7> mapper){
+                                    return map(t->{
+                                        mapper.accept(t);
+                                        return t;
+                                    });
+                                }
+                                public <T8,R> Do7<R> zip(Higher<W, T8> fb, BiFunction<? super T7,? super T8,? extends R> fa){
+                                    return new Do7<R>((a,b,c,d,e,f)->monad.zip(gh.apply(a,b,c,d,e,f),fb,fa));
+                                }
+
+                                public Do7<String> show(Show<W> show){
+                                    return new Do7<String>((a1,b1,c1,d1,e1,f1)->monad.unit(show.show(monad.flatMap_(a.get(),
+                                        t1 -> monad.flatMap_(b.apply(t1),t2->monad.flatMap_(c.apply(t1,t2),
+                                            t3->monad.flatMap_(d.apply(t1,t2,t3),t4->e.apply(t1,t2,t3,t4))))))));
+                                }
+
+                                public Do7<T7> guard(MonadZero<W> monadZero,
+                                                     Predicate7<? super T1,? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7> fn) {
+                                    return new Do7<>((t1,t2,t3,t4,t5,t6)->monadZero.filter(p->fn.test(t1,t2,t3,t4,t5,t6,p), gh.apply(t1,t2,t3,t4,t5,t6)));
+                                }
+
+                                public <R> Do1<R> yield(Function7<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? extends R> fn) {
+                                    return Do.forEach(monad).__(()-> monad.flatMap_(a.get(), in -> {
+
+
+                                        Higher<W, R> hk2 = monad.flatMap_(b.apply(in), in2 -> {
+                                            Higher<W, R> hk3 = monad.flatMap_(c.apply(in,in2), in3 -> {
+                                                Higher<W, R> hk4 = monad.flatMap_(d.apply(in,in2,in3), in4 -> {
+                                                    Higher<W,R> hk5 = monad.flatMap_(e.apply(in,in2,in3,in4), in5 -> {
+                                                        Higher<W,R> hk6 = monad.flatMap_(fh.apply(in,in2,in3,in4,in5),in6->{
+                                                            Higher<W,R> hk7 = monad.map_(gh.apply(in,in2,in3,in4,in5,in6),in7->fn.apply(in, in2, in3, in4,in5,in6,in7));
+                                                            return hk7;
+                                                        });
+                                                        return hk6;
+                                                    });
+                                                    return hk5;
+                                                });
+                                                return hk4;
+                                            });
+                                            return hk3;
+                                        });
+                                        return hk2;
+                                    }));
+
+                                }
+
+                                public <R> R fold(Function<? super Higher<W,T7>,? extends R> fn){
+                                    return fn.apply(monad.flatMap_(a.get(),t1->{
+                                        return monad.flatMap_(b.apply(t1),t2->{
+                                            return monad.flatMap_(c.apply(t1,t2),t3->{
+                                                return monad.flatMap_(d.apply(t1,t2,t3),t4->{
+                                                    return monad.flatMap_(e.apply(t1,t2,t3,t4),t5 -> {
+                                                        return monad.flatMap_(fh.apply(t1,t2,t3,t4,t5), t6 -> {
+                                                            return gh.apply(t1,t2,t3,t4,t5,t6);
+                                                        });
+                                                    });
+                                                });
+                                            });
+                                        } );
+                                    }));
+                                }
+
+                                @AllArgsConstructor
+                                public class Do8<T8> {
+                                    private final Function7<T1,T2,T3,T4,T5,T6,T7, Higher<W, T8>> eh;
+
+                                    public <R> Do8<R> map(Function<? super T8, ? extends R> mapper){
+                                        return new Do8<>((a,b,c,d,e,f,g)->monad.map_(eh.apply(a,b,c,d,e,f,g),mapper));
+                                    }
+
+                                    public <R> Do8<R> ap(Higher<W,Function<T8,R>> applicative){
+                                        return new Do8<R>((a,b,c,d,e,f,g)->monad.ap(applicative,eh.apply(a,b,c,d,e,f,g)));
+                                    }
+                                    public Do8<T8> peek(Consumer<? super T8> mapper){
+                                        return map(t->{
+                                            mapper.accept(t);
+                                            return t;
+                                        });
+                                    }
+                                    public <T9,R> Do8<R> zip(Higher<W, T9> fb, BiFunction<? super T8,? super T9,? extends R> fa){
+                                        return new Do8<R>((a,b,c,d,e,f,g)->monad.zip(eh.apply(a,b,c,d,e,f,g),fb,fa));
+                                    }
+
+                                    public Do8<String> show(Show<W> show){
+                                        return new Do8<String>((a1,b1,c1,d1,e1,f1,e2)->monad.unit(show.show(monad.flatMap_(a.get(),
+                                            t1 -> monad.flatMap_(b.apply(t1),t2->monad.flatMap_(c.apply(t1,t2),
+                                                t3->monad.flatMap_(d.apply(t1,t2,t3),t4->e.apply(t1,t2,t3,t4))))))));
+                                    }
+
+                                    public Do8<T8> guard(MonadZero<W> monadZero,
+                                                         Predicate8<? super T1,? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? super T8> fn) {
+                                        return new Do8<>((t1,t2,t3,t4,t5,t6,t7)->monadZero.filter(p->fn.test(t1,t2,t3,t4,t5,t6,t7,p), eh.apply(t1,t2,t3,t4,t5,t6,t7)));
+                                    }
+
+                                    public <R> Do1<R> yield(Function8<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? super T8, ? extends R> fn) {
+                                        return Do.forEach(monad).__(()-> monad.flatMap_(a.get(), in -> {
+
+                                            Higher<W, R> hk2 = monad.flatMap_(b.apply(in), in2 -> {
+                                                Higher<W, R> hk3 = monad.flatMap_(c.apply(in,in2), in3 -> {
+                                                    Higher<W, R> hk4 = monad.flatMap_(d.apply(in,in2,in3), in4 -> {
+                                                        Higher<W,R> hk5 = monad.flatMap_(e.apply(in,in2,in3,in4), in5 -> {
+                                                            Higher<W,R> hk6 = monad.flatMap_(fh.apply(in,in2,in3,in4,in5),in6->{
+                                                                Higher<W,R> hk7 = monad.flatMap_(gh.apply(in,in2,in3,in4,in5,in6),in7->{
+                                                                    Higher<W,R> hk8 = monad.map_(eh.apply(in,in2,in3,in4,in5,in6,in7),in8->fn.apply(in, in2, in3, in4,in5,in6,in7,in8));
+                                                                    return hk8;
+                                                                });
+                                                                return hk7;
+                                                            });
+                                                            return hk6;
+                                                        });
+                                                        return hk5;
+                                                    });
+                                                    return hk4;
+                                                });
+                                                return hk3;
+                                            });
+                                            return hk2;
+                                        }));
+
+                                    }
+
+                                    public <R> R fold(Function<? super Higher<W,T8>,? extends R> fn){
+                                        return fn.apply(monad.flatMap_(a.get(),t1->{
+                                            return monad.flatMap_(b.apply(t1),t2->{
+                                                return monad.flatMap_(c.apply(t1,t2),t3->{
+                                                    return monad.flatMap_(d.apply(t1,t2,t3),t4->{
+                                                        return monad.flatMap_(e.apply(t1,t2,t3,t4),t5 -> {
+                                                            return monad.flatMap_(fh.apply(t1,t2,t3,t4,t5), t6 -> {
+                                                                return monad.flatMap_(gh.apply(t1,t2,t3,t4,t5,t6), t7 -> {
+                                                                    return eh.apply(t1,t2,t3,t4,t5,t6,t7);
+                                                                });
+                                                            });
+                                                        });
+                                                    });
+                                                });
+                                            } );
+                                        }));
+                                    }
+                                }
+                            }
                         }
                     }
                 }
