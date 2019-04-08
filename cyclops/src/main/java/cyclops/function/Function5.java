@@ -3,10 +3,18 @@ package cyclops.function;
 
 import java.util.concurrent.Executor;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import cyclops.control.*;
 
 public interface Function5<T1, T2, T3, T4, T5, R> extends Function1<T1, Function1<T2, Function1<T3,Function1<T4,Function1<T5, R>>>>> {
+
+    public static <T1,T2,T3,T4,T5, R> Function5<T1,  T2,T3,T4,T5,R> constant(R t) {
+        return (a,b,c,d,e)-> t;
+    }
+    public static <T1,T2,T3,T4,T5,R> Function5<T1,  T2,T3,T4,T5,R> lazyConstant(Supplier<R> t) {
+        return (a,b,c,d,e)-> t.get();
+    }
 
     public R apply(T1 a, T2 b, T3 c, T4 d, T5 e);
 
