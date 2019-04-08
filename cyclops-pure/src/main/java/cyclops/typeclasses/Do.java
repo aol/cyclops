@@ -397,6 +397,8 @@ public class Do<W> {
                         return new Do4<String>((a1,b1,c1)->monad.unit(show.show(monad.flatMap_(a.get(), t1 ->
                                         monad.flatMap_(b.apply(t1),t2->monad.flatMap_(c.apply(t1,t2),t3->d.apply(t1,t2,t3)))))));
                     }
+
+
                     public Do5<String> _show(Show<W> show){
                         return new Do5<>((x1,x2,x3,x4)->monad.unit(show.show(monad.flatMap_(a.get(), t1 ->
                             monad.flatMap_(b.apply(t1),t2->monad.flatMap_(c.apply(t1,t2),t3->d.apply(t1,t2,t3)))))));
@@ -418,6 +420,7 @@ public class Do<W> {
                     public <T5> Do5<T5> _flatten(Higher<W, Higher<W, T5>> nested){
                         return new Do5<T5>(Function4.constant(monad.flatten(nested)));
                     }
+
 
 
                     public Do4<T4> guard(MonadZero<W> monadZero, Predicate4<? super T1,? super T2, ? super T3, ? super T4> fn) {
@@ -475,8 +478,30 @@ public class Do<W> {
                                                             t3->monad.flatMap_(d.apply(t1,t2,t3),t4->e.apply(t1,t2,t3,t4))))))));
                         }
 
-                        public Do5<T5> guard(MonadZero<W> monadZero,
-                                                                                                                                                      Predicate5<? super T1,? super T2, ? super T3, ? super T4, ? super T5> fn) {
+
+                        public Do6<String> _show(Show<W> show){
+                            return new Do6<>((x1,x2,x3,x4,x5)->monad.unit(show.show(monad.flatMap_(a.get(), t1 ->
+                                monad.flatMap_(b.apply(t1),t2->monad.flatMap_(c.apply(t1,t2),t3->d.apply(t1,t2,t3)))))));
+                        }
+                        public <T6> Do6<T6> __(Higher<W, T6> e) {
+                            return new Do6<>(Function5.constant(e));
+                        }
+
+                        public <T6> Do6<T6> __(Supplier<Higher<W, T6>> e) {
+                            return new Do6<>(Function5.lazyConstant(e));
+                        }
+                        public <T6> Do6<T6> __(Function5<T1,T2,T3,T4,T5,Higher<W, T6>> e) {
+                            return new Do6<>(e);
+                        }
+
+                        public <T6> Do6<T6> _of(T6 e) {
+                            return new Do6<>(Function5.constant(monad.unit(e)));
+                        }
+                        public <T6> Do6<T6> _flatten(Higher<W, Higher<W, T6>> nested){
+                            return new Do6<T6>(Function5.constant(monad.flatten(nested)));
+                        }
+
+                        public Do5<T5> guard(MonadZero<W> monadZero,Predicate5<? super T1,? super T2, ? super T3, ? super T4, ? super T5> fn) {
                             return new Do5<>((t1,t2,t3,t4)->monadZero.filter(p->fn.test(t1,t2,t3,t4,p), e.apply(t1,t2,t3,t4)));
                         }
                         public <R> Do1<R> yield(Function5<? super T1, ? super T2, ? super T3, ? super T4, ? super T5,? extends R> fn) {
@@ -536,8 +561,29 @@ public class Do<W> {
                                         t3->monad.flatMap_(d.apply(t1,t2,t3),t4->e.apply(t1,t2,t3,t4))))))));
                             }
 
-                            public Do6<T6> guard(MonadZero<W> monadZero,
-                                                 Predicate6<? super T1,? super T2, ? super T3, ? super T4, ? super T5, ? super T6> fn) {
+                            public Do7<String> _show(Show<W> show){
+                                return new Do7<>((x1,x2,x3,x4,x5,x6)->monad.unit(show.show(monad.flatMap_(a.get(), t1 ->
+                                    monad.flatMap_(b.apply(t1),t2->monad.flatMap_(c.apply(t1,t2),t3->d.apply(t1,t2,t3)))))));
+                            }
+                            public <T7> Do7<T7> __(Higher<W, T7> e) {
+                                return new Do7<>(Function6.constant(e));
+                            }
+
+                            public <T7> Do7<T7> __(Supplier<Higher<W, T7>> e) {
+                                return new Do7<>(Function6.lazyConstant(e));
+                            }
+                            public <T7> Do7<T7> __(Function6<T1,T2,T3,T4,T5,T6,Higher<W, T7>> e) {
+                                return new Do7<>(e);
+                            }
+
+                            public <T7> Do7<T7> _of(T7 e) {
+                                return new Do7<>(Function6.constant(monad.unit(e)));
+                            }
+                            public <T7> Do7<T7> _flatten(Higher<W, Higher<W, T7>> nested){
+                                return new Do7<T7>(Function6.constant(monad.flatten(nested)));
+                            }
+
+                            public Do6<T6> guard(MonadZero<W> monadZero, Predicate6<? super T1,? super T2, ? super T3, ? super T4, ? super T5, ? super T6> fn) {
                                 return new Do6<>((t1,t2,t3,t4,t5)->monadZero.filter(p->fn.test(t1,t2,t3,t4,t5,p), fh.apply(t1,t2,t3,t4,t5)));
                             }
 
@@ -602,6 +648,30 @@ public class Do<W> {
                                     return new Do7<String>((a1,b1,c1,d1,e1,f1)->monad.unit(show.show(monad.flatMap_(a.get(),
                                         t1 -> monad.flatMap_(b.apply(t1),t2->monad.flatMap_(c.apply(t1,t2),
                                             t3->monad.flatMap_(d.apply(t1,t2,t3),t4->e.apply(t1,t2,t3,t4))))))));
+                                }
+
+
+
+                                public Do8<String> _show(Show<W> show){
+                                    return new Do8<>((x1,x2,x3,x4,x5,x6,x7)->monad.unit(show.show(monad.flatMap_(a.get(), t1 ->
+                                        monad.flatMap_(b.apply(t1),t2->monad.flatMap_(c.apply(t1,t2),t3->d.apply(t1,t2,t3)))))));
+                                }
+                                public <T8> Do8<T8> __(Higher<W, T8> e) {
+                                    return new Do8<>(Function7.constant(e));
+                                }
+
+                                public <T8> Do8<T8> __(Supplier<Higher<W, T8>> e) {
+                                    return new Do8<>(Function7.lazyConstant(e));
+                                }
+                                public <T8> Do8<T8> __(Function7<T1,T2,T3,T4,T5,T6,T7,Higher<W, T8>> e) {
+                                    return new Do8<>(e);
+                                }
+
+                                public <T8> Do8<T8> _of(T8 e) {
+                                    return new Do8<>(Function7.constant(monad.unit(e)));
+                                }
+                                public <T8> Do8<T8> _flatten(Higher<W, Higher<W, T8>> nested){
+                                    return new Do8<>(Function7.constant(monad.flatten(nested)));
                                 }
 
                                 public Do7<T7> guard(MonadZero<W> monadZero,
