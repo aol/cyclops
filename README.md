@@ -21,6 +21,7 @@
   - [Part 7 : Immutable Collections (Covering Vector, NonEmptyList and reactive processing)](https://medium.com/@johnmcclean/dysfunctional-programming-in-java-7-immutable-collections-83ba78aaf4dd)
   
   * [Tagless Final in Java](https://medium.com/@johnmcclean/powerful-extensible-code-with-tagless-final-in-java-4094f923cdea)
+  * [A Java long read : Is functional programming worth it?](https://medium.com/@johnmcclean/a-java-long-read-is-functional-programming-worth-it-ca53bfcd0c6a)
 
 # What's new in Cyclops X (cyclops 10)
 
