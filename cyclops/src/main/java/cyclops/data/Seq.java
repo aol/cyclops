@@ -260,7 +260,11 @@ public interface Seq<T> extends ImmutableList<T>,
         return Cons.cons(value,this);
     }
     default Seq<T> prependAll(Iterable<? extends T> it){
-      return (Seq<T>)ImmutableList.super.prependAll(it);
+        Seq<T> res = this;
+        for(T next : it){
+            res = res.prepend(next);
+        }
+      return res;
     }
 
     default Seq<T> take(final long num) {
