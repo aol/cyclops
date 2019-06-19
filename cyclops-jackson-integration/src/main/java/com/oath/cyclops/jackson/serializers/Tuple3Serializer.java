@@ -23,7 +23,7 @@ public class Tuple3Serializer extends JsonSerializer<Tuple3<?,?,?>> {
     Object[] array = new Object[]{value._1(),value._2(),value._3()};
     gen.writeStartArray();
     for(Object o : array) {
-      JsonSerializer<Object> ser = serializers.findValueSerializer(o.getClass());
+      JsonSerializer<Object> ser = serializers.findTypedValueSerializer(o.getClass(),true,null);
       ser.serialize(o, gen, serializers);
     }
     gen.writeEndArray();

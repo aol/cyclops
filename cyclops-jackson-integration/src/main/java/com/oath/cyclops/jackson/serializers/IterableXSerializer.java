@@ -16,7 +16,7 @@ public class IterableXSerializer extends JsonSerializer<Iterable<?>>{
     }
     gen.writeStartArray();
     for(Object o : value) {
-      JsonSerializer<Object> ser = serializers.findValueSerializer(o.getClass());
+      JsonSerializer<Object> ser = serializers.findTypedValueSerializer(o.getClass(),true,null);
       ser.serialize(o, gen, serializers);
     }
     gen.writeEndArray();
