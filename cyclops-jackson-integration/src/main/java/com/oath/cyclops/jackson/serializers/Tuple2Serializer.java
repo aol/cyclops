@@ -24,7 +24,7 @@ public class Tuple2Serializer extends JsonSerializer<Tuple2<?,?>> {
     Object[] array = new Object[]{value._1(),value._2()};
     gen.writeStartArray();
     for(Object o : array) {
-      JsonSerializer<Object> ser = serializers.findValueSerializer(o.getClass());
+      JsonSerializer<Object> ser = serializers.findTypedValueSerializer(o.getClass(),true,null);
       ser.serialize(o, gen, serializers);
     }
     gen.writeEndArray();
