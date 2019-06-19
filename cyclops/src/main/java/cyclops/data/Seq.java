@@ -1092,7 +1092,7 @@ public interface Seq<T> extends ImmutableList<T>,
 
         @Override
         public Seq<T> plusAll(Iterable<? extends T> t) {
-            return fromIterable((Iterable<T>)t);
+            return prependAll(t);
         }
 
         @Override
