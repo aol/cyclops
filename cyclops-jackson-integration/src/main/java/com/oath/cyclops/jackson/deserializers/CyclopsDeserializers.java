@@ -3,6 +3,7 @@ package com.oath.cyclops.jackson.deserializers;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
+import com.fasterxml.jackson.databind.type.CollectionLikeType;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.ReferenceType;
 import com.oath.cyclops.jackson.deserializers.OptionDeserializer;
@@ -28,7 +29,17 @@ public class CyclopsDeserializers  extends Deserializers.Base {
     tuples.add(Tuple7.class);
     tuples.add(Tuple8.class);
   }
-  @Override
+
+    @Override
+    public JsonDeserializer<?> findCollectionLikeDeserializer(CollectionLikeType type, DeserializationConfig config, BeanDescription beanDesc, TypeDeserializer elementTypeDeserializer, JsonDeserializer<?> elementDeserializer) throws JsonMappingException {
+        Class<?> raw = type.getRawClass();
+        if (IterableX.class.isAssignableFrom(type.getRawClass())) {
+            return new IterableXDeserializer(raw,type.containedTypeOrUnknown(0).getRawClass(),elementTypeDeserializer,elementDeserializer, type);
+        }
+      return super.findCollectionLikeDeserializer(type, config, beanDesc, elementTypeDeserializer, elementDeserializer);
+    }
+
+    @Override
   public JsonDeserializer<?> findBeanDeserializer(JavaType type, DeserializationConfig config, BeanDescription beanDesc) throws JsonMappingException {
     Class<?> raw = type.getRawClass();
 
@@ -69,9 +80,6 @@ public class CyclopsDeserializers  extends Deserializers.Base {
     if(tuples.contains(raw)) {
       return new TupleDeserializer(raw);
     }
-    if (IterableX.class.isAssignableFrom(type.getRawClass())) {
-      return new IterableXDeserializer(raw,type.containedTypeOrUnknown(0).getRawClass());
-    }
     if (PersistentMap.class.isAssignableFrom(type.getRawClass())) {
       return new PersistentMapDeserializer(raw);
     }
@@ -80,10 +88,9 @@ public class CyclopsDeserializers  extends Deserializers.Base {
 
   @Override
   public JsonDeserializer<?> findCollectionDeserializer(CollectionType type, DeserializationConfig config, BeanDescription beanDesc, TypeDeserializer elementTypeDeserializer, JsonDeserializer<?> elementDeserializer) throws JsonMappingException {
-    Class<?> raw = type.getRawClass();
-    if (IterableX.class.isAssignableFrom(type.getRawClass())) {
-      return new IterableXDeserializer(raw,type.containedTypeOrUnknown(0).getRawClass());
-    }
+      if (IterableX.class.isAssignableFrom(type.getRawClass())) {
+          return new IterableXDeserializer(type.getRawClass(),type.containedTypeOrUnknown(0).getRawClass(),elementTypeDeserializer,elementDeserializer, type);
+      }
     return super.findCollectionDeserializer(type, config, beanDesc, elementTypeDeserializer, elementDeserializer);
   }
 
