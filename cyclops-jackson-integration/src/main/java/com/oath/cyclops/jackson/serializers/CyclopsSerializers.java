@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ser.Serializers;
 import com.fasterxml.jackson.databind.ser.impl.BeanAsArraySerializer;
 import com.fasterxml.jackson.databind.ser.std.SerializableSerializer;
 import com.fasterxml.jackson.databind.type.CollectionLikeType;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.ReferenceType;
 import com.oath.cyclops.matching.Sealed2;
 import com.oath.cyclops.matching.Sealed3;
@@ -19,6 +20,8 @@ import com.oath.cyclops.types.persistent.PersistentMap;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.control.*;
 import cyclops.data.tuple.*;
+
+import java.util.Collection;
 
 public class CyclopsSerializers extends Serializers.Base {
 
@@ -58,12 +61,18 @@ public class CyclopsSerializers extends Serializers.Base {
 
   @Override
   public JsonSerializer<?> findCollectionLikeSerializer(SerializationConfig config, CollectionLikeType type, BeanDescription beanDesc, TypeSerializer elementTypeSerializer, JsonSerializer<Object> elementValueSerializer) {
-
+      if (!Collection.class.isAssignableFrom(type.getRawClass()) && IterableX.class.isAssignableFrom(type.getRawClass())) {
+          return new IterableXSerializer();
+      }
     return super.findCollectionLikeSerializer(config, type, beanDesc, elementTypeSerializer, elementValueSerializer);
   }
 
+    @Override
+    public JsonSerializer<?> findCollectionSerializer(SerializationConfig config, CollectionType type, BeanDescription beanDesc, TypeSerializer elementTypeSerializer, JsonSerializer<Object> elementValueSerializer) {
+        return super.findCollectionSerializer(config, type, beanDesc, elementTypeSerializer, elementValueSerializer);
+    }
 
-  @Override
+    @Override
   public JsonSerializer<?> findSerializer(SerializationConfig config, JavaType type, BeanDescription beanDesc) {
 
     if (Tuple1.class==type.getRawClass()) {
@@ -93,9 +102,7 @@ public class CyclopsSerializers extends Serializers.Base {
     if(PersistentMap.class.isAssignableFrom(type.getRawClass())) {
       return new PersistentMapSerializer();
     }
-    if (IterableX.class.isAssignableFrom(type.getRawClass())) {
-      return new IterableXSerializer();
-    }
+
     if (Either.class.isAssignableFrom(type.getRawClass())) {
       return new Sealed2Serializer();
     }
