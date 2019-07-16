@@ -1,13 +1,18 @@
 package com.oath.cyclops.async.adapters;
 
 
+import com.oath.cyclops.react.async.subscription.Continueable;
+import com.oath.cyclops.types.futurestream.Continuation;
+import com.oath.cyclops.util.ExceptionSoftener;
+import cyclops.control.Option;
+import cyclops.reactive.ReactiveSeq;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.concurrent.BlockingQueue;
@@ -18,16 +23,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.control.Option;
-import cyclops.reactive.ReactiveSeq;
-
-
-import com.oath.cyclops.react.async.subscription.Continueable;
-import com.oath.cyclops.types.futurestream.Continuation;
-
-import lombok.AllArgsConstructor;
-import sun.invoke.empty.Empty;
 
 public interface AdaptersModule {
 
