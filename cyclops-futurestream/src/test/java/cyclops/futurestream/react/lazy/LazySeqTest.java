@@ -14,6 +14,7 @@ import static org.junit.Assert.assertThat;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -44,6 +45,24 @@ public abstract class LazySeqTest extends BaseSeqTest {
 		assertEquals(asList(1, 2, 1, 2, 1, 2).size(),of(1, 2).cycle(3).to(ReactiveConvertableSequence::converter).listX().size());
 		assertEquals(asList(1, 2, 3, 1, 2, 3).size(), of(1, 2, 3).cycle(2).to(ReactiveConvertableSequence::converter).listX().size());
 	}
+
+	@Test
+    public void takeWhileWithSleep(){
+	    new LazyReact().<Integer>fromIterableAsync(Arrays.asList(()->1,()->{
+	        System.out.println("Sleep one! " + Thread.currentThread().getId());
+	        sleep(1000000000);
+	        return 200;
+        })).map(i->{
+            sleep(100);
+            System.out.println("Map " + Thread.currentThread().getId());
+            return i+1;
+        }).takeWhile(i->{
+            System.out.println("Take while " + Thread.currentThread().getId());
+            return false;
+        }).forEach(System.out::println);
+
+      //  sleep(10000);
+    }
 	@Test
 	public void copy(){
 		of(1,2,3,4,5,6)
@@ -67,8 +86,12 @@ public abstract class LazySeqTest extends BaseSeqTest {
 	}
 	@Test
 	public void switchOnNextMultiple(){
-		assertThat(react(()->1,()->2).mergeLatest( react(()->'a',()->'b'),
-						react(()->100,()->200)).toList().size(),equalTo(6));
+        for(int i=0;i<500;i++) {
+            List<Object> list = react(() -> 1, () -> 2).mergeLatest(react(() -> 'a', () -> 'b'),
+                react(() -> 100, () -> 200)).toList();
+            System.out.println(list);
+            assertThat(list.size(), equalTo(6));
+        }
 	}
 
 	@Test

@@ -48,10 +48,19 @@ public class Runner<U> {
 
         final Continuation finish = new Continuation(
                                                      () -> {
+                                                        collector.afterResults(()->{
+                                                            runnable.run();
+                                                            throw new ClosedQueueException();
+                                                        });
+                                                        return Continuation.empty();
+                                                        /**
+                                                        return Continuation.emptyRunnable(()->{
+                                                            collector.getResults();
+                                                            runnable.run();
+                                                            throw new ClosedQueueException();
+                                                        });
+                                                         **/
 
-                                                         collector.getResults();
-                                                         runnable.run();
-                                                         throw new ClosedQueueException();
 
                                                      });
         final Continuation finishNoCollect = new Continuation(
@@ -70,7 +79,7 @@ public class Runner<U> {
 
                                                final FastFuture f = it.next();
 
-                                               handleFilter(cont, f);//if completableFuture has been filtered out, we need to move to the next one instead
+                                               handleFilter(cont, f);//if FastFuture has been filtered out, we need to move to the next one instead
 
                                                collector.accept(f);
                                            }
