@@ -52,17 +52,19 @@ public interface AdaptersModule {
                               .concatMap(c -> {
                                   try {
                                       Continuation next = c.proceed();
+                                      /**
                                       if(next instanceof Continuation.Empty)
                                           return Option.none();
-                                      /**
-                                       *  if(next instanceof Continuation.EmptyRunnableContinuation) {
-                                       *                                           ((Continuation.EmptyRunnableContinuation)next).run();
-                                       *                                           return Option.some(next);
-                                       *                                       }
-                                        */
+                                       **/
+
+                                      if(next instanceof Continuation.EmptyRunnableContinuation) {
+                                                     ((Continuation.EmptyRunnableContinuation)next).run();
+                                                        return Option.some(next);
+                                      }
+
                                       return Option.some(next);
                                   } catch (final Queue.ClosedQueueException e) {
-
+                                      e.printStackTrace();
                                       return Option.none();
                                   }
 

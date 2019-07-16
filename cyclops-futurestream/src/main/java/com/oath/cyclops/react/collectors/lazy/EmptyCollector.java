@@ -100,8 +100,10 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 
   public void afterResults(Runnable r){
 
+      System.out.println("Finished - waiting for all of");
       if (active.size() > 0) {
           FastFuture.allOf(()->{
+              System.out.println("All of!!");
               active.stream()
                   .filter(cf -> cf.isDone())
                   .peek(this::handleExceptions)
@@ -116,30 +118,16 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
           r.run();
       }
   }
-  @Override
-  public Collection<FastFuture<T>> getResults() {
-      while (active.size() > 0) {
+    @Override
+    public Collection<FastFuture<T>> getResults() {
+        active.stream()
+            .forEach(cf -> safeJoin.apply(cf));
+        active.clear();
+        return new ArrayList<>();
+    }
 
-          final List<FastFuture> toRemove = active.stream()
-              .filter(cf -> cf.isDone())
-              .peek(this::handleExceptions)
-              .collect(Collectors.toList());
 
-          active.removeAll(toRemove);
-          if (active.size() > 0) {
-              final CompletableFuture promise = new CompletableFuture();
-              FastFuture.xOf(1, () -> promise.complete(true), active.toArray(new FastFuture[0]));
-
-              promise.join();
-          }
-
-      }
-
-    active.clear();
-    return new ArrayList<>();
-  }
-
-  /*
+    /*
    *	@return zero list
    * @see com.oath.cyclops.react.collectors.lazy.LazyResultConsumer#getAllResults()
    */

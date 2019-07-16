@@ -38,7 +38,9 @@ public class Continuation {
 
         @Override
         public void run() {
+
             r.run();
+            System.out.println("run!");
         }
     }
 }
