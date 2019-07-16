@@ -39,7 +39,9 @@ public class Runner<U> {
 
     }
 
-    public Continuation runContinuations(final LazyStreamWrapper lastActive, final EmptyCollector collector) {
+    public Continuation
+
+    runContinuations(final LazyStreamWrapper lastActive, final EmptyCollector collector, boolean blocking) {
 
         final Iterator<FastFuture> it = lastActive.injectFutures()
                                                   .iterator();
@@ -48,12 +50,23 @@ public class Runner<U> {
 
         final Continuation finish = new Continuation(
                                                      () -> {
+                                                            collector.afterResults(()->{
+                                                            runnable.run();
+                                                            throw new ClosedQueueException();
+                                                        });
+                                                        return Continuation.empty();
 
-                                                         collector.getResults();
-                                                         runnable.run();
-                                                         throw new ClosedQueueException();
 
                                                      });
+        final Continuation blockingFinish = new Continuation(
+            () -> {
+
+                    collector.getResults();
+                    runnable.run();
+                    throw new ClosedQueueException();
+
+
+            });
         final Continuation finishNoCollect = new Continuation(
                                                               () -> {
                                                                   runnable.run();
@@ -70,7 +83,7 @@ public class Runner<U> {
 
                                                final FastFuture f = it.next();
 
-                                               handleFilter(cont, f);//if completableFuture has been filtered out, we need to move to the next one instead
+                                               handleFilter(cont, f);//if FastFuture has been filtered out, we need to move to the next one instead
 
                                                collector.accept(f);
                                            }
@@ -78,7 +91,7 @@ public class Runner<U> {
                                            if (it.hasNext())
                                                return cont[0];
                                            else {
-                                               return finish.proceed();
+                                               return blocking ? blockingFinish.proceed() : finish.proceed();
                                            }
                                        } catch (final SimpleReactProcessingException e) {
 

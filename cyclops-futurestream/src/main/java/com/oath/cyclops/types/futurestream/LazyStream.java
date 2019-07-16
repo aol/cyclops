@@ -70,7 +70,15 @@ public interface LazyStream<U> extends BlockingStream<U> {
         return new Runner(
                           r).runContinuations(getLastActive(),
                                               new EmptyCollector(
-                                                                 getMaxActive(), safeJoin));
+                                                                 getMaxActive(), safeJoin),false);
+
+    }
+    default Continuation blockingContinuation(final Runnable r) {
+        final Function<FastFuture, U> safeJoin = (final FastFuture cf) -> (U) BlockingStreamHelper.getSafe(cf, getErrorHandler());
+        return new Runner(
+            r).runContinuations(getLastActive(),
+            new EmptyCollector(
+                getMaxActive(), safeJoin),true);
 
     }
 
@@ -150,6 +158,7 @@ public interface LazyStream<U> extends BlockingStream<U> {
         if (getLastActive().isSequential()) {
             //if single threaded we can simply push from each Future into the toX to be returned
             try {
+
                 this.getLastActive()
                     .operation(f -> f.peek(c))
                     .injectFutures()
