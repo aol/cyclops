@@ -2265,12 +2265,12 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     @Override
     default FutureStream<U> takeWhile(final Predicate<? super U> predicate) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .takeWhile(predicate));
+                         .takeWhile(predicate));
     }
     @Override
     default FutureStream<U> takeWhileInclusive(final Predicate<? super U> predicate) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .takeWhileInclusive(predicate));
+                         .takeWhileInclusive(predicate));
     }
 
     /**
@@ -2283,7 +2283,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     @Override
     default FutureStream<U> takeUntil(final Predicate<? super U> predicate) {
-        return fromStream(LazyFutureStreamFunctions.takeUntil(this, predicate));
+        return fromStream(LazyFutureStreamFunctions.takeUntil(this,predicate));
     }
     @Override
     default FutureStream<U> takeUntilInclusive(final Predicate<? super U> p) {

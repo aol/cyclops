@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 import cyclops.futurestream.FutureStream;
@@ -55,12 +56,14 @@ public class LazySeqAutoOptimizeTest extends LazySeqTest {
 	}
 	@Test
 	public void longRun(){
+        AtomicInteger count = new AtomicInteger(0);
 		new LazyReact().autoOptimizeOn().range(0, 1_000_000)
 						.map(i->i+2)
 						.map(i->Thread.currentThread().getId())
-					//	.peek(System.out::println)
+                         .peek(i->count.incrementAndGet())
+						//.peek(System.out::println)
 						.runOnCurrent();
-		System.out.println("Finished!");
+		System.out.println("Finished! " + count.get());
 	}
     @Override
     public void testSkipUntilWithNullsInclusive() {

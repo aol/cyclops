@@ -96,19 +96,36 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 
   }
 
-  /*
-   *	@return zero list
-   * @see com.oath.cyclops.react.collectors.lazy.LazyResultConsumer#getResults()
-   */
-  @Override
-  public Collection<FastFuture<T>> getResults() {
-    active.stream()
-      .forEach(cf -> safeJoin.apply(cf));
-    active.clear();
-    return new ArrayList<>();
-  }
 
-  /*
+
+  public void afterResults(Runnable r){
+
+      if (active.size() > 0) {
+          FastFuture.allOf(()->{
+              active.stream()
+                  .filter(cf -> cf.isDone())
+                  .peek(this::handleExceptions)
+                  .collect(Collectors.toList());
+              r.run();
+          }, active.toArray(new FastFuture[0]));
+      }else{
+          active.stream()
+              .filter(cf -> cf.isDone())
+              .peek(this::handleExceptions)
+              .collect(Collectors.toList());
+          r.run();
+      }
+  }
+    @Override
+    public Collection<FastFuture<T>> getResults() {
+        active.stream()
+            .forEach(cf -> safeJoin.apply(cf));
+        active.clear();
+        return new ArrayList<>();
+    }
+
+
+    /*
    *	@return zero list
    * @see com.oath.cyclops.react.collectors.lazy.LazyResultConsumer#getAllResults()
    */
