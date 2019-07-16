@@ -86,14 +86,11 @@ public abstract class LazySeqTest extends BaseSeqTest {
 	}
 	@Test
 	public void switchOnNextMultiple(){
-        for(int i=0;i<500;i++) {
-            System.out.println("Next " + i);
+        for(int i=0;i<5000;i++) {
             List<Object> list = react(() -> 1, () -> 2).mergeLatest(react(() -> 'a', () -> 'b'),
                 react(() -> 100, () -> 200)).toList();
             System.out.println(list);
-            if(list.size()<6){
-                sleep(100000);
-            }
+
             assertThat(list.size(), equalTo(6));
         }
 	}

@@ -100,10 +100,8 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 
   public void afterResults(Runnable r){
 
-      System.out.println("Finished - waiting for all of");
       if (active.size() > 0) {
           FastFuture.allOf(()->{
-              System.out.println("All of!!");
               active.stream()
                   .filter(cf -> cf.isDone())
                   .peek(this::handleExceptions)

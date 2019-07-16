@@ -104,6 +104,7 @@ public class Queue<T> implements Adapter<T> {
     private volatile Signal<Integer> sizeSignal;
 
     private volatile Continueable sub;
+    @Getter
     private ContinuationStrategy continuationStrategy;
     private volatile boolean shuttingDown = false;
 

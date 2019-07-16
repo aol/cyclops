@@ -45,6 +45,9 @@ public interface AdaptersModule {
 
         }
 
+        public boolean isBlocking(){
+            return true;
+        }
         @Override
         public void handleContinuation() {
 
@@ -52,11 +55,6 @@ public interface AdaptersModule {
                               .concatMap(c -> {
                                   try {
                                       Continuation next = c.proceed();
-                                      /**
-                                      if(next instanceof Continuation.Empty)
-                                          return Option.none();
-                                       **/
-
                                       if(next instanceof Continuation.EmptyRunnableContinuation) {
                                                      ((Continuation.EmptyRunnableContinuation)next).run();
                                                         return Option.some(next);
@@ -64,7 +62,6 @@ public interface AdaptersModule {
 
                                       return Option.some(next);
                                   } catch (final Queue.ClosedQueueException e) {
-                                      e.printStackTrace();
                                       return Option.none();
                                   }
 
