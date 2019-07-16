@@ -85,6 +85,20 @@ public class BlockingStreamHelper {
         errorHandler.ifPresent((handler) -> handler.accept(t));
         return null;
     }
+    @SuppressWarnings("rawtypes")
+    public static Object throwSafe(final FastFuture next, final Optional<Consumer<Throwable>> errorHandler) {
+        try {
+            return next.join();
+        } catch (final SimpleReactCompletionException e) {
+            capture(e.getCause(), errorHandler);
+        } catch (final RuntimeException e) {
+           throw e;
+        } catch (final Exception e) {
+            capture(e, errorHandler);
+        }
+
+        return MissingValue.MISSING_VALUE;
+    }
 
     @SuppressWarnings("rawtypes")
     public static Object getSafe(final FastFuture next, final Optional<Consumer<Throwable>> errorHandler) {

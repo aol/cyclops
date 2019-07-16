@@ -19,6 +19,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.oath.cyclops.util.ExceptionSoftener;
+import cyclops.control.Option;
 import cyclops.reactive.ReactiveSeq;
 
 
@@ -26,6 +27,7 @@ import com.oath.cyclops.react.async.subscription.Continueable;
 import com.oath.cyclops.types.futurestream.Continuation;
 
 import lombok.AllArgsConstructor;
+import sun.invoke.empty.Empty;
 
 public interface AdaptersModule {
 
@@ -47,17 +49,24 @@ public interface AdaptersModule {
         public void handleContinuation() {
 
             continuation = ReactiveSeq.fromIterable(continuation)
-                              .<Optional<Continuation>> map(c -> {
+                              .concatMap(c -> {
                                   try {
-                                      return Optional.of(c.proceed());
+                                      Continuation next = c.proceed();
+                                      if(next instanceof Continuation.Empty)
+                                          return Option.none();
+                                      /**
+                                       *  if(next instanceof Continuation.EmptyRunnableContinuation) {
+                                       *                                           ((Continuation.EmptyRunnableContinuation)next).run();
+                                       *                                           return Option.some(next);
+                                       *                                       }
+                                        */
+                                      return Option.some(next);
                                   } catch (final Queue.ClosedQueueException e) {
 
-                                      return Optional.empty();
+                                      return Option.none();
                                   }
 
                               })
-                              .filter(Optional::isPresent)
-                              .map(Optional::get)
                               .toList();
 
             if (continuation.size() == 0) {

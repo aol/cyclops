@@ -13,9 +13,32 @@ public class Continuation {
         return remainderOfWorkToBeDone.get();
     }
 
-    public static Continuation empty() {
+    public static Empty empty() {
 
-        return new Continuation(
-                                () -> empty());
+        return new Empty();
+    }
+    public static EmptyRunnableContinuation emptyRunnable(Runnable r) {
+
+        return new EmptyRunnableContinuation(r);
+    }
+
+    public static class Empty extends Continuation {
+
+        public Empty() {
+            super(() -> empty());
+        }
+    }
+
+    public static class EmptyRunnableContinuation extends Continuation implements Runnable {
+        final Runnable r;
+        public EmptyRunnableContinuation(Runnable r) {
+            super(() ->empty());
+            this.r = r;
+        }
+
+        @Override
+        public void run() {
+            r.run();
+        }
     }
 }
