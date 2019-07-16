@@ -73,15 +73,19 @@ public interface LazyToQueue<U> extends ToQueue<U> {
 
     @Override
     default void addToQueue(final Queue queue) {
-
-        final Continuation continuation = thenSync(queue::add).self(s -> {
+        FutureStream str = thenSync(queue::add).self(s -> {
             if (this.getPopulator()
-                    .isPoolingActive())
+                .isPoolingActive())
                 s.peekSync(v -> {
                     throw new CompletedException(
-                                                 v);
+                        v);
                 });
-        }).runContinuation(() -> {throw new ClosedQueueException();
+        });
+
+
+        final Continuation continuation =  queue.getContinuationStrategy().isBlocking() ? str.blockingContinuation(() -> {
+            throw new ClosedQueueException();
+        }) : str.runContinuation(() -> {throw new ClosedQueueException();
                                    }
                            );
         queue.addContinuation(continuation);

@@ -70,7 +70,15 @@ public interface LazyStream<U> extends BlockingStream<U> {
         return new Runner(
                           r).runContinuations(getLastActive(),
                                               new EmptyCollector(
-                                                                 getMaxActive(), safeJoin));
+                                                                 getMaxActive(), safeJoin),false);
+
+    }
+    default Continuation blockingContinuation(final Runnable r) {
+        final Function<FastFuture, U> safeJoin = (final FastFuture cf) -> (U) BlockingStreamHelper.getSafe(cf, getErrorHandler());
+        return new Runner(
+            r).runContinuations(getLastActive(),
+            new EmptyCollector(
+                getMaxActive(), safeJoin),true);
 
     }
 
@@ -153,7 +161,6 @@ public interface LazyStream<U> extends BlockingStream<U> {
 
                 this.getLastActive()
                     .operation(f -> f.peek(c))
-                    .operation(f -> f.peek(System.out::println))
                     .injectFutures()
                     .forEach(next -> {
 
@@ -162,7 +169,7 @@ public interface LazyStream<U> extends BlockingStream<U> {
 
                     });
             } catch (final SimpleReactProcessingException e) {
-                e.printStackTrace();
+
             }
 
             return;

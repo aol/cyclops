@@ -40,7 +40,6 @@ public class Continuation {
         public void run() {
 
             r.run();
-            System.out.println("run!");
         }
     }
 }
