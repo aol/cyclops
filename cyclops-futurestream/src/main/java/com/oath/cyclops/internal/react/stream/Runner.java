@@ -39,7 +39,9 @@ public class Runner<U> {
 
     }
 
-    public Continuation runContinuations(final LazyStreamWrapper lastActive, final EmptyCollector collector) {
+    public Continuation
+
+    runContinuations(final LazyStreamWrapper lastActive, final EmptyCollector collector) {
 
         final Iterator<FastFuture> it = lastActive.injectFutures()
                                                   .iterator();
@@ -52,14 +54,14 @@ public class Runner<U> {
                                                             runnable.run();
                                                             throw new ClosedQueueException();
                                                         });
-                                                        return Continuation.empty();
-                                                        /**
+                                                        //return Continuation.empty();
+
                                                         return Continuation.emptyRunnable(()->{
                                                             collector.getResults();
                                                             runnable.run();
                                                             throw new ClosedQueueException();
                                                         });
-                                                         **/
+
 
 
                                                      });

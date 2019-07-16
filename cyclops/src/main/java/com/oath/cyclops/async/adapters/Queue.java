@@ -472,6 +472,7 @@ public class Queue<T> implements Adapter<T> {
 
         public ClosedQueueException() {
             currentData = null;
+
         }
 
         public boolean isDataPresent() {
@@ -482,7 +483,6 @@ public class Queue<T> implements Adapter<T> {
         public Throwable fillInStackTrace() {
             return this;
         }
-
     }
 
     /**

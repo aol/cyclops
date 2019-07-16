@@ -150,8 +150,10 @@ public interface LazyStream<U> extends BlockingStream<U> {
         if (getLastActive().isSequential()) {
             //if single threaded we can simply push from each Future into the toX to be returned
             try {
+
                 this.getLastActive()
                     .operation(f -> f.peek(c))
+                    .operation(f -> f.peek(System.out::println))
                     .injectFutures()
                     .forEach(next -> {
 
@@ -160,7 +162,7 @@ public interface LazyStream<U> extends BlockingStream<U> {
 
                     });
             } catch (final SimpleReactProcessingException e) {
-
+                e.printStackTrace();
             }
 
             return;
