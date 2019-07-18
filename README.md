@@ -85,3 +85,11 @@ This is the 10.x branch for 2.x branch click the link below
 cyclops is licensed under the Apache 2.0 license.		
 
 http://www.apache.org/licenses/LICENSE-2.0
+
+# Thanks to our Sponsors
+
+* ![YourKit Logo](https://www.yourkit.com/images/yklogo.png) YourKit supports open source projects with innovative and intelligent tools
+for monitoring and profiling Java and .NET applications.
+YourKit is the creator of <a href="https://www.yourkit.com/java/profiler/">YourKit Java Profiler</a>,
+<a href="https://www.yourkit.com/.net/profiler/">YourKit .NET Profiler</a>,
+and <a href="https://www.yourkit.com/youmonitor/">YourKit YouMonitor</a>.
