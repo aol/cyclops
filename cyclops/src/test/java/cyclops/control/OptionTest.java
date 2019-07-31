@@ -32,7 +32,7 @@ import static cyclops.data.tuple.Tuple.tuple;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
-public class OptionTest extends  AbstractValueTest implements Printable {
+public class OptionTest extends  AbstractOptionTest implements Printable {
 
     Option<Integer> eager;
     Option<Integer> none;
@@ -43,6 +43,9 @@ public class OptionTest extends  AbstractValueTest implements Printable {
         none = Option.none();
 
     }
+
+
+
     @Test
     public void fromNull(){
         System.out.println(Option.fromIterable(Seq.of().plus(null)));
@@ -521,17 +524,17 @@ public class OptionTest extends  AbstractValueTest implements Printable {
 	}
 
   @Override
-  protected <T> MonadicValue<T> of(T value) {
+  protected <T> Option<T> of(T value) {
     return Option.some(value);
   }
 
   @Override
-  protected <T> MonadicValue<T> empty() {
+  protected <T> Option<T> empty() {
     return Option.none();
   }
 
   @Override
-  protected <T> MonadicValue<T> fromPublisher(Publisher<T> p) {
+  protected <T> Option<T> fromPublisher(Publisher<T> p) {
     return Option.fromPublisher(p);
   }
 }
