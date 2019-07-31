@@ -14,4 +14,9 @@ public class OptionOrElseValueTest extends AbstractOrElseValueTest {
     public OrElseValue<Integer, OrElseValue<Integer, ?>> empty() {
         return (OrElseValue)Option.<Integer>none();
     }
+
+    @Override
+    public boolean isLazy() {
+        return false;
+    }
 }
