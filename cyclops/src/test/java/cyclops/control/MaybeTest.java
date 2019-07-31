@@ -54,6 +54,16 @@ public class MaybeTest extends  AbstractValueTest implements Printable {
 
     int cap =0;
 
+    @Test
+    public void filterLazy(){
+        Maybe.just(10)
+            .filter(i->{
+                lazy = false;
+                return i>10;
+            });
+
+        assertTrue(lazy);
+    }
 
     @Test
     public void nullPublisher(){
