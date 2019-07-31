@@ -15,7 +15,22 @@ public class MaybeOrElseValueTest extends AbstractOrElseValueTest {
     }
 
     @Override
-    public OrElseValue<Integer, OrElseValue<Integer, ?>> empty() {
+    public OrElseValue<Integer, OrElseValue<Integer, ?>> empty1() {
+        return (OrElseValue)Maybe.<Integer>nothing();
+    }
+
+    @Override
+    public OrElseValue<Integer, OrElseValue<Integer, ?>> empty2() {
+        return (OrElseValue)Maybe.<Integer>nothing();
+    }
+
+    @Override
+    public OrElseValue<Integer, OrElseValue<Integer, ?>> empty3() {
+        return (OrElseValue)Maybe.<Integer>nothing();
+    }
+
+    @Override
+    public OrElseValue<Integer, OrElseValue<Integer, ?>> empty4() {
         return (OrElseValue)Maybe.<Integer>nothing();
     }
 

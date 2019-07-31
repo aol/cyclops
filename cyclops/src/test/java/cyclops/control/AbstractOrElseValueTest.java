@@ -9,12 +9,15 @@ import static org.junit.Assert.*;
 public abstract class AbstractOrElseValueTest {
 
     public abstract OrElseValue<Integer,OrElseValue<Integer,?>> of(int value);
-    public abstract OrElseValue<Integer,OrElseValue<Integer,?>> empty();
+    public abstract OrElseValue<Integer,OrElseValue<Integer,?>> empty1();
+    public abstract OrElseValue<Integer,OrElseValue<Integer,?>> empty2();
+    public abstract OrElseValue<Integer,OrElseValue<Integer,?>> empty3();
+    public abstract OrElseValue<Integer,OrElseValue<Integer,?>> empty4();
     public abstract boolean isLazy();
 
     @Test
     public void recoverWith_switchesOnEmpty(){
-       assertThat(empty().recoverWith(()->of(1)),equalTo(of(1)));
+       assertThat(empty1().recoverWith(()->of(1)),equalTo(of(1)));
     }
     @Test
     public void recoverWith_doesntswitchesWhenNotEmpty(){
@@ -22,9 +25,45 @@ public abstract class AbstractOrElseValueTest {
     }
     boolean lazy = true;
     @Test
-    public void lazyRecoverWithTest(){
+    public void lazyRecoverWithTest1(){
         if(isLazy()) {
-            empty()
+            empty1()
+                .recoverWith(() -> {
+                    lazy = false;
+                    return of(10);
+                });
+
+            assertTrue(lazy);
+        }
+    }
+    @Test
+    public void lazyRecoverWithTest2(){
+        if(isLazy()) {
+            empty2()
+                .recoverWith(() -> {
+                    lazy = false;
+                    return of(10);
+                });
+
+            assertTrue(lazy);
+        }
+    }
+    @Test
+    public void lazyRecoverWithTest3(){
+        if(isLazy()) {
+            empty3()
+                .recoverWith(() -> {
+                    lazy = false;
+                    return of(10);
+                });
+
+            assertTrue(lazy);
+        }
+    }
+    @Test
+    public void lazyRecoverWithTest4(){
+        if(isLazy()) {
+            empty4()
                 .recoverWith(() -> {
                     lazy = false;
                     return of(10);
