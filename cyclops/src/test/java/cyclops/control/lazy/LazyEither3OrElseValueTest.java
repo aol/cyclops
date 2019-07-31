@@ -14,9 +14,26 @@ public class LazyEither3OrElseValueTest extends AbstractOrElseValueTest {
     }
 
     @Override
-    public OrElseValue<Integer, OrElseValue<Integer, ?>> empty() {
+    public OrElseValue<Integer, OrElseValue<Integer, ?>> empty1() {
         return (OrElseValue) LazyEither3.left1(null);
     }
+
+    @Override
+    public OrElseValue<Integer, OrElseValue<Integer, ?>> empty2() {
+        return (OrElseValue) LazyEither3.left2(null);
+    }
+
+    @Override
+    public OrElseValue<Integer, OrElseValue<Integer, ?>> empty3() {
+        return (OrElseValue) LazyEither3.left2(null);
+    }
+
+    @Override
+    public OrElseValue<Integer, OrElseValue<Integer, ?>> empty4() {
+        return (OrElseValue) LazyEither3.left1(null);
+    }
+
+
 
     @Override
     public boolean isLazy() {

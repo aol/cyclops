@@ -10,8 +10,24 @@ public class OptionOrElseValueTest extends AbstractOrElseValueTest {
         return (OrElseValue)Option.<Integer>some(value);
     }
 
+
     @Override
-    public OrElseValue<Integer, OrElseValue<Integer, ?>> empty() {
+    public OrElseValue<Integer, OrElseValue<Integer, ?>> empty2() {
+        return (OrElseValue)Option.<Integer>none();
+    }
+
+    @Override
+    public OrElseValue<Integer, OrElseValue<Integer, ?>> empty3() {
+        return (OrElseValue)Option.<Integer>none();
+    }
+
+    @Override
+    public OrElseValue<Integer, OrElseValue<Integer, ?>> empty4() {
+        return (OrElseValue)Option.<Integer>none();
+    }
+
+    @Override
+    public OrElseValue<Integer, OrElseValue<Integer, ?>> empty1() {
         return (OrElseValue)Option.<Integer>none();
     }
 
