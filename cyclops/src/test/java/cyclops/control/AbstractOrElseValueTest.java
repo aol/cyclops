@@ -10,13 +10,27 @@ public abstract class AbstractOrElseValueTest {
 
     public abstract OrElseValue<Integer,OrElseValue<Integer,?>> of(int value);
     public abstract OrElseValue<Integer,OrElseValue<Integer,?>> empty();
+    public abstract boolean isLazy();
 
     @Test
-    public void onEmptySwitch_switchesOnEmpty(){
+    public void recoverWith_switchesOnEmpty(){
        assertThat(empty().recoverWith(()->of(1)),equalTo(of(1)));
     }
     @Test
-    public void onEmptySwitch_doesntswitchesWhenNotEmpty(){
+    public void recoverWith_doesntswitchesWhenNotEmpty(){
         assertThat(of(1).recoverWith(()->of(2)),equalTo(of(1)));
+    }
+    boolean lazy = true;
+    @Test
+    public void lazyRecoverWithTest(){
+        if(isLazy()) {
+            empty()
+                .recoverWith(() -> {
+                    lazy = false;
+                    return of(10);
+                });
+
+            assertTrue(lazy);
+        }
     }
 }
