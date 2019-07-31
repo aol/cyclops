@@ -37,4 +37,6 @@ public abstract class AbstractValueTest {
     Assert.assertThat(capture.get(), equalTo(10));
   }
 
+
+
 }

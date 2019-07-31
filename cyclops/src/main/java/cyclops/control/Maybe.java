@@ -821,6 +821,10 @@ public interface Maybe<T> extends Option<T> {
     @Override
     <R> R fold(Function<? super T, ? extends R> some, Supplier<? extends R> none);
 
+    @Override
+    default Maybe<T> onEmptySwitch(Supplier<? extends Option<T>> supplier) {
+        return this;
+    }
 
     @Override
     Maybe<T> filter(Predicate<? super T> fn);
