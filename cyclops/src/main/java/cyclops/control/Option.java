@@ -41,7 +41,7 @@ public interface Option<T> extends To<Option<T>>,
                                     MonadicValue<T>,
                                     Zippable<T>,
                                     Recoverable<T>,
-                                    Sealed2<T,Option.None<T>>,
+                                    Sealed2<T, Option.None<T>>,
                                     Iterable<T>,
                                     Higher<option,T>,
                                     Serializable{
