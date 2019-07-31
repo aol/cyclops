@@ -5,7 +5,7 @@ import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import java.util.function.Supplier;
 
 @Deprecated
-public interface OrElseValue<T, X extends OrElseValue<T,?>> extends Value<T>, OnEmptySwitch<T,X> {
+public interface OrElseValue<T, X extends OrElseValue<T,?>> extends Value<T>{
     @Deprecated
     default X orElseUse(X opt){
         if(isPresent())
@@ -14,11 +14,14 @@ public interface OrElseValue<T, X extends OrElseValue<T,?>> extends Value<T>, On
     }
     @Deprecated
     default X orElseUse(Supplier<X> opt){
-      return onEmptySwitch(opt);
+        if(isPresent())
+            return (X)this;
+        return opt.get();
+
     }
 
-    @Override
-    default X onEmptySwitch(Supplier<? extends X> supplier){
+
+    default X recoverWith(Supplier<? extends X> supplier){
         if(isPresent())
             return (X)this;
         return supplier.get();
