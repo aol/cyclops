@@ -13,10 +13,10 @@ public abstract class AbstractOrElseValueTest {
 
     @Test
     public void onEmptySwitch_switchesOnEmpty(){
-       assertThat(empty().onEmptySwitch(()->of(1)),equalTo(of(1)));
+       assertThat(empty().recoverWith(()->of(1)),equalTo(of(1)));
     }
     @Test
     public void onEmptySwitch_doesntswitchesWhenNotEmpty(){
-        assertThat(of(1).onEmptySwitch(()->of(2)),equalTo(of(1)));
+        assertThat(of(1).recoverWith(()->of(2)),equalTo(of(1)));
     }
 }

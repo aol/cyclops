@@ -804,6 +804,7 @@ public interface Maybe<T> extends Option<T> {
     Maybe<T> recover(T value);
 
     Maybe<T> recoverWith(Supplier<? extends Option<T>> fn);
+
     @Override
     default Maybe<T> orElseUse(Option<T> opt){
         return recoverWith(()->opt);
@@ -820,11 +821,6 @@ public interface Maybe<T> extends Option<T> {
 
     @Override
     <R> R fold(Function<? super T, ? extends R> some, Supplier<? extends R> none);
-
-    @Override
-    default Maybe<T> onEmptySwitch(Supplier<? extends Option<T>> supplier) {
-        return this;
-    }
 
     @Override
     Maybe<T> filter(Predicate<? super T> fn);
@@ -972,9 +968,7 @@ public interface Maybe<T> extends Option<T> {
             return m;
         }
 
-        /* (non-Javadoc)
-         * @see cyclops2.control.Maybe#recoverFlatMap(java.util.function.Supplier)
-         */
+
         @Override
         public Maybe<T> recoverWith(Supplier<? extends Option<T>> fn) {
             return this;
@@ -1254,6 +1248,7 @@ public interface Maybe<T> extends Option<T> {
             return new Just<>(Eval.narrow(Eval.later(fn))).flatMap(m->m);
 
         }
+
 
 
         @Override

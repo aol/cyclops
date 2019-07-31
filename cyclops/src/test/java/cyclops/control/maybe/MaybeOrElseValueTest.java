@@ -19,4 +19,15 @@ public class MaybeOrElseValueTest extends AbstractOrElseValueTest {
         return (OrElseValue)Maybe.<Integer>nothing();
     }
 
+    boolean lazy = true;
+    @Test
+    public void lazyRecoverWithTest(){
+        Maybe.nothing()
+            .recoverWith(()->{
+                lazy = false;
+                return Maybe.just(10);
+            });
+
+        assertTrue(lazy);
+    }
 }
