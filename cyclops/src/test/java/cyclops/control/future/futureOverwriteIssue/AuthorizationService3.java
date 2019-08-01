@@ -1,4 +1,4 @@
-package cyclops.control.futureOverwriteIssue;
+package cyclops.control.future.futureOverwriteIssue;
 
 
 import cyclops.control.Either;

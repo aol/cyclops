@@ -1,4 +1,4 @@
-package cyclops.control;
+package cyclops.control.maybe;
 
 import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.mixins.Printable;
@@ -9,7 +9,13 @@ import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import com.oath.cyclops.util.box.Mutable;
 
+import cyclops.control.Either;
+import cyclops.control.Eval;
+import cyclops.control.Future;
+import cyclops.control.Maybe;
 import cyclops.control.Maybe.CompletableMaybe;
+import cyclops.control.Trampoline;
+import cyclops.control.Try;
 import cyclops.data.HashSet;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;

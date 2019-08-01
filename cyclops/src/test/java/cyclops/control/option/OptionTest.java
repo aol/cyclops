@@ -1,4 +1,4 @@
-package cyclops.control;
+package cyclops.control.option;
 
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.mixins.Printable;
@@ -11,11 +11,20 @@ import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
+import cyclops.control.AbstractValueTest;
+import cyclops.control.Either;
+import cyclops.control.Eval;
+import cyclops.control.Future;
+import cyclops.control.Maybe;
+import cyclops.control.Option;
+import cyclops.control.Trampoline;
+import cyclops.control.Try;
 import cyclops.data.HashSet;
 import cyclops.data.NonEmptyList;
 import cyclops.data.Seq;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Publisher;
@@ -32,7 +41,7 @@ import static cyclops.data.tuple.Tuple.tuple;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
-public class OptionTest extends  AbstractValueTest implements Printable {
+public class OptionTest extends AbstractValueTest implements Printable {
 
     Option<Integer> eager;
     Option<Integer> none;
@@ -58,7 +67,7 @@ public class OptionTest extends  AbstractValueTest implements Printable {
     @Test
     public void fromNullMaybe(){
         System.out.println(Option.fromIterable(Seq.of().plus(null)));
-        assertThat(Option.some(null), not(equalTo(Maybe.nothing())));
+        assertThat(Option.some(null), Matchers.not(equalTo(Maybe.nothing())));
         assertThat(Option.none(), not(equalTo(Maybe.just(null))));
         assertThat(Option.fromIterable(Seq.of()),equalTo(Maybe.nothing()));
         assertThat(Option.fromIterable(Seq.of().plus(null)),equalTo(Maybe.just(null)));

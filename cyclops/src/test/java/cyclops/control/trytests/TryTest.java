@@ -1,21 +1,24 @@
-package cyclops.control;
+package cyclops.control.trytests;
 
-import com.oath.cyclops.types.persistent.PersistentSet;
+import cyclops.control.Either;
+import cyclops.control.Future;
+import cyclops.control.Ior;
+import cyclops.control.Maybe;
+import cyclops.control.Option;
+import cyclops.control.Trampoline;
+import cyclops.control.Try;
+import cyclops.function.Monoid;
+import cyclops.companion.Semigroups;
 import com.oath.cyclops.util.box.Mutable;
 
-
-import cyclops.companion.Monoids;
-import cyclops.companion.Reducers;
-import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
-import cyclops.data.HashSet;
-import cyclops.function.Monoid;
-import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -25,53 +28,40 @@ import static org.junit.Assert.*;
 
 
 
-public class Ior2Test {
+public class TryTest {
 
-	Ior<String,Integer> just;
-	Ior<String,Integer> none;
+	Try<Integer,RuntimeException> just;
+	Try<Integer,RuntimeException> none;
+	RuntimeException exception = new RuntimeException();
 	@Before
 	public void setUp() throws Exception {
-		just = Ior.right(10);
-		none = Ior.left("none");
-	}
-	static class Base{ }
-	static class One extends EitherTest.Base { }
-	static class Two extends EitherTest.Base {}
-	@Test
-	public void visitAny(){
+		just = Try.success(10);
+		none = Try.failure(exception);
 
-		Ior<One,Two> test = Ior.right(new Two());
-		test.to(Ior::applyAny).apply(b->b.toString());
-		Ior.right(10).to(Ior::consumeAny).accept(System.out::println);
-		Ior.right(10).to(e->Ior.visitAny(System.out::println,e));
-		Object value = Ior.right(10).to(e->Ior.visitAny(e, x->x));
-		assertThat(value,equalTo(10));
+		just.toEither(-5000).mapLeft(x-> new Exception()).toTry(Exception.class);
 	}
 
 
 	@Test
-    public void nest(){
-       assertThat(just.nest().map(m->m.toOptional().get()),equalTo(just));
-       assertThat(none.nest().map(m->m.get()),equalTo(none));
-    }
-    @Test
+    public void recover(){
+        final String result = Try.withCatch(() -> "takeOne", RuntimeException.class)
+                                .recoverFlatMap(__ -> Try.<String,RuntimeException>success("ignored"))
+                .orElse("boo!");
+        Try.withCatch(() -> "hello", RuntimeException.class)
+           .recover(()->"world");
+	}
+
+
+
+
+
+   @Test
     public void coFlatMap(){
         assertThat(just.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(just));
-        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(Ior.right(50)));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(Try.success(50)));
     }
 
-	@Test
-    public void visit(){
-        assertThat(just.fold(secondary->"no", primary->"yes",(sec, pri)->"oops!"),equalTo("yes"));
-        assertThat(none.fold(secondary->"no", primary->"yes",(sec, pri)->"oops!"),equalTo("no"));
-        assertThat(Ior.both(10, "eek").fold(secondary->"no", primary->"yes",(sec, pri)->"oops!"),equalTo("oops!"));
-    }
-    @Test
-    public void visitIor(){
-        assertThat(just.bimap(secondary->"no", primary->"yes"),equalTo(Ior.right("yes")));
-        assertThat(none.bimap(secondary->"no", primary->"yes"),equalTo(Ior.left("no")));
-        assertThat(Ior.both(10, "eek").bimap(secondary->"no", primary->"yes"),equalTo(Ior.both("no","yes")));
-    }
+
 	@Test
 	public void testToMaybe() {
 		assertThat(just.toMaybe(),equalTo(Maybe.of(10)));
@@ -82,9 +72,6 @@ public class Ior2Test {
 		return i+1;
 	}
 
-
-
-
 	@Test
 	public void testOfT() {
 		assertThat(Ior.right(1),equalTo(Ior.right(1)));
@@ -94,75 +81,33 @@ public class Ior2Test {
 
 
 
-	@Test
-    public void testSequenceSecondary() {
-    Ior<Integer, ReactiveSeq<String>> iors = Ior.sequenceLeft(Arrays.asList(just, none, Ior.right(1)));
-        assertThat(iors.map(s->s.toList()),equalTo(Ior.right(Arrays.asList("none"))));
-    }
 
-	@Test
-    public void testAccumulateSecondary() {
-        Ior<?,PersistentSet<String>> iors = Ior.accumulateLeft(Arrays.asList(just,none,Ior.right(1)), Reducers.<String>toPersistentSet());
-        assertThat(iors,equalTo(Ior.right(HashSet.of("none"))));
-    }
 
-	@Test
-    public void testAccumulateSecondarySemigroup() {
-        Ior<?,String> iors = Ior.accumulateLeft(Arrays.asList(just,none,Ior.left("1")), i->""+i,Monoids.stringConcat);
-        assertThat(iors,equalTo(Ior.right("none1")));
-    }
-	@Test
-    public void testAccumulateSecondarySemigroupIntSum() {
-        Ior<?,Integer> iors = Ior.accumulateLeft(Monoids.intSum,Arrays.asList(Ior.both(2, "boo!"),Ior.left(1)));
-        assertThat(iors,equalTo(Ior.right(3)));
-    }
-	@Test
-	public void testSequence() {
-    Ior<String, ReactiveSeq<Integer>> maybes = Ior.sequenceRight(Arrays.asList(just, none, Ior.right(1)));
-		assertThat(maybes.map(s->s.toList()),equalTo(Ior.right(Arrays.asList(10,1))));
-	}
-
-	@Test
-	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-		Ior<?,PersistentSet<Integer>> maybes =Ior.accumulateRight(Arrays.asList(just,none,Ior.right(1)),Reducers.toPersistentSet());
-		assertThat(maybes,equalTo(Ior.right(HashSet.of(10,1))));
-	}
-
-	@Test
-	public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-		Ior<?,String> maybes = Ior.accumulateRight(Arrays.asList(just,none,Ior.right(1)), i->""+i,Semigroups.stringConcat);
-		assertThat(maybes,equalTo(Ior.right("101")));
-	}
-	@Test
-	public void testAccumulateJust() {
-		Ior<?,Integer> maybes =Ior.accumulateRight(Arrays.asList(just,none,Ior.right(1)),Semigroups.intSum);
-		assertThat(maybes,equalTo(Ior.right(11)));
-	}
 
 	@Test
 	public void testUnitT() {
-		assertThat(just.unit(20),equalTo(Ior.right(20)));
+		assertThat(just.unit(20),equalTo(Try.success(20)));
 	}
 
 
 
 	@Test
 	public void testisPrimary() {
-		assertTrue(just.isRight());
-		assertFalse(none.isRight());
+		assertTrue(just.isSuccess());
+		assertFalse(none.isSuccess());
 	}
 
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
-		assertThat(just.map(i->i+5),equalTo(Ior.right(15)));
-		assertThat(none.map(i->i+5),equalTo(Ior.left("none")));
+		assertThat(just.map(i->i+5),equalTo(Try.success(15)));
+		assertThat(none.map(i->i+5).toEither(),equalTo(Either.left(exception)));
 	}
 
 	@Test
 	public void testFlatMap() {
-		assertThat(just.flatMap(i->Ior.right(i+5)),equalTo(Ior.right(15)));
-		assertThat(none.flatMap(i->Ior.right(i+5)),equalTo(Ior.left("none")));
+		assertThat(just.flatMap(i->Try.success(i+5)),equalTo(Try.success(15)));
+		assertThat(none.flatMap(i->Try.success(i+5)),equalTo(Try.failure(exception)));
 	}
 
 	@Test
@@ -190,7 +135,6 @@ public class Ior2Test {
         assertThat(toStream.collect(Collectors.toList()),equalTo(Arrays.asList(10)));
     }
 
-
     @Test
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.fold(f->Stream.of((int)f),()->Stream.of()));
@@ -198,15 +142,17 @@ public class Ior2Test {
         assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(Arrays.asList(10)));
     }
 
+
 	@Test
 	public void testIterate() {
-		assertThat(just.asSupplier(-1000).iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
+		assertThat(just.asSupplier(-100).iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
 	}
 
 	@Test
 	public void testGenerate() {
-		assertThat(just.asSupplier(-1000).generate().limit(10).sumInt(i->i),equalTo(100));
+		assertThat(just.asSupplier(-100).generate().limit(10).sumInt(i->i),equalTo(100));
 	}
+
 
 
 
@@ -217,12 +163,11 @@ public class Ior2Test {
 	}
 	@Test
 	public void testToXorNone(){
-		Either<String,Integer> xor = none.toEither();
+		Either<RuntimeException,Integer> xor = none.toEither();
 		assertTrue(xor.isLeft());
-		assertThat(xor,equalTo(Either.left("none")));
+		assertThat(xor,equalTo(Either.left(exception)));
 
 	}
-
 
 
 	@Test
@@ -230,7 +175,13 @@ public class Ior2Test {
 		assertThat(just.toEither(-5000).swap(),equalTo(Either.left(10)));
 	}
 
+	@Test
+	public void testToXorSecondaryNone(){
 
+		Either<Integer,RuntimeException> xorNone = none.toEither().swap();
+		assertThat(xorNone,equalTo(Either.right(exception)));
+
+	}
 	@Test
 	public void testToTry() {
 		assertTrue(none.toTry().isFailure());
@@ -242,17 +193,48 @@ public class Ior2Test {
 		assertTrue(none.toTry(Throwable.class).isFailure());
 	}
 
+	@Test
+	public void testToIor() {
+		assertThat(just.toIor(),equalTo(Ior.right(10)));
+
+	}
+	@Test
+	public void testToIorNone(){
+		Ior<RuntimeException,Integer> ior = none.toIor();
+		assertTrue(ior.isLeft());
+        assertThat(ior,equalTo(Ior.left(exception)));
+
+	}
+
+
+	@Test
+	public void testToIorSecondary() {
+		assertThat(just.toIor().swap(),equalTo(Ior.left(10)));
+	}
+
+
+	@Test
+	public void testToIorSecondaryNone(){
+	    Ior<Integer,RuntimeException> ior = none.toIor().swap();
+        assertTrue(ior.isRight());
+        assertThat(ior,equalTo(Ior.right(exception)));
+
+	}
+
+
+
+
 
 	@Test
 	public void testMkString() {
-		assertThat(just.mkString(),equalTo("Ior.right[10]"));
-		assertThat(none.mkString(),equalTo("Ior.left[none]"));
+		assertThat(just.mkString(),equalTo("Success[10]"));
+		assertThat(none.mkString(),equalTo("Failure["+exception+"]"));
 	}
 
 
 	@Test
 	public void testGet() {
-		assertThat(just.orElse(-50),equalTo(10));
+		assertThat(just.get(),equalTo(Option.some(10)));
 	}
 
 
@@ -289,9 +271,6 @@ public class Ior2Test {
 	}
 
 
-
-
-
 	private int add(int a, int b){
 		return a+b;
 	}
@@ -310,10 +289,16 @@ public class Ior2Test {
 	}
 
 
+
+
 	@Test
 	public void testFoldRightMonoidOfT() {
-		assertThat(just.fold(Monoid.of(1, Semigroups.intMult)),equalTo(10));
+		assertThat(just.fold(Monoid.of(1,Semigroups.intMult)),equalTo(10));
 	}
+
+
+
+
 
 	@Test
 	public void testWhenFunctionOfQsuperMaybeOfTQextendsR() {
@@ -351,11 +336,7 @@ public class Ior2Test {
 
 
 
-
-
-
-
-
+	Executor exec = Executors.newFixedThreadPool(1);
 
 
 	@Test
@@ -382,7 +363,7 @@ public class Ior2Test {
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR1() {
-		assertThat(just.map(i->i+5),equalTo(Ior.right(15)));
+		assertThat(just.map(i->i+5),equalTo(Try.success(15)));
 	}
 
 	@Test
@@ -396,7 +377,6 @@ public class Ior2Test {
 	private Trampoline<Integer> sum(int times, int sum){
 		return times ==0 ?  Trampoline.done(sum) : Trampoline.more(()->sum(times-1,sum+times));
 	}
-
 
 	@Test
 	public void testUnitT1() {

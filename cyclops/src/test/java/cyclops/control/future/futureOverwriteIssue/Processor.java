@@ -1,4 +1,4 @@
-package cyclops.control.futureOverwriteIssue;
+package cyclops.control.future.futureOverwriteIssue;
 
 
 import cyclops.control.Either;
@@ -12,9 +12,7 @@ import cyclops.data.NonEmptyList;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Spouts;
 import org.junit.Test;
-import reactor.core.publisher.Flux;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

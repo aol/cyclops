@@ -1,6 +1,8 @@
-package cyclops.control;
+package cyclops.control.validated;
 
 import cyclops.companion.Monoids;
+import cyclops.control.Future;
+import cyclops.control.Validated;
 import cyclops.data.NonEmptyList;
 import cyclops.data.Seq;
 import cyclops.reactive.Spouts;

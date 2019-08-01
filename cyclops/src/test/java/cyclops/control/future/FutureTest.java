@@ -1,4 +1,4 @@
-package cyclops.control;
+package cyclops.control.future;
 
 import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.types.reactive.Completable;
@@ -6,6 +6,17 @@ import com.oath.cyclops.util.box.Mutable;
 
 
 import cyclops.companion.*;
+import cyclops.control.Either;
+import cyclops.control.Eval;
+import cyclops.control.Future;
+import cyclops.control.Ior;
+import cyclops.control.LazyEither;
+import cyclops.control.LazyEither3;
+import cyclops.control.LazyEither4;
+import cyclops.control.LazyEither5;
+import cyclops.control.Maybe;
+import cyclops.control.Trampoline;
+import cyclops.control.Try;
 import cyclops.data.HashSet;
 import cyclops.data.Seq;
 import cyclops.function.Monoid;

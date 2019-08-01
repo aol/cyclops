@@ -1,6 +1,9 @@
-package cyclops.control;
+package cyclops.control.eval;
 
+import cyclops.control.Eval;
 import cyclops.control.Eval.CompletableEval;
+import cyclops.control.Future;
+import cyclops.control.Try;
 import cyclops.data.Seq;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;

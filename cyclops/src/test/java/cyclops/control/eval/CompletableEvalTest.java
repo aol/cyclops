@@ -1,7 +1,12 @@
-package cyclops.control;
+package cyclops.control.eval;
 
 import com.oath.cyclops.types.persistent.PersistentSet;
-import com.oath.cyclops.types.reactive.Completable;
+import cyclops.control.Either;
+import cyclops.control.Eval;
+import cyclops.control.Future;
+import cyclops.control.Maybe;
+import cyclops.control.Trampoline;
+import cyclops.control.Try;
 import cyclops.data.HashSet;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
