@@ -1,4 +1,4 @@
-package cyclops.control.futureOverwriteIssue;
+package cyclops.control.future.futureOverwriteIssue;
 
 import cyclops.data.Seq;
 import lombok.AllArgsConstructor;

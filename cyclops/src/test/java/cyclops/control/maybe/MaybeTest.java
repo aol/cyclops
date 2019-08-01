@@ -1,4 +1,4 @@
-package cyclops.control;
+package cyclops.control.maybe;
 
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.persistent.PersistentSet;
@@ -11,7 +11,16 @@ import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
+import cyclops.control.AbstractValueTest;
+import cyclops.control.Either;
+import cyclops.control.Eval;
+import cyclops.control.Future;
+import cyclops.control.LazyEither5;
+import cyclops.control.Maybe;
 import cyclops.control.Maybe.CompletableMaybe;
+import cyclops.control.Option;
+import cyclops.control.Trampoline;
+import cyclops.control.Try;
 import cyclops.data.HashSet;
 import cyclops.data.Seq;
 import cyclops.data.tuple.Tuple;
@@ -39,7 +48,7 @@ import static cyclops.data.tuple.Tuple.tuple;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
-public class MaybeTest extends  AbstractValueTest implements Printable {
+public class MaybeTest extends AbstractValueTest implements Printable {
 
     Maybe<Integer> just;
     Maybe<Integer> none;

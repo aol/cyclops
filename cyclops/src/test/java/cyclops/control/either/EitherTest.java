@@ -1,5 +1,6 @@
-package cyclops.control;
+package cyclops.control.either;
 
+import cyclops.control.Either;
 import cyclops.data.LazySeq;
 import cyclops.companion.Monoids;
 import cyclops.companion.Semigroups;
@@ -16,9 +17,9 @@ public class EitherTest {
 	private String concat(String a,String b){
 		return a+b;
 	}
-	static class Base{ }
-    static class One extends Base{ }
-    static class Two extends Base{}
+	public static class Base{ }
+    public static class One extends Base{ }
+    public static class Two extends Base{}
     @Test
     public void visitAny(){
 

@@ -1,4 +1,4 @@
-package cyclops.control;
+package cyclops.control.either;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -13,49 +13,36 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.control.Option;
+import cyclops.control.Either;
 import org.junit.Before;
 import org.junit.Test;
 
-public class IorPrimaryTest {
+public class EitherRightTest {
 
-	Ior<FileNotFoundException,Integer> success;
+	Either<FileNotFoundException,Integer> success;
 	final Integer value = 10;
-
-
-	public Ior<FileNotFoundException,String> load(String filename){
-		return Ior.right("test-data");
+	
+	
+	public Either<FileNotFoundException,String> load(String filename){
+		return Either.right("test-data");
 	}
-
+	
 	public void process(){
-
-		Ior<FileNotFoundException,String> attempt = load("data");
-
+		
+		Either<FileNotFoundException,String> attempt = load("data");
+		
 		attempt.map(String::toUpperCase)
 				.peek(System.out::println);
-
+	
 	}
-
+	
 	@Before
 	public void setup(){
-		success = Ior.right(10);
+		success = Either.right(10);
 	}
-	@Test
-    public void bimap(){
 
-        Ior<RuntimeException,Integer> mapped = success.bimap(e->new RuntimeException(), d->d+1);
-        assertThat(mapped.get(),equalTo(Option.some(11)));
-        assertTrue(mapped.isRight());
-    }
-    Throwable capT;
-    int capInt=0;
-    @Test
-    public void bipeek(){
-       capT =null;
-       capInt=0;
-         success.bipeek(e->capT=e, d->capInt=d);
-        assertThat(capInt,equalTo(10));
-        assertThat(capT,nullValue());
-    }
+
 
 	@Test
 	public void testGet() {
@@ -69,12 +56,12 @@ public class IorPrimaryTest {
 
 	@Test
 	public void testMap() {
-		assertThat(success.map(x->x+1),equalTo(Ior.right(value+1)));
+		assertThat(success.map(x->x+1),equalTo(Either.right(value+1)));
 	}
 
 	@Test
 	public void testFlatMap() {
-		assertThat(success.flatMap(x->Ior.right(x+1)),equalTo(Ior.right(value+1)));
+		assertThat(success.flatMap(x-> Either.right(x+1)),equalTo(Either.right(value+1)));
 	}
 
 	@Test
@@ -86,7 +73,7 @@ public class IorPrimaryTest {
 		assertThat(success.filter(x->x>15),equalTo(Option.none()));
 	}
 
-
+	
 
 	@Test
 	public void testOrElse() {
@@ -125,6 +112,6 @@ public class IorPrimaryTest {
 		assertThat(valueCaptured,is(10));
 	}
 	Exception errorCaptured;
-
+	
 
 }

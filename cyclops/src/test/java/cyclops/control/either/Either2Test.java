@@ -1,7 +1,14 @@
-package cyclops.control;
+package cyclops.control.either;
 
 import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.util.box.Mutable;
+import cyclops.control.Either;
+import cyclops.control.Future;
+import cyclops.control.Ior;
+import cyclops.control.Maybe;
+import cyclops.control.Option;
+import cyclops.control.Trampoline;
+import cyclops.control.Try;
 import cyclops.data.HashSet;
 
 import cyclops.companion.Monoids;

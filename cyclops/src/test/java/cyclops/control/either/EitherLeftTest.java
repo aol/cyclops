@@ -1,52 +1,37 @@
-package cyclops.control;
+package cyclops.control.either;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.control.Option;
+import cyclops.control.Either;
 import org.junit.Before;
 import org.junit.Test;
 
-public class IorSecondaryTest {
+public class EitherLeftTest {
 
-	Ior<FileNotFoundException,Integer> failure;
+	Either<FileNotFoundException,Integer> failure;
 	FileNotFoundException error = new FileNotFoundException();
 	@Before
 	public void setup(){
-		failure = Ior.left(error);
+		failure = Either.left(error);
 	}
-	@Test
-    public void bimap(){
-
-        Ior<RuntimeException,Integer> mapped = failure.bimap(e->new RuntimeException(), d->d+1);
-        assertTrue(mapped.isLeft());
-        assertThat(mapped.swap().orElse(null),instanceOf(RuntimeException.class));
-    }
-    Throwable capT;
-    int capInt=0;
-    @Test
-    public void bipeek(){
-       capT =null;
-       capInt=0;
-         failure.bipeek(e->capT=e, d->capInt=d);
-        assertThat(capInt,equalTo(0));
-        assertThat(capT,instanceOf(FileNotFoundException.class));
-    }
 
 
 	@Test
 	public void testOf() {
 		assertNotNull(failure);
 	}
+
+
 
 	@Test
 	public void testMap() {
@@ -55,7 +40,7 @@ public class IorSecondaryTest {
 
 	@Test
 	public void testFlatMap() {
-		assertThat(failure.flatMap(x->Ior.right(10)),equalTo(failure));
+		assertThat(failure.flatMap(x-> Either.right(10)),equalTo(failure));
 	}
 
 	@Test
@@ -63,7 +48,9 @@ public class IorSecondaryTest {
 		assertThat(failure.filter(x->x==10),equalTo(Option.none()));
 	}
 
+	
 
+	
 	@Test
 	public void testOrElse() {
 		assertThat(failure.orElse(10),equalTo(10));
@@ -98,12 +85,12 @@ public class IorSecondaryTest {
 	Integer value = null;
 	@Test
 	public void testForeach() {
-
+		
 		failure.forEach(v -> value = v);
 		assertThat(value,is(nullValue()));
 	}
 
-
+	
 	Object errorCaptured;
 	@Test
 	public void testForeachFailed() {
@@ -112,6 +99,6 @@ public class IorSecondaryTest {
 		assertThat(error,equalTo(errorCaptured));
 	}
 
-
+	
 
 }
