@@ -445,8 +445,8 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * {@code
      *  Ior<String,Integer> just  = Ior.right(10);
         Ior<String,Integer> none = Ior.left("none");
-     *  Ior<?,PersistentSetX<String>> iors = Ior.accumulateLeft(Seq.of(just,none,Ior.right(1)),Reducers.<String>toPersistentSetX());
-      //Ior.right(PersistentSetX.of("none"))));
+     *  Ior<?,PersistentSet<String>> iors = Ior.accumulateLeft(Seq.of(just,none,Ior.right(1)),Reducers.<String>toPersistentSet());
+      //Ior.right(HashSet.of("none"))));
       * }
      * </pre>
      * @param iors Collection of Iors to accumulate left values
@@ -511,6 +511,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
     public static <ST, PT> Ior<PT, ST> accumulateLeft(final Monoid<ST> reducer, final Iterable<Ior<ST, PT>> iors) {
         return sequenceLeft(iors).map(s -> s.reduce(reducer));
     }
+    
 
     /**
      *  Turn a toX of Iors into a single Ior with Lists of values.
@@ -535,19 +536,51 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
     public static <ST, PT> Ior<ST, ReactiveSeq<PT>> sequenceRight(final Iterable<Ior<ST, PT>> iors) {
         return sequence(ReactiveSeq.fromIterable(iors).filterNot(Ior::isLeft));
     }
-  public static  <L,T> Ior<L,ReactiveSeq<T>> sequence(ReactiveSeq<? extends Ior<L,T>> stream) {
 
-    Ior<L, ReactiveSeq<T>> identity = right(ReactiveSeq.empty());
+    public static <L, T> Ior<L, ReactiveSeq<T>> sequence(ReactiveSeq<? extends Ior<L, T>> stream) {
 
-    BiFunction<Ior<L,ReactiveSeq<T>>,Ior<L,T>,Ior<L,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
+        Ior<L, ReactiveSeq<T>> identity = right(ReactiveSeq.empty());
 
-    BinaryOperator<Ior<L,ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendStream(z2));
+        BiFunction<Ior<L, ReactiveSeq<T>>, Ior<L, T>, Ior<L, ReactiveSeq<T>>> combineToStream = (acc, next) -> acc.zip(next, (a, b) -> a.append(b));
 
-    return stream.reduce(identity,combineToStream,combineStreams);
-  }
-  public static <L,T,R> Ior<L,ReactiveSeq<R>> traverse(Function<? super T,? extends R> fn,ReactiveSeq<Ior<L,T>> stream) {
-    return sequence(stream.map(h->h.map(fn)));
-  }
+        BinaryOperator<Ior<L, ReactiveSeq<T>>> combineStreams = (a, b) -> a.zip(b, (z1, z2) -> z1.appendStream(z2));
+
+        return stream.reduce(identity, combineToStream, combineStreams);
+    }
+
+    public static <L, T, R> Ior<L, ReactiveSeq<R>> traverse(Function<? super T, ? extends R> fn, ReactiveSeq<Ior<L, T>> stream) {
+        return sequence(stream.map(h -> h.map(fn)));
+    }
+
+    public static <L, T> Ior<ReactiveSeq<L>, ReactiveSeq<T>> sequenceBoth(Iterable<? extends Ior<L, T>> stream) {
+        return sequenceBoth(ReactiveSeq.fromIterable(stream));
+    }
+
+    public static <L, T> Ior<ReactiveSeq<L>, ReactiveSeq<T>> sequenceBoth(ReactiveSeq<? extends Ior<L, T>> stream) {
+
+        Ior<ReactiveSeq<L>, ReactiveSeq<T>> identity = both(ReactiveSeq.empty(), ReactiveSeq.empty());
+
+        BiFunction<Ior<ReactiveSeq<L>, ReactiveSeq<T>>, Ior<L, T>, Ior<ReactiveSeq<L>, ReactiveSeq<T>>> combineToStream = (Ior<ReactiveSeq<L>, ReactiveSeq<T>> acc, Ior<L, T> next) -> {
+            Ior<ReactiveSeq<L>, ReactiveSeq<T>>[]res =new Ior[]{acc};
+            next.mapLeft(l -> {
+                res[0]=acc.mapLeft(rs -> {
+                    return rs.append(l);
+                });
+                return l;
+            }).map(r -> {
+                res[0]=acc.map(rs -> {
+                    return rs.append(r);
+                });
+                return r;
+            });
+            return res[0];
+        };
+
+        BinaryOperator<Ior<ReactiveSeq<L>, ReactiveSeq<T>>> combineStreams = (a, b) -> a.zip(b, (z1, z2) -> z1.appendStream(z2));
+
+        return stream.reduce(identity, combineToStream, combineStreams);
+    }
+
 
     /**
      * Accumulate the result of the Primary types in the Collection of Iors provided using the supplied Reducer  {@see cyclops2.Reducers}.
@@ -1125,7 +1158,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
 
             @Override
             public String mkString() {
-                return "Ior.both[" + primary.toString() + ":" + secondary.toString() + "]";
+                return "Ior.both[" + secondary.toString()  + ":" + primary.toString() + "]";
             }
 
 
