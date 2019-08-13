@@ -36,7 +36,7 @@ public class Memoize {
         return ()->{
             Object val = value.get();
         if (val == UNSET) {
-            synchronized (UNSET){
+            synchronized (value){
                 if(value.get()==UNSET) {
                     val = s.get();
                     value.set(val);
