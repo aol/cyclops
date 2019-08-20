@@ -9,7 +9,7 @@ import java.util.function.Supplier;
  * @author johnmcclean
  *
  */
-public interface Unwrapable {
+public interface Unwrappable {
     /**
      * Unwrap a wrapped value
      *
@@ -28,8 +28,8 @@ public interface Unwrapable {
     }
     default <R> R unwrapNested(Class<?> c,Supplier<? extends R> supplier ){
         R unwrapped = unwrap();
-        while(unwrapped instanceof Unwrapable){
-            unwrapped = ((Unwrapable) unwrapped).unwrap();
+        while(unwrapped instanceof Unwrappable){
+            unwrapped = ((Unwrappable) unwrapped).unwrap();
         }
         if(c.isAssignableFrom(unwrapped.getClass())){
             return unwrapped;

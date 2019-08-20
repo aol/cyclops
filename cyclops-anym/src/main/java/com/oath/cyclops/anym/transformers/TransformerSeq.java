@@ -8,7 +8,7 @@ import java.util.stream.*;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
-import com.oath.cyclops.types.Unwrapable;
+import com.oath.cyclops.types.Unwrappable;
 import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.stream.ToStream;
 import cyclops.data.Seq;
@@ -28,7 +28,7 @@ import cyclops.companion.Streamable;
 import cyclops.monads.WitnessType;
 
 @Deprecated
-public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
+public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrappable,
                                                                     Traversable<T>,
                                                                     ToStream<T>,
                                                                     Publisher<T> {

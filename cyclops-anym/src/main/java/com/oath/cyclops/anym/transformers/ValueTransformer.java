@@ -5,7 +5,7 @@ import java.util.function.*;
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.MonadicValue;
-import com.oath.cyclops.types.Unwrapable;
+import com.oath.cyclops.types.Unwrappable;
 import com.oath.cyclops.types.Zippable;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
@@ -20,7 +20,7 @@ import cyclops.function.Function3;
 
 @Deprecated
 public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Publisher<T>,
-  Unwrapable,
+  Unwrappable,
   Unit<T>,
   Folds<T>,
   Zippable<T> {
