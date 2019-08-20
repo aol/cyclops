@@ -7,7 +7,7 @@ import org.junit.Test;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 
-public class UnwrapableTest {
+public class UnwrappableTest {
     @Test
     public void unwrapIfInstanceHit() throws Exception {
        Object o = new MyUnWrappable().unwrapIfInstance(Either.class,()->"hello");
@@ -19,7 +19,7 @@ public class UnwrapableTest {
         Object o = new MyUnWrappable().unwrapIfInstance(String.class,()->"hello");
         assertThat(o,equalTo("hello"));
     }
-    static class MyUnWrappable implements Unwrapable{
+    static class MyUnWrappable implements Unwrappable {
         @Override
         public <R> R unwrap() {
             return (R) LazyEither.left("hello");
