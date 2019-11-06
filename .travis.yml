@@ -1,5 +1,5 @@
 language: java
-install: travis_wait ./gradlew clean build jacoco
+install: travis_wait 60 ./gradlew clean build jacoco
 jdk:
   - openjdk8
 after_success:
