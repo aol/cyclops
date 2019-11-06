@@ -1,9 +1,6 @@
 language: java
 install: travis_wait ./gradlew clean build jacoco
 jdk:
-  - oraclejdk8
-before_install:
-  - sudo apt-get update
-  - sudo apt-get install --only-upgrade -y oracle-java8-installer
+  - openjdk8
 after_success:
   - bash <(curl -s https://codecov.io/bash)
