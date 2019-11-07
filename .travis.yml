@@ -1,5 +1,5 @@
 language: java
-install: travis_wait 60 ./gradlew clean build jacoco --parallel --max-workers 4
+install: travis_wait 120 ./gradlew clean build jacoco
 jdk:
   - openjdk8
 after_success:
