@@ -1,7 +1,9 @@
+sudo: true
 language: java
 jdk:
   - openjdk8
+install: ./gradlew clean
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-
-script: ./gradlew clean build jacoco
+script:
+  - ./gradlew build jacoco
