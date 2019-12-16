@@ -1,5 +1,6 @@
 package cyclops.data;
 
+import com.oath.cyclops.internal.stream.OneShotStreamX;
 import com.oath.cyclops.internal.stream.StreamX;
 import com.oath.cyclops.types.futurestream.Continuation;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
@@ -15,9 +16,11 @@ import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class Chain<T> implements ImmutableList<T>{
@@ -169,6 +172,52 @@ public abstract class Chain<T> implements ImmutableList<T>{
     public abstract boolean isEmpty();
 
     public abstract Iterator<T> iterator();
+
+    @Override
+    public <U, R> ImmutableList<R> zipWithStream(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        if(other instanceof ReactiveSeq && ! (other instanceof OneShotStreamX))
+            return zip(ReactiveSeq.fromStream(other),zipper);
+        else
+            return zip(ReactiveSeq.fromStream(other).toList(),zipper);
+    }
+
+    @Override
+    public <U> ImmutableList<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
+        return zipWithStream(other,Tuple::tuple);
+    }
+
+    @Override
+    public ImmutableList<T> insertStreamAt(int pos, Stream<T> stream) {
+        if(stream instanceof ReactiveSeq && ! (stream instanceof OneShotStreamX))
+            return ImmutableList.super.insertStreamAt(pos,stream);
+        else
+            return insertAt(pos,ReactiveSeq.fromStream(stream).toList());
+    }
+
+    @Override
+    public ImmutableList<T> prependStream(Stream<? extends T> stream) {
+        if(stream instanceof ReactiveSeq && ! (stream instanceof OneShotStreamX))
+            return ImmutableList.super.prependStream(stream);
+        else
+            return prependAll(stream.collect(Collectors.toList()));
+    }
+
+    @Override
+    public ImmutableList<T> removeStream(Stream<? extends T> stream) {
+        if(stream instanceof ReactiveSeq && ! (stream instanceof OneShotStreamX))
+            return ImmutableList.super.removeStream(stream);
+        else
+            return ImmutableList.super.removeStream(ReactiveSeq.fromIterable(ReactiveSeq.fromStream(stream).toList()));
+    }
+
+    @Override
+    public ImmutableList<T> retainStream(Stream<? extends T> stream) {
+        if(stream instanceof ReactiveSeq && ! (stream instanceof OneShotStreamX))
+            return ImmutableList.super.retainStream(stream);
+        else
+            return ImmutableList.super.retainStream(ReactiveSeq.fromIterable(ReactiveSeq.fromStream(stream).toList()));
+    }
+
     @Override
     public <R> Chain<R> unitIterable(Iterable<R> it) {
         return wrap(it);

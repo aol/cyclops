@@ -1533,5 +1533,52 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }
         return super.equals(obj);
     }
+    public ReactiveSeq<T> insertAt(int pos, Iterable<? extends T> values){
+        if(pos==0){
+            return prependStream(ReactiveSeq.fromIterable(values));
+        }
+        return Spouts.defer(()-> {
+            long check = new Long(pos);
+            boolean added[] = {false};
+            return Spouts.<T>concat(zipWithIndex().flatMap(t -> {
+                if (t._2() < check && !added[0])
+                    return ReactiveSeq.of(t._1());
+                if (!added[0]) {
+                    added[0] = true;
+                    return Spouts.concat(ReactiveSeq.fromIterable(values), ReactiveSeq.of(t._1()));
+                }
+                return Stream.of(t._1());
+            }), Spouts.deferFromStream(() -> {
+                    return !added[0] ? ReactiveSeq.fromIterable(values) : ReactiveSeq.empty();
+                }
+            ));
+        });
 
+
+
+    }
+    public ReactiveSeq<T> insertAt(int pos, ReactiveSeq<? extends T> values){
+        if(pos==0){
+            return prependStream(values);
+        }
+
+        return Spouts.defer(()-> {
+            long check = new Long(pos);
+            boolean added[] = {false};
+
+            return Spouts.<T>concat(zipWithIndex().flatMap(t -> {
+                if (t._2() < check && !added[0])
+                    return ReactiveSeq.of(t._1());
+                if (!added[0]) {
+                    added[0] = true;
+                    return Spouts.concat(values, ReactiveSeq.of(t._1()));
+                }
+                return Stream.of(t._1());
+            }), Spouts.deferFromStream(() -> {
+                    return !added[0] ? values : ReactiveSeq.empty();
+                }
+            ));
+        });
+
+    }
 }

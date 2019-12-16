@@ -2091,6 +2091,7 @@ public abstract class AbstractIterableXTest {
 	                                                .collect(Collectors.toList());
 
 	        List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
+	        System.out.println(right);
 	        assertThat(right,hasItem(100));
 	        assertThat(right,hasItem(200));
 	        assertThat(right,hasItem(300));
