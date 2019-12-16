@@ -126,13 +126,19 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         if(this instanceof LazySeq){
             return (LazySeq<T>)this;
         }
-        return fold(c->LazySeq.lazy(c.head(),()->c.tail().lazySeq()), nil->LazySeq.empty());
+        return LazySeq.fromIterable(this);
+
     }
     default Seq<T> seq(){
         if(this instanceof Seq){
             return (Seq<T>)this;
         }
-        return fold(c->Seq.cons(c.head(),c.tail().seq()), nil->Seq.empty());
+        Seq<T> s = Seq.empty();
+        for(T next :  reverse()){
+            s = s.plus(next);
+        }
+        return s;
+
     }
     default Option<NonEmptyList<T>> nonEmptyList(){
         return Option.ofNullable(fold(c->NonEmptyList.cons(c.head(),c.tail()), nil->null));

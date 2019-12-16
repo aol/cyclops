@@ -1,5 +1,7 @@
 package cyclops.data;
 
+import com.oath.cyclops.internal.stream.StreamX;
+import com.oath.cyclops.types.futurestream.Continuation;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentList;
 import cyclops.control.Option;
@@ -7,6 +9,7 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.function.Memoize;
 import cyclops.reactive.ReactiveSeq;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 
@@ -31,12 +34,23 @@ public abstract class Chain<T> implements ImmutableList<T>{
         public boolean isEmpty() {
             return false;
         }
+        @Override
+        public <R> Chain<R> flatMap(Function<? super T, ? extends ImmutableList<? extends R>> fn) {
+            return wrap(ReactiveSeq.fromIterable(this).concatMap(fn));
+        }
+
+        public <R> NonEmptyChain<R> flatMapNEC(Function<? super T, ? extends NonEmptyChain<? extends R>> fn) {
+            return new Wrap(ReactiveSeq.fromIterable(this).concatMap(fn));
+        }
 
         @Override
         public NonEmptyChain<T> prepend(T value) {
             return append(singleton(value),this);
         }
-
+        @Override
+        public NonEmptyChain<T> prependAll(Iterable< ? extends T> value) {
+            return append(wrap(value),this);
+        }
         @Override
         public NonEmptyChain<T> append(T value) {
             return append(this,singleton(value));
@@ -100,6 +114,23 @@ public abstract class Chain<T> implements ImmutableList<T>{
         public NonEmptyChain<T> reverse() {
             return new Wrap(this::reverseIterator);
         }
+        @Override
+        public String toString(){
+
+            Iterator<T> it = iterator();
+
+            StringBuffer b = new StringBuffer("[" + it.next());
+            while(it.hasNext()){
+                b.append(", "+it.next());
+            }
+            b.append("]");
+            return b.toString();
+
+        }
+        @Override
+        public Iterator<T> iterator() {
+            return new ChainIterator<T>(this);
+        }
     }
 
     public static <T> Chain<T> narrow(Chain<? extends T> broad) {
@@ -124,11 +155,14 @@ public abstract class Chain<T> implements ImmutableList<T>{
         return right.isEmpty() ?  (NonEmptyChain<T>)left : new Append(left,(NonEmptyChain<T>)right);
     }
     public static <T> Chain<T> wrap(Iterable<T> it){
-        return  it.iterator().hasNext() ? new Wrap(it) : new EmptyChain<>();
+        Iterator<T> i = it.iterator();
+
+        return  i.hasNext()  ? new Wrap(it) : empty();
+
     }
     public abstract Chain<T> concat(Chain<T> b);
     @Override
-    public <R> ImmutableList<R> unitStream(Stream<R> stream) {
+    public <R> Chain<R> unitStream(Stream<R> stream) {
         return wrap(ReactiveSeq.fromStream(stream));
     }
 
@@ -147,7 +181,7 @@ public abstract class Chain<T> implements ImmutableList<T>{
 
     @Override
     public Chain<T> drop(long num) {
-        return null;
+        return wrap(ReactiveSeq.fromIterable(this).drop(num));
     }
 
     @Override
@@ -159,6 +193,7 @@ public abstract class Chain<T> implements ImmutableList<T>{
     public NonEmptyChain<T> prepend(T value) {
         return append(singleton(value),this);
     }
+    public abstract Chain<T> prependAll(Iterable< ? extends T> value);
 
     @Override
     public NonEmptyChain<T> append(T value) {
@@ -330,6 +365,16 @@ public abstract class Chain<T> implements ImmutableList<T>{
             return false;
         }
 
+        public String toString(){
+            return "[]";
+        }
+        @Override
+        public Chain<T> prependAll(Iterable< ? extends T> value) {
+
+            Chain<T> t = narrow(wrap(value));
+            return t.isEmpty() ? this : t;
+
+        }
 
     }
 
@@ -349,26 +394,7 @@ public abstract class Chain<T> implements ImmutableList<T>{
         public boolean isEmpty() {
             return false;
         }
-        @Override
-        public Iterator<T> iterator() {
-            return new Iterator<T>() {
-                boolean first = true;
 
-                @Override
-                public boolean hasNext() {
-                    return first;
-                }
-
-                @Override
-                public T next() {
-
-                    if(!first)
-                       throw new  NoSuchElementException();
-                   first = false;
-                   return value;
-                }
-            };
-        }
 
         @Override
         public NonEmptyChain<T> appendAll(Iterable<? extends T> values) {
@@ -401,7 +427,7 @@ public abstract class Chain<T> implements ImmutableList<T>{
 
         @Override
         public int size() {
-            return 0;
+            return 1;
         }
 
 
@@ -438,26 +464,7 @@ public abstract class Chain<T> implements ImmutableList<T>{
         }
         @Override
         public Iterator<T> iterator() {
-            return new Iterator<T>() {
-                Iterator<T> active = left.iterator();
-                boolean first = true;
-                @Override
-                public boolean hasNext() {
-                    boolean res =  active.hasNext();
-                    if(!res && first){
-                        first = false;
-                        active = right.iterator();
-                        res  = active.hasNext();
-                    }
-                    return res;
-
-                }
-
-                @Override
-                public T next() {
-                    return active.next();
-                }
-            };
+          return new ChainIterator<T>(this);
         }
 
         @Override
@@ -519,7 +526,7 @@ public abstract class Chain<T> implements ImmutableList<T>{
             return Tuple.tuple(head(),tail());
         }
     }
-    @AllArgsConstructor
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
     private static final class Wrap<T> extends NonEmptyChain<T>{
         private final Iterable<T> it;
 
@@ -532,10 +539,7 @@ public abstract class Chain<T> implements ImmutableList<T>{
         public boolean isEmpty() {
             return false;
         }
-        @Override
-        public Iterator<T> iterator() {
-            return it.iterator();
-        }
+
 
         @Override
         public Option<T> get(int pos) {
@@ -575,5 +579,71 @@ public abstract class Chain<T> implements ImmutableList<T>{
         public Tuple2<T, ImmutableList<T>> unapply() {
             return Tuple.tuple(head(),tail());
         }
+
+        @Override
+        public Iterator<T> iterator(){
+            return it.iterator();
+        }
+    }
+
+     private static class ChainIterator<T> implements Iterator<T>{
+
+            Vector<NonEmptyChain<T>> rights = Vector.empty();
+            Iterator<T> current = null;
+             Chain<T> c;
+
+            public ChainIterator( Chain<T> chain ){
+                this.c = chain.isEmpty() ? null : chain;
+            }
+
+
+
+
+            public boolean hasNext() {
+                return (c != null) || (current != null && current.hasNext());
+            }
+
+            @Override
+            public T next() {
+                Supplier<T> go = ()-> {
+                    boolean loop = true;
+
+                    while(loop) {
+                        loop = false;
+                        if (current != null && current.hasNext()) {
+                            return current.next();
+                        }
+                        current = null;
+                        if (c instanceof Singleton) {
+                            T value = ((Singleton<T>) c).value;
+                            c = rights.foldLeft((a, b) -> append(b, a))
+                                .orElse(null);
+                            rights = Vector.empty();
+                            return value;
+                        }
+                        if (c instanceof Append) {
+                            rights = rights.plus(((Append<T>) c).right);
+                            c = ((Append<T>) c).left;
+                            loop = true;
+                        }
+                        if(c instanceof Wrap){
+                            current = ((Wrap<T>)c).it.iterator();
+                            c = rights.foldLeft((a, b) -> append(b, a))
+                                .orElse(null);
+                            rights = Vector.empty();
+
+                            return current.next();
+
+                        }
+                        if(c instanceof EmptyChain || c == null){
+                            throw new NoSuchElementException();
+                        }
+                    }
+                    return null; //unreachable
+                };
+                return go.get();
+
+            }
+
     }
 }

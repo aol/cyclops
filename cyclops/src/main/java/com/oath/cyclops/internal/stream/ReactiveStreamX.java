@@ -479,6 +479,22 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     }
 
+    public ReactiveSeq<T> removeFirst(Predicate<? super T> pred) {
+
+        Supplier<Predicate<? super T>> predicate = () -> {
+            AtomicBoolean active = new AtomicBoolean(true);
+            return i-> {
+                if (active.get() && pred.test(i)) {
+                    active.set(false);
+                    return false;
+                }
+                return true;
+            };
+        };
+        return this.filterLazyPredicate(predicate);
+
+    }
+
     @Override
     public ReactiveSeq<T> changes() {
         if (async == Type.NO_BACKPRESSURE) {
