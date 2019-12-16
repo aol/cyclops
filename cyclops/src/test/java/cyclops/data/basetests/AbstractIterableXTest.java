@@ -1199,6 +1199,15 @@ public abstract class AbstractIterableXTest {
 		return 200;
 	}
 
+	@Test
+    public void statelessRemoveFirst(){
+        IterableX<Integer> stream = of(5,2,1).removeFirst(e -> Objects.equals(e, 2));
+
+        assertThat(stream.toList(),equalTo(Arrays.asList(5,1)));
+        assertThat(stream.toList(),equalTo(Arrays.asList(5,1)));
+    }
+
+
 
 	@Test
 	public void batchBySize(){
@@ -2475,7 +2484,7 @@ public abstract class AbstractIterableXTest {
     @Test
     public void testCycleWhileNoOrd() {
         count =0;
-        assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleWhile(next->count++<6).toList());
+        assertEquals(asList(1, 2, 3, 1, 2,3),of(1, 2, 3).cycleWhile(next->count++<6).toList());
 
     }
     @Test

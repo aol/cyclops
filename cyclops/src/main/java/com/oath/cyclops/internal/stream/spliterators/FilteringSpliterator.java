@@ -1,5 +1,7 @@
 package com.oath.cyclops.internal.stream.spliterators;
 
+import lombok.Getter;
+
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Consumer;
@@ -10,6 +12,7 @@ import java.util.function.Predicate;
  */
 public class FilteringSpliterator<T> extends Spliterators.AbstractSpliterator<T> implements CopyableSpliterator<T>, Composable<T>{
     Spliterator<T> source;
+    @Getter
     Predicate<? super T> mapper;
     public FilteringSpliterator(final Spliterator<T> source, Predicate<? super T> mapper) {
         super(source.estimateSize(),source.characteristics() & Spliterator.ORDERED);
@@ -18,10 +21,17 @@ public class FilteringSpliterator<T> extends Spliterators.AbstractSpliterator<T>
         this.mapper = mapper;
 
     }
+    FilteringSpliterator(final Spliterator<T> source) {
+        super(source.estimateSize(),source.characteristics() & Spliterator.ORDERED);
+
+        this.source = source;
+        this.mapper = getMapper();
+
+    }
     @Override
     public void forEachRemaining(Consumer<? super T> action) {
         source.forEachRemaining(t->{
-            if(mapper.test(t))
+            if(getMapper().test(t))
                 action.accept(t);
         });
 
@@ -34,7 +44,7 @@ public class FilteringSpliterator<T> extends Spliterators.AbstractSpliterator<T>
         do {
 
             advance = source.tryAdvance(t -> {
-                if (mapper.test(t)) {
+                if (getMapper().test(t)) {
                     action.accept(t);
                     accepted[0] = true;
                 }
@@ -61,10 +71,10 @@ public class FilteringSpliterator<T> extends Spliterators.AbstractSpliterator<T>
     }
     public static <T> FilteringSpliterator<T> compose(FilteringSpliterator<T> before, FilteringSpliterator<T> after){
 
-        return new FilteringSpliterator<>(before.source,((Predicate<T>)before.mapper).and(after.mapper));
+        return new FilteringSpliterator<>(before.source,((Predicate<T>)before.mapper).and(after.getMapper()));
     }
     public static <T> FilteringSpliterator<T> compose(LazyFilteringSpliterator<T> before, FilteringSpliterator<T> after){
 
-        return new FilteringSpliterator<>(before.source,((Predicate<T>)before.mapperSupplier.get()).and(after.mapper));
+        return new FilteringSpliterator<>(before.source,((Predicate<T>)before.mapperSupplier.get()).and(after.getMapper()));
     }
 }
