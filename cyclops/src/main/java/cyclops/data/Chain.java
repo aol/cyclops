@@ -2,6 +2,7 @@ package cyclops.data;
 
 import com.oath.cyclops.internal.stream.OneShotStreamX;
 import com.oath.cyclops.internal.stream.StreamX;
+import com.oath.cyclops.internal.stream.spliterators.IteratableSpliterator;
 import com.oath.cyclops.types.futurestream.Continuation;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentList;
@@ -10,12 +11,15 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.function.Memoize;
 import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Spliterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -134,6 +138,11 @@ public abstract class Chain<T> implements ImmutableList<T>{
         public Iterator<T> iterator() {
             return new ChainIterator<T>(this);
         }
+
+        @Override
+        public <T2, R> ImmutableList<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
+            return wrap(Spouts.from(this).zip(fn,publisher));
+        }
     }
 
     public static <T> Chain<T> narrow(Chain<? extends T> broad) {
@@ -158,7 +167,9 @@ public abstract class Chain<T> implements ImmutableList<T>{
         return right.isEmpty() ?  (NonEmptyChain<T>)left : new Append(left,(NonEmptyChain<T>)right);
     }
     public static <T> Chain<T> wrap(Iterable<T> it){
+
         Iterator<T> i = it.iterator();
+
 
         return  i.hasNext()  ? new Wrap(it) : empty();
 
@@ -632,6 +643,11 @@ public abstract class Chain<T> implements ImmutableList<T>{
         @Override
         public Iterator<T> iterator(){
             return it.iterator();
+        }
+
+        @Override
+        public Spliterator<T> spliterator() {
+            return new IteratableSpliterator<>(it);
         }
     }
 
