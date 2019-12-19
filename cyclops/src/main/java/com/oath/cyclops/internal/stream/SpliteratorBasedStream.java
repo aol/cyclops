@@ -152,7 +152,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     @Override
     public <S, U> ReactiveSeq<Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third) {
-        return createSeq( new Zipping3Spliterator<>(get(),second.spliterator(),third.spliterator(),(a, b, c)->Tuple.tuple(a,b,c)));
+        return createSeq( new Zipping3Spliterator<>(get(), second.spliterator(),third.spliterator(),(a, b, c)->Tuple.tuple(a,b,c)));
     }
 
 

@@ -1073,9 +1073,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Pure#unit(java.lang.Object)
-     */
+
     @Override
     public <T> ReactiveSeq<T> unit(final T unit) {
         return Spouts.of(unit);

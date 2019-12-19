@@ -985,9 +985,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
-     */
     @Override
     default <U, R> ReactiveSeq<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
@@ -3819,7 +3816,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default ReactiveSeq<ReactiveSeq<T>> permutations() {
-        return Streams.permutations(toArray());
+        return ReactiveSeq.defer(()->Streams.permutations(toArray()));
     }
 
 
@@ -3864,7 +3861,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default ReactiveSeq<ReactiveSeq<T>> combinations(final int size) {
-        return Streams.combinations(size,toArray());
+        return ReactiveSeq.defer(()->Streams.combinations(size,toArray()));
     }
 
     /**
@@ -3882,10 +3879,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default ReactiveSeq<ReactiveSeq<T>> combinations() {
-        Object[] a = toArray();
-        return range(1, a.length+1).map(size->Streams.<T>combinations(size,a))
-                                 .flatMap(s -> s)
-                                 .prepend(ReactiveSeq.<T>empty());
+        return ReactiveSeq.defer(()->{
+            Object[] a = toArray();
+            System.out.println("A" + Arrays.toString(a));
+            ReactiveSeq<ReactiveSeq<T>> r =  range(1, a.length+1).map(size->Streams.<T>combinations(size,a))
+                                     .flatMap(s -> s)
+                                     .prepend(ReactiveSeq.<T>empty());
+            System.out.println(r.map(a1->a1.toList()).toList());
+            return r;
+        });
 
     }
 
