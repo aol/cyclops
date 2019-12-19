@@ -143,6 +143,11 @@ public abstract class Chain<T> implements ImmutableList<T>{
         public <T2, R> ImmutableList<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
             return wrap(Spouts.from(this).zip(fn,publisher));
         }
+
+        @Override
+        public Spliterator<T> spliterator() {
+            return new IteratableSpliterator<>(this);
+        }
     }
 
     public static <T> Chain<T> narrow(Chain<? extends T> broad) {
