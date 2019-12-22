@@ -25,6 +25,7 @@ import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -78,6 +79,166 @@ public abstract class Chain<T> implements ImmutableList<T>{
         @Override
         public  <R> NonEmptyChain<R> map(Function<? super T, ? extends R> fn){
             return new Wrap(ReactiveSeq.fromIterable(this).map(fn));
+        }
+
+        @Override
+        public NonEmptyChain<T> concat(Chain<T> b) {
+            return append(this,b);
+        }
+
+        @Override
+        public NonEmptyChain<T> insertStreamAt(int pos, Stream<T> stream) {
+            return (NonEmptyChain<T>)super.insertStreamAt(pos, stream);
+        }
+
+        @Override
+        public NonEmptyChain<T> prependStream(Stream<? extends T> stream) {
+            return (NonEmptyChain<T>)super.prependStream(stream);
+        }
+
+        @Override
+        public NonEmptyChain<T> peek(Consumer<? super T> c) {
+            return (NonEmptyChain<T>)super.peek(c);
+        }
+
+        @Override
+        public NonEmptyChain<ReactiveSeq<T>> permutations() {
+            return (NonEmptyChain<ReactiveSeq<T>>)super.permutations();
+        }
+
+        @Override
+        public NonEmptyChain<ReactiveSeq<T>> combinations(int size) {
+            return (NonEmptyChain<ReactiveSeq<T>>)super.combinations(size);
+        }
+
+        @Override
+        public NonEmptyChain<ReactiveSeq<T>> combinations() {
+            return (NonEmptyChain<ReactiveSeq<T>>)super.combinations();
+        }
+
+        @Override
+        public NonEmptyChain<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
+            return (NonEmptyChain<T>)super.combine(predicate, op);
+        }
+
+        @Override
+        public NonEmptyChain<T> combine(Monoid<T> op, BiPredicate<? super T, ? super T> predicate) {
+            return (NonEmptyChain<T>)super.combine(op, predicate);
+        }
+
+        @Override
+        public NonEmptyChain<T> cycle(long times) {
+            return (NonEmptyChain<T>)super.cycle(times);
+        }
+
+        @Override
+        public NonEmptyChain<T> cycle(Monoid<T> m, long times) {
+            return (NonEmptyChain<T>)super.cycle(m, times);
+        }
+
+        @Override
+        public NonEmptyChain<Seq<T>> sliding(int windowSize) {
+            return (NonEmptyChain<Seq<T>>)super.sliding(windowSize);
+        }
+
+        @Override
+        public NonEmptyChain<Seq<T>> sliding(int windowSize, int increment) {
+            return (NonEmptyChain<Seq<T>>)super.sliding(windowSize, increment);
+        }
+
+        @Override
+        public <C extends PersistentCollection<? super T>> NonEmptyChain<C> grouped(int size, Supplier<C> supplier) {
+            return (NonEmptyChain<C>)super.grouped(size, supplier);
+        }
+
+        @Override
+        public NonEmptyChain<Vector<T>> grouped(int groupSize) {
+            return (NonEmptyChain<Vector<T>>)super.grouped(groupSize);
+        }
+
+        @Override
+        public NonEmptyChain<T> distinct() {
+            return (NonEmptyChain<T>)super.distinct();
+        }
+
+        @Override
+        public NonEmptyChain<T> scanLeft(Monoid<T> monoid) {
+            return (NonEmptyChain<T>)super.scanLeft(monoid);
+        }
+
+        @Override
+        public <U> NonEmptyChain<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
+            return (NonEmptyChain<U>)super.scanLeft(seed, function);
+        }
+
+        @Override
+        public NonEmptyChain<T> scanRight(Monoid<T> monoid) {
+            return (NonEmptyChain<T>)super.scanRight(monoid);
+        }
+
+        @Override
+        public <U> NonEmptyChain<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner) {
+            return (NonEmptyChain<U>)super.scanRight(identity, combiner);
+        }
+
+        @Override
+        public NonEmptyChain<T> sorted() {
+            return (NonEmptyChain<T>)super.sorted();
+        }
+
+        @Override
+        public NonEmptyChain<T> sorted(Comparator<? super T> c) {
+            return (NonEmptyChain<T>)super.sorted(c);
+        }
+
+        @Override
+        public NonEmptyChain<T> intersperse(T value) {
+            return (NonEmptyChain<T>)super.intersperse(value);
+        }
+
+        @Override
+        public NonEmptyChain<T> shuffle() {
+            return (NonEmptyChain<T>)super.shuffle();
+        }
+
+        @Override
+        public NonEmptyChain<T> shuffle(Random random) {
+            return (NonEmptyChain<T>)super.shuffle(random);
+        }
+
+        @Override
+        public <U extends Comparable<? super U>> NonEmptyChain<T> sorted(Function<? super T, ? extends U> function) {
+            return (NonEmptyChain<T>)super.sorted(function);
+        }
+
+        @Override
+        public NonEmptyChain<T> prependAll(T... values) {
+            return (NonEmptyChain<T>)super.prependAll(values);
+        }
+
+        @Override
+        public NonEmptyChain<T> insertAt(int pos, T... values) {
+            return (NonEmptyChain<T>)super.insertAt(pos, values);
+        }
+
+        @Override
+        public NonEmptyChain<T> plusAll(Iterable<? extends T> list) {
+            return (NonEmptyChain<T>)super.plusAll(list);
+        }
+
+        @Override
+        public NonEmptyChain<T> plus(T value) {
+            return super.plus(value);
+        }
+
+        @Override
+        public NonEmptyChain<T> insertAt(int pos, Iterable<? extends T> values) {
+            return (NonEmptyChain<T>)super.insertAt(pos, values);
+        }
+
+        @Override
+        public NonEmptyChain<T> insertAt(int i, T value) {
+            return (NonEmptyChain<T>)super.insertAt(i, value);
         }
 
         @Override
@@ -171,6 +332,10 @@ public abstract class Chain<T> implements ImmutableList<T>{
 
     public static <T> EmptyChain<T> empty(){
         return EMPTY;
+    }
+
+    public static <T> NonEmptyChain<T> of(T... values){
+        return new Wrap<>(Arrays.asList(values));
     }
     public static <T> NonEmptyChain<T> singleton(T value){
         return new Singleton<T>(value);
@@ -474,12 +639,12 @@ public abstract class Chain<T> implements ImmutableList<T>{
 
     @Override
     public <S, U, R> Chain<R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
-        return (Chain<R>)ImmutableList.super.zip3(second,third);
+        return (Chain<R>)ImmutableList.super.zip3(second,third,fn3);
     }
 
     @Override
     public <T2, T3, T4, R> Chain<R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
-        return (Chain<R>)ImmutableList.super.zip4(second,third,fourth);
+        return (Chain<R>)ImmutableList.super.zip4(second,third,fourth,fn);
     }
 
     @Override
@@ -990,7 +1155,7 @@ public abstract class Chain<T> implements ImmutableList<T>{
         private final Iterable<T> it;
 
         @Override
-        public Chain<T> concat(Chain<T> b) {
+        public NonEmptyChain<T> concat(Chain<T> b) {
             return b.isEmpty() ? this : new Append(this,(NonEmptyChain<T>)b) ;
         }
 

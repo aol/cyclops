@@ -14,6 +14,7 @@ import cyclops.data.TreeSet;
 import cyclops.function.Monoid;
 
 import cyclops.function.NaturalTransformation;
+import cyclops.function.Semigroup;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 
@@ -40,6 +41,9 @@ import java.util.stream.Stream;
 public interface Monoids {
 
 
+    static <T> Monoid<Chain<T>> chainConcat() {
+        return Monoid.of(Chain.empty(),Semigroups.immutableListConcat());
+    }
 
     static <T, C extends PersistentCollection<T>> Monoid<C> concatPersistentCollection(C empty) {
         return Monoid.of(empty,Semigroups.persistentCollectionConcat());

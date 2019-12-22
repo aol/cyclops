@@ -18,6 +18,8 @@ import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.data.Chain;
+import cyclops.data.Chain.NonEmptyChain;
 import cyclops.data.IntMap;
 import cyclops.data.LazySeq;
 import cyclops.data.Seq;
@@ -33,6 +35,22 @@ import cyclops.reactive.ReactiveSeq;
 public class SemigroupsTest {
 
 
+    @Test
+    public void testChainConcat() {
+        Chain<Integer> list = cyclops.data.Chain.empty();
+        list= list.plus(1);
+        list = list.plus(2);
+        list = list.plus(4);
+        Semigroup<Chain<Integer>> combiner= Semigroups.chainConcat();
+        assertThat(combiner.apply(list,Chain.of(4,5,6)).toList(),equalTo(Arrays.asList(1,2,4,4,5,6)));
+    }
+    @Test
+    public void testNonEmptyChainConcat() {
+        NonEmptyChain<Integer> list = Chain.of(1,2,4);
+
+        Semigroup<Chain<Integer>> combiner= Semigroups.chainConcat();
+        assertThat(combiner.apply(list,Chain.of(4,5,6)).toList(),equalTo(Arrays.asList(1,2,4,4,5,6)));
+    }
     @Test
     public void testCollectionConcatPVector() {
         cyclops.data.Vector<Integer> list = cyclops.data.Vector.empty();
