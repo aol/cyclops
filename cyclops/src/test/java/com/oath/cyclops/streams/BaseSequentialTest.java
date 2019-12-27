@@ -855,7 +855,7 @@ public class BaseSequentialTest {
     }
     @Test
     public void insertAtSOutOfRangeEmpty() {
-        for(int k=0;k<ITERATIONS;k++) {
+        for(int k=0;k<1000;k++) {
             List<String> result = of().insertStreamAt(1, Stream.of(100, 200, 300))
                     .map(it -> it + "!!").collect(Collectors.toList());
 

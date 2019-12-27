@@ -470,20 +470,19 @@ public interface Spouts {
         return reactiveStream(new SpliteratorToOperator<T>(new UnfoldSpliterator<>(seed, unfolder)));
     }
     public static  <T> ReactiveSeq<T> concat(Publisher<Publisher<T>> pubs){
-        return reactiveStream(new LazyArrayConcatonatingOperator<T>(Spouts.from(pubs).seq()
-                            .map(p->new PublisherToOperator<T>(p))));
+        return Spouts.from(pubs).mergeMap(p->p);
 
     }
     @Deprecated
     public static  <T> ReactiveSeq<T> lazyConcat(Publisher<Publisher<T>> pubs){
 
-        return reactiveStream(new LazyArrayConcatonatingOperator<T>(Spouts.from(pubs).seq()
-                .map(p->new PublisherToOperator<T>(p))));
+        return Spouts.from(pubs).mergeMap(p->p);
+
     }
     public static  <T> ReactiveSeq<T> concat(Stream<? extends T>... streams){
 
         ReactiveSeq<Stream<T>> rs = ReactiveSeq.of((Stream[]) streams);
-        return concat(rs.map(ReactiveSeq::fromStream));
+        return rs.map(ReactiveSeq::fromStream).mergeMap(s->s);
     }
 
 

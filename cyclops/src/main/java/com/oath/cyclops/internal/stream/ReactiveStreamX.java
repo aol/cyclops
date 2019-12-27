@@ -497,48 +497,50 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public ReactiveSeq<T> changes() {
-        if (async == Type.NO_BACKPRESSURE) {
-            Queue<T> discrete = QueueFactories.<T>unboundedNonBlockingQueue()
-                    .build()
-                    .withTimeout(1);
+        return Spouts.defer(()->{
+            if (async == Type.NO_BACKPRESSURE) {
+                Queue<T> discrete = QueueFactories.<T>unboundedNonBlockingQueue()
+                        .build()
+                        .withTimeout(1);
 
 
-            Signal<T> signal = new Signal<T>(null, discrete);
-            publishTo(signal).forEach(e -> {
-            }, e -> {
-            }, () -> signal.close());
+                Signal<T> signal = new Signal<T>(null, discrete);
+                publishTo(signal).forEach(e -> {
+                }, e -> {
+                }, () -> signal.close());
 
-            return signal.getDiscrete().stream();
-        } else {
-            Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
-                    .build();
-            Signal<T> signal = new Signal<T>(null, queue);
-            Subscription sub = source.subscribe(signal::set, i -> {
-                signal.close();
+                return signal.getDiscrete().stream();
+            } else {
+                Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+                        .build();
+                Signal<T> signal = new Signal<T>(null, queue);
+                Subscription sub = source.subscribe(signal::set, i -> {
+                    signal.close();
 
 
-            }, () -> {
-                signal.close();
-            });
+                }, () -> {
+                    signal.close();
+                });
 
-            Continuation[] contRef = {null};
+                Continuation[] contRef = {null};
 
-            AtomicBoolean wip = new AtomicBoolean(false);
-            Continuation cont = new Continuation(() -> {
+                AtomicBoolean wip = new AtomicBoolean(false);
+                Continuation cont = new Continuation(() -> {
 
-                if (wip.compareAndSet(false, true)) {
-                    sub.request(1l);
-                    wip.set(false);
-                }
-                return contRef[0];
-            });
+                    if (wip.compareAndSet(false, true)) {
+                        sub.request(1l);
+                        wip.set(false);
+                    }
+                    return contRef[0];
+                });
 
-            contRef[0] = cont;
+                contRef[0] = cont;
 
-            queue.addContinuation(cont);
+                queue.addContinuation(cont);
 
-            return signal.getDiscrete().stream();
-        }
+                return signal.getDiscrete().stream();
+            }
+        });
 
     }
 
@@ -1555,6 +1557,12 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
 
     }
+
+    @Override
+    public ReactiveSeq<T> insertStreamAt(int pos, Stream<T> stream) {
+        return insertAt(pos,Spouts.fromSpliterator(stream.spliterator()));
+    }
+
     public ReactiveSeq<T> insertAt(int pos, ReactiveSeq<? extends T> values){
         if(pos==0){
             return prependStream(values);

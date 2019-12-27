@@ -32,8 +32,6 @@ public class ZippingSpliterator<T1,T2,R> implements CopyableSpliterator<R>,
          boolean found[] = {false};
          return left.tryAdvance(l ->
                 right.tryAdvance(r -> {
-                    new Throwable().printStackTrace();
-                    System.out.println("L " + l + " : R " +r );
                     action.accept(fn.apply(l, r));
                     found[0]=true;
                 })) && found[0];
