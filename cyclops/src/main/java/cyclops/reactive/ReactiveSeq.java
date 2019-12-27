@@ -865,17 +865,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     public <T> ReactiveSeq<T> unit(T unit);
 
     default <R> ReactiveSeq<R> parallel(Function<? super Stream<T>,? extends Stream<? extends R>> fn){
-        Queue<R> queue = QueueFactories.<R>unboundedNonBlockingQueue()
-                                                                  .build();
+        return defer(()-> {
+            Queue<R> queue = QueueFactories.<R>unboundedNonBlockingQueue()
+                .build();
 
-        ReactiveSeq<Iterator<? extends R>> stream = ReactiveSeq.<Stream<? extends R>>generate(() -> foldParallel(fn))
-                                                                    .take(1)
-                                                                    .map(s->s.iterator());
-        Iterator[] it = {null};
-        Continuation[] store = {null};
-        Continuation cont =
-                new Continuation(()->{
-                    if(it[0]==null)
+            ReactiveSeq<Iterator<? extends R>> stream = ReactiveSeq.<Stream<? extends R>>generate(() -> foldParallel(fn))
+                .take(1)
+                .map(s -> s.iterator());
+            Iterator[] it = {null};
+            Continuation[] store = {null};
+            Continuation cont =
+                new Continuation(() -> {
+                    if (it[0] == null)
                         it[0] = stream.asFunction().apply(0l);
                     Iterator<R> local = it[0];
                     try {
@@ -885,7 +886,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                         } else {
                             queue.offer(local.next());
                         }
-                    }catch(Throwable t){
+                    } catch (Throwable t) {
                         queue.close();
                         throw ExceptionSoftener.throwSoftenedException(t);
                     }
@@ -893,25 +894,27 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
                 });
-        ;
-        store[0]=cont;
-        queue.addContinuation(cont);
-        return queue.stream();
+            ;
+            store[0] = cont;
+            queue.addContinuation(cont);
+            return queue.stream();
 
+        });
 
     }
     default <R> ReactiveSeq<R> parallel(ForkJoinPool fj,Function<? super Stream<T>,? extends Stream<? extends R>> fn){
-        Queue<R> queue = QueueFactories.<R>unboundedNonBlockingQueue()
+        return defer(()-> {
+            Queue<R> queue = QueueFactories.<R>unboundedNonBlockingQueue()
                 .build();
 
-        ReactiveSeq<? extends Iterator<? extends R>> stream = ReactiveSeq.<Stream<? extends R>>generate(() -> foldParallel(fj,fn))
+            ReactiveSeq<? extends Iterator<? extends R>> stream = ReactiveSeq.<Stream<? extends R>>generate(() -> foldParallel(fj, fn))
                 .take(1)
-                .map(s->s.iterator());
-        Iterator[] it = {null};
-        Continuation[] store = {null};
-        Continuation cont =
-                new Continuation(()->{
-                    if(it[0]==null)
+                .map(s -> s.iterator());
+            Iterator[] it = {null};
+            Continuation[] store = {null};
+            Continuation cont =
+                new Continuation(() -> {
+                    if (it[0] == null)
                         it[0] = stream.asFunction().apply(0l);
                     Iterator<R> local = it[0];
                     try {
@@ -923,7 +926,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
                             queue.offer(local.next());
                         }
-                    }catch(Throwable t){
+                    } catch (Throwable t) {
                         queue.close();
                         throw ExceptionSoftener.throwSoftenedException(t);
                     }
@@ -931,10 +934,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
                 });
-        ;
-        store[0]=cont;
-        queue.addContinuation(cont);
-        return queue.stream();
+            ;
+            store[0] = cont;
+            queue.addContinuation(cont);
+            return queue.stream();
+        });
 
 
     }
@@ -3014,9 +3018,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default Maybe<T> single() {
-        final Iterator<T> it = iterator();
+
 
         return Maybe.<Object>fromEvalNullable(Eval.later(() -> {
+            final Iterator<T> it = iterator();
             if(it.hasNext()) {
                 Object res = it.next();
                 if(it.hasNext())
@@ -3083,12 +3088,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Element and Sequence
      */
     default Tuple2<T, ReactiveSeq<T>> elementAtAndStream(final long index) {
-        final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> tuple = this.duplicate();
-        return tuple.map1(s -> s.zipWithIndex()
-                                .filter(t -> t._2() == index)
-                                .findFirst()
-                                .map(t -> t._1())
-                                .get());
+
+            final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> tuple = this.duplicate();
+            return tuple.map1(s -> s.zipWithIndex()
+                .filter(t -> t._2() == index)
+                .findFirst()
+                .map(t -> t._1())
+                .get());
+
     }
 
     /**
@@ -3104,16 +3111,19 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *         element
      */
     default ReactiveSeq<Tuple2<T, Long>> elapsed() {
-        final AtomicLong last = new AtomicLong(
-                                               System.currentTimeMillis());
 
-        return zip(ReactiveSeq.generate(() -> {
-            final long now = System.currentTimeMillis();
+        return defer(()->{
+            final AtomicLong last = new AtomicLong(
+                                                   System.currentTimeMillis());
 
-            final long result = now - last.get();
-            last.set(now);
-            return result;
-        }));
+            return zip(ReactiveSeq.generate(() -> {
+                final long now = System.currentTimeMillis();
+
+                final long result = now - last.get();
+                last.set(now);
+                return result;
+            }));
+        });
     }
 
     /**
@@ -3676,18 +3686,22 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     default ReactiveSeq<T> recoverWith(final BiFunction<Integer,Throwable,? extends Publisher<? extends T>> fn){
-        AtomicInteger count = new AtomicInteger(0);
-        return recoverWith(t->{
-            return fn.apply(count.getAndIncrement(),t);
+        return defer(()->{
+            AtomicInteger count = new AtomicInteger(0);
+            return recoverWith(t->{
+                return fn.apply(count.getAndIncrement(),t);
+            });
         });
     }
     default <X extends Throwable> ReactiveSeq<T> recoverWith(Class<X> type, final BiFunction<Integer,X,? extends Publisher<? extends T>> fn){
-        AtomicInteger count = new AtomicInteger(0);
-        return recoverWith(t->{
-            if (type.isAssignableFrom(t.getClass())) {
-                return fn.apply(count.getAndIncrement(), (X)t);
-            }
-            throw ExceptionSoftener.throwSoftenedException(t);
+        return defer(()-> {
+            AtomicInteger count = new AtomicInteger(0);
+            return recoverWith(t -> {
+                if (type.isAssignableFrom(t.getClass())) {
+                    return fn.apply(count.getAndIncrement(), (X) t);
+                }
+                throw ExceptionSoftener.throwSoftenedException(t);
+            });
         });
     }
 
@@ -3793,16 +3807,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Filtered ReactiveSeq
      */
     default ReactiveSeq<T> removeValue(final T t) {
-        boolean[] found = {false};
-        return this.filter(v -> {
-            if(found[0])
+        return defer(()-> {
+            boolean[] found = {false};
+            return this.filter(v -> {
+                if (found[0])
+                    return true;
+                if (v == t) {
+                    found[0] = true;
+                    return false;
+                }
                 return true;
-            if(v==t){
-                found[0]=true;
-                return false;
-            }
-            return true;
 
+            });
         });
     }
 
@@ -3881,11 +3897,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default ReactiveSeq<ReactiveSeq<T>> combinations() {
         return ReactiveSeq.defer(()->{
             Object[] a = toArray();
-            System.out.println("A" + Arrays.toString(a));
             ReactiveSeq<ReactiveSeq<T>> r =  range(1, a.length+1).map(size->Streams.<T>combinations(size,a))
                                      .flatMap(s -> s)
                                      .prepend(ReactiveSeq.<T>empty());
-            System.out.println(r.map(a1->a1.toList()).toList());
             return r;
         });
 
@@ -4471,24 +4485,26 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Deprecated //name will be refactored to merge in the future
     default ReactiveSeq<T> mergeP(final QueueFactory<T> factory,final Publisher<T>... publishers) {
-        final Counter c = new Counter();
-        c.active.set(publishers.length + 1);
-        final QueueBasedSubscriber<T> init = QueueBasedSubscriber.subscriber(factory, c, publishers.length);
+        return defer(()->{
+            final Counter c = new Counter();
+            c.active.set(publishers.length + 1);
+            final QueueBasedSubscriber<T> init = QueueBasedSubscriber.subscriber(factory, c, publishers.length);
 
-        final Supplier<Continuation> sp = () -> {
-            subscribe(init);
-            for (final Publisher next : publishers) {
-                next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, publishers.length));
-            }
+            final Supplier<Continuation> sp = () -> {
+                subscribe(init);
+                for (final Publisher next : publishers) {
+                    next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, publishers.length));
+                }
 
-            init.close();
+                init.close();
 
-            return Continuation.empty();
-        };
-        final Continuation continuation = new Continuation(
-                sp);
-        init.addContinuation(continuation);
-        return ReactiveSeq.fromStream(init.jdkStream());
+                return Continuation.empty();
+            };
+            final Continuation continuation = new Continuation(
+                    sp);
+            init.addContinuation(continuation);
+            return ReactiveSeq.fromStream(init.jdkStream());
+        });
     }
     default ReactiveSeq<T> publishTo(Adapter<T>... adapters){
         return peek(e->{
@@ -4505,26 +4521,28 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         });
     }
     default ReactiveSeq<T> merge(Adapter<T>... adapters){
-        Publisher<T>[] publishers = ReactiveSeq.of(adapters).map(a->a.stream()).toArray(n->new Publisher[n]);
+        return defer(()->{
+            Publisher<T>[] publishers = ReactiveSeq.of(adapters).map(a->a.stream()).toArray(n->new Publisher[n]);
 
-        final Counter c = new Counter();
-        c.active.set(publishers.length + 1);
-        final QueueBasedSubscriber<T> init = QueueBasedSubscriber.subscriber(QueueFactories.boundedQueue(5_000), c, publishers.length);
+            final Counter c = new Counter();
+            c.active.set(publishers.length + 1);
+            final QueueBasedSubscriber<T> init = QueueBasedSubscriber.subscriber(QueueFactories.boundedQueue(5_000), c, publishers.length);
 
-        final Supplier<Continuation> sp = () -> {
-            backpressureAware().subscribe(init);
-            for (final Publisher next : publishers) {
-                next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, publishers.length));
-            }
+            final Supplier<Continuation> sp = () -> {
+                backpressureAware().subscribe(init);
+                for (final Publisher next : publishers) {
+                    next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, publishers.length));
+                }
 
-            init.close();
+                init.close();
 
-            return Continuation.empty();
-        };
-        final Continuation continuation = new Continuation(
-                sp);
-        init.addContinuation(continuation);
-        return ReactiveSeq.fromStream(init.jdkStream());
+                return Continuation.empty();
+            };
+            final Continuation continuation = new Continuation(
+                    sp);
+            init.addContinuation(continuation);
+            return ReactiveSeq.fromStream(init.jdkStream());
+        });
     }
     <R> R fold(Function<? super ReactiveSeq<T>,? extends R> sync, Function<? super ReactiveSeq<T>,? extends R> reactiveStreams,
                Function<? super ReactiveSeq<T>,? extends R> asyncNoBackPressure);
@@ -4550,39 +4568,47 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default <R1,R2,R3> ReactiveSeq<R3> fanOutZipIn(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R1>> path1,
                                                     Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R2>> path2,
                                                      BiFunction<? super R1, ? super R2, ? extends R3> zipFn){
-        Seq<ReactiveSeq<T>> list = multicast(2);
-        return path1.apply(list.getOrElse(0,empty())).zip(path2.apply(list.getOrElse(1,empty())),zipFn);
+        return defer(()-> {
+            Seq<ReactiveSeq<T>> list = multicast(2);
+            return path1.apply(list.getOrElse(0, empty())).zip(path2.apply(list.getOrElse(1, empty())), zipFn);
+        });
 
     }
     default <R1,R2,R3> ReactiveSeq<R3> parallelFanOutZipIn(ForkJoinPool fj, Function<? super Stream<T>, ? extends Stream<? extends R1>> path1,
                                                    Function<? super Stream<T>, ? extends Stream<? extends R2>> path2,
                                                    BiFunction<? super R1, ? super R2, ? extends R3> zipFn){
-        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate(()->new ArrayDeque<T>(100));
-        Tuple2<? extends Stream<? extends R1>, ? extends Stream<? extends R2>> d2 = d.map1(path1).map2(path2);
+        return defer(()->{
+            Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate(()->new ArrayDeque<T>(100));
+            Tuple2<? extends Stream<? extends R1>, ? extends Stream<? extends R2>> d2 = d.map1(path1).map2(path2);
 
-        ReactiveSeq<R1> res1 = d._1().parallel(fj, path1);
-        ReactiveSeq<R2> res2 = d._2().parallel(fj, path2);
-        return res1.zip(res2,zipFn);
+            ReactiveSeq<R1> res1 = d._1().parallel(fj, path1);
+            ReactiveSeq<R2> res2 = d._2().parallel(fj, path2);
+            return res1.zip(res2,zipFn);
+        });
 
     }
     default <R> ReactiveSeq<R> fanOut(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path1,
                                       Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path2){
-        Seq<ReactiveSeq<T>> list = multicast(2);
-        Publisher<R> pub = (Publisher<R>)path2.apply(list.getOrElse(1,empty()));
-        ReactiveSeq<R> seq = (ReactiveSeq<R>)path1.apply(list.getOrElse(0,empty()));
-        return  seq.mergeP(pub);
+        return defer(()-> {
+            Seq<ReactiveSeq<T>> list = multicast(2);
+            Publisher<R> pub = (Publisher<R>) path2.apply(list.getOrElse(1, empty()));
+            ReactiveSeq<R> seq = (ReactiveSeq<R>) path1.apply(list.getOrElse(0, empty()));
+            return seq.mergeP(pub);
+        });
 
     }
 
     default <R> ReactiveSeq<R> parallelFanOut(ForkJoinPool fj,Function<? super Stream<T>, ? extends Stream<? extends R>> path1,
                                       Function<? super Stream<T>, ? extends Stream<? extends R>> path2){
 
-        Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate(()->new ArrayDeque<T>(100));
-        Tuple2<? extends Stream<? extends R>, ? extends Stream<? extends R>> d2 = d.map1(path1).map2(path2);
+        return defer(()-> {
+            Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> d = duplicate(() -> new ArrayDeque<T>(100));
+            Tuple2<? extends Stream<? extends R>, ? extends Stream<? extends R>> d2 = d.map1(path1).map2(path2);
 
-        ReactiveSeq<R> res1 = d._1().parallel(fj, path1);
-        ReactiveSeq<R> res2 = d._2().parallel(fj, path2);
-        return res1.mergeP(res2);
+            ReactiveSeq<R> res1 = d._1().parallel(fj, path1);
+            ReactiveSeq<R> res2 = d._2().parallel(fj, path2);
+            return res1.mergeP(res2);
+        });
 
 
 
@@ -4591,12 +4617,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                       Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path2,
                                       Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path3){
 
-
-        Seq<ReactiveSeq<T>> list = multicast(3);
-        Publisher<R> pub2 = (Publisher<R>)path2.apply(list.getOrElse(1,empty()));
-        Publisher<R> pub3 = (Publisher<R>)path3.apply(list.getOrElse(2,empty()));
-        ReactiveSeq<R> seq = (ReactiveSeq<R>)path1.apply(list.getOrElse(0,empty()));
-        return  seq.mergeP(pub2,pub3);
+        return defer(()-> {
+            Seq<ReactiveSeq<T>> list = multicast(3);
+            Publisher<R> pub2 = (Publisher<R>) path2.apply(list.getOrElse(1, empty()));
+            Publisher<R> pub3 = (Publisher<R>) path3.apply(list.getOrElse(2, empty()));
+            ReactiveSeq<R> seq = (ReactiveSeq<R>) path1.apply(list.getOrElse(0, empty()));
+            return seq.mergeP(pub2, pub3);
+        });
 
 
 
@@ -4606,13 +4633,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                               Function<? super Stream<T>, ? extends Stream<? extends R>> path3){
 
 
-        Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate(()->new ArrayDeque<T>(100));
-        val res = d.map1(path1).map2(path2).map3(path3);
+        return defer(()-> {
+            Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> d = triplicate(() -> new ArrayDeque<T>(100));
+            val res = d.map1(path1).map2(path2).map3(path3);
 
-        ReactiveSeq<R> res1 = d._1().parallel(fj, path1);
-        ReactiveSeq<R> res2 = d._2().parallel(fj, path2);
-        ReactiveSeq<R> res3 = d._3().parallel(fj, path3);
-        return res1.mergeP(res2,res3);
+            ReactiveSeq<R> res1 = d._1().parallel(fj, path1);
+            ReactiveSeq<R> res2 = d._2().parallel(fj, path2);
+            ReactiveSeq<R> res3 = d._3().parallel(fj, path3);
+            return res1.mergeP(res2, res3);
+        });
 
 
 
@@ -4622,11 +4651,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                                       Function<? super Stream<T>, ? extends Stream<? extends R3>> path3,
                                                       Function3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn){
 
-        Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate(()->new ArrayDeque<T>(100));
-        ReactiveSeq<R1> res1 = d._1().parallel(fj, path1);
-        ReactiveSeq<R2> res2 = d._2().parallel(fj, path2);
-        ReactiveSeq<R3> res3 = d._3().parallel(fj, path3);
-        return res1.zip3(res2,res3,zipFn);
+        return defer(()-> {
+            Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> d = triplicate(() -> new ArrayDeque<T>(100));
+            ReactiveSeq<R1> res1 = d._1().parallel(fj, path1);
+            ReactiveSeq<R2> res2 = d._2().parallel(fj, path2);
+            ReactiveSeq<R3> res3 = d._3().parallel(fj, path3);
+            return res1.zip3(res2, res3, zipFn);
+        });
 
     }
     default <R1,R2,R3,R4> ReactiveSeq<R4> fanOutZipIn(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R1>> path1,
@@ -4634,10 +4665,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                       Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R3>> path3,
                                             Function3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn){
 
-        Seq<ReactiveSeq<T>> list = multicast(3);
-        return path1.apply(list.getOrElse(0,empty()))
-                        .zip3(path2.apply(list.getOrElse(1,empty())),
-                            path3.apply(list.getOrElse(2,empty())),zipFn);
+        return defer(()-> {
+            Seq<ReactiveSeq<T>> list = multicast(3);
+            return path1.apply(list.getOrElse(0, empty()))
+                .zip3(path2.apply(list.getOrElse(1, empty())),
+                    path3.apply(list.getOrElse(2, empty())), zipFn);
+        });
 
     }
     default <R> ReactiveSeq<R> fanOut(Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path1,
@@ -4645,12 +4678,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                       Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path3,
                                       Function<? super ReactiveSeq<T>, ? extends ReactiveSeq<? extends R>> path4){
 
-        Seq<ReactiveSeq<T>> list = multicast(4);
-        Publisher<R> pub2 = (Publisher<R>)path2.apply(list.getOrElse(1,empty()));
-        Publisher<R> pub3 = (Publisher<R>)path3.apply(list.getOrElse(2,empty()));
-        Publisher<R> pub4 = (Publisher<R>)path4.apply(list.getOrElse(3,empty()));
-        ReactiveSeq<R> seq = (ReactiveSeq<R>)path1.apply(list.getOrElse(0,empty()));
-        return  seq.mergeP(pub2,pub3,pub4);
+        return defer(()-> {
+            Seq<ReactiveSeq<T>> list = multicast(4);
+            Publisher<R> pub2 = (Publisher<R>) path2.apply(list.getOrElse(1, empty()));
+            Publisher<R> pub3 = (Publisher<R>) path3.apply(list.getOrElse(2, empty()));
+            Publisher<R> pub4 = (Publisher<R>) path4.apply(list.getOrElse(3, empty()));
+            ReactiveSeq<R> seq = (ReactiveSeq<R>) path1.apply(list.getOrElse(0, empty()));
+            return seq.mergeP(pub2, pub3, pub4);
+        });
 
     }
     default <R> ReactiveSeq<R> parallelFanOut(ForkJoinPool fj,Function<? super Stream<T>, ? extends Stream<? extends R>> path1,
@@ -4658,12 +4693,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                       Function<? super Stream<T>, ? extends Stream<? extends R>> path3,
                                       Function<? super Stream<T>, ? extends Stream<? extends R>> path4){
 
-        val d = quadruplicate(()->new ArrayDeque<T>(100));
-        ReactiveSeq<R> res1 = d._1().parallel(fj, path1);
-        ReactiveSeq<R> res2 = d._2().parallel(fj, path2);
-        ReactiveSeq<R> res3 = d._3().parallel(fj, path3);
-        ReactiveSeq<R> res4 = d._4().parallel(fj, path4);
-        return res1.mergeP(res2,res3,res4);
+        return defer(()-> {
+            val d = quadruplicate(() -> new ArrayDeque<T>(100));
+            ReactiveSeq<R> res1 = d._1().parallel(fj, path1);
+            ReactiveSeq<R> res2 = d._2().parallel(fj, path2);
+            ReactiveSeq<R> res3 = d._3().parallel(fj, path3);
+            ReactiveSeq<R> res4 = d._4().parallel(fj, path4);
+            return res1.mergeP(res2, res3, res4);
+        });
 
     }
 
@@ -4674,12 +4711,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                                     Function4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn){
 
 
-        Seq<ReactiveSeq<T>> list = multicast(4);
-        return path1.apply(list.getOrElse(0,empty()))
-                    .zip4(path2.apply(list.getOrElse(1,empty())),
-                        path3.apply(list.getOrElse(2,empty())),
-                        path4.apply(list.getOrElse(3,empty())),
-                        zipFn);
+        return defer(()-> {
+            Seq<ReactiveSeq<T>> list = multicast(4);
+            return path1.apply(list.getOrElse(0, empty()))
+                .zip4(path2.apply(list.getOrElse(1, empty())),
+                    path3.apply(list.getOrElse(2, empty())),
+                    path4.apply(list.getOrElse(3, empty())),
+                    zipFn);
+        });
 
     }
     default <R1,R2,R3,R4,R5> ReactiveSeq<R5> parallelFanOutZipIn(ForkJoinPool fj,Function<? super Stream<T>, ? extends Stream<? extends R1>> path1,
@@ -4688,13 +4727,15 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                                          Function<? super Stream<T>, ? extends Stream<? extends R4>> path4,
                                                          Function4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn){
 
-        val d = quadruplicate(()->new ArrayDeque<T>(100));
+        return defer(()-> {
+            val d = quadruplicate(() -> new ArrayDeque<T>(100));
 
-        ReactiveSeq<R1> res1 = d._1().parallel(fj, path1);
-        ReactiveSeq<R2> res2 = d._2().parallel(fj, path2);
-        ReactiveSeq<R3> res3 = d._3().parallel(fj, path3);
-        ReactiveSeq<R4> res4 = d._4().parallel(fj, path4);
-        return res1.zip4(res2,res3,res4,zipFn);
+            ReactiveSeq<R1> res1 = d._1().parallel(fj, path1);
+            ReactiveSeq<R2> res2 = d._2().parallel(fj, path2);
+            ReactiveSeq<R3> res3 = d._3().parallel(fj, path3);
+            ReactiveSeq<R4> res4 = d._4().parallel(fj, path4);
+            return res1.zip4(res2, res3, res4, zipFn);
+        });
 
     }
 
@@ -4704,6 +4745,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> changes();
 
     default Topic<T> broadcast(){
+
         Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                                                     .build()
                                                     .withTimeout(1);
