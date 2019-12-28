@@ -455,15 +455,13 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     @Override
     public void prependAppend3() {
         Assert.assertThat(of(1)
-            .prependStream(Stream.of(2)).toList(), containsInAnyOrder(ReactiveSeq.fromIterable(asList(1))
-            .prependStream(Stream.of(2)).toList()));
+            .prependStream(Stream.of(2)).toList(), hasItems(ReactiveSeq.fromIterable(asList(1))
+            .prependStream(Stream.of(2)).toList().toArray(new Integer[0])));
     }
 
     @Override
     public void statelessRemoveFirst() {
         IterableX<Integer> stream = of(5,2,1).removeFirst(e -> Objects.equals(e, 2));
-
-        assertThat(stream.toList(),containsInAnyOrder(Arrays.asList(5,1)));
-        assertThat(stream.toList(),containsInAnyOrder(Arrays.asList(5,1)));
+        assertThat(stream.toList(),hasItems(5,1));
     }
 }

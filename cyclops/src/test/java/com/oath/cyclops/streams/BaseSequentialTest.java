@@ -895,10 +895,12 @@ public class BaseSequentialTest {
 
     @Test
     public void insertAtStreamOutOfRangeEmpty() {
-        List<String> result = of().insertStreamAt(1, Stream.of(100, 200, 300))
+        for (int i = 0; i < 10000; i++) {
+            List<String> result = of().insertStreamAt(1, Stream.of(100, 200, 300))
                 .map(it -> it + "!!").collect(Collectors.toList());
 
-        assertThat(result, equalTo(Arrays.asList("100!!","200!!","300!!")));
+            assertThat(result, equalTo(Arrays.asList("100!!", "200!!", "300!!")));
+        }
     }
 
     @Test

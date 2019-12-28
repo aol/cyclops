@@ -1537,21 +1537,21 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         if(pos==0){
             return prependStream(ReactiveSeq.fromIterable(values));
         }
-        return Spouts.defer(()-> {
+        return Spouts.deferFromStream(()-> {
             long check = new Long(pos);
             boolean added[] = {false};
-            return Spouts.<T>concat(zipWithIndex().flatMap(t -> {
+            return  Spouts.of(zipWithIndex().flatMap(t -> {
                 if (t._2() < check && !added[0])
                     return ReactiveSeq.of(t._1());
                 if (!added[0]) {
                     added[0] = true;
-                    return Spouts.concat(ReactiveSeq.fromIterable(values), ReactiveSeq.of(t._1()));
+                    return ReactiveSeq.concat(ReactiveSeq.fromIterable(values), ReactiveSeq.of(t._1()));
                 }
                 return Stream.of(t._1());
-            }), Spouts.deferFromStream(() -> {
+            }), ReactiveSeq.deferFromStream(() -> {
                     return !added[0] ? ReactiveSeq.fromIterable(values) : ReactiveSeq.empty();
                 }
-            ));
+            )).concatMap(i->i);
         });
 
 
@@ -1568,22 +1568,22 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             return prependStream(values);
         }
 
-        return Spouts.defer(()-> {
+        return Spouts.deferFromStream(()-> {
             long check = new Long(pos);
             boolean added[] = {false};
 
-            return Spouts.<T>concat(zipWithIndex().flatMap(t -> {
+            return Spouts.of(zipWithIndex().flatMap(t -> {
                 if (t._2() < check && !added[0])
                     return ReactiveSeq.of(t._1());
                 if (!added[0]) {
                     added[0] = true;
-                    return Spouts.concat(values, ReactiveSeq.of(t._1()));
+                    return ReactiveSeq.concat(values, ReactiveSeq.of(t._1()));
                 }
                 return Stream.of(t._1());
-            }), Spouts.deferFromStream(() -> {
+            }), ReactiveSeq.deferFromStream(() -> {
                     return !added[0] ? values : ReactiveSeq.empty();
                 }
-            ));
+            )).concatMap(i->i);
         });
 
     }
