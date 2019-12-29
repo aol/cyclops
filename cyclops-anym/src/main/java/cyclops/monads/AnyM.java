@@ -25,7 +25,7 @@ import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.internal.stream.ReactiveStreamX;
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.MonadicValue;
-import com.oath.cyclops.types.Unwrapable;
+import com.oath.cyclops.types.Unwrappable;
 
 import com.oath.cyclops.types.factory.EmptyUnit;
 import com.oath.cyclops.types.factory.Unit;
@@ -107,7 +107,7 @@ import static com.oath.cyclops.types.foldable.Evaluation.LAZY;
  *
  * @param <T> type data wrapped by the underlying monad
  */
-public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
+public interface AnyM<W extends WitnessType<W>,T> extends Unwrappable,
                                                             To<AnyM<W,T>>,
                                                             EmptyUnit<T>,
                                                             Unit<T>,

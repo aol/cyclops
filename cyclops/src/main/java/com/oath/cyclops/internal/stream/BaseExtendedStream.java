@@ -1,6 +1,6 @@
 package com.oath.cyclops.internal.stream;
 
-import com.oath.cyclops.types.Unwrapable;
+import com.oath.cyclops.types.Unwrappable;
 
 import com.oath.cyclops.util.ExceptionSoftener;
 
@@ -20,7 +20,7 @@ import java.util.stream.*;
 /**
  * Created by johnmcclean on 13/01/2017.
  */
-public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T>, Iterable<T>  {
+public abstract class BaseExtendedStream<T> implements Unwrappable, ReactiveSeq<T>, Iterable<T>  {
 
     public abstract Stream<T> unwrapStream();
     @Override

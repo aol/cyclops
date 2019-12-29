@@ -4,7 +4,7 @@ import com.oath.cyclops.anym.AnyMSeq;
 import com.oath.cyclops.anym.AnyMValue;
 import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
-import com.oath.cyclops.types.Unwrapable;
+import com.oath.cyclops.types.Unwrappable;
 
 import com.oath.cyclops.anym.extensability.MonadAdapter;
 import com.oath.cyclops.types.factory.EmptyUnit;
@@ -65,7 +65,7 @@ import static com.oath.cyclops.types.foldable.Evaluation.LAZY;
  * @param <T> type data wrapped by the underlying monad
  */
 public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
-                                                                Unwrapable,
+                                                                Unwrappable,
                                                                 EmptyUnit<T>,
                                                                 Unit<T>,
                                                                 Folds<T>,

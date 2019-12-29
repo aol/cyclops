@@ -1,7 +1,7 @@
 package com.oath.cyclops.anym.transformers;
 
 import com.oath.cyclops.types.MonadicValue;
-import com.oath.cyclops.types.Unwrapable;
+import com.oath.cyclops.types.Unwrappable;
 import com.oath.cyclops.types.Value;
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.Folds;
@@ -17,7 +17,7 @@ import java.util.function.*;
 
 @Deprecated
 public abstract class NonEmptyTransformer<W extends WitnessType<W>,T> implements Publisher<T>,
-                                                                            Unwrapable,Transformable<T>,
+                                                                            Unwrappable,Transformable<T>,
                                                                             Unit<T>,
                                                                             Folds<T>{
 
