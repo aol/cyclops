@@ -122,6 +122,11 @@ public class Ior2Test {
 		assertThat(maybes.map(s->s.toList()),equalTo(Ior.right(Arrays.asList(10,1))));
 	}
 
+    @Test
+    public void testSequenceBoth() {
+        Ior<ReactiveSeq<String>, ReactiveSeq<Integer>> maybes = Ior.sequenceBoth(Arrays.asList(just, none, Ior.right(1)));
+        assertThat(maybes.bimap(l->l.toList(),s->s.toList()),equalTo(Ior.both(Arrays.asList(10,1),Arrays.asList("none"))));
+    }
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
 		Ior<?,PersistentSet<Integer>> maybes =Ior.accumulateRight(Arrays.asList(just,none,Ior.right(1)),Reducers.toPersistentSet());
