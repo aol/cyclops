@@ -92,4 +92,23 @@ public class AppendTest extends BaseImmutableListTest {
         assertThat(of(1,2,3,4,5,6,7).prependAll(10,11,12),equalTo(of(10,11,12,1,2,3,4,5,6,7)));
         assertThat(of(1,2,3,4,5,6,7).prependAll(Seq.of(10,11,12)),equalTo(of(10,11,12,1,2,3,4,5,6,7)));
     }
+
+    @Override
+    public void testCycleWhile() {
+
+    }
+
+    @Override
+    public void testCycleUntil() {
+
+    }
+
+    @Override
+    public void testCycleWhileNoOrd() {
+
+    }
+
+    @Override
+    public void testCycleUntilNoOrd() {
+    }
 }

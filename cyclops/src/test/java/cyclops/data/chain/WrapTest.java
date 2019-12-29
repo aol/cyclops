@@ -95,4 +95,23 @@ public class WrapTest extends BaseImmutableListTest {
          System.out.println("B.class" + b.getClass());
         assertThat(of(1,5,3,4,2).sorted(),equalTo(of(1,2,3,4,5)));
     }
+
+    @Override
+    public void testCycleWhile() {
+
+    }
+
+    @Override
+    public void testCycleUntil() {
+
+    }
+
+    @Override
+    public void testCycleWhileNoOrd() {
+
+    }
+
+    @Override
+    public void testCycleUntilNoOrd() {
+    }
 }
