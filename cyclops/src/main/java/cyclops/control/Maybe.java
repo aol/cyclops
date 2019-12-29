@@ -902,9 +902,7 @@ public interface Maybe<T> extends Option<T> {
 
         @Override
         public Maybe<T> filter(final Predicate<? super T> test) {
-            if (test.test(lazy.get()))
-                return this;
-            return EMPTY;
+            return flatMap(t->test.test(t) ? this : Maybe.nothing());
         }
 
         @Override

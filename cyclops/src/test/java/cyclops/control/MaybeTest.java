@@ -55,6 +55,16 @@ public class MaybeTest extends  AbstractOptionTest implements Printable {
 
     int cap =0;
 
+    @Test
+    public void filterLazy(){
+        Maybe.just(10)
+            .filter(i->{
+                lazy = false;
+                return i>10;
+            });
+
+        assertTrue(lazy);
+    }
 
     boolean lazy = true;
 
