@@ -13,6 +13,7 @@ import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
+import org.junit.Ignore;
 import org.junit.Test;
 import reactor.test.StepVerifier;
 
@@ -50,7 +51,7 @@ public class IteratorTest {
     }
 
     int count =0;
-    @Test
+    @Test @Ignore
     public void testCycleWhileNoOrd() {
         count =0;
 
