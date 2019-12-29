@@ -738,17 +738,47 @@ public interface Folds<T> extends Iterable<T>  {
 
 
     /**
-     * Check that there are specified number of matches of predicate in the
-     * Stream
+     * Check that there are exactly the specified number of matches for the supplied predicate
      *
+     *
+     * e.g.
      * <pre>
      * {@code
      *  assertTrue(ReactiveSeq.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
      * }
      * </pre>
      *
+     *  Alternatively @see {@link Folds#atLeast} and {@link Folds#atMost}
      */
     default boolean xMatch(final int num, final Predicate<? super T> c) {
         return stream().xMatch(num, c);
+    }
+
+    /**
+     * Check that the predicate matches at least the specified number of times
+     */
+    default boolean atLeast(final int num, final Predicate<? super T> c) {
+        int[] matched = {0};
+        return stream().filter(n->{
+            if(c.test(n)) {
+                matched[0]++;
+                return true;
+            }
+            return false;
+        }).takeWhileInclusive(n->matched[0]<num).count()>=num;
+    }
+
+    /**
+     * Check that the predicate matches at most the specified number of times
+     */
+    default boolean atMost(final int num, final Predicate<? super T> c) {
+        int[] matched = {0};
+        return stream().filter(n->{
+            if(c.test(n)) {
+                matched[0]++;
+                return true;
+            }
+            return false;
+        }).takeWhileInclusive(n->matched[0]<num+1).count()<num+1;
     }
 }

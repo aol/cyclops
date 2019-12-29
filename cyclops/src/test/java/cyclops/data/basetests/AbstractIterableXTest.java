@@ -1637,6 +1637,49 @@ public abstract class AbstractIterableXTest {
 		assertTrue(of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
 	}
 
+	@Test
+    public void atLeast1(){
+        assertFalse(of(1,2,3,5,6,7).atLeast(3, i-> i>5));
+    }
+    @Test
+    public void atLeast(){
+        assertTrue(of(1,2,3,5,6,7).atLeast(3, i-> i>1 ));
+        assertTrue(of(1,2,3,5,6,7).atLeast(3, i-> i>2 ));
+        assertTrue(of(1,2,3,5,6,7).atLeast(3, i-> i>3 ));
+        assertTrue(of(1,2,3,5,6,7).atLeast(3, i-> i>4 ));
+        assertFalse(of(1,2,3,5,6,7).atLeast(3, i-> i>5));
+        assertFalse(of(1,2,3,5,6,7).atLeast(3, i-> i>6));
+        assertFalse(of(1,2,3,5,6,7).atLeast(3, i-> i>7));
+
+    }
+    int times = 0;
+    @Test
+    public void atLeastShortCircuit(){
+        times = 0;
+        assertTrue(of(1,2,3,5,6,7).stream().peek(a->times++).atLeast(1, i-> i>0 ));
+        assertThat(times,equalTo(1));
+
+    }
+    @Test
+    public void atMost(){
+        assertFalse(of(1,2,3,5,6,7).atMost(3, i-> i>1 ));
+        assertFalse(of(1,2,3,5,6,7).atMost(3, i-> i>2 ));
+        assertTrue(of(1,2,3,5,6,7).atMost(3, i-> i>3 ));
+        assertTrue(of(1,2,3,5,6,7).atMost(3, i-> i>4 ));
+        assertTrue(of(1,2,3,5,6,7).atMost(3, i-> i>5));
+        assertTrue(of(1,2,3,5,6,7).atMost(3, i-> i>6));
+        assertTrue(of(1,2,3,5,6,7).atMost(3, i-> i>7));
+
+    }
+
+    @Test
+    public void atMostShortCircuit(){
+        times = 0;
+        assertFalse(of(1,2,3,5,6,7).stream().peek(a->times++).atMost(1, i-> i>0 ));
+        assertThat(times,equalTo(2));
+
+    }
+
 
 
 	@Test
