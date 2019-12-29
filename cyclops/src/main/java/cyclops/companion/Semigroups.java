@@ -58,7 +58,7 @@ public interface Semigroups {
     static <T> Semigroup<Chain<T>> chainConcat() {
         return Semigroups.immutableListConcat();
     }
-    static <T> Semigroup<Chain.NonEmptyChain<T>> nonEmptyChainConcat() {
+    static <T> Semigroup<NonEmptyChain<T>> nonEmptyChainConcat() {
         return Semigroups.immutableListConcat();
     }
 
