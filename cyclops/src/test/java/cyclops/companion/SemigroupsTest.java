@@ -1,36 +1,21 @@
 package cyclops.companion;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.function.BinaryOperator;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import cyclops.data.Chain;
-import cyclops.data.Chain.NonEmptyChain;
 import cyclops.data.IntMap;
 import cyclops.data.LazySeq;
+import cyclops.data.NonEmptyChain;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.function.Semigroup;
-import cyclops.companion.Semigroups;
-
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import cyclops.reactive.ReactiveSeq;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 public class SemigroupsTest {
 
