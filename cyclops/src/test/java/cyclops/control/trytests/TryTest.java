@@ -40,6 +40,14 @@ public class TryTest {
 
 		just.toEither(-5000).mapLeft(x-> new Exception()).toTry(Exception.class);
 	}
+	@Test
+    public void infinite() {
+        Try<String, Exception> result = Option.<String>none().toTry(new Exception("asdf"));
+        for (int i = 0; i < 10; i++) {
+            result = result.recoverFlatMap(e -> Try.failure(new Exception("asdf")));
+        }
+        System.out.println(result.toString());
+    }
 
 
 	@Test

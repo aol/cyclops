@@ -306,7 +306,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
         @Override
         public LazyEither<Throwable, RT> flatMapLeftToRight(Function<? super Throwable, ? extends Either<Throwable, RT>> fn) {
-            return either.flatMapLeftToRight(fn);
+            return either.flatMapLeft(fn);
         }
 
         @Override
@@ -1263,7 +1263,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
         @Override
         public LazyEither<ST, PT> flatMapLeftToRight(Function<? super ST, ? extends Either<ST, PT>> fn) {
-            return LazyEither.fromLazy(lazy.map(m->m.flatMapLeftToRight(fn)));
+            return flatMapLeft(fn);
 
         }
 
