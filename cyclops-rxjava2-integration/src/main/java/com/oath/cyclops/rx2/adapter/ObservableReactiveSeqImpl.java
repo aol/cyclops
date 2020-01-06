@@ -288,6 +288,11 @@ public class ObservableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
+    public ReactiveSeq<T> removeFirst(Predicate<? super T> pred) {
+        return observable(Observables.connectToReactiveSeq(observable).removeFirst(pred));
+    }
+
+    @Override
     public ReactiveSeq<T> dropWhile(Predicate<? super T> p) {
         return observable(observable.skipWhile(t->p.test(t)));
     }

@@ -278,6 +278,11 @@ public class FlowableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
+    public ReactiveSeq<T> removeFirst(Predicate<? super T> pred) {
+        return flux(Spouts.from(flowable).removeFirst(pred));
+    }
+
+    @Override
     public ReactiveSeq<T> dropWhile(Predicate<? super T> p) {
         return flux(flowable.skipWhile(Functions.rxPredicate(p)));
     }

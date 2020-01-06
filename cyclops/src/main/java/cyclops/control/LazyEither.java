@@ -194,17 +194,17 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
 
       @Override
-      public Either<Throwable, RT> recover(Supplier<? extends RT> value) {
+      public LazyEither<Throwable, RT> recover(Supplier<? extends RT> value) {
         return either.recover(value);
       }
 
       @Override
-      public Either<Throwable, RT> recover(RT value) {
+      public LazyEither<Throwable, RT> recover(RT value) {
         return either.recover(value);
       }
 
       @Override
-      public Either<Throwable, RT> recoverWith(Supplier<? extends Either<Throwable, RT>> fn) {
+      public LazyEither<Throwable, RT> recoverWith(Supplier<? extends Either<Throwable, RT>> fn) {
         return either.recoverWith(fn);
       }
 
@@ -510,6 +510,15 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         };
         return visitAny(either,fn);
     }
+    @Override
+    LazyEither<LT, RT> recover(Supplier<? extends RT> value);
+
+    @Override
+    LazyEither<LT, RT> recover(RT value);
+
+    @Override
+    LazyEither<LT, RT> recoverWith(Supplier<? extends Either<LT, RT>> fn);
+
     default Trampoline<RT> toTrampoline(Supplier<RT> defaultValue) {
         return Trampoline.more(()->Trampoline.done(orElse(null)));
     }
@@ -1007,18 +1016,22 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
 
       @Override
-      public Either<ST, PT> recover(Supplier<? extends PT> value) {
-        return this.fold(l->Either.right(value.get()), r->this);
+      public LazyEither<ST, PT> recover(Supplier<? extends PT> value) {
+          return new Lazy<ST,PT>(
+              lazy.map(m -> m.recover(value)));
       }
 
       @Override
-      public Either<ST, PT> recover(PT value) {
-        return this.fold(l->Either.right(value), r->this);
+      public LazyEither<ST, PT> recover(PT value) {
+          return new Lazy<ST,PT>(
+              lazy.map(m -> m.recover(value)));
       }
 
       @Override
-      public Either<ST, PT> recoverWith(Supplier<? extends Either<ST, PT>> fn) {
-        return this.fold(l->fn.get(), r->this);
+      public LazyEither<ST, PT> recoverWith(Supplier<? extends Either<ST, PT>> fn) {
+          return new Lazy<ST,PT>(
+              lazy.map(m -> m.recoverWith(fn)));
+
       }
         public Eval<Either<ST, PT>> nestedEval(){
             return (Eval)lazy;
@@ -1302,17 +1315,17 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         private final Eval<PT> value;
 
       @Override
-      public Either<ST, PT> recover(Supplier<? extends PT> value) {
+      public LazyEither<ST, PT> recover(Supplier<? extends PT> value) {
         return this;
       }
 
       @Override
-      public Either<ST, PT> recover(PT value) {
+      public LazyEither<ST, PT> recover(PT value) {
         return this;
       }
 
       @Override
-      public Either<ST, PT> recoverWith(Supplier<? extends Either<ST, PT>> fn) {
+      public LazyEither<ST, PT> recoverWith(Supplier<? extends Either<ST, PT>> fn) {
         return this;
       }
 
@@ -1488,18 +1501,19 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
 
       @Override
-      public Either<ST, PT> recover(Supplier<? extends PT> value) {
-        return Either.right(value.get());
+      public LazyEither<ST, PT> recover(Supplier<? extends PT> value) {
+          return new Lazy<>(Eval.later(() -> LazyEither.right(value.get())));
       }
 
       @Override
-      public Either<ST, PT> recover(PT value) {
-        return Either.right(value);
+      public LazyEither<ST, PT> recover(PT value) {
+          return new Lazy<>(Eval.later(()->LazyEither.right(value)));
+
       }
 
       @Override
-      public Either<ST, PT> recoverWith(Supplier<? extends Either<ST, PT>> fn) {
-        return fn.get();
+      public LazyEither<ST, PT> recoverWith(Supplier<? extends Either<ST, PT>> fn) {
+        return new Lazy<>(Eval.later(()->LazyEither.fromEither(fn.get())));
       }
 
       private Object writeReplace() {
