@@ -732,7 +732,9 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
      * @param fn Transformation function
      * @return Either
      */
-    Either<LT, RT> flatMapLeftToRight(Function<? super LT, ? extends Either<LT, RT>> fn);
+    default Either<LT, RT> flatMapLeftToRight(Function<? super LT, ? extends Either<LT, RT>> fn){
+        return flatMapLeft(fn);
+    }
 
     /**
      * @return True if this is a right Either
@@ -1109,7 +1111,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
 
         @Override
         public Either<L, R> flatMapLeftToRight(final Function<? super L, ? extends Either<L, R>> fn) {
-            return fn.apply(value);
+            return flatMapLeft(fn);
         }
 
 
