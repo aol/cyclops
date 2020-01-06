@@ -9,8 +9,9 @@ import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.reactive.Completable;
-import cyclops.function.*;
-
+import cyclops.function.Function3;
+import cyclops.function.Function4;
+import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import lombok.AccessLevel;
@@ -19,9 +20,16 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.*;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * A right biased Lazy Either4 type. transform / flatMap operators are tail-call optimized
@@ -52,6 +60,9 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
                                                         Sealed5<LT1,LT2,LT3,LT4,RT>,
                                                         Value<RT> {
 
+
+    @Override
+    LazyEither5<LT1, LT2, LT3, LT4, RT> recoverWith(Supplier<? extends LazyEither5<LT1, LT2, LT3, LT4, RT>> supplier);
 
     Option<RT> get();
     /**
@@ -133,6 +144,11 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         @Override
         public boolean completeExceptionally(Throwable error) {
             return complete.completeExceptionally(error);
+        }
+
+        @Override
+        public LazyEither5<Throwable, LT1, LT2, LT3, RT> recoverWith(Supplier<? extends LazyEither5<Throwable, LT1, LT2, LT3, RT>> supplier) {
+            return either.recoverWith(supplier);
         }
 
         @Override
@@ -814,6 +830,12 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
             };
         }
 
+        @Override
+        public LazyEither5<ST, M, M2, M3, PT> recoverWith(Supplier<? extends LazyEither5<ST, M, M2, M3, PT>> supplier) {
+            return new Lazy(
+                lazy.map(m -> m.recoverWith(supplier)));
+        }
+
         public Option<PT> get() {
             return trampoline().get();
         }
@@ -1008,6 +1030,11 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         }
 
         @Override
+        public LazyEither5<ST, M, M2, M3, PT> recoverWith(Supplier<? extends LazyEither5<ST, M, M2, M3, PT>> supplier) {
+            return this;
+        }
+
+        @Override
         public Option<PT> get() {
             return Option.some(value.get());
         }
@@ -1191,6 +1218,11 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         }
 
         @Override
+        public LazyEither5<ST, M, M2, M3, PT> recoverWith(Supplier<? extends LazyEither5<ST, M, M2, M3, PT>> supplier) {
+            return new Lazy<>(Eval.narrow(Eval.later((supplier))));
+        }
+
+        @Override
         public Option<PT> get() {
             return Option.none();
         }
@@ -1362,6 +1394,11 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
             return Maybe.nothing();
 
+        }
+
+        @Override
+        public LazyEither5<ST, M, M2, M3, PT> recoverWith(Supplier<? extends LazyEither5<ST, M, M2, M3, PT>> supplier) {
+            return new Lazy<>(Eval.narrow(Eval.later((supplier))));
         }
 
         @Override
@@ -1537,6 +1574,11 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         }
 
         @Override
+        public LazyEither5<ST, M, M2, M3, PT> recoverWith(Supplier<? extends LazyEither5<ST, M, M2, M3, PT>> supplier) {
+            return new Lazy<>(Eval.narrow(Eval.later((supplier))));
+        }
+
+        @Override
         public Option<PT> get() {
             return Option.none();
         }
@@ -1707,6 +1749,11 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
             return Maybe.nothing();
 
+        }
+
+        @Override
+        public LazyEither5<ST, M, M2, M3, PT> recoverWith(Supplier<? extends LazyEither5<ST, M, M2, M3, PT>> supplier) {
+            return new Lazy<>(Eval.narrow(Eval.later((supplier))));
         }
 
         @Override

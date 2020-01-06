@@ -210,7 +210,7 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     }
 
     @Override
-    default OnEmptySwitch<ImmutableSet<T>, ImmutableSet<T>> onEmptySwitch(Supplier<? extends ImmutableSet<T>> supplier){
+    default ImmutableSet<T> onEmptySwitch(Supplier<? extends ImmutableSet<T>> supplier){
         if(size()==0)
             return supplier.get();
         return this;
