@@ -102,6 +102,13 @@ public interface Validated<E,T> extends Sealed2<NonEmptyList<E>,T>, Transformabl
     }
 
 
+    @Override
+    default Validated<E, T> recoverWith(Supplier<? extends Validated<E, T>> supplier) {
+        return fold(
+            e -> supplier.get(),
+            it -> valid(it));
+    }
+
     public static <E,T> Validated<E,T> valid(T t){
         return new Valid<>(Either.right(t));
     }

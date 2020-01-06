@@ -174,6 +174,10 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         return xor.toTrampoline();
     }
 
+    @Override
+    public Try<T, X> recoverWith(Supplier<? extends Try<T, X>> supplier) {
+        return Try.fromEither(xor.recoverWith(()->supplier.get().asEither()));
+    }
 
     /**
      * Retry a transformation if it fails. Default settings are to retry up to 7

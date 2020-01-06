@@ -17,4 +17,8 @@ public final class SimpleTimer {
     public final long getElapsedNanoseconds() {
         return System.nanoTime() - startNanoSeconds;
     }
+
+    public final long getElapsedMillis(){
+        return (long)(getElapsedNanoseconds()/ 1e+6);
+    }
 }

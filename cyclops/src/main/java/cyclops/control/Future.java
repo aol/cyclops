@@ -86,6 +86,12 @@ public class Future<T> implements To<Future<T>>,
   }
 
 
+    @Override
+    public Future<T> recoverWith(Supplier<? extends Future<T>> supplier) {
+        return this.map(Future::ofResult)
+                   .recover(supplier)
+                   .flatMap(i->i);
+    }
 
     @Override
     public final void subscribe(final Subscriber<? super T> sub) {
@@ -823,12 +829,6 @@ public class Future<T> implements To<Future<T>>,
 
 
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.util.function.Supplier#getValue()
-     */
-
     public T getOrElse(T alt) {
         try {
             return future.join();
@@ -852,6 +852,7 @@ public class Future<T> implements To<Future<T>>,
     public boolean isSuccess() {
         return future.isDone() && !future.isCompletedExceptionally();
     }
+
     /**
      * @see java.util.concurrent.CompletableFuture#isDone
      * @return true if this Future has completed executing

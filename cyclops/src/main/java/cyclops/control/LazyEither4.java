@@ -202,6 +202,11 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         }
 
         @Override
+        public LazyEither4<Throwable, LT1, LT2, RT> recoverWith(Supplier<? extends LazyEither4<Throwable, LT1, LT2, RT>> supplier) {
+            return either.recoverWith(supplier);
+        }
+
+        @Override
         public <R1, R2> LazyEither4<Throwable, LT1, R1, R2> bimap(Function<? super LT2, ? extends R1> fn1, Function<? super RT, ? extends R2> fn2) {
             return either.bimap(fn1,fn2);
         }
@@ -565,37 +570,27 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
         return (Maybe<U>)Filters.super.ofType(type);
     }
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Filters#filterNot(java.util.function.Predicate)
-     */
+
     @Override
     default Maybe<RT> filterNot(Predicate<? super RT> predicate) {
 
         return (Maybe<RT>)Filters.super.filterNot(predicate);
     }
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Filters#notNull()
-     */
+
     @Override
     default Maybe<RT> notNull() {
 
         return (Maybe<RT>)Filters.super.notNull();
     }
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.functor.BiTransformable#bimap(java.util.function.Function,
-     * java.util.function.Function)
-     */
+
+    @Override
+    LazyEither4<LT1, LT2, LT3, RT> recoverWith(Supplier<? extends LazyEither4<LT1, LT2, LT3, RT>> supplier);
+
     @Override
     <R1, R2> LazyEither4<LT1, LT2, R1, R2> bimap(Function<? super LT3, ? extends R1> fn1,
                                                  Function<? super RT, ? extends R2> fn2);
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.functor.Transformable#transform(java.util.function.Function)
-     */
+
     @Override
     <R> LazyEither4<LT1,LT2,LT3, R> map(Function<? super RT, ? extends R> fn);
 
@@ -894,6 +889,12 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         }
 
         @Override
+        public LazyEither4<ST, M, M2, PT> recoverWith(Supplier<? extends LazyEither4<ST, M, M2, PT>> supplier) {
+            return new Lazy(
+                lazy.map(m -> m.recoverWith(supplier)));
+        }
+
+        @Override
         public <R1, R2> LazyEither4<ST, M,R1, R2> bimap(final Function<? super M2, ? extends R1> fn1,
                                                         final Function<? super PT, ? extends R2> fn2) {
             return LazyEither4.fromLazy(lazy.map(m->m.bimap(fn1,fn2)));
@@ -1068,6 +1069,11 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             return false;
         }
 
+        @Override
+        public LazyEither4<ST, M, M2, PT> recoverWith(Supplier<? extends LazyEither4<ST, M, M2, PT>> supplier) {
+            return this;
+        }
+
         /* (non-Javadoc)
          * @see java.lang.Object#hashCode()
          */
@@ -1157,6 +1163,11 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         public boolean isLeft3() {
 
             return false;
+        }
+
+        @Override
+        public LazyEither4<ST, M, M2, PT> recoverWith(Supplier<? extends LazyEither4<ST, M, M2, PT>> supplier) {
+            return new Lazy<>(Eval.narrow(Eval.later((supplier))));
         }
 
         @Override
@@ -1391,6 +1402,11 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             return false;
         }
 
+        @Override
+        public LazyEither4<ST, M, M2, PT> recoverWith(Supplier<? extends LazyEither4<ST, M, M2, PT>> supplier) {
+            return new Lazy<>(Eval.narrow(Eval.later((supplier))));
+        }
+
         /* (non-Javadoc)
          * @see java.lang.Object#hashCode()
          */
@@ -1480,6 +1496,12 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
             return true;
         }
+
+        @Override
+        public LazyEither4<ST, M, M2, PT> recoverWith(Supplier<? extends LazyEither4<ST, M, M2, PT>> supplier) {
+            return new Lazy<>(Eval.narrow(Eval.later((supplier))));
+        }
+
         @Override
         public String toString() {
             return mkString();
