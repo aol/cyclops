@@ -152,7 +152,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     @Override
     public <S, U> ReactiveSeq<Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third) {
-        return createSeq( new Zipping3Spliterator<>(get(),second.spliterator(),third.spliterator(),(a, b, c)->Tuple.tuple(a,b,c)));
+        return createSeq( new Zipping3Spliterator<>(get(), second.spliterator(),third.spliterator(),(a, b, c)->Tuple.tuple(a,b,c)));
     }
 
 
@@ -430,33 +430,34 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
 
     public ReactiveSeq<T> changes(){
+         return ReactiveSeq.defer(()-> {
+             com.oath.cyclops.async.adapters.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+                 .build();
 
-            com.oath.cyclops.async.adapters.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
-                    .build();
 
+             Spliterator<T> copy = copy();
 
-            Spliterator<T> copy = copy();
+             Continuation[] contRef = {null};
+             Signal<T> signal = new Signal<T>(null, queue);
+             AtomicBoolean wip = new AtomicBoolean(false);
+             Continuation cont = new Continuation(() -> {
 
-            Continuation[] contRef ={null};
-            Signal<T> signal = new Signal<T>(null, queue);
-            AtomicBoolean wip = new AtomicBoolean(false);
-            Continuation cont = new Continuation(()->{
+                 if (wip.compareAndSet(false, true)) {
+                     if (!copy.tryAdvance(signal::set)) {
+                         signal.close();
+                         return Continuation.empty();
+                     }
+                     wip.set(false);
+                 }
+                 return contRef[0];
+             });
 
-                if(wip.compareAndSet(false,true)) {
-                    if(!copy.tryAdvance(signal::set)){
-                        signal.close();
-                        return Continuation.empty();
-                    }
-                    wip.set(false);
-                }
-                return contRef[0];
-            });
+             contRef[0] = cont;
 
-            contRef[0]= cont;
+             queue.addContinuation(cont);
 
-            queue.addContinuation(cont);
-
-            return signal.getDiscrete().stream();
+             return signal.getDiscrete().stream();
+         });
 
 
     }

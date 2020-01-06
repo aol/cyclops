@@ -1,10 +1,7 @@
 package cyclops;
 
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
 import io.vavr.collection.Vector;
 import org.junit.Test;
-import org.openjdk.jmh.annotations.TearDown;
 
 import java.util.Arrays;
 

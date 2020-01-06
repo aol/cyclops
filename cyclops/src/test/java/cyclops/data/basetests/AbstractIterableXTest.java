@@ -148,6 +148,7 @@ public abstract class AbstractIterableXTest {
         IterableX<Tuple3<Integer, Integer, Integer>> zipped = it1.zip3(it2, it3);
 
 
+
         StepVerifier.create(zipped)
             .consumeNextWith(t -> assertThat(Seq.of(t._1(),t._2(),t._3()),contains(1,2,3)))
             .expectComplete()
@@ -1199,6 +1200,15 @@ public abstract class AbstractIterableXTest {
 		return 200;
 	}
 
+	@Test
+    public void statelessRemoveFirst(){
+        IterableX<Integer> stream = of(5,2,1).removeFirst(e -> Objects.equals(e, 2));
+
+        assertThat(stream.toList(),equalTo(Arrays.asList(5,1)));
+        assertThat(stream.toList(),equalTo(Arrays.asList(5,1)));
+    }
+
+
 
 	@Test
 	public void batchBySize(){
@@ -2125,6 +2135,7 @@ public abstract class AbstractIterableXTest {
 	                                                .collect(Collectors.toList());
 
 	        List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
+	        System.out.println(right);
 	        assertThat(right,hasItem(100));
 	        assertThat(right,hasItem(200));
 	        assertThat(right,hasItem(300));
@@ -2508,17 +2519,12 @@ public abstract class AbstractIterableXTest {
         assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle(3).toList());
         assertEquals(asList(1, 2, 3, 1, 2, 3), of(1, 2, 3).cycle(2).toList());
     }
-    /**
-    @Test
-    public void testCycleTimesNoOrd() {
-        assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle(3).toListX());
-    }
-**/
+
     int count =0;
     @Test
     public void testCycleWhileNoOrd() {
         count =0;
-        assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleWhile(next->count++<6).toList());
+        assertEquals(asList(1, 2, 3, 1, 2,3),of(1, 2, 3).cycleWhile(next->count++<6).toList());
 
     }
     @Test
@@ -2827,6 +2833,25 @@ public abstract class AbstractIterableXTest {
                     .prependAll(7,8)
                     .insertAt(4,9).deleteBetween(1,2)
                 .insertStreamAt(5,Stream.of(11,12)).stream().count(),equalTo(10L));
+    }
+
+    @Test
+    public void prependAppend3(){
+        Assert.assertThat(of(1)
+            .prependStream(Stream.of(2)).toList(), equalTo(ReactiveSeq.fromIterable(asList(1))
+            .prependStream(Stream.of(2)).toList()));
+
+    }
+
+    public void prependStream(){
+        assertThat(of(1)
+            .prepend(2), equalTo( of(2,1)));
+        assertThat(of(1)
+            .prependAll(asList(2)), equalTo( of(2,1)) );
+        assertThat(of(1)
+            .prependStream(Stream.of(2)), equalTo( of(2,1)) );
+
+
     }
     @Test
     public void insertAndRemove(){

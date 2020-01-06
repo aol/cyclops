@@ -1,38 +1,41 @@
 package cyclops.companion;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.function.BinaryOperator;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import cyclops.data.Chain;
 import cyclops.data.IntMap;
 import cyclops.data.LazySeq;
+import cyclops.data.NonEmptyChain;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.function.Semigroup;
-import cyclops.companion.Semigroups;
-
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import cyclops.reactive.ReactiveSeq;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 public class SemigroupsTest {
 
 
+    @Test
+    public void testChainConcat() {
+        Chain<Integer> list = cyclops.data.Chain.empty();
+        list= list.plus(1);
+        list = list.plus(2);
+        list = list.plus(4);
+        Semigroup<Chain<Integer>> combiner= Semigroups.chainConcat();
+        assertThat(combiner.apply(list,Chain.of(4,5,6)).toList(),equalTo(Arrays.asList(1,2,4,4,5,6)));
+    }
+    @Test
+    public void testNonEmptyChainConcat() {
+        NonEmptyChain<Integer> list = Chain.of(1,2,4);
+
+        Semigroup<Chain<Integer>> combiner= Semigroups.chainConcat();
+        assertThat(combiner.apply(list,Chain.of(4,5,6)).toList(),equalTo(Arrays.asList(1,2,4,4,5,6)));
+    }
     @Test
     public void testCollectionConcatPVector() {
         cyclops.data.Vector<Integer> list = cyclops.data.Vector.empty();

@@ -14,6 +14,7 @@ import cyclops.function.Effect;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import cyclops.data.tuple.Tuple2;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
@@ -33,6 +34,7 @@ import java.util.stream.Stream;
 
 import static com.oath.cyclops.types.foldable.Evaluation.LAZY;
 import static cyclops.reactive.ReactiveSeq.of;
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -58,7 +60,18 @@ public class SpoutsTest {
         count=0;
         err = null;
     }
+    @Test
+    public void testCycleWhileNoReplayable() {
+        count =0;
 
+        ReactiveSeq<Integer> ch =  Spouts.of(1, 2, 3)
+            .cycleWhile(next->count++<6);
+
+        assertThat(ch.toList(), equalTo(asList(1,2,3,1,2,3)));
+
+        count =0;
+        assertThat(ch.toList(), equalTo(asList(1,2,3,1,2,3)));
+    }
     @Test
     public void plusAllSize(){
 

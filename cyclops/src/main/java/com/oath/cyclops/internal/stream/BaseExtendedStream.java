@@ -13,6 +13,7 @@ import cyclops.reactive.ReactiveSeq;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
 import java.util.stream.*;
@@ -260,7 +261,7 @@ public abstract class BaseExtendedStream<T> implements Unwrappable, ReactiveSeq<
     @Override
     public ReactiveSeq<T> onClose(final Runnable closeHandler) {
 
-        return this;
+        return onComplete(closeHandler);
     }
 
     @Override
@@ -297,7 +298,15 @@ public abstract class BaseExtendedStream<T> implements Unwrappable, ReactiveSeq<
     }
     @Override
     public final ReactiveSeq<T> sorted() {
-        return createSeq(unwrapStream().sorted());
+        Comparator<? super T> c = (a,b)-> {
+                            Comparable<T> cA = (Comparable<T>) a;
+                            Comparable<T> cB = (Comparable<T>) b;
+                            Comparator<Comparable> cp =  Comparator.naturalOrder();
+                            return cp.compare(cA,cB);
+
+         };
+        return sorted(c);
+
     }
 
     public  abstract <R> ReactiveSeq<R> mapLazyFn(Supplier<Function<? super T, ? extends R>> fn);
@@ -348,6 +357,21 @@ public abstract class BaseExtendedStream<T> implements Unwrappable, ReactiveSeq<
             };
         };
         return filterLazyPredicate(lazy);
+
+    }
+    public ReactiveSeq<T> removeFirst(Predicate<? super T> pred) {
+
+        Supplier<Predicate<? super T>> predicate = () -> {
+            AtomicBoolean active = new AtomicBoolean(true);
+            return i-> {
+                if (active.get() && pred.test(i)) {
+                    active.set(false);
+                    return false;
+                }
+                return true;
+            };
+        };
+        return this.filterLazyPredicate(predicate);
 
     }
     @Override
