@@ -18,6 +18,7 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -451,4 +452,16 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
             Tuple.tuple(9, 2)));
     }
 
+    @Override
+    public void prependAppend3() {
+        Assert.assertThat(of(1)
+            .prependStream(Stream.of(2)).toList(), hasItems(ReactiveSeq.fromIterable(asList(1))
+            .prependStream(Stream.of(2)).toList().toArray(new Integer[0])));
+    }
+
+    @Override
+    public void statelessRemoveFirst() {
+        IterableX<Integer> stream = of(5,2,1).removeFirst(e -> Objects.equals(e, 2));
+        assertThat(stream.toList(),hasItems(5,1));
+    }
 }
