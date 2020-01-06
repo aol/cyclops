@@ -12,6 +12,8 @@ import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 import cyclops.control.Eval;
 import cyclops.control.Future;
 import cyclops.data.Bag;
+import cyclops.data.Chain;
+import cyclops.data.ImmutableList;
 import cyclops.function.Predicates;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -56,6 +58,21 @@ public class ReactiveSeqTest {
         err = null;
     }
     Throwable err;
+
+    int count =0;
+    @Test
+    public void testCycleWhileNoReplayable() {
+        count =0;
+
+        ReactiveSeq<Integer> ch =  ReactiveSeq.of(1, 2, 3)
+                                              .cycleWhile(next->count++<6);
+
+        assertThat(ch.toList(),equalTo(asList(1,2,3,1,2,3)));
+
+        System.out.println("***");
+        count =0 ;
+        assertThat(ch.toList(),equalTo(asList(1,2,3,1,2,3)));
+    }
 
     @Test
     public void dropRightValues(){
@@ -357,7 +374,7 @@ public class ReactiveSeqTest {
         System.out.println("Stream " + stream + " rs " + rs + " count " + count);
     }
 
-    int count =0;
+
     @Test
     public void compareConcat(){
         List<Integer> oneThousand= Stream.iterate(1,i->i+1).limit(1000).collect(Collectors.toList());

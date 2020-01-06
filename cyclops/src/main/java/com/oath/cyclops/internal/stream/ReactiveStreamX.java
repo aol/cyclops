@@ -479,50 +479,68 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     }
 
+    public ReactiveSeq<T> removeFirst(Predicate<? super T> pred) {
+
+        Supplier<Predicate<? super T>> predicate = () -> {
+            AtomicBoolean active = new AtomicBoolean(true);
+            return i-> {
+                if (active.get() && pred.test(i)) {
+                    active.set(false);
+                    return false;
+                }
+                return true;
+            };
+        };
+        return this.filterLazyPredicate(predicate);
+
+    }
+
     @Override
     public ReactiveSeq<T> changes() {
-        if (async == Type.NO_BACKPRESSURE) {
-            Queue<T> discrete = QueueFactories.<T>unboundedNonBlockingQueue()
-                    .build()
-                    .withTimeout(1);
+        return Spouts.defer(()->{
+            if (async == Type.NO_BACKPRESSURE) {
+                Queue<T> discrete = QueueFactories.<T>unboundedNonBlockingQueue()
+                        .build()
+                        .withTimeout(1);
 
 
-            Signal<T> signal = new Signal<T>(null, discrete);
-            publishTo(signal).forEach(e -> {
-            }, e -> {
-            }, () -> signal.close());
+                Signal<T> signal = new Signal<T>(null, discrete);
+                publishTo(signal).forEach(e -> {
+                }, e -> {
+                }, () -> signal.close());
 
-            return signal.getDiscrete().stream();
-        } else {
-            Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
-                    .build();
-            Signal<T> signal = new Signal<T>(null, queue);
-            Subscription sub = source.subscribe(signal::set, i -> {
-                signal.close();
+                return signal.getDiscrete().stream();
+            } else {
+                Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+                        .build();
+                Signal<T> signal = new Signal<T>(null, queue);
+                Subscription sub = source.subscribe(signal::set, i -> {
+                    signal.close();
 
 
-            }, () -> {
-                signal.close();
-            });
+                }, () -> {
+                    signal.close();
+                });
 
-            Continuation[] contRef = {null};
+                Continuation[] contRef = {null};
 
-            AtomicBoolean wip = new AtomicBoolean(false);
-            Continuation cont = new Continuation(() -> {
+                AtomicBoolean wip = new AtomicBoolean(false);
+                Continuation cont = new Continuation(() -> {
 
-                if (wip.compareAndSet(false, true)) {
-                    sub.request(1l);
-                    wip.set(false);
-                }
-                return contRef[0];
-            });
+                    if (wip.compareAndSet(false, true)) {
+                        sub.request(1l);
+                        wip.set(false);
+                    }
+                    return contRef[0];
+                });
 
-            contRef[0] = cont;
+                contRef[0] = cont;
 
-            queue.addContinuation(cont);
+                queue.addContinuation(cont);
 
-            return signal.getDiscrete().stream();
-        }
+                return signal.getDiscrete().stream();
+            }
+        });
 
     }
 
@@ -1057,9 +1075,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Pure#unit(java.lang.Object)
-     */
+
     @Override
     public <T> ReactiveSeq<T> unit(final T unit) {
         return Spouts.of(unit);
@@ -1517,5 +1533,58 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }
         return super.equals(obj);
     }
+    public ReactiveSeq<T> insertAt(int pos, Iterable<? extends T> values){
+        if(pos==0){
+            return prependStream(ReactiveSeq.fromIterable(values));
+        }
+        return Spouts.deferFromStream(()-> {
+            long check = new Long(pos);
+            boolean added[] = {false};
+            return  Spouts.of(zipWithIndex().flatMap(t -> {
+                if (t._2() < check && !added[0])
+                    return ReactiveSeq.of(t._1());
+                if (!added[0]) {
+                    added[0] = true;
+                    return ReactiveSeq.concat(ReactiveSeq.fromIterable(values), ReactiveSeq.of(t._1()));
+                }
+                return Stream.of(t._1());
+            }), ReactiveSeq.deferFromStream(() -> {
+                    return !added[0] ? ReactiveSeq.fromIterable(values) : ReactiveSeq.empty();
+                }
+            )).concatMap(i->i);
+        });
 
+
+
+    }
+
+    @Override
+    public ReactiveSeq<T> insertStreamAt(int pos, Stream<T> stream) {
+        return insertAt(pos,Spouts.fromSpliterator(stream.spliterator()));
+    }
+
+    public ReactiveSeq<T> insertAt(int pos, ReactiveSeq<? extends T> values){
+        if(pos==0){
+            return prependStream(values);
+        }
+
+        return Spouts.deferFromStream(()-> {
+            long check = new Long(pos);
+            boolean added[] = {false};
+
+            return Spouts.of(zipWithIndex().flatMap(t -> {
+                if (t._2() < check && !added[0])
+                    return ReactiveSeq.of(t._1());
+                if (!added[0]) {
+                    added[0] = true;
+                    return ReactiveSeq.concat(values, ReactiveSeq.of(t._1()));
+                }
+                return Stream.of(t._1());
+            }), ReactiveSeq.deferFromStream(() -> {
+                    return !added[0] ? values : ReactiveSeq.empty();
+                }
+            )).concatMap(i->i);
+        });
+
+    }
 }

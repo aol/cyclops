@@ -201,10 +201,15 @@ public abstract class BaseImmutableListTest extends AbstractIterableXTest {
         assertThat(of(1,2,3).flatMap(i-> of(i*2)),equalTo(Seq.of(2,4,6)));
         assertThat(this.<Integer>empty().concatMap(i-> of(i*2)),equalTo(Seq.empty()));
     }
+    @Test
+    public void testFoldLeftA(){
 
+        assertThat(fromStream(ReactiveSeq.range(0,100_000)).foldLeft(Monoids.intSum),equalTo(704982704));
+
+    }
     @Test
     public void testFoldRightA(){
-
+        assertThat(fromStream(ReactiveSeq.range(0,10)).foldRight(Monoids.intSum),equalTo(45));
         assertThat(fromStream(ReactiveSeq.range(0,100_000)).foldRight(Monoids.intSum),equalTo(704982704));
     }
     @Test

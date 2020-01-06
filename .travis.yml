@@ -1,9 +1,19 @@
+sudo: true
 language: java
-install: travis_wait ./gradlew clean build jacoco
 jdk:
-  - oraclejdk8
-before_install:
-  - sudo apt-get update
-  - sudo apt-get install --only-upgrade -y oracle-java8-installer
+  - openjdk8
+install: ./gradlew clean
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+script:
+  - travis_wait 120 ./gradlew assemble
+  - travis_wait 120 ./gradlew build jacoco --parallel --max-workers 4
+
+before_cache:
+    - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+    - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+    directories:
+        - $HOME/.gradle/caches/
+        - $HOME/.gradle/wrapper/

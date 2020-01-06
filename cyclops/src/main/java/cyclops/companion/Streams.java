@@ -65,42 +65,44 @@ public class Streams {
 
     public static <T> ReactiveSeq<ReactiveSeq<T>> combinations(int size,Object[] a){
 
-        final int fromIndex = 0;
-        final int toIndex = a.length;
 
-        final Iterator<ReactiveSeq<T>> iter = new Iterator<ReactiveSeq<T>>() {
-            private final int[] indices = IntStream.range(fromIndex, fromIndex + size).toArray();
+            final int fromIndex = 0;
+            final int toIndex = a.length;
 
-            @Override
-            public boolean hasNext() {
-                return indices[0] <= toIndex - size;
-            }
+            final Iterator<ReactiveSeq<T>> iter = new Iterator<ReactiveSeq<T>>() {
+                private final int[] indices = IntStream.range(fromIndex, fromIndex + size).toArray();
 
-            @Override
-            public ReactiveSeq<T> next() {
-                final List<T> result = new ArrayList<>(size);
-
-                for (int idx : indices) {
-                    result.add((T)a[idx]);
+                @Override
+                public boolean hasNext() {
+                    return indices[0] <= toIndex - size;
                 }
 
-                if (++indices[size - 1] == toIndex) {
-                    for (int i = size - 1; i > 0; i--) {
-                        if (indices[i] > toIndex - (size - i)) {
-                            indices[i - 1]++;
+                @Override
+                public ReactiveSeq<T> next() {
+                    final List<T> result = new ArrayList<>(size);
 
-                            for (int j = i; j < size; j++) {
-                                indices[j] = indices[j - 1] + 1;
+                    for (int idx : indices) {
+                        result.add((T) a[idx]);
+                    }
+
+                    if (++indices[size - 1] == toIndex) {
+                        for (int i = size - 1; i > 0; i--) {
+                            if (indices[i] > toIndex - (size - i)) {
+                                indices[i - 1]++;
+
+                                for (int j = i; j < size; j++) {
+                                    indices[j] = indices[j - 1] + 1;
+                                }
                             }
                         }
                     }
+
+                    return ReactiveSeq.fromList(result);
                 }
+            };
 
-                return ReactiveSeq.fromList(result);
-            }
-        };
+            return ReactiveSeq.fromIterator(iter);
 
-        return ReactiveSeq.fromIterator(iter);
     }
     public static <T> ReactiveSeq<ReactiveSeq<T>> permutations(Object[] a){
 

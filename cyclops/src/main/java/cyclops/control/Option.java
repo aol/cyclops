@@ -630,6 +630,14 @@ public interface Option<T> extends To<Option<T>>,
     }
 
 
+
+    default Option<T> onEmpty(Runnable r){
+        if(!isPresent()){
+            r.run();
+        }
+        return this;
+    }
+
     @Override
     default Option<T> peek(final Consumer<? super T> c) {
 

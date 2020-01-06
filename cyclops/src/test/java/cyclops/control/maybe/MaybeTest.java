@@ -11,6 +11,7 @@ import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
+import cyclops.control.AbstractOptionTest;
 import cyclops.control.AbstractValueTest;
 import cyclops.control.Either;
 import cyclops.control.Eval;
@@ -48,13 +49,15 @@ import static cyclops.data.tuple.Tuple.tuple;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
-public class MaybeTest extends AbstractValueTest implements Printable {
+
+public class MaybeTest extends AbstractOptionTest implements Printable {
 
     Maybe<Integer> just;
     Maybe<Integer> none;
 
     @Before
     public void setUp() throws Exception {
+        lazy = true;
         just = Maybe.just(10);
         none = Maybe.nothing();
         cap =0;
@@ -62,6 +65,19 @@ public class MaybeTest extends AbstractValueTest implements Printable {
     }
 
     int cap =0;
+
+    @Test
+    public void filterLazy(){
+        Maybe.just(10)
+            .filter(i->{
+                lazy = false;
+                return i>10;
+            });
+
+        assertTrue(lazy);
+    }
+
+    boolean lazy = true;
 
 
     @Test
@@ -199,7 +215,6 @@ public class MaybeTest extends AbstractValueTest implements Printable {
         assertThat(just.recoverWith(()->Maybe.just(5)).toOptional().get(),equalTo(10));
     }
 
-    boolean lazy = true;
 
     @Test
     public void lazyTest() {
@@ -678,17 +693,17 @@ public class MaybeTest extends AbstractValueTest implements Printable {
 	}
 
   @Override
-  protected <T> MonadicValue<T> of(T value) {
+  protected <T> Maybe<T> of(T value) {
     return Maybe.just(value);
   }
 
   @Override
-  protected <T> MonadicValue<T> empty() {
+  protected <T> Maybe<T> empty() {
     return Maybe.nothing();
   }
 
   @Override
-  protected <T> MonadicValue<T> fromPublisher(Publisher<T> p) {
+  protected <T> Maybe<T> fromPublisher(Publisher<T> p) {
     return Maybe.fromPublisher(p);
   }
 }
