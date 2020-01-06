@@ -183,6 +183,11 @@ public interface Maybe<T> extends Option<T> {
         }
 
         @Override
+        public Maybe<T2> onEmpty(Runnable r) {
+            return maybe.onEmpty(r);
+        }
+
+        @Override
         public boolean isFailed() {
             return complete.isCompletedExceptionally();
         }
@@ -845,6 +850,8 @@ public interface Maybe<T> extends Option<T> {
     }
 
 
+    @Override
+    Maybe<T> onEmpty(Runnable r);
 
     @Override
     default Maybe<T> peek(final Consumer<? super T> c) {
@@ -889,10 +896,13 @@ public interface Maybe<T> extends Option<T> {
         }
 
         @Override
+        public Maybe<T> onEmpty(Runnable r) {
+            return this;
+        }
+
+        @Override
         public Maybe<T> filter(final Predicate<? super T> test) {
-            if (test.test(lazy.get()))
-                return this;
-            return EMPTY;
+            return flatMap(t->test.test(t) ? this : Maybe.nothing());
         }
 
         @Override
@@ -1097,6 +1107,11 @@ public interface Maybe<T> extends Option<T> {
 
 
         @Override
+        public Maybe<T> onEmpty(Runnable r){
+            return new Lazy<T>(
+                lazy.map(m -> m.onEmpty(r)));
+        }
+        @Override
         public Maybe<T> recover(final T value) {
             return new Lazy<T>(
                     lazy.map(m -> m.recover(value)));
@@ -1229,6 +1244,14 @@ public interface Maybe<T> extends Option<T> {
         @Override
         public Maybe<T> filter(final Predicate<? super T> test) {
             return EMPTY;
+        }
+
+        @Override
+        public Maybe<T> onEmpty(Runnable r) {
+            return new Lazy<>(Eval.later(()->{
+                r.run();
+                return this;
+            }));
         }
 
 

@@ -1,5 +1,6 @@
 package cyclops.instances.control;
 
+import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.ior;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher2;
@@ -162,12 +163,23 @@ public class IorInstances {
 
         @Override
         public <T> Higher<Higher<ior, L>, T> raiseError(L l) {
-            return null;
+            return Ior.left(l);
         }
 
         @Override
         public <T> Higher<Higher<ior, L>, T> handleErrorWith(Function<? super L, ? extends Higher<Higher<ior, L>, ? extends T>> fn, Higher<Higher<ior, L>, T> ds) {
-            return null;
+            Function<? super L, ? extends Ior<L, T>> fn2 = fn.andThen(s -> {
+
+                Higher<Higher<ior, L>, T> x = (Higher<Higher<ior, L>, T>) s;
+                Ior<L, T> r = Ior.narrowK(x);
+                return r;
+            });
+            Ior<L,T> ior = Ior.narrowK(ds);
+            if(ior.isLeft()){
+                Ior<L, ? extends T> res = narrowK(fn.apply(ior.getLeft().orElse(null)));
+                return (Ior<L, T>)res;
+            }
+            return ior;
         }
 
         @Override
