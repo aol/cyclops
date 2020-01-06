@@ -28,6 +28,7 @@ public class EitherTest {
 
     @Test
     public void partitionEithersOrdered(){
+
         Seq<Either<Integer,String>> s = Seq.of(right("hello"),left(1),right("world"),left(2));
         Tuple2<Vector<Integer>, Vector<String>> v = Either.partitionEithers(s);
         Vector<Integer> ints = v._1();
