@@ -1901,12 +1901,12 @@ public class Streams {
     }
 
     public final static <T> String join(final Stream<T> stream, final String sep) {
-        return stream.map(t -> t.toString())
+        return stream.map(t -> t!=null ? t.toString() : "null")
                      .collect(java.util.stream.Collectors.joining(sep));
     }
 
     public final static <T> String join(final Stream<T> stream, final String sep, final String start, final String end) {
-        return stream.map(t -> t.toString())
+        return stream.map(t -> t!=null ? t.toString() : "null")
                      .collect(java.util.stream.Collectors.joining(sep, start, end));
     }
 

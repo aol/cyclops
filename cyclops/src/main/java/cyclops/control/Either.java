@@ -11,8 +11,12 @@ import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 
+import cyclops.companion.Monoids;
+import cyclops.companion.Reducers;
+import cyclops.data.ImmutableList;
 import cyclops.data.LazySeq;
 import cyclops.data.Vector;
+import cyclops.data.tuple.Tuple2;
 import cyclops.function.*;
 import cyclops.companion.Semigroups;
 
@@ -116,6 +120,8 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
                                          Unit<RT>, Transformable<RT>, Filters<RT>,
                                          Serializable,
                                          Higher2<either, LT, RT> {
+
+
 
 
     public static  <L,T,R> Either<L,R> tailRec(T initial, Function<? super T, ? extends Either<L,? extends Either<T, R>>> fn){
@@ -468,6 +474,29 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
   public static <L,T,R> Either<L,Stream<R>> traverse(Function<? super T,? extends R> fn,Stream<Either<L,T>> stream) {
     return sequence(stream.map(h->h.map(fn)));
   }
+
+
+    public static <L, R> Tuple2<Vector<L>, Vector<R>> partitionEithers(Iterable<Either<L, R>> eithers) {
+
+        return ReactiveSeq.fromIterable(eithers)
+                        .partition(Either::isLeft)
+                        .bimap(l -> l.map(e -> e.fold(left -> left, right -> null)).vector(),
+                            r -> r.map(e -> e.fold(left -> null, right -> right)).vector());
+    }
+
+    public static <L, R> Vector<L> lefts(Iterable<Either<L, R>> eithers) {
+        return ReactiveSeq.fromIterable(eithers)
+                            .filter(Either::isLeft)
+                            .map(e -> e.fold(left -> left, right -> null))
+                            .vector();
+    }
+    public static <L, R> Vector<R> rights(Iterable<Either<L, R>> eithers) {
+        return ReactiveSeq.fromIterable(eithers)
+                            .filter(Either::isRight)
+                            .map(e -> e.fold(left -> null, right -> right))
+                            .vector();
+    }
+
     /**
      * Accumulate the result of the Left types in the Collection of Eithers provided using the supplied Reducer  {@see cyclops2.Reducers}.
      *
