@@ -125,7 +125,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     <A> A[] toArray(IntFunction<A[]> generator);
 
-    ReactiveSeq<T> removeFirst(Predicate<? super T> pred);
+    default ReactiveSeq<T> removeFirst(Predicate<? super T> pred) {
+        return defer(()->{
+            AtomicBoolean active = new AtomicBoolean(true);
+            return filter(i->{
+                if(active.get() && pred.test(i)){
+                    active.set(false);
+                    return false;
+                }
+                return true;
+            });
+        });
+    }
 
     @Override
     default ReactiveSeq<T> plusAll(Iterable<? extends T> list) {

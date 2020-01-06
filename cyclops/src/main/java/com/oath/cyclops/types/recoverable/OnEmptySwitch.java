@@ -23,7 +23,7 @@ public interface OnEmptySwitch<T, R> {
      * @param supplier to create replacement container
      * @return Either this container or if zero, an alternative returned by the provided supplier
      */
-    OnEmptySwitch<T, R> onEmptySwitch(Supplier<? extends R> supplier);
+    R onEmptySwitch(Supplier<? extends R> supplier);
 
 
 }

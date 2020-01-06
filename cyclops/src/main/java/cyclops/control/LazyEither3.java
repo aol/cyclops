@@ -161,6 +161,11 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
         }
 
         @Override
+        public LazyEither3<Throwable, LT1, RT> recoverWith(Supplier<? extends LazyEither3<Throwable, LT1, RT>> fn) {
+            return either.recoverWith(fn);
+        }
+
+        @Override
         public LazyEither3<Throwable, RT, LT1> swap2() {
             return either.swap2();
         }
@@ -479,6 +484,8 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
 
 
 
+    @Override
+    LazyEither3<LT1, LT2, RT> recoverWith(Supplier<? extends LazyEither3<LT1, LT2, RT>> fn);
 
     /**
      * @return Swap the middle and the right types
@@ -693,6 +700,13 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
 
 
         }
+
+        @Override
+        public LazyEither3<ST, M, PT> recoverWith(Supplier<? extends LazyEither3<ST, M, PT>> fn) {
+            return new Lazy(
+                lazy.map(m -> m.recoverWith(fn)));
+        }
+
         @Override
         public Trampoline<LazyEither3<ST,M,PT>> toTrampoline() {
             Trampoline<LazyEither3<ST,M,PT>> trampoline = lazy.toTrampoline();
@@ -925,6 +939,11 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
         }
 
         @Override
+        public LazyEither3<ST, M, PT> recoverWith(Supplier<? extends LazyEither3<ST, M, PT>> fn) {
+            return this;
+        }
+
+        @Override
         public boolean isRight() {
             return true;
         }
@@ -1082,6 +1101,11 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
         }
 
         @Override
+        public LazyEither3<ST, M, PT> recoverWith(Supplier<? extends LazyEither3<ST, M, PT>> fn) {
+            return new Lazy<ST,M,PT>(Eval.narrow(Eval.later((fn))));
+        }
+
+        @Override
         public boolean isRight() {
             return false;
         }
@@ -1226,6 +1250,11 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
 
             return (LazyEither3) this;
 
+        }
+
+        @Override
+        public LazyEither3<ST, M, PT> recoverWith(Supplier<? extends LazyEither3<ST, M, PT>> fn) {
+            return new Lazy<ST,M,PT>(Eval.narrow(Eval.later((fn))));
         }
 
         @Override
