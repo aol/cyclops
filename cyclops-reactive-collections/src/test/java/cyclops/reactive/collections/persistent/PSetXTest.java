@@ -14,6 +14,7 @@ import cyclops.data.tuple.Tuple2;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -42,6 +43,10 @@ public class PSetXTest extends AbstractSetTest {
 
         counter = new AtomicLong(0);
         super.setup();
+    }
+    @Test @Ignore
+    public void printNull() {
+
     }
     @Test
     @Override

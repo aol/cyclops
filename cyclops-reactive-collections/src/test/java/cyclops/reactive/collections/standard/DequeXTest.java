@@ -23,6 +23,7 @@ import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.collections.AbstractCollectionXTest;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
@@ -41,6 +42,10 @@ public class DequeXTest extends AbstractCollectionXTest {
 
         counter = new AtomicLong(0);
 	    super.setup();
+    }
+    @Test @Ignore
+    public void printNull() {
+
     }
 
     @Test
