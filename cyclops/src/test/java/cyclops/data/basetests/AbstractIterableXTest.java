@@ -79,6 +79,10 @@ public abstract class AbstractIterableXTest {
     boolean set = false;
 
     @Test
+    public void printNull(){
+        System.out.println(of(new String[]{null}));
+    }
+    @Test
     public void zip2Seq() {
         IterableX<Integer> it1 = of(1);
         IterableX<Integer> it2 = of(2);
