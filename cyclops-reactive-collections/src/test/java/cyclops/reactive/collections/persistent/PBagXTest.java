@@ -14,6 +14,7 @@ import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -42,6 +43,10 @@ public class PBagXTest extends AbstractSetTest {
 
         counter = new AtomicLong(0);
         super.setup();
+    }
+    @Test @Ignore
+    public void printNull() {
+
     }
     @Override
     protected <T> CollectionX<T> fromStream(Stream<T> s) {
