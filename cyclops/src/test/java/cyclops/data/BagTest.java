@@ -11,6 +11,7 @@ import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -32,6 +33,11 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 
 public class BagTest extends BaseImmutableSetTest {
+
+    @Test @Ignore
+    public void printNull() {
+
+    }
 
     @Test
     public void testBag(){
