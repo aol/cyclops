@@ -43,9 +43,23 @@
         </dependency>
         <dependency>
             <groupId>com.oath.cyclops</groupId>
+            <artifactId>cyclops</artifactId>
+            <version>10.4.0</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.oath.cyclops</groupId>
             <artifactId>cyclops-anym</artifactId>
             <version>10.4.0</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.oath.cyclops</groupId>
+            <artifactId>cyclops-anym</artifactId>
+            <version>10.4.0</version>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.oath.cyclops</groupId>

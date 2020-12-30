@@ -1,25 +1,20 @@
 package cyclops.futurestream.react.simple;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import com.oath.cyclops.util.SimpleTimer;
+import cyclops.futurestream.SimpleReact;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.With;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import org.junit.Test;
-
-import cyclops.futurestream.SimpleReact;
-import com.oath.cyclops.util.SimpleTimer;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.Builder;
-import lombok.experimental.Wither;
-
-
-
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 
 public class AlgorithmCompareTest {
@@ -79,7 +74,7 @@ public class AlgorithmCompareTest {
 
 
 
-	@Wither
+	@With
 	@Getter
 	@AllArgsConstructor
 	@Builder
