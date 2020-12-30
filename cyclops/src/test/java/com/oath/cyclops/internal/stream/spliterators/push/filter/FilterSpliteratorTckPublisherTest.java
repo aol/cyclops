@@ -6,11 +6,11 @@ import cyclops.reactive.Spouts;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;
-import org.reactivestreams.tck.support.PublisherVerificationRules;
+import org.reactivestreams.tck.flow.support.PublisherVerificationRules;
 import org.testng.annotations.Test;
 
 @Test
-public class FilterSpliteratorTckPublisherTest extends PublisherVerification<Long> implements PublisherVerificationRules{
+public class FilterSpliteratorTckPublisherTest extends PublisherVerification<Long> implements PublisherVerificationRules {
 
 	public FilterSpliteratorTckPublisherTest(){
 		  super(new TestEnvironment(300L));
