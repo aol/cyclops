@@ -28,6 +28,7 @@
         <mocikto-core.version>3.6.28</mocikto-core.version>
         <reactive-streams.version>1.0.3</reactive-streams.version>
         <vertx-core.version>4.0.0</vertx-core.version>
+        <commoms-io.version>2.8.0</commoms-io.version>
     </properties>
 
     <dependencies>
