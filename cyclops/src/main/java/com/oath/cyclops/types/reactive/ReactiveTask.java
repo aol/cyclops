@@ -1,13 +1,12 @@
 package com.oath.cyclops.types.reactive;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-
 import cyclops.data.tuple.Tuple3;
+import lombok.Value;
+import lombok.With;
 import org.reactivestreams.Subscription;
 
-import lombok.Value;
-import lombok.experimental.Wither;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 /**
  * Class that represents an active reactive-streams task
@@ -17,9 +16,9 @@ import lombok.experimental.Wither;
  */
 @Value
 public class ReactiveTask implements Subscription {
-    @Wither
+    @With
     Executor exec;
-    @Wither
+    @With
     Tuple3<CompletableFuture<Subscription>, CompletableFuture<?>, CompletableFuture<Boolean>> subscriptionAndTask;
 
     /* (non-Javadoc)

@@ -22,7 +22,7 @@ import com.oath.cyclops.async.adapters.Adapter;
 import cyclops.data.Seq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import lombok.experimental.Wither;
+import lombok.With;
 import org.reactivestreams.Publisher;
 
 import com.oath.cyclops.internal.react.FutureStreamImpl;

@@ -1,12 +1,12 @@
 package com.oath.cyclops.types.traversable;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import com.oath.cyclops.types.Filters;
 import cyclops.companion.Streams;
 import cyclops.control.Eval;
+
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * An interface that represents a non-scalar Filters

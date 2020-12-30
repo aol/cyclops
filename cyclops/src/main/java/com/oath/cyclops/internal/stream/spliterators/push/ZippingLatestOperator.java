@@ -1,10 +1,10 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
 import com.oath.cyclops.async.adapters.Queue;
-import lombok.AllArgsConstructor;
-import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
+import lombok.AllArgsConstructor;
+import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 
 import java.util.ArrayList;
 import java.util.List;

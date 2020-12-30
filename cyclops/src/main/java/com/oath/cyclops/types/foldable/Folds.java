@@ -1,5 +1,20 @@
 package com.oath.cyclops.types.foldable;
 
+import cyclops.control.Maybe;
+import cyclops.control.Option;
+import cyclops.data.HashMap;
+import cyclops.data.HashSet;
+import cyclops.data.TreeSet;
+import cyclops.data.Vector;
+import cyclops.data.*;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.function.Monoid;
+import cyclops.function.Reducer;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
+
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
@@ -9,22 +24,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-
-import cyclops.control.Option;
-import cyclops.data.*;
-import cyclops.data.HashMap;
-import cyclops.data.HashSet;
-import cyclops.data.TreeSet;
-import cyclops.data.Vector;
-import cyclops.data.tuple.Tuple;
-import cyclops.data.tuple.Tuple2;
-import cyclops.data.tuple.Tuple3;
-import cyclops.control.Maybe;
-import cyclops.function.Monoid;
-import cyclops.function.Reducer;
-import cyclops.reactive.ReactiveSeq;
-import cyclops.data.Seq;
-import cyclops.reactive.Spouts;
 
 /**
  * Represents a type that may be reducable (foldable) to a single value or toX

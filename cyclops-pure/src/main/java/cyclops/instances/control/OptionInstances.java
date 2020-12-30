@@ -31,7 +31,7 @@ import cyclops.typeclasses.monad.Traverse;
 import cyclops.typeclasses.monad.TraverseByTraverse;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
-import lombok.experimental.Wither;
+import lombok.With;
 
 import java.util.function.Function;
 
@@ -145,7 +145,7 @@ public class OptionInstances {
   private final OptionTypeclasses INSTANCE = new OptionTypeclasses();
 
   @AllArgsConstructor
-  @Wither
+  @With
   public static class OptionTypeclasses  implements MonadPlus<option>,
                                                     MonadRec<option>,
                                                     TraverseByTraverse<option>,

@@ -7,7 +7,7 @@ import cyclops.data.tuple.Tuple3;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.Wither;
+import lombok.With;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 
@@ -19,7 +19,7 @@ import java.util.function.Predicate;
 
 @AllArgsConstructor
 @Getter
-@Wither
+@With
 public class Zipper<T> implements Iterable<T>,
                                     Higher<zipper,T> {
 

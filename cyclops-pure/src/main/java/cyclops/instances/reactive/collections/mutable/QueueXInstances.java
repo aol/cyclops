@@ -31,7 +31,7 @@ import cyclops.typeclasses.monad.Traverse;
 import cyclops.typeclasses.monad.TraverseByTraverse;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
-import lombok.experimental.Wither;
+import lombok.With;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -146,7 +146,7 @@ public class QueueXInstances {
     private final static QueueXTypeClasses INSTANCE = new QueueXTypeClasses();
 
     @AllArgsConstructor
-    @Wither
+    @With
     public static class QueueXTypeClasses implements MonadPlus<queue>,
         MonadRec<queue>,
         TraverseByTraverse<queue>,

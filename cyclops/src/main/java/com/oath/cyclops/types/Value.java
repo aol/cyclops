@@ -1,30 +1,25 @@
 package com.oath.cyclops.types;
 
+import com.oath.cyclops.matching.SealedOr;
+import cyclops.control.*;
+import cyclops.data.NonEmptyList;
+import cyclops.function.Function0;
+import cyclops.function.Monoid;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
-
-import com.oath.cyclops.matching.SealedOr;
-import cyclops.control.*;
-import cyclops.control.LazyEither;
-import cyclops.control.Maybe;
-import cyclops.data.NonEmptyList;
-import cyclops.function.Function0;
-import cyclops.function.Monoid;
-import cyclops.reactive.Spouts;
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-
-import cyclops.reactive.ReactiveSeq;
-import com.oath.cyclops.types.reactive.ValueSubscriber;
 
 /**
  * A data type that stores at most 1 Values

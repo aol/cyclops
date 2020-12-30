@@ -7,7 +7,7 @@ import com.oath.cyclops.types.futurestream.SimpleReactStream;
 import cyclops.reactive.Spouts;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.experimental.Wither;
+import lombok.With;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
@@ -68,7 +68,7 @@ import java.util.stream.*;
  *
  */
 @Builder
-@Wither
+@With
 public class SimpleReact implements ReactBuilder {
     @Getter
     private final Executor queueService;

@@ -1,13 +1,7 @@
 package com.oath.cyclops.matching;
 
-import static cyclops.control.Option.none;
-
 import cyclops.control.Option;
-import cyclops.data.tuple.Tuple1;
-import cyclops.data.tuple.Tuple2;
-import cyclops.data.tuple.Tuple3;
-import cyclops.data.tuple.Tuple4;
-import cyclops.data.tuple.Tuple5;
+import cyclops.data.tuple.*;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
@@ -15,6 +9,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+
+import static cyclops.control.Option.none;
 
 /**
  * Pattern matching use case contract.

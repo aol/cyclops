@@ -12,7 +12,7 @@ import cyclops.function.checked.*;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.experimental.Wither;
+import lombok.With;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -306,7 +306,7 @@ public class FluentFunctions {
             }
         };
     }
-    @Wither(AccessLevel.PRIVATE)
+    @With(AccessLevel.PRIVATE)
     @AllArgsConstructor
     public static class FluentRunnable<R> implements Effect {
         private final Runnable fn;
@@ -479,7 +479,7 @@ public class FluentFunctions {
             fn.run();
         }
     }
-    @Wither(AccessLevel.PRIVATE)
+    @With(AccessLevel.PRIVATE)
     @AllArgsConstructor
     public static class FluentSupplier<R> implements Function0<R> {
         private final Supplier<R> fn;
@@ -687,7 +687,7 @@ public class FluentFunctions {
 
     }
 
-    @Wither(AccessLevel.PRIVATE)
+    @With(AccessLevel.PRIVATE)
     @AllArgsConstructor
     public static class FluentFunction<T, R> implements Function1<T, R>, Transformable<R> {
         private final Function<T, R> fn;
@@ -1008,7 +1008,7 @@ public class FluentFunctions {
 
     }
 
-    @Wither(AccessLevel.PRIVATE)
+    @With(AccessLevel.PRIVATE)
     @AllArgsConstructor
     public static class FluentBiFunction<T1, T2, R> implements Function2<T1, T2, R> {
         BiFunction<T1, T2, R> fn;
@@ -1383,7 +1383,7 @@ public class FluentFunctions {
 
     }
 
-    @Wither(AccessLevel.PRIVATE)
+    @With(AccessLevel.PRIVATE)
     @AllArgsConstructor
     public static class FluentTriFunction<T1, T2, T3, R> implements Function3<T1, T2, T3, R> {
         private final Function3<T1, T2, T3, R> fn;

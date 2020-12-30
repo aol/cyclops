@@ -1,7 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
 import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 
 /**

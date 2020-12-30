@@ -1,13 +1,12 @@
 package com.oath.cyclops.internal.stream.operators;
 
+import com.oath.cyclops.util.ExceptionSoftener;
+import cyclops.companion.Streams;
+import lombok.AllArgsConstructor;
+
 import java.util.Iterator;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
-import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.companion.Streams;
-
-import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class RecoverOperator<T> {

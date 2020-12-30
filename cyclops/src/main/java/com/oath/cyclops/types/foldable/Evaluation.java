@@ -1,8 +1,6 @@
 package com.oath.cyclops.types.foldable;
 
 
-import java.util.function.Consumer;
-
 public enum Evaluation {
     EAGER, LAZY;
 

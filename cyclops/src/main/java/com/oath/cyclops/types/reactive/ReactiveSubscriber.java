@@ -1,18 +1,16 @@
 package com.oath.cyclops.types.reactive;
 
-import java.util.ArrayList;
-import java.util.Objects;
-
-import com.oath.cyclops.util.ExceptionSoftener;
 import com.oath.cyclops.internal.stream.spliterators.push.CapturingOperator;
+import com.oath.cyclops.util.ExceptionSoftener;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import lombok.Getter;
+import lombok.val;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import cyclops.reactive.ReactiveSeq;
-
-import lombok.val;
+import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * A Subscriber for Observable type event driven Streams that implement backpressure via the reactive-streams API

@@ -1,25 +1,22 @@
 package com.oath.cyclops.async.adapters;
 
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.react.async.subscription.Continueable;
+import com.oath.cyclops.types.futurestream.Continuation;
+import cyclops.control.Option;
+import cyclops.data.HashMap;
+import cyclops.data.Seq;
+import cyclops.reactive.ReactiveSeq;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Synchronized;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import com.oath.cyclops.types.futurestream.Continuation;
-import com.oath.cyclops.async.QueueFactories;
-
-
-import cyclops.control.Option;
-import cyclops.data.HashMap;
-import cyclops.data.Seq;
-import cyclops.reactive.ReactiveSeq;
-import com.oath.cyclops.react.async.subscription.Continueable;
-
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Synchronized;
 
 /**
  * A class that can accept input streams and generate emitted streams where data sent in the Topic is guaranteed to be

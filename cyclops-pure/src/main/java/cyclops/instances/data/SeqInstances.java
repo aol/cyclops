@@ -31,7 +31,7 @@ import cyclops.typeclasses.monad.Traverse;
 import cyclops.typeclasses.monad.TraverseByTraverse;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
-import lombok.experimental.Wither;
+import lombok.With;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -136,7 +136,7 @@ public class SeqInstances {
 
   private final static SeqTypeClasses INSTANCE = new SeqTypeClasses();
   @AllArgsConstructor
-  @Wither
+  @With
   public static class SeqTypeClasses implements MonadPlus<seq>,
                                                     MonadRec<seq>,
                                                     TraverseByTraverse<seq>,

@@ -5,14 +5,13 @@ import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
 import com.oath.cyclops.matching.Sealed4;
 import cyclops.companion.Comparators;
 import cyclops.control.Option;
-
 import cyclops.data.LazySeq;
-import cyclops.reactive.ReactiveSeq;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple1;
 import cyclops.data.tuple.Tuple2;
+import cyclops.reactive.ReactiveSeq;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Arrays;

@@ -1,9 +1,9 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
+import org.reactivestreams.Publisher;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import org.reactivestreams.Publisher;
 
 
 public class FlatMapPublisher<T, R> extends BaseOperator<T, R> {

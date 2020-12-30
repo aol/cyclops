@@ -1,12 +1,9 @@
 package com.oath.cyclops.util.box;
 
-import com.oath.cyclops.types.functor.Transformable;
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.Trampoline;
 import lombok.ToString;
-import org.reactivestreams.Subscriber;
 
 import java.util.Iterator;
 import java.util.Objects;

@@ -34,7 +34,7 @@ import cyclops.typeclasses.monad.MonadZero;
 import cyclops.typeclasses.monad.Traverse;
 import cyclops.typeclasses.monad.TraverseByTraverse;
 import lombok.AllArgsConstructor;
-import lombok.experimental.Wither;
+import lombok.With;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -136,7 +136,7 @@ public class IOInstances {
 
     private final static IOInstances.IOTypeClasses INSTANCE = new IOInstances.IOTypeClasses();
     @AllArgsConstructor
-    @Wither
+    @With
     public static class IOTypeClasses implements MonadPlus<io>,
                                                 MonadRec<io>,
                                                 TraverseByTraverse<io>,

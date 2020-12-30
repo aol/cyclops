@@ -21,9 +21,9 @@ import com.oath.cyclops.types.futurestream.EagerToQueue;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.Wither;
+import lombok.With;
 
-@Wither
+@With
 @Getter
 @AllArgsConstructor
 public class SimpleReactStreamImpl<U> implements SimpleReactStream<U>, EagerToQueue<U> {

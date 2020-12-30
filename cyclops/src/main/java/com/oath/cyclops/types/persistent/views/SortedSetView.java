@@ -1,6 +1,5 @@
 package com.oath.cyclops.types.persistent.views;
 
-import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.types.persistent.PersistentSortedSet;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;

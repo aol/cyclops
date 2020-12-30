@@ -2,7 +2,6 @@ package com.oath.cyclops.internal.stream.spliterators.push;
 
 import com.oath.cyclops.types.persistent.PersistentCollection;
 
-import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;

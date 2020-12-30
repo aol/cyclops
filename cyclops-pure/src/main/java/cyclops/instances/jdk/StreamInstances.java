@@ -28,7 +28,7 @@ import cyclops.typeclasses.monad.Traverse;
 import cyclops.typeclasses.monad.TraverseByTraverse;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
-import lombok.experimental.Wither;
+import lombok.With;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -110,7 +110,7 @@ public  class StreamInstances {
   }
     private final static StreamTypeClasses INSTANCE = new StreamTypeClasses();
     @AllArgsConstructor
-    @Wither
+    @With
     public static class StreamTypeClasses implements MonadPlus<stream>,
                                                             MonadRec<stream>,
                                                             TraverseByTraverse<stream>,

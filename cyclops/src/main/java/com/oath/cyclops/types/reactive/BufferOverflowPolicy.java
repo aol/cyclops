@@ -1,6 +1,5 @@
 package com.oath.cyclops.types.reactive;
 
-import cyclops.control.Either;
 import cyclops.control.Option;
 
 public enum BufferOverflowPolicy{ DROP, BLOCK;

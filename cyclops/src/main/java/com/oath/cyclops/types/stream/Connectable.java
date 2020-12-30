@@ -1,12 +1,10 @@
 package com.oath.cyclops.types.stream;
 
-import java.util.Queue;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
+import cyclops.reactive.ReactiveSeq;
 import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
-import cyclops.reactive.ReactiveSeq;
+import java.util.Queue;
+import java.util.function.Function;
 
 /**
  * A Connectable - Stream already emitting data

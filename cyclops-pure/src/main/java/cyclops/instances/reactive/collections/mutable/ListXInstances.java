@@ -30,7 +30,7 @@ import cyclops.typeclasses.monad.Traverse;
 import cyclops.typeclasses.monad.TraverseByTraverse;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
-import lombok.experimental.Wither;
+import lombok.With;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -132,7 +132,7 @@ public class ListXInstances {
 
     private final static ListXTypeClasses INSTANCE = new ListXTypeClasses();
     @AllArgsConstructor
-    @Wither
+    @With
     public static class ListXTypeClasses implements MonadPlus<list>,
         MonadRec<list>,
         TraverseByTraverse<list>,

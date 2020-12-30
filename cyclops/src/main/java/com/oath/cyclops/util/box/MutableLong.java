@@ -1,15 +1,14 @@
 package com.oath.cyclops.util.box;
 
-import java.util.OptionalLong;
-import java.util.function.*;
-import java.util.stream.LongStream;
-
 import com.oath.cyclops.types.foldable.To;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import java.util.OptionalLong;
+import java.util.function.*;
+import java.util.stream.LongStream;
 
 /**
  * Class that represents a Closed Variable

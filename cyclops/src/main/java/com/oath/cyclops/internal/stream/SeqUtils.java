@@ -1,17 +1,12 @@
 package com.oath.cyclops.internal.stream;
 
-import java.util.AbstractCollection;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import cyclops.companion.Streamable;
+
+import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import cyclops.companion.Streamable;
 
 public class SeqUtils {
     /**

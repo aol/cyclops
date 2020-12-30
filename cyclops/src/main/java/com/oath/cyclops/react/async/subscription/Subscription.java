@@ -1,5 +1,10 @@
 package com.oath.cyclops.react.async.subscription;
 
+import com.oath.cyclops.async.adapters.Queue;
+import cyclops.reactive.ReactiveSeq;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,14 +13,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import cyclops.reactive.ReactiveSeq;
-
-
-import com.oath.cyclops.async.adapters.Queue;
-
-import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @Setter

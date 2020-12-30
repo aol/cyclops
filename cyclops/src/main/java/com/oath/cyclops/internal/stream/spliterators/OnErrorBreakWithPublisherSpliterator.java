@@ -1,6 +1,5 @@
 package com.oath.cyclops.internal.stream.spliterators;
 
-import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.reactivestreams.Publisher;

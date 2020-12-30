@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 

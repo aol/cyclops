@@ -3,11 +3,11 @@ package com.oath.cyclops.types;
 import com.oath.cyclops.types.factory.EmptyUnit;
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.functor.Transformable;
+import com.oath.cyclops.types.reactive.ValueSubscriber;
 import cyclops.control.Future;
+import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.control.Try;
-import cyclops.control.Maybe;
-import com.oath.cyclops.types.reactive.ValueSubscriber;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import org.reactivestreams.Publisher;
@@ -18,8 +18,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import static cyclops.matching.Api.Case;
 
 /**
  * A type that represents a Monad that wraps a single value

@@ -1,43 +1,43 @@
 package com.oath.cyclops.internal.stream;
 
 
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.adapters.Signal;
+import com.oath.cyclops.internal.stream.publisher.PublisherIterable;
+import com.oath.cyclops.internal.stream.spliterators.*;
 import com.oath.cyclops.internal.stream.spliterators.push.CollectingSinkSpliterator;
-import com.oath.cyclops.internal.stream.spliterators.push.OnErrorBreakOperator;
 import com.oath.cyclops.internal.stream.spliterators.push.ValueEmittingSpliterator;
 import com.oath.cyclops.types.futurestream.Continuation;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.reactive.ValueSubscriber;
-import com.oath.cyclops.internal.stream.publisher.PublisherIterable;
-import com.oath.cyclops.internal.stream.spliterators.*;
-import com.oath.cyclops.async.QueueFactories;
-import com.oath.cyclops.async.adapters.Signal;
+import cyclops.companion.Streams;
 import cyclops.control.Eval;
-import cyclops.data.Seq;
-
-import cyclops.companion.*;
-import cyclops.control.Maybe;
 import cyclops.control.LazyEither;
+import cyclops.control.Maybe;
+import cyclops.data.Seq;
 import cyclops.data.Vector;
-import cyclops.function.Function3;
-import cyclops.function.Function4;
-import cyclops.reactive.ReactiveSeq;
-
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Iterator;
+import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
-import java.util.stream.*;
-
-import static java.util.Comparator.comparing;
+import java.util.stream.Collector;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 /*
  * Note on Organization
  * Composite operators (those that work by composing calls to existing operators) should move to ReactiveSeq

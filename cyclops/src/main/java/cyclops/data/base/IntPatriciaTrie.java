@@ -3,12 +3,11 @@ package cyclops.data.base;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct1;
 import com.oath.cyclops.matching.Sealed3;
 import cyclops.control.Option;
-
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple1;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import cyclops.data.tuple.Tuple;
-import cyclops.data.tuple.Tuple1;
 
 import java.util.Arrays;
 import java.util.Iterator;

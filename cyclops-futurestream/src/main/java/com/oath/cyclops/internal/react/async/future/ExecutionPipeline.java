@@ -10,11 +10,11 @@ import java.util.function.Function;
 import cyclops.data.Seq;
 import lombok.AllArgsConstructor;
 import lombok.ToString;
-import lombok.experimental.Wither;
+import lombok.With;
 
 @ToString
 @AllArgsConstructor
-@Wither
+@With
 public class ExecutionPipeline {
     private final Seq<Function> functionList;
     private final Seq<Executor> execList;

@@ -13,7 +13,7 @@ import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.Wither;
+import lombok.With;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -33,7 +33,7 @@ import java.util.stream.*;
 
 @AllArgsConstructor
 public class FluxReactiveSeqImpl<T> implements ReactiveSeq<T> {
-    @Wither
+    @With
     @Getter
     private final Flux<T> flux;
 

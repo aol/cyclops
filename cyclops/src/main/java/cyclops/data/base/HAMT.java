@@ -7,10 +7,10 @@ import cyclops.control.Option;
 import cyclops.data.ImmutableList;
 import cyclops.data.LazySeq;
 import cyclops.data.Seq;
-import cyclops.reactive.ReactiveSeq;
-import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
+import cyclops.reactive.ReactiveSeq;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;

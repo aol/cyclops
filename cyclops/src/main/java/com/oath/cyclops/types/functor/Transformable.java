@@ -1,11 +1,7 @@
 package com.oath.cyclops.types.functor;
 
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.control.Trampoline;
 
 /**
  * An interface that represents a type that can transform a value from one type to another

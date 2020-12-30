@@ -17,9 +17,9 @@ import com.oath.cyclops.types.futurestream.SimpleReactStream;
 import com.oath.cyclops.util.ExceptionSoftener;
 
 import lombok.AllArgsConstructor;
-import lombok.experimental.Wither;
+import lombok.With;
 
-@Wither
+@With
 @AllArgsConstructor
 public class EagerStreamWrapper implements StreamWrapper {
     @SuppressWarnings("rawtypes")

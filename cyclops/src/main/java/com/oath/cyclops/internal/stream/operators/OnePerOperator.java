@@ -1,13 +1,12 @@
 package com.oath.cyclops.internal.stream.operators;
 
+import cyclops.companion.Streams;
+import lombok.AllArgsConstructor;
+
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Stream;
-
-import cyclops.companion.Streams;
-
-import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class OnePerOperator<T> {

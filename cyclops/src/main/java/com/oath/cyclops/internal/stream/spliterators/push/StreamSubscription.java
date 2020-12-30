@@ -1,10 +1,9 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
-import cyclops.control.Either;
 import org.reactivestreams.Subscription;
 
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.*;
+import java.util.function.LongConsumer;
 
 /**
  * Created by johnmcclean on 12/01/2017.

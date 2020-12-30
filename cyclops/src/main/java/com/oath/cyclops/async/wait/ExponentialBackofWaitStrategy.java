@@ -1,8 +1,8 @@
 package com.oath.cyclops.async.wait;
 
-import java.util.concurrent.locks.LockSupport;
-
 import lombok.AllArgsConstructor;
+
+import java.util.concurrent.locks.LockSupport;
 
 /**
  * Will recover to recieve or push data to a Queue, backing off by an exponentially increasing wait time

@@ -31,7 +31,7 @@ import cyclops.typeclasses.monad.MonadZero;
 import cyclops.typeclasses.monad.Traverse;
 import cyclops.typeclasses.monad.TraverseByTraverse;
 import lombok.AllArgsConstructor;
-import lombok.experimental.Wither;
+import lombok.With;
 
 import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
@@ -149,7 +149,7 @@ public class IterableInstances {
 
     private final static ReactiveSeqTypeClasses INSTANCE = new ReactiveSeqTypeClasses();
     @AllArgsConstructor
-    @Wither
+    @With
     public static class ReactiveSeqTypeClasses implements MonadPlus<reactiveSeq>,
                                                             MonadRec<reactiveSeq>,
                                                             TraverseByTraverse<reactiveSeq>,

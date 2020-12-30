@@ -1,12 +1,6 @@
 package com.oath.cyclops.types.stream;
 
-import java.util.List;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
-import com.oath.cyclops.internal.stream.ReversedIterator;
 import cyclops.reactive.ReactiveSeq;
-import com.oath.cyclops.internal.stream.SeqUtils;
 
 /**
  * Interface that represents a data type that can be converted to a Stream
