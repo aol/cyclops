@@ -1,14 +1,14 @@
 package com.oath.cyclops.async.adapters;
 
+import com.oath.cyclops.matching.Sealed2;
+import com.oath.cyclops.react.async.subscription.Continueable;
+import com.oath.cyclops.types.futurestream.Continuation;
+import cyclops.control.Either;
+import cyclops.reactive.ReactiveSeq;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
-import com.oath.cyclops.matching.Sealed2;
-import com.oath.cyclops.types.futurestream.Continuation;
-import cyclops.reactive.ReactiveSeq;
-import cyclops.control.Either;
-import com.oath.cyclops.react.async.subscription.Continueable;
 
 /**
  *

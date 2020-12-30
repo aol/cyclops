@@ -30,7 +30,7 @@ import com.oath.cyclops.hkt.DataWitness.tryType;
 import cyclops.reactive.ReactiveSeq;
 
 import lombok.*;
-import lombok.experimental.Wither;
+import lombok.With;
 import org.reactivestreams.Publisher;
 
 import com.oath.cyclops.util.ExceptionSoftener;
@@ -142,7 +142,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         return 2;
     }
     final Either<X,T> xor;
-    @Wither(AccessLevel.PRIVATE)
+    @With(AccessLevel.PRIVATE)
     private final Class<? extends Throwable>[] classes;
 
     public Either<X,T> asEither(){

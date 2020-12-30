@@ -19,7 +19,7 @@ import io.reactivex.Flowable;
 import io.reactivex.Single;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.Wither;
+import lombok.With;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -35,7 +35,7 @@ import java.util.stream.*;
 
 @AllArgsConstructor
 public class FlowableReactiveSeqImpl<T> implements ReactiveSeq<T> {
-    @Wither
+    @With
     @Getter
     Flowable<T> flowable;
 

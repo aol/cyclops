@@ -10,10 +10,10 @@ import cyclops.function.Cacheable;
 import cyclops.function.Memoize;
 
 import lombok.AllArgsConstructor;
-import lombok.experimental.Wither;
+import lombok.With;
 
 @AllArgsConstructor
-@Wither
+@With
 public class PipelineBuilder {
 
     private final ExecutionPipeline builder;

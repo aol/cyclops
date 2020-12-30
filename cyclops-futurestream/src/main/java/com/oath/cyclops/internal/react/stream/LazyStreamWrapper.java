@@ -15,13 +15,13 @@ import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.internal.react.async.future.FinalPipeline;
 
 import lombok.AllArgsConstructor;
-import lombok.experimental.Wither;
+import lombok.With;
 
 @AllArgsConstructor
 public class LazyStreamWrapper<U> implements StreamWrapper<U> {
-    @Wither
+    @With
     private final Supplier<Stream<U>> values;
-    @Wither
+    @With
     private final LazyReact react;
     private PipelineBuilder pipeline;
     private final FuturePool pool;

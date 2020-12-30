@@ -31,7 +31,7 @@ import cyclops.typeclasses.monad.Traverse;
 import cyclops.typeclasses.monad.TraverseByTraverse;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
-import lombok.experimental.Wither;
+import lombok.With;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -140,7 +140,7 @@ public class VectorInstances {
 
   private final static VectorTypeClasses INSTANCE = new VectorTypeClasses();
   @AllArgsConstructor
-  @Wither
+  @With
   public static class VectorTypeClasses implements MonadPlus<vector>,
                                                     MonadRec<vector>,
                                                     TraverseByTraverse<vector>,

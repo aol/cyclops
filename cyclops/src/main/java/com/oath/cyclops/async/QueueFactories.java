@@ -1,16 +1,15 @@
 package com.oath.cyclops.async;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.SynchronousQueue;
-
 import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.async.adapters.QueueFactory;
+import com.oath.cyclops.async.wait.NoWaitRetry;
+import com.oath.cyclops.async.wait.WaitStrategy;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
-import com.oath.cyclops.async.wait.NoWaitRetry;
-import com.oath.cyclops.async.wait.WaitStrategy;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.SynchronousQueue;
 
 /**
  * Methods for generating QueueFactories for plumbing Streams together

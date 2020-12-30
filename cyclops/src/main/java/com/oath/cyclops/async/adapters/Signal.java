@@ -1,11 +1,11 @@
 package com.oath.cyclops.async.adapters;
 
+import lombok.Getter;
+
 import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
-
-import lombok.Getter;
 
 /**
  * Datastructure that accepts a Stream of data and outputs a Stream of changes

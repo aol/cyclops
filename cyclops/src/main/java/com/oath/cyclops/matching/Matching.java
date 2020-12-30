@@ -1,14 +1,11 @@
 package com.oath.cyclops.matching;
 
-import static java.util.Arrays.stream;
-
 import com.oath.cyclops.matching.Case.Any;
-
 import cyclops.control.Option;
-import cyclops.reactive.ReactiveSeq;
-import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple0;
+import cyclops.reactive.ReactiveSeq;
+import lombok.AllArgsConstructor;
 
 import java.util.Optional;
 

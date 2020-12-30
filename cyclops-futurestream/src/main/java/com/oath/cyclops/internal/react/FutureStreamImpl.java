@@ -39,7 +39,7 @@ import com.oath.cyclops.async.adapters.QueueFactory;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.Wither;
+import lombok.With;
 import org.reactivestreams.Subscriber;
 
 
@@ -47,23 +47,23 @@ import org.reactivestreams.Subscriber;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class FutureStreamImpl<U> implements FutureStream<U> {
 
-    @Wither
+    @With
     private final Optional<Consumer<Throwable>> errorHandler;
     private final LazyStreamWrapper<U> lastActive;
 
-    @Wither
+    @With
     private final Supplier<LazyResultConsumer<U>> lazyCollector;
-    @Wither
+    @With
     private final QueueFactory<U> queueFactory;
-    @Wither
+    @With
     private final LazyReact simpleReact;
-    @Wither
+    @With
     private final Continueable subscription;
     private final static ReactPool<LazyReact> pool = ReactPool.elasticPool(() -> new LazyReact(
                                                                                                Executors.newSingleThreadExecutor()));
-    @Wither
+    @With
     private final ConsumerHolder error;
-    @Wither
+    @With
     private final MaxActive maxActive;
 
     @AllArgsConstructor

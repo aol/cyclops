@@ -1,5 +1,10 @@
 package com.oath.cyclops.internal.stream;
 
+import com.oath.cyclops.internal.stream.spliterators.ClosingSpliterator;
+import com.oath.cyclops.types.stream.Connectable;
+import cyclops.companion.Streams;
+import cyclops.reactive.ReactiveSeq;
+
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Queue;
@@ -7,11 +12,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import com.oath.cyclops.internal.stream.spliterators.ClosingSpliterator;
-import com.oath.cyclops.types.stream.Connectable;
-import cyclops.reactive.ReactiveSeq;
-import cyclops.companion.Streams;
 
 public abstract class BaseConnectableImpl<T> extends IteratorHotStream<T>implements Connectable<T> {
 

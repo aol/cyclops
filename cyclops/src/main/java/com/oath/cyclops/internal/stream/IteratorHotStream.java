@@ -1,5 +1,10 @@
 package com.oath.cyclops.internal.stream;
 
+import com.oath.cyclops.util.ExceptionSoftener;
+import com.oath.cyclops.util.stream.scheduling.cron.CronExpression;
+import cyclops.companion.Eithers;
+import cyclops.function.FluentFunctions;
+
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Queue;
@@ -9,11 +14,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicReferenceArray;
-
-import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.companion.Eithers;
-import cyclops.function.FluentFunctions;
-import com.oath.cyclops.util.stream.scheduling.cron.CronExpression;
 
 public class IteratorHotStream<T> {
 

@@ -1,15 +1,14 @@
 package com.oath.cyclops.util.box;
 
-import java.util.OptionalDouble;
-import java.util.function.*;
-import java.util.stream.DoubleStream;
-
 import com.oath.cyclops.types.foldable.To;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import java.util.OptionalDouble;
+import java.util.function.*;
+import java.util.stream.DoubleStream;
 
 /**
  * Class that represents a Closed Variable

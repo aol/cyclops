@@ -31,7 +31,7 @@ import cyclops.typeclasses.monad.Traverse;
 import cyclops.typeclasses.monad.TraverseByTraverse;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
-import lombok.experimental.Wither;
+import lombok.With;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -134,7 +134,7 @@ public class DequeXInstances {
 
     private final static DequeXTypeClasses INSTANCE = new DequeXTypeClasses();
     @AllArgsConstructor
-    @Wither
+    @With
     public static class DequeXTypeClasses implements MonadPlus<deque>,
         MonadRec<deque>,
         TraverseByTraverse<deque>,

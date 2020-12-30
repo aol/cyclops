@@ -8,8 +8,6 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static cyclops.data.tuple.Tuple.tuple;
-
 
 public class UnfoldSpliterator<T1,T> implements Spliterator<T>, CopyableSpliterator<T> {
 

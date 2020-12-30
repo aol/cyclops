@@ -30,7 +30,7 @@ import cyclops.typeclasses.monad.Traverse;
 import cyclops.typeclasses.monad.TraverseByTraverse;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
-import lombok.experimental.Wither;
+import lombok.With;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -134,7 +134,7 @@ public class SetXInstances {
 
     private final static SetXTypeClasses INSTANCE = new SetXTypeClasses();
     @AllArgsConstructor
-    @Wither
+    @With
     public static class SetXTypeClasses implements MonadPlus<set>,
                                                     MonadRec<set>,
                                                     TraverseByTraverse<set>,

@@ -1,12 +1,13 @@
 package com.oath.cyclops.types.persistent.views;
 
-import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentQueue;
 import lombok.AllArgsConstructor;
 
-import java.util.*;
+import java.util.AbstractQueue;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Queue;
 import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
 
 public interface QueueView<T> extends Queue<T>
 {

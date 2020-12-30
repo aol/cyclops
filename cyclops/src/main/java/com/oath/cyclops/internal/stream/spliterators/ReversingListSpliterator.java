@@ -1,14 +1,14 @@
 package com.oath.cyclops.internal.stream.spliterators;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Consumer;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 
 @AllArgsConstructor
 public class ReversingListSpliterator<T> implements Spliterator<T>, ReversableSpliterator<T> {

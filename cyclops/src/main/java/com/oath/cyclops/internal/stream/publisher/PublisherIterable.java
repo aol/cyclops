@@ -1,13 +1,13 @@
 package com.oath.cyclops.internal.stream.publisher;
 
 
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicLongFieldUpdater;
-
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
+
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 
 
 

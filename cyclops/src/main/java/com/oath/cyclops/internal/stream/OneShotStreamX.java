@@ -1,18 +1,20 @@
 package com.oath.cyclops.internal.stream;
 
-import com.oath.cyclops.internal.stream.spliterators.LimitWhileClosedSpliterator;
 import com.oath.cyclops.internal.stream.spliterators.ReversableSpliterator;
-import cyclops.control.Option;
-import cyclops.data.tuple.Tuple;
-import cyclops.companion.Streams;
-import cyclops.data.Seq;
-import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streamable;
+import cyclops.companion.Streams;
+import cyclops.control.Option;
+import cyclops.data.Seq;
+import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
+import cyclops.reactive.ReactiveSeq;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Optional;
+import java.util.Spliterator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;

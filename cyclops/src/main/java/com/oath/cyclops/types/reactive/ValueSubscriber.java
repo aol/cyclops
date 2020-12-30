@@ -1,5 +1,15 @@
 package com.oath.cyclops.types.reactive;
 
+import com.oath.cyclops.types.Value;
+import com.oath.cyclops.util.ExceptionSoftener;
+import cyclops.control.Either;
+import cyclops.control.Future;
+import cyclops.control.Ior;
+import cyclops.control.Try;
+import cyclops.function.Memoize;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.Executor;
@@ -7,17 +17,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import com.oath.cyclops.types.Value;
-import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.control.Future;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-
-import cyclops.control.Ior;
-import cyclops.control.Try;
-import cyclops.control.Either;
-import cyclops.function.Memoize;
 
 /**
  * A reactive-streams Subscriber that can take 1 value from a reactive-streams publisher and convert

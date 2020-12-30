@@ -12,6 +12,9 @@ plugins {
   id 'me.champeau.gradle.jmh' version '0.2.0'
 }
 
+apply plugin: 'java'
+apply plugin: 'maven'
+
 def custom = { "$rootDir/gradle/${it}.gradle" } //find custom plugins locally
 
 

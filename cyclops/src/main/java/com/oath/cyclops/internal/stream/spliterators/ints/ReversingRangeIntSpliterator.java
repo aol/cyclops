@@ -1,13 +1,13 @@
 package com.oath.cyclops.internal.stream.spliterators.ints;
 
+import com.oath.cyclops.internal.stream.spliterators.ReversableSpliterator;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
-
-import com.oath.cyclops.internal.stream.spliterators.ReversableSpliterator;
-import lombok.Getter;
-import lombok.Setter;
 
 public class ReversingRangeIntSpliterator implements Spliterator.OfInt, ReversableSpliterator<Integer> {
 

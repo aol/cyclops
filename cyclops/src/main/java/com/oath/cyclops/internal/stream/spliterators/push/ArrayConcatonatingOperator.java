@@ -3,9 +3,6 @@ package com.oath.cyclops.internal.stream.spliterators.push;
 import cyclops.data.BankersQueue;
 import cyclops.data.Seq;
 
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 /**

@@ -3,7 +3,6 @@ package com.oath.cyclops.internal.stream.spliterators.push;
 import cyclops.data.Seq;
 import org.reactivestreams.Subscription;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;

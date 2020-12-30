@@ -3,7 +3,6 @@ package com.oath.cyclops.internal.stream.spliterators.push;
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.data.Seq;
 
-import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
 

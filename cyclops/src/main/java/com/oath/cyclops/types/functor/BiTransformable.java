@@ -3,8 +3,6 @@ package com.oath.cyclops.types.functor;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import cyclops.control.Trampoline;
-
 /*
  * A type that can perform transformations across a domain with two types.
  * For example a BiTransformable for Java Map may allow both the Keys and Values to be transformed together (via the bimap operator).

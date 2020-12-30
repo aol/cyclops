@@ -1,10 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.*;
 import java.util.Spliterators.AbstractSpliterator;
 import java.util.function.Consumer;
 

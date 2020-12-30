@@ -1,43 +1,41 @@
 package com.oath.cyclops.internal.stream;
 
 
-import com.oath.cyclops.async.adapters.Queue;
-import com.oath.cyclops.internal.stream.spliterators.Zipping3Spliterator;
-import com.oath.cyclops.types.futurestream.Continuation;
-import com.oath.cyclops.types.persistent.PersistentCollection;
-import com.oath.cyclops.types.stream.Connectable;
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.util.ExceptionSoftener;
-
-import com.oath.cyclops.internal.stream.spliterators.push.*;
-import cyclops.control.Future;
 import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.async.adapters.QueueFactory;
 import com.oath.cyclops.async.adapters.Signal;
 import com.oath.cyclops.async.adapters.Topic;
-import cyclops.data.Seq;
+import com.oath.cyclops.internal.stream.spliterators.push.*;
+import com.oath.cyclops.types.futurestream.Continuation;
+import com.oath.cyclops.types.persistent.PersistentCollection;
+import com.oath.cyclops.types.stream.Connectable;
+import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.companion.Streams;
-import cyclops.control.*;
+import cyclops.control.Future;
+import cyclops.control.LazyEither;
+import cyclops.control.Maybe;
+import cyclops.control.Option;
+import cyclops.data.Seq;
 import cyclops.data.Vector;
-import cyclops.function.Function3;
-import cyclops.function.Function4;
-import cyclops.function.Monoid;
-
-import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Spouts;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.Wither;
-import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
+import cyclops.function.Monoid;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.With;
+import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -48,7 +46,6 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import java.util.*;
 
 import static com.oath.cyclops.internal.stream.ReactiveStreamX.Type.BACKPRESSURE;
 import static com.oath.cyclops.internal.stream.ReactiveStreamX.Type.SYNC;
@@ -59,10 +56,10 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Getter
     final Operator<T> source;
-    @Wither
+    @With
     final Consumer<? super Throwable> defaultErrorHandler;
 
-    @Wither
+    @With
     final Type async; //SYNC streams should switch to lazy Backpressured or No backpressure when zip or flatMapP are called
 
     public Type getType() {

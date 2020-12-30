@@ -5,7 +5,6 @@ import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
 
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;

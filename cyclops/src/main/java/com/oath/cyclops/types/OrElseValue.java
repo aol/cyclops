@@ -1,7 +1,5 @@
 package com.oath.cyclops.types;
 
-import com.oath.cyclops.types.recoverable.OnEmptySwitch;
-
 import java.util.function.Supplier;
 
 @Deprecated

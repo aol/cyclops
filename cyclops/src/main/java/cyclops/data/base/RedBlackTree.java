@@ -4,16 +4,15 @@ package cyclops.data.base;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct5;
 import com.oath.cyclops.matching.Sealed2;
 import cyclops.control.Option;
-
-import cyclops.matching.Api;
-import cyclops.reactive.ReactiveSeq;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple5;
-import lombok.experimental.Wither;
+import cyclops.matching.Api;
+import cyclops.reactive.ReactiveSeq;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.With;
 
 import java.io.Serializable;
 import java.util.Comparator;
@@ -118,7 +117,7 @@ public interface RedBlackTree extends Serializable{
     }
 
     @AllArgsConstructor
-    @Wither
+    @With
     public static final class Node<K,V> implements Tree<K,V>, Deconstruct5<Boolean,Tree<K,V>,Tree<K,V>, K,V> {
         private final boolean isBlack;
         private final Tree<K,V> left;

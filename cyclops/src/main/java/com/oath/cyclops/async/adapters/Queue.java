@@ -1,5 +1,19 @@
 package com.oath.cyclops.async.adapters;
 
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.wait.DirectWaitStrategy;
+import com.oath.cyclops.async.wait.WaitStrategy;
+import com.oath.cyclops.internal.react.exceptions.SimpleReactProcessingException;
+import com.oath.cyclops.react.async.subscription.AlwaysContinue;
+import com.oath.cyclops.react.async.subscription.Continueable;
+import com.oath.cyclops.react.async.subscription.Subscription;
+import com.oath.cyclops.types.futurestream.Continuation;
+import com.oath.cyclops.util.ExceptionSoftener;
+import com.oath.cyclops.util.SimpleTimer;
+import cyclops.data.Seq;
+import cyclops.reactive.ReactiveSeq;
+import lombok.*;
+
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
@@ -12,25 +26,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import com.oath.cyclops.react.async.subscription.Subscription;
-import com.oath.cyclops.async.QueueFactories;
-import cyclops.data.Seq;
-import cyclops.reactive.ReactiveSeq;
-import com.oath.cyclops.async.wait.DirectWaitStrategy;
-import com.oath.cyclops.async.wait.WaitStrategy;
-import com.oath.cyclops.internal.react.exceptions.SimpleReactProcessingException;
-import com.oath.cyclops.react.async.subscription.AlwaysContinue;
-import com.oath.cyclops.react.async.subscription.Continueable;
-import com.oath.cyclops.types.futurestream.Continuation;
-import com.oath.cyclops.util.ExceptionSoftener;
-import com.oath.cyclops.util.SimpleTimer;
-
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Wither;
 
 /**
  * Inspired by scalaz-streams async.Queue (functionally similar, but wraps a JDK Queue - wait-free or Blocking)
@@ -79,7 +74,7 @@ import lombok.experimental.Wither;
  * @param <T>
  *            Type of data stored in Queue
  */
-@Wither
+@With
 @AllArgsConstructor
 public class Queue<T> implements Adapter<T> {
 

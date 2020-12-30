@@ -1,14 +1,11 @@
 package com.oath.cyclops.internal.stream;
 
 import com.oath.cyclops.types.Unwrappable;
-
 import com.oath.cyclops.util.ExceptionSoftener;
-
 import cyclops.companion.Streams;
 import cyclops.data.Seq;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-
 import cyclops.reactive.ReactiveSeq;
 
 import java.util.*;

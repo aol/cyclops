@@ -29,7 +29,7 @@ import cyclops.typeclasses.monad.Traverse;
 import cyclops.typeclasses.monad.TraverseByTraverse;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
-import lombok.experimental.Wither;
+import lombok.With;
 
 import java.util.function.Function;
 
@@ -132,7 +132,7 @@ public  class FutureInstances {
     private final FutureTypeclasses INSTANCE = new FutureTypeclasses();
 
     @AllArgsConstructor
-    @Wither
+    @With
     public static class FutureTypeclasses  implements MonadPlus<future>,
                                                         MonadRec<future>,
                                                         TraverseByTraverse<future>,

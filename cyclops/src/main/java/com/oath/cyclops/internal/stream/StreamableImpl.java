@@ -1,7 +1,6 @@
 package com.oath.cyclops.internal.stream;
 
 import cyclops.companion.Streamable;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

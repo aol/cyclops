@@ -1,10 +1,10 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
-
 import lombok.Getter;
 import org.reactivestreams.Subscription;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 public class CapturingOperator<T> implements Operator<T> {
 

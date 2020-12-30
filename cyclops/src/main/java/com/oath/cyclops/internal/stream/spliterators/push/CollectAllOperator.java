@@ -1,6 +1,5 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
-import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
 

@@ -1,11 +1,11 @@
 package com.oath.cyclops.react;
 
+import lombok.Getter;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ScheduledExecutorService;
-
-import lombok.Getter;
 
 public class ThreadPools {
     @Getter

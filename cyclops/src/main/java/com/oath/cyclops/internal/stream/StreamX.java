@@ -4,15 +4,18 @@ import com.oath.cyclops.internal.stream.spliterators.CopyableSpliterator;
 import com.oath.cyclops.internal.stream.spliterators.IteratableSpliterator;
 import com.oath.cyclops.internal.stream.spliterators.ReversableSpliterator;
 import cyclops.companion.Streams;
-import cyclops.data.Seq;
 import cyclops.control.Option;
-import cyclops.reactive.ReactiveSeq;
+import cyclops.data.Seq;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
+import cyclops.reactive.ReactiveSeq;
 
-import java.util.*;
+import java.util.Deque;
+import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.*;
 import java.util.stream.Stream;
 

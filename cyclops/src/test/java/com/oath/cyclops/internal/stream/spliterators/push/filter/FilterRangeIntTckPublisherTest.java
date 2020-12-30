@@ -5,11 +5,11 @@ import cyclops.reactive.Spouts;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;
-import org.reactivestreams.tck.support.PublisherVerificationRules;
+import org.reactivestreams.tck.flow.support.PublisherVerificationRules;
 import org.testng.annotations.Test;
 
 @Test
-public class FilterRangeIntTckPublisherTest extends PublisherVerification<Long> implements PublisherVerificationRules{
+public class FilterRangeIntTckPublisherTest extends PublisherVerification<Long> implements PublisherVerificationRules {
 
 	public FilterRangeIntTckPublisherTest(){
 		  super(new TestEnvironment(300L));

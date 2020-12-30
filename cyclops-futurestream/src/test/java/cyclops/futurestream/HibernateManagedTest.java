@@ -1,12 +1,10 @@
 package cyclops.futurestream;
 
 import cyclops.control.Try;
-import cyclops.reactive.IO;
-import cyclops.reactive.Managed;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.query.NativeQuery;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -24,7 +22,7 @@ public class HibernateManagedTest {
         session = mock(Session.class);
         when(factory.openSession()).thenReturn(session);
         when(session.beginTransaction()).thenReturn(mock(Transaction.class));
-        when(session.createQuery(Mockito.anyString())).thenReturn(mock(Query.class));
+        when(session.createQuery(Mockito.anyString())).thenReturn(mock(NativeQuery.class));
     }
 
 

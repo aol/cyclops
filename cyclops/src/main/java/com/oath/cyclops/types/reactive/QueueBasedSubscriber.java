@@ -1,5 +1,17 @@
 package com.oath.cyclops.types.reactive;
 
+import com.oath.cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.Queue.ClosedQueueException;
+import com.oath.cyclops.async.adapters.QueueFactory;
+import com.oath.cyclops.react.async.subscription.Continueable;
+import com.oath.cyclops.types.futurestream.Continuation;
+import cyclops.control.Eval;
+import cyclops.reactive.ReactiveSeq;
+import lombok.Getter;
+import lombok.Setter;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -10,21 +22,6 @@ import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
-import com.oath.cyclops.react.async.subscription.Continueable;
-
-import cyclops.control.Eval;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-
-import cyclops.reactive.ReactiveSeq;
-import com.oath.cyclops.async.adapters.Queue;
-import com.oath.cyclops.async.adapters.Queue.ClosedQueueException;
-import com.oath.cyclops.async.adapters.QueueFactory;
-import com.oath.cyclops.types.futurestream.Continuation;
-
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * A reactive-streams reactiveSubscriber, backed by a cyclops2-react async.Queue, for merging data from multiple publishers into a single Stream

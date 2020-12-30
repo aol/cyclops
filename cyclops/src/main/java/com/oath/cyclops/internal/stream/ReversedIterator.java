@@ -1,13 +1,12 @@
 package com.oath.cyclops.internal.stream;
 
+import cyclops.companion.Streamable;
+import cyclops.reactive.ReactiveSeq;
+import lombok.AllArgsConstructor;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-
-import cyclops.reactive.ReactiveSeq;
-import cyclops.companion.Streamable;
-
-import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class ReversedIterator<U> implements Streamable<U> {

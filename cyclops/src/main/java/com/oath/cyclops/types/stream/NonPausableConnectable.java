@@ -1,12 +1,12 @@
 package com.oath.cyclops.types.stream;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.stream.Stream;
-
 import com.oath.cyclops.internal.stream.BaseConnectableImpl;
 import cyclops.companion.Eithers;
 import cyclops.function.FluentFunctions;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.stream.Stream;
 
 /**
  * A Connectable (Stream already emitting data) that can not be paused

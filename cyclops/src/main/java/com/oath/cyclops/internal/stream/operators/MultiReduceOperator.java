@@ -1,17 +1,16 @@
 package com.oath.cyclops.internal.stream.operators;
 
+import cyclops.companion.Streams;
+import cyclops.function.Monoid;
+import cyclops.function.Reducer;
+import lombok.AllArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import cyclops.function.Monoid;
-import cyclops.function.Reducer;
-import cyclops.companion.Streams;
-
-import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class MultiReduceOperator<R> {

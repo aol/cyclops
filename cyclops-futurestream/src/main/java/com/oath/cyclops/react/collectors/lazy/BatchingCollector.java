@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.Builder;
-import lombok.experimental.Wither;
+import lombok.With;
+import lombok.Builder;
 
 /**
  * This class allows a Batch of completable futures to be processed before collecting their results, to increase
@@ -22,7 +22,7 @@ import lombok.experimental.Wither;
  *
  * @param <T> Result type
  */
-@Wither
+@With
 @AllArgsConstructor
 @Builder
 public class BatchingCollector<T> implements LazyResultConsumer<T> {

@@ -29,7 +29,7 @@ import cyclops.typeclasses.monad.Traverse;
 import cyclops.typeclasses.monad.TraverseByTraverse;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
-import lombok.experimental.Wither;
+import lombok.With;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -139,7 +139,7 @@ public class PersistentQueueXInstances {
 
     private final static PersistentQueueXTypeClasses INSTANCE = new PersistentQueueXTypeClasses();
     @AllArgsConstructor
-    @Wither
+    @With
     public static class PersistentQueueXTypeClasses implements MonadPlus<persistentQueueX>,
                                                                 MonadRec<persistentQueueX>,
                                                                 TraverseByTraverse<persistentQueueX>,
@@ -279,5 +279,5 @@ public class PersistentQueueXInstances {
     public static <T,R> Foldable<persistentQueueX> foldable(){
         return INSTANCE;
     }
-   
+
 }

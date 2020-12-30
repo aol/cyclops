@@ -11,7 +11,7 @@ import com.oath.cyclops.internal.react.async.future.FastFuture;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.Wither;
+import lombok.With;
 
 /**
  * A collector that periodically joins active completablefutures
@@ -20,7 +20,7 @@ import lombok.experimental.Wither;
  * @author johnmcclean
  *
  */
-@Wither
+@With
 @AllArgsConstructor
 public class EmptyCollector<T> implements LazyResultConsumer<T> {
 

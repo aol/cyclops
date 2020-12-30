@@ -1,16 +1,15 @@
 package com.oath.cyclops.internal.stream;
 
-import static cyclops.data.tuple.Tuple.tuple;
+import cyclops.companion.Streams;
+import cyclops.data.tuple.Tuple3;
+import org.reactivestreams.Subscription;
 
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import cyclops.data.tuple.Tuple3;
-import org.reactivestreams.Subscription;
-
-import cyclops.companion.Streams;
+import static cyclops.data.tuple.Tuple.tuple;
 
 public class FutureStreamUtils {
     /**

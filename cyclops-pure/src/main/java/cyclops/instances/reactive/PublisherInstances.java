@@ -26,7 +26,7 @@ import cyclops.typeclasses.monad.MonadZero;
 import cyclops.typeclasses.monad.Traverse;
 import cyclops.typeclasses.monad.TraverseByTraverse;
 import lombok.AllArgsConstructor;
-import lombok.experimental.Wither;
+import lombok.With;
 import org.reactivestreams.Publisher;
 
 import java.util.concurrent.Executor;
@@ -114,7 +114,7 @@ public class PublisherInstances {
 
     private final static ReactiveSeqTypeClasses INSTANCE = new ReactiveSeqTypeClasses();
     @AllArgsConstructor
-    @Wither
+    @With
     public static class ReactiveSeqTypeClasses implements MonadPlus<reactiveSeq>,
                                                             MonadRec<reactiveSeq>,
                                                             TraverseByTraverse<reactiveSeq>,

@@ -1,18 +1,18 @@
 package com.oath.cyclops.types.traversable;
 
-import com.oath.cyclops.types.persistent.PersistentCollection;
-import com.oath.cyclops.types.recoverable.OnEmpty;
 import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.functor.FilterableTransformable;
+import com.oath.cyclops.types.persistent.PersistentCollection;
+import com.oath.cyclops.types.recoverable.OnEmpty;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.data.tuple.Tuple2;
-import cyclops.data.tuple.Tuple3;
-import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -20,7 +20,7 @@ import java.util.Comparator;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
-import java.util.stream.*;
+import java.util.stream.Stream;
 
 /**
  * A non-scalar navigatable data type

@@ -26,7 +26,7 @@ import cyclops.typeclasses.monad.Traverse;
 import cyclops.typeclasses.monad.TraverseByTraverse;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
-import lombok.experimental.Wither;
+import lombok.With;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -106,7 +106,7 @@ public class CompletableFutureInstances {
     private final CompletableFutureTypeclasses INSTANCE = new CompletableFutureTypeclasses();
 
     @AllArgsConstructor
-    @Wither
+    @With
     public static class CompletableFutureTypeclasses  implements MonadPlus<completableFuture>,
                                                                 MonadRec<completableFuture>,
                                                                 TraverseByTraverse<completableFuture>,

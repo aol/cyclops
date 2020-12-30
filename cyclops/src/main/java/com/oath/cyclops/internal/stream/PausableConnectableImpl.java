@@ -1,12 +1,12 @@
 package com.oath.cyclops.internal.stream;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.stream.Stream;
-
 import com.oath.cyclops.types.stream.PausableConnectable;
 import cyclops.companion.Eithers;
 import cyclops.function.FluentFunctions;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.stream.Stream;
 
 public class PausableConnectableImpl<T> extends BaseConnectableImpl<T> implements PausableConnectable<T> {
     public PausableConnectableImpl(final Stream<T> stream) {

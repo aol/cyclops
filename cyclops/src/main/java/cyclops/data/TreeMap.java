@@ -13,7 +13,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
-import lombok.experimental.Wither;
+import lombok.With;
 
 import java.io.Serializable;
 import java.util.Comparator;
@@ -30,7 +30,7 @@ public final class TreeMap<K,V> implements ImmutableMap<K,V> ,
 
     private static final long serialVersionUID = 1L;
     private final RedBlackTree.Tree<K,V> map;
-    @Wither()
+    @With()
     private final Comparator<K> comparator;
 
 

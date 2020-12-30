@@ -29,7 +29,7 @@ import cyclops.typeclasses.monad.Traverse;
 import cyclops.typeclasses.monad.TraverseByTraverse;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
-import lombok.experimental.Wither;
+import lombok.With;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -138,7 +138,7 @@ public class LinkedListXInstances {
 
     private final static LinkedListXTypeClasses INSTANCE = new LinkedListXTypeClasses();
     @AllArgsConstructor
-    @Wither
+    @With
     public static class LinkedListXTypeClasses implements MonadPlus<linkedListX>,
         MonadRec<linkedListX>,
         TraverseByTraverse<linkedListX>,

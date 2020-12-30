@@ -1,7 +1,5 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
-import com.oath.cyclops.internal.stream.publisher.PublisherIterable;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;

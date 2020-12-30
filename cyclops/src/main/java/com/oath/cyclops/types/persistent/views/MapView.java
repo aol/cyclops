@@ -1,14 +1,13 @@
 package com.oath.cyclops.types.persistent.views;
 
-import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentMap;
 import lombok.AllArgsConstructor;
 
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 public interface MapView<K,V> extends Map<K,V>

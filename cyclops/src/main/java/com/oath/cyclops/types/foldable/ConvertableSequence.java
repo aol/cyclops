@@ -1,6 +1,7 @@
 package com.oath.cyclops.types.foldable;
 
 import com.oath.cyclops.types.stream.ToStream;
+import cyclops.companion.Streamable;
 import cyclops.companion.Streams;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
@@ -8,7 +9,6 @@ import cyclops.control.Option;
 import cyclops.data.*;
 import cyclops.data.tuple.Tuple;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.companion.Streamable;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

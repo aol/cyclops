@@ -8,7 +8,7 @@ import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.stream.ToStream;
 import cyclops.function.Function0;
 import cyclops.function.Function1;
-import lombok.experimental.Wither;
+import lombok.With;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -57,7 +57,7 @@ import java.util.function.Supplier;
 public class Generator<T> implements Iterable<T>, ToStream<T> {
     private final Suspended suspended;
     private final Maybe<T> value;
-    @Wither
+    @With
     private final GeneratorSupplier<T> remainderOfWorkToBeDone;
 
 

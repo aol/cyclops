@@ -1,12 +1,13 @@
 package com.oath.cyclops.types.persistent.views;
 
-import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentSet;
 import lombok.AllArgsConstructor;
 
-import java.util.*;
+import java.util.AbstractSet;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
 
 public interface SetView<T> extends Set<T>
 {

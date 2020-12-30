@@ -1,8 +1,8 @@
 package com.oath.cyclops.types.reactive;
 
-import java.util.function.Consumer;
-
 import org.reactivestreams.Subscription;
+
+import java.util.function.Consumer;
 
 /**
  * Interface for reactive-streams based terminal operations, requires simple-react to be on the classpath.
