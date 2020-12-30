@@ -7,6 +7,7 @@
     <artifactId>com.oath.cyclops</artifactId>
     <version>10.4.0</version>
     <packaging>pom</packaging>
+    <name>AOL Cyclops</name>
 
     <modules>
         <module>cyclops</module>
@@ -21,8 +22,12 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <testng.version>7.0.0</testng.version>
+        <testng.version>7.3.0</testng.version>
         <junit.version>4.13.1</junit.version>
+        <mocikto-all.version>1.10.19</mocikto-all.version>
+        <mocikto-core.version>3.6.28</mocikto-core.version>
+        <reactive-streams.version>1.0.3</reactive-streams.version>
+        <vertx-core.version>4.0.0</vertx-core.version>
     </properties>
 
     <dependencies>
@@ -32,16 +37,6 @@
             <version>1.18.16</version>
         </dependency>
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.oath.cyclops</groupId>
-                <artifactId>cyclops</artifactId>
-                <version>10.4.0</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <pluginManagement>
@@ -71,6 +66,11 @@
                             <version>3.0.0-M5</version>
                         </dependency>
                     </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>2.7</version>
                 </plugin>
             </plugins>
         </pluginManagement>

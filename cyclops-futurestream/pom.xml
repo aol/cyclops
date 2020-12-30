@@ -71,19 +71,19 @@
         <dependency>
             <groupId>org.reactivestreams</groupId>
             <artifactId>reactive-streams-tck</artifactId>
-            <version>1.0.0</version>
+            <version>${reactive-streams.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>1.9.5</version>
+            <version>${mocikto-core.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
-            <version>3.0.7.RELEASE</version>
+            <version>3.4.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -107,25 +107,25 @@
         <dependency>
             <groupId>com.github.stefanbirkner</groupId>
             <artifactId>system-rules</artifactId>
-            <version>1.10.0</version>
+            <version>1.19.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-core</artifactId>
-            <version>3.0.0</version>
+            <version>${vertx-core.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>5.1.0.Final</version>
+            <version>5.4.27.Final</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>5.1.0.Final</version>
+            <version>5.4.27.Final</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

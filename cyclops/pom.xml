@@ -60,7 +60,7 @@
         <dependency>
             <groupId>org.reactivestreams</groupId>
             <artifactId>reactive-streams</artifactId>
-            <version>1.0.0</version>
+            <version>${reactive-streams.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -72,31 +72,31 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>19.0</version>
+            <version>30.1-jre</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-test</artifactId>
-            <version>3.2.2.RELEASE</version>
+            <version>3.4.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.github.stefanbirkner</groupId>
             <artifactId>system-rules</artifactId>
-            <version>1.10.0</version>
+            <version>1.19.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
-            <version>3.2.2.RELEASE</version>
+            <version>3.4.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.reactivestreams</groupId>
             <artifactId>reactive-streams-tck</artifactId>
-            <version>1.0.0</version>
+            <version>${reactive-streams.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -114,7 +114,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>1.9.5</version>
+            <version>${mocikto-all.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -126,25 +126,25 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.8.0</version>
+            <version>3.18.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>5.1.0.Final</version>
+            <version>5.4.27.Final</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>5.1.0.Final</version>
+            <version>5.4.27.Final</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>2.0.0</version>
+            <version>2.5.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
