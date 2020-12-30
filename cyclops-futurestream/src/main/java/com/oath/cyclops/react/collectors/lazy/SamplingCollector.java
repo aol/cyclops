@@ -6,8 +6,8 @@ import java.util.function.Function;
 import com.oath.cyclops.internal.react.async.future.FastFuture;
 
 import lombok.AllArgsConstructor;
-import lombok.experimental.Builder;
-import lombok.experimental.Wither;
+import lombok.With;
+import lombok.Builder;
 
 /**
  *
@@ -19,7 +19,7 @@ import lombok.experimental.Wither;
  * @param <T> Result type
  */
 @AllArgsConstructor
-@Wither
+@With
 @Builder
 public class SamplingCollector<T> implements LazyResultConsumer<T> {
 

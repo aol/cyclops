@@ -22,6 +22,7 @@ import com.oath.cyclops.async.adapters.Adapter;
 import cyclops.data.Seq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
+import lombok.experimental.Wither;
 import org.reactivestreams.Publisher;
 
 import com.oath.cyclops.internal.react.FutureStreamImpl;
@@ -35,8 +36,8 @@ import cyclops.function.Cacheable;
 
 import lombok.Getter;
 import lombok.ToString;
-import lombok.experimental.Builder;
-import lombok.experimental.Wither;
+import lombok.Builder;
+import lombok.With;
 
 /**
  *
@@ -71,7 +72,7 @@ import lombok.experimental.Wither;
  */
 
 @Builder
-@Wither
+@With
 @ToString
 public class LazyReact implements ReactBuilder {
 

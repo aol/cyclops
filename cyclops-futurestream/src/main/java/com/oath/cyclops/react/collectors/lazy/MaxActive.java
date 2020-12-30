@@ -2,12 +2,12 @@ package com.oath.cyclops.react.collectors.lazy;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.Builder;
-import lombok.experimental.Wither;
+import lombok.With;
+import lombok.Builder;
 
 @AllArgsConstructor
 @Getter
-@Wither
+@With
 @Builder
 public class MaxActive {
 
