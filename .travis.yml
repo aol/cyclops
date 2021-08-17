@@ -6,8 +6,8 @@ install: ./gradlew clean
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 script:
-  - travis_wait 120 ./gradlew assemble
-  - travis_wait 120 ./gradlew build jacoco --parallel --max-workers 4
+  - ./gradlew assemble
+  - ./gradlew build jacoco --parallel --max-workers 4
 
 before_cache:
     - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
