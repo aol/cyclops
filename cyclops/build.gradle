@@ -189,5 +189,4 @@ nexus {
     repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
     snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
 }
-/**
- task wrapper(type: Wrapper) {gradleVersion = '2.14.1'}**/
+
