@@ -37,23 +37,14 @@ repositories {
     jcenter()
 }
 
-if (JavaVersion.current().isJava8Compatible()) {
-    allprojects {
-        tasks.withType(Javadoc) {
-            options.addStringOption('Xdoclint:none', '-quiet')
-        }
-    }
-}
-configurations {
-    provided
-}
+
 
 dependencies {
 
 
-    implementation 'org.agrona:Agrona:0.9.1'
-    implementation 'org.reactivestreams:reactive-streams:1.0.0'
-    implementation 'io.kindedj:kindedj:'+kindedJVersion
+    api 'org.agrona:Agrona:0.9.1'
+    api 'org.reactivestreams:reactive-streams:1.0.0'
+    api 'io.kindedj:kindedj:'+kindedJVersion
     compileOnly 'org.projectlombok:lombok:1.16.20'
     testImplementation group: 'io.projectreactor', name: 'reactor-test', version: '3.2.2.RELEASE'
     testImplementation 'com.github.stefanbirkner:system-rules:1.10.0'
@@ -73,11 +64,8 @@ dependencies {
     jmh 'com.google.guava:guava:19.0'
 
 }
-sourceSets {
-    main.compileClasspath += [configurations.provided]
-    test.compileClasspath += [configurations.provided]
-    test.runtimeClasspath += [configurations.provided]
-}
+
+/**
 jacocoTestReport {
     afterEvaluate {
         classDirectories = files(classDirectories.files.collect {
@@ -85,11 +73,11 @@ jacocoTestReport {
         })
     }
 }
-
+**/
 jmh {
     jmhVersion = '1.29'
     humanOutputFile = null
-    include = ".*scrabble*"
+  //  include = ".*scrabble*"
 }
 
 task testNG(type: Test) {
@@ -100,12 +88,6 @@ task testNG(type: Test) {
     reports.html.destination = file("$buildDir/reports/test")
 }
 
-task testSuite(type: Test) {
-
-    include '**/*TestSuite.class'
-    reports.junitXml.destination = "$buildDir/reports/test"
-    reports.html.destination = "$buildDir/reports/test"
-}
 
 test {
     reports.html.destination = file("$buildDir/reports/test")
@@ -126,68 +108,12 @@ task packageTests(type: Jar) {
 artifacts.archives packageTests
 
 
-
-modifyPom {
-    project {
-        name 'cyclops'
-        description 'Platform for Functional Reactive Programming with Java 8'
-        url 'https://github.com/aol/cyclops-react'
-        inceptionYear '2015'
-
-        groupId 'com.oath.cyclops'
-        artifactId 'cyclops'
-        version "$version"
-
-        scm {
-            url 'scm:git@github.com:aol/cyclops-react.git'
-            connection 'scm:git@github.com:aol/cyclops-react.git'
-            developerConnection 'scm:git@github.com:aol/simple-react.git'
-        }
-
-        licenses {
-            license {
-                name 'The Apache Software License, Version 2.0'
-                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                distribution 'repo'
-            }
-        }
-
-        developers {
-            developer {
-                id 'johnmcclean-aol'
-                name 'John McClean'
-                email 'john.mcclean@teamaol.com'
-            }
-            developer {
-                id 'kewangie'
-                name 'Ke Wang'
-                email 'ke.wang@teamaol.com'
-            }
-
-            developer {
-                id 'tkountis'
-                name 'Thomas Kountis Wang'
-                email 'thomas.kountis@adtech.com'
-            }
-            developer {
-                id 'colinfkennedy'
-                name 'Colin Kennedy'
-                email 'Colin.Kennedy@teamaol.com'
-            }
-        }
-    }
-}
-
-extraArchive {
-    sources = true
-    tests = true
-    javadoc = true
-}
+/**
 
 nexus {
     sign = true
     repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
     snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
 }
-/**
- task wrapper(type: Wrapper) {gradleVersion = '2.14.1'}**/
+ **/
+
