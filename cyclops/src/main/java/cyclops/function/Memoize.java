@@ -71,9 +71,14 @@ public class Memoize {
      * @param <R> Return type of Function
      * @return Memoized asynchronously updating function
      */
-    public static <R> Function0<R> memoizeSupplierAsync(final Supplier<R> fn, ScheduledExecutorService ex, long updateRateInMillis){
-        return ()-> Memoize.memoizeFunctionAsync(a-> fn.get(),ex,updateRateInMillis)
-                           .apply("k");
+    public static <R> Function0<R> memoizeSupplierAsync(Supplier<R> fn, ScheduledExecutorService ex, long updateRateInMillis) {
+        val memoizeFn = memoizeFunctionAsync((a) -> {
+            return fn.get();
+        }, ex, updateRateInMillis);
+
+        return () -> {
+            return memoizeFn.apply("k");
+        };
     }
     /**
      * Memoize a Supplier and update the cached values asynchronously using the provided Scheduled Executor Service

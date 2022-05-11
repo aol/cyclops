@@ -42,7 +42,7 @@ task wrapper(type: Wrapper) {
 }
 
 allprojects {
-    tasks.withType(JavaCompile).configureEach {
+    tasks.withType(JavaCompile) {
         options.fork = true
         options.incremental = true
     }
