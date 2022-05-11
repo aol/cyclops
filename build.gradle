@@ -9,12 +9,13 @@ buildscript {
 }
 
 plugins {
-  id 'me.champeau.gradle.jmh' version '0.2.0'
+    id "me.champeau.jmh" version "0.6.5"
 }
 
-def custom = { "$rootDir/gradle/${it}.gradle" } //find custom plugins locally
-
-
+dependencies {
+    jmh 'org.openjdk.jmh:jmh-core:1.29'
+    jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.28'
+}
 
 jar {
   manifest {
@@ -23,26 +24,19 @@ jar {
 }
 
 
+
 subprojects {
+    apply plugin: 'me.champeau.jmh'
+    apply plugin: 'java-library'
+//  sourceCompatibility = 1.8
+//  targetCompatibility = 1.8
 
-  sourceCompatibility = 1.8
-  targetCompatibility = 1.8
-  if (JavaVersion.current().isJava8Compatible()) {
-    allprojects {
-      tasks.withType(Javadoc) {
-        options.addStringOption('Xdoclint:none', '-quiet')
-      }
-    }
-  }
 
-}
 
-task wrapper(type: Wrapper) {
-  gradleVersion = '2.14.1'
 }
 
 allprojects {
-    tasks.withType(JavaCompile).configureEach {
+    tasks.withType(JavaCompile) {
         options.fork = true
         options.incremental = true
     }
