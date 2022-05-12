@@ -1,11 +1,8 @@
 package cyclops;
 
 
-import com.google.common.collect.ImmutableList;
 import cyclops.data.Vector;
-import cyclops.data.tuple.Tuple;
-import cyclops.reactive.collections.immutable.VectorX;
-import io.vavr.collection.Stream;
+
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -17,7 +14,7 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 
-import java.util.List;
+
 import java.util.concurrent.TimeUnit;
 
 
@@ -26,13 +23,13 @@ public class VectorOps {
 
 
     Vector<Integer> vector;
-    VectorX<Integer> vectorX;
+  //  VectorX<Integer> vectorX;
     io.vavr.collection.Vector<Integer> js;
 
     @Setup
     public void before() {
         vector = Vector.range(0, 100_000);
-        vectorX = VectorX.range(0, 100_000);
+     //   vectorX = VectorX.range(0, 100_000);
         js = io.vavr.collection.Vector.range(0, 100_000);
 
     }
@@ -83,7 +80,7 @@ public class VectorOps {
 
     }
 
-
+/**
     @Benchmark
     @BenchmarkMode(Mode.SampleTime)
     @OutputTimeUnit(TimeUnit.MILLISECONDS)
@@ -110,6 +107,7 @@ public class VectorOps {
 
 
     }
+    **/
 
 }
 

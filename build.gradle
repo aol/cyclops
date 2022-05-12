@@ -33,6 +33,9 @@ subprojects {
     java {
         withJavadocJar()
         withSourcesJar()
+
+        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_1_8
     }
     /**
     signing {
@@ -40,7 +43,13 @@ subprojects {
     }
 
  **/
-
+    if (JavaVersion.current().isJava8Compatible()) {
+        allprojects {
+            tasks.withType(Javadoc) {
+                options.addStringOption('Xdoclint:none', '-quiet')
+            }
+        }
+    }
     javadoc {
         if(JavaVersion.current().isJava9Compatible()) {
             options.addBooleanOption('html5', true)
@@ -51,6 +60,14 @@ subprojects {
     }
     signing {
         sign configurations.archives
+    }
+    dependencies {
+        compileOnly "org.projectlombok:lombok:${lombokVersion}"
+        annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+        // Test Dependencies
+        testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+        testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     }
     publishing {
         publications {
@@ -116,7 +133,7 @@ subprojects {
 
     }
 }
-
+/**
 allprojects {
     tasks.withType(JavaCompile) {
         options.fork = true
@@ -124,3 +141,5 @@ allprojects {
     }
 
 }
+
+ **/
