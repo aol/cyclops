@@ -10,9 +10,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.experimental.Builder;
 import lombok.experimental.Wither;
+
 
 /**
  * This class allows a Batch of completable futures to be processed before collecting their results, to increase

@@ -6,7 +6,6 @@ def custom = { "$rootDir/gradle/${it}.gradle" } //find custom plugins locally
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
-//apply plugin: 'com.bmuschko.nexus'
 apply plugin: 'jacoco'
 apply from: custom('jacoco-version')
 apply from: custom('jacoco-config')
@@ -102,12 +101,5 @@ task packageTests(type: Jar) {
 artifacts.archives packageTests
 
 
-/**
 
-nexus {
-    sign = true
-    repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
-    snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
-}
- **/
 

@@ -98,8 +98,49 @@ public class CyclopsDeserializers  extends Deserializers.Base {
   public JsonDeserializer<?> findReferenceDeserializer(ReferenceType type,
                                                        DeserializationConfig config, BeanDescription bean,
                                                        TypeDeserializer typeDeserializer, JsonDeserializer<?> jsonDeserializer) throws JsonMappingException {
+      Class<?> raw = type.getRawClass();
 
-    return super.findReferenceDeserializer(type, config, bean, typeDeserializer, jsonDeserializer);
+      if (raw == Maybe.class) {
+          return new MaybeDeserializer(type);
+      }
+      if (raw == Option.class) {
+          return new OptionDeserializer(type);
+      }
+      if (raw == Eval.class) {
+          return new EvalDeserializer(type);
+      }
+      if (raw == Future.class) {
+          return new EvalDeserializer(type);
+      }
+      if (raw == Ior.class) {
+          return new IorDeserializer(type);
+      }
+      if (raw == LazyEither.class) {
+          return new LazyEitherDeserializer(type);
+      }
+      if (raw == LazyEither3.class) {
+          return new LazyEither3Deserializer(type);
+      }
+      if (raw == LazyEither4.class) {
+          return new LazyEither4Deserializer(type);
+      }
+
+      if (raw == Either.class) {
+          return new EitherDeserializer(type);
+      }
+      if (raw == Trampoline.class) {
+          return new TrampolineDeserializer(type);
+      }
+      if (raw == Unrestricted.class) {
+          return new TrampolineDeserializer(type);
+      }
+      if(tuples.contains(raw)) {
+          return new TupleDeserializer(raw);
+      }
+      if (PersistentMap.class.isAssignableFrom(type.getRawClass())) {
+          return new PersistentMapDeserializer(raw);
+      }
+        return super.findReferenceDeserializer(type, config, bean, typeDeserializer, jsonDeserializer);
   }
 
 }

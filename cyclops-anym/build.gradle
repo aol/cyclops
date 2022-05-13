@@ -31,7 +31,7 @@ dependencies {
     api project(':cyclops-futurestream')
     api project(':cyclops-reactive-collections')
     api project(':cyclops-pure')
-    compileOnly 'org.projectlombok:lombok:1.16.20'
+
     testImplementation project(':cyclops').sourceSets.test.output
     testImplementation 'io.projectreactor:reactor-core:3.0.7.RELEASE'
     testImplementation group: 'junit', name: 'junit', version: '4.12'
