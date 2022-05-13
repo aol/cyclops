@@ -1,7 +1,7 @@
 package cyclops.data.vector;
 
 import cyclops.data.Vector;
-import cyclops.reactive.collections.immutable.VectorX;
+
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
