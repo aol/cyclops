@@ -29,7 +29,7 @@ configurations {
 dependencies {
     api project(':cyclops')
     testImplementation project(':cyclops').sourceSets.test.output
-  
+
     testImplementation project(':cyclops').sourceSets.test.output
     testImplementation 'org.reactivestreams:reactive-streams-tck:1.0.0'
     testImplementation group: 'io.projectreactor', name: 'reactor-test', version: '3.2.2.RELEASE'

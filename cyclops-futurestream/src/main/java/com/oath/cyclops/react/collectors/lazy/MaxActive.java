@@ -2,7 +2,7 @@ package com.oath.cyclops.react.collectors.lazy;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.Builder;
+import lombok.Builder;
 import lombok.experimental.Wither;
 
 @AllArgsConstructor
