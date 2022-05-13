@@ -28,7 +28,6 @@ dependencies {
     api project(':cyclops')
     api project(':cyclops-reactive-collections')
 
-    compileOnly 'org.projectlombok:lombok:1.16.20'
     testImplementation project(':cyclops').sourceSets.test.output
     testImplementation 'org.reactivestreams:reactive-streams-tck:1.0.0'
     testImplementation 'org.mockito:mockito-core:1.9.5'
