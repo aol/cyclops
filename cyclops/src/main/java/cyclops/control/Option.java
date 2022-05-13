@@ -36,7 +36,7 @@ import java.util.stream.Stream;
  @see Maybe is a lazy / reactive sub-class of Option
 
  **/
-public interface Option<T> extends To<Option<T>>,
+public interface Option<T>  extends To<Option<T>>,
                                     OrElseValue<T,Option<T>>,
                                     MonadicValue<T>,
                                     Zippable<T>,
@@ -102,7 +102,7 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     static <T> Option<T> some(T value){
-        return new Option.Some<>(value);
+        return new Option.Some<T>(value);
     }
 
     static <T> Option<T> fromFuture(Future<T> future){
