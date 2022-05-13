@@ -1,20 +1,16 @@
-buildscript {
-  repositories {
-    jcenter()
-  }
-
-  dependencies {
-    classpath 'com.bmuschko:gradle-nexus-plugin:2.2'
-  }
-}
-
 plugins {
-  id 'me.champeau.gradle.jmh' version '0.2.0'
+    id "me.champeau.jmh" version "0.6.5"
+    id 'maven-publish'
+    id 'signing'
+}
+repositories {
+    mavenCentral()
 }
 
-def custom = { "$rootDir/gradle/${it}.gradle" } //find custom plugins locally
-
-
+dependencies {
+    jmh 'org.openjdk.jmh:jmh-core:1.29'
+    jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.28'
+}
 
 jar {
   manifest {
@@ -23,28 +19,127 @@ jar {
 }
 
 
+
 subprojects {
+    apply plugin: 'me.champeau.jmh'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'signing'
 
-  sourceCompatibility = 1.8
-  targetCompatibility = 1.8
-  if (JavaVersion.current().isJava8Compatible()) {
-    allprojects {
-      tasks.withType(Javadoc) {
-        options.addStringOption('Xdoclint:none', '-quiet')
-      }
+    group 'com.oath.cyclops'
+//  sourceCompatibility = 1.8
+//  targetCompatibility = 1.8
+
+    java {
+        withJavadocJar()
+        withSourcesJar()
+
+        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_1_8
     }
-  }
+    /**
+    signing {
+        sign publishing.publications.mavenJava
+    }
 
+ **/
+    if (JavaVersion.current().isJava8Compatible()) {
+        allprojects {
+            tasks.withType(Javadoc) {
+                options.addStringOption('Xdoclint:none', '-quiet')
+            }
+        }
+    }
+    javadoc {
+        if(JavaVersion.current().isJava9Compatible()) {
+            options.addBooleanOption('html5', true)
+        }
+    }
+    artifacts {
+        archives javadocJar, sourcesJar
+    }
+    signing {
+        sign configurations.archives
+    }
+    dependencies {
+        compileOnly "org.projectlombok:lombok:${lombokVersion}"
+        annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+        // Test Dependencies
+        testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+        testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    }
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                version "$version"
+                pom {
+                    name = POM_NAME
+                    packaging = POM_PACKAGING
+                    description = POM_DESCRIPTION
+                    url = POM_URL
+                    scm {
+                        url = 'scm:git@github.com:aol/cyclops-react.git'
+                        connection = 'scm:git@github.com:aol/cyclops-react.git'
+                        developerConnection = 'scm:git@github.com:aol/simple-react.git'
+                    }
+
+                    licenses {
+                        license {
+                            name = 'The Apache Software License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution = 'repo'
+                        }
+                    }
+
+
+                    developers {
+                        developer {
+                            id = 'johnmcclean-aol'
+                            name = 'John McClean'
+                            email = 'john.mcclean@teamaol.com'
+                        }
+                        developer {
+                            id = 'kewangie'
+                            name = 'Ke Wang'
+                            email = 'ke.wang@teamaol.com'
+                        }
+
+                        developer {
+                            id = 'tkountis'
+                            name = 'Thomas Kountis Wang'
+                            email = 'thomas.kountis@adtech.com'
+                        }
+                        developer {
+                            id = 'colinfkennedy'
+                            name = 'Colin Kennedy'
+                            email = 'Colin.Kennedy@teamaol.com'
+                        }
+                    }
+                }
+            }
+        }
+        repositories {
+            mavenLocal()
+            maven {
+                url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+                credentials {
+                    username = nexusUsername
+                    password = nexusPassword
+                }
+            }
+        }
+
+    }
 }
-
-task wrapper(type: Wrapper) {
-  gradleVersion = '2.14.1'
-}
-
+/**
 allprojects {
-    tasks.withType(JavaCompile).configureEach {
+    tasks.withType(JavaCompile) {
         options.fork = true
         options.incremental = true
     }
 
 }
+
+ **/
