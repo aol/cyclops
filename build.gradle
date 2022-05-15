@@ -37,12 +37,8 @@ subprojects {
         targetCompatibility = JavaVersion.VERSION_1_8
         sourceCompatibility = JavaVersion.VERSION_1_8
     }
-    /**
-    signing {
-        sign publishing.publications.mavenJava
-    }
 
- **/
+
     if (JavaVersion.current().isJava8Compatible()) {
         allprojects {
             tasks.withType(Javadoc) {
@@ -58,9 +54,11 @@ subprojects {
     artifacts {
         archives javadocJar, sourcesJar
     }
+    /**
     signing {
         sign configurations.archives
     }
+ **/
     dependencies {
         compileOnly "org.projectlombok:lombok:${lombokVersion}"
         annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
@@ -131,6 +129,9 @@ subprojects {
             }
         }
 
+    }
+    signing {
+        sign publishing.publications.mavenJava
     }
 }
 
