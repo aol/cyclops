@@ -5,6 +5,7 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.internal.stream.spliterators.*;
 
 
+import com.oath.cyclops.internal.stream.spliterators.doubles.ReversingDoubleArraySpliterator;
 import com.oath.cyclops.types.foldable.Contains;
 import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
@@ -15,7 +16,6 @@ import cyclops.control.*;
 import cyclops.data.Enumeration;
 
 import com.oath.cyclops.internal.stream.OneShotStreamX;
-import com.oath.cyclops.internal.stream.spliterators.doubles.ReversingDoubleArraySpliterator;
 import com.oath.cyclops.internal.stream.spliterators.ints.ReversingIntArraySpliterator;
 import com.oath.cyclops.internal.stream.spliterators.ints.ReversingRangeIntSpliterator;
 import com.oath.cyclops.internal.stream.spliterators.longs.ReversingLongArraySpliterator;
@@ -37,7 +37,6 @@ import cyclops.data.Seq;
 
 import cyclops.data.Vector;
 import cyclops.data.HashMap;
-import cyclops.function.Curry;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -344,127 +343,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return fromSpliterator(new ReversingIntArraySpliterator<>(values,0,values.length,false));
 
     }
-    /*
-    * Fluent limit operation using primitive types
-    * e.g.
-    * <pre>
-    *  {@code
-    *    import static cyclops.ReactiveSeq.limitInts;
-    *
-    *    ReactiveSeq.ofInts(1,2,3)
-    *               .to(limitInts(1));
-    *
-    *   //[1]
-    *  }
-    *  </pre>
-    *
-    */
-    @Deprecated //moved to cyclops.companion.Functions
-    public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> limitInts(long maxSize){
 
-        return a->a.ints(i->i,s->s.limit(maxSize));
-    }
-    /*
-   * Fluent limit operation using primitive types
-   * e.g.
-   * <pre>
-   *  {@code
-   *    import static cyclops.ReactiveSeq.skipInts;
-   *
-   *    ReactiveSeq.ofInts(1,2,3)
-   *               .to(limitInts(1));
-   *
-   *   //[1]
-   *  }
-   *  </pre>
-   *
-   */
-    @Deprecated //moved to cyclops.companion.Functions
-    public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> skipInts(long skip){
 
-        return a->a.ints(i->i,s->s.skip(skip));
-    }
-    /*
-     * Fluent transform operation using primitive types
-     * e.g.
-     * <pre>
-     *  {@code
-     *    import static cyclops.ReactiveSeq.mapInts;
-     *
-     *    ReactiveSeq.ofInts(1,2,3)
-     *               .to(mapInts(i->i*2));
-     *
-     *   //[2,4,6]
-     *  }
-     *  </pre>
-     *
-     */
-    @Deprecated //moved to cyclops.companion.Functions
-    public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> mapInts(IntUnaryOperator b){
 
-        return a->a.ints(i->i,s->s.map(b));
-    }
-    /*
-    * Fluent filter operation using primitive types
-    * e.g.
-    * <pre>
-    *  {@code
-    *    import static cyclops.ReactiveSeq.filterInts;
-    *
-    *    ReactiveSeq.ofInts(1,2,3)
-    *               .to(filterInts(i->i>2));
-    *
-    *   //[3]
-    *  }
-    *  </pre>
-    *
-    */
-    @Deprecated //moved to cyclops.companion.Functions
-    public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> filterInts(IntPredicate b){
 
-        return a->a.ints(i->i,s->s.filter(b));
-    }
-    /*
-     * Fluent flatMap operation using primitive types
-     * e.g.
-     * <pre>
-     *  {@code
-     *    import static cyclops.ReactiveSeq.concatMapnts;
-     *
-     *    ReactiveSeq.ofInts(1,2,3)
-     *               .to(concatMapnts(i->IntStream.of(i*2)));
-     *
-     *   //[2,4,6]
-     *  }
-     *  </pre>
-     *
-     */
-    @Deprecated //moved to cyclops.companion.Functions
-    public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> concatMapnts(IntFunction<? extends IntStream> b){
-
-        return a->a.ints(i->i,s->s.flatMap(b));
-    }
-    /*
-     * Fluent integer concat operation using primitive types
-     * e.g.
-     * <pre>
-     *  {@code
-     *    import static cyclops.ReactiveSeq.concatInts;
-     *
-     *    ReactiveSeq.ofInts(1,2,3)
-     *               .to(concatInts(ReactiveSeq.range(5,10)));
-     *
-     *   //[1,2,3,5,6,7,8,9]
-     *  }
-     *  </pre>
-     *
-     */
-    @Deprecated //moved to cyclops.companion.Functions
-    public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> concatInts( ReactiveSeq<Integer> b){
-        return a->fromSpliterator(IntStream.concat(a.mapToInt(i->i),b.mapToInt(i->i)).spliterator());
-    }
-
-       /**
+    /**
      *
      * @param values longs to populate Stream from
      * @return ReactiveSeq of multiple Longs
@@ -473,126 +356,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return fromSpliterator(new ReversingLongArraySpliterator<>(values,0,values.length,false));
     }
 
-
-    /*
-     * Fluent limit operation using primitive types
-     * e.g.
-     * <pre>
-     *  {@code
-     *    import static cyclops.ReactiveSeq.limitLongs;
-     *
-     *    ReactiveSeq.ofLongs(1,2,3)
-     *               .to(limitLongs(1));
-     *
-     *   //[1]
-     *  }
-     *  </pre>
-     *
-     */
-    @Deprecated //moved to cyclops.companion.Functions
-    public static Function<? super ReactiveSeq<Long>, ? extends ReactiveSeq<Long>> limitLongs(long maxSize){
-
-        return a->a.longs(i->i,s->s.limit(maxSize));
-    }
-    /*
-   * Fluent limit operation using primitive types
-   * e.g.
-   * <pre>
-   *  {@code
-   *    import static cyclops.ReactiveSeq.skipLongs;
-   *
-   *    ReactiveSeq.ofLongs(1,2,3)
-   *               .to(limitLongs(1));
-   *
-   *   //[1l]
-   *  }
-   *  </pre>
-   *
-   */
-    @Deprecated //moved to cyclops.companion.Functions
-    public static Function<? super ReactiveSeq<Long>, ? extends ReactiveSeq<Long>> skipLongs(long skip){
-
-        return a->a.longs(i->i,s->s.skip(skip));
-    }
-    /*
-     * Fluent transform operation using primitive types
-     * e.g.
-     * <pre>
-     *  {@code
-     *    import static cyclops.ReactiveSeq.mapLongs;
-     *
-     *    ReactiveSeq.ofLongs(1l,2l,3l)
-     *               .to(mapLongs(i->i*2));
-     *
-     *   //[2l,4l,6l]
-     *  }
-     *  </pre>
-     *
-     */
-    @Deprecated //moved to cyclops.companion.Functions
-    public static Function<? super ReactiveSeq<Long>, ? extends ReactiveSeq<Long>> mapLongs(LongUnaryOperator b){
-
-        return a->a.longs(i->i,s->s.map(b));
-    }
-    /*
-    * Fluent filter operation using primitive types
-    * e.g.
-    * <pre>
-    *  {@code
-    *    import static cyclops.ReactiveSeq.filterInts;
-    *
-    *    ReactiveSeq.ofLongs(1l,2l,3l)
-    *               .to(filterLongs(i->i>2));
-    *
-    *   //[3l]
-    *  }
-    *  </pre>
-    *
-    */
-    @Deprecated //moved to cyclops.companion.Functions
-    public static Function<? super ReactiveSeq<Long>, ? extends ReactiveSeq<Long>> filterLongs(LongPredicate b){
-
-        return a->a.longs(i->i,s->s.filter(b));
-    }
-    /*
-     * Fluent flatMap operation using primitive types
-     * e.g.
-     * <pre>
-     *  {@code
-     *    import static cyclops.ReactiveSeq.flatMapLongs;
-     *
-     *    ReactiveSeq.ofLongs(1,2,3)
-     *               .to(flatMapLongs(i->LongStream.of(i*2)));
-     *
-     *   //[2l,4l,6l]
-     *  }
-     *  </pre>
-     *
-     */
-    @Deprecated //moved to cyclops.companion.Functions
-    public static Function<? super ReactiveSeq<Long>, ? extends ReactiveSeq<Long>> flatMapLongs(LongFunction<? extends LongStream> b){
-
-        return a->a.longs(i->i,s->s.flatMap(b));
-    }
-    /*
-     * Fluent integer concat operation using primitive types
-     * e.g.
-     * <pre>
-     *  {@code
-     *    import static cyclops.ReactiveSeq.concatLongs;
-     *
-     *    ReactiveSeq.ofLongs(1l,2l,3l)
-     *               .to(concatLongs(ReactiveSeq.ofLongs(5,10)));
-     *
-     *   //[1l,2l,3l,5l,6l,7l,8l,9l]
-     *  }
-     *  </pre>
-     *
-     */
-    @Deprecated //moved to cyclops.companion.Functions
-    public static Function<? super ReactiveSeq<Long>, ? extends ReactiveSeq<Long>> concatLongs( ReactiveSeq<Long> b){
-        return a->fromSpliterator(LongStream.concat(a.mapToLong(i->i),b.mapToLong(i->i)).spliterator());
-    }
 
     /**
      *
@@ -603,126 +366,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return fromSpliterator(new ReversingDoubleArraySpliterator<>(values,0,values.length,false));
     }
 
-    /*
- * Fluent limit operation using primitive types
- * e.g.
- * <pre>
- *  {@code
- *    import static cyclops.ReactiveSeq.limitDoubles;
- *
- *    ReactiveSeq.ofDoubles(1d,2d,3d)
- *               .to(limitDoubles(1));
- *
- *   //[1]
- *  }
- *  </pre>
- *
- */
-    @Deprecated //moved to cyclops.companion.Functions
-    public static Function<? super ReactiveSeq<Double>, ? extends ReactiveSeq<Double>> limitDouble(long maxSize){
 
-        return a->a.doubles(i->i,s->s.limit(maxSize));
-    }
-    /*
-   * Fluent limit operation using primitive types
-   * e.g.
-   * <pre>
-   *  {@code
-   *    import static cyclops.ReactiveSeq.skipDoubles;
-   *
-   *    ReactiveSeq.ofDoubles(1d,2d,3d)
-   *               .to(limitDoubles(1));
-   *
-   *   //[1d]
-   *  }
-   *  </pre>
-   *
-   */
-    @Deprecated //moved to cyclops.companion.Functions
-    public static Function<? super ReactiveSeq<Double>, ? extends ReactiveSeq<Double>> skipDoubles(long skip){
-
-        return a->a.doubles(i->i,s->s.skip(skip));
-    }
-    /*
-     * Fluent transform operation using primitive types
-     * e.g.
-     * <pre>
-     *  {@code
-     *    import static cyclops.ReactiveSeq.mapDoubles;
-     *
-     *    ReactiveSeq.ofDoubles(1d,2d,3d)
-     *               .to(mapDoubles(i->i*2));
-     *
-     *   //[2d,4d,6d]
-     *  }
-     *  </pre>
-     *
-     */
-    @Deprecated //moved to cyclops.companion.Functions
-    public static Function<? super ReactiveSeq<Double>, ? extends ReactiveSeq<Double>> mapDoubles(DoubleUnaryOperator b){
-
-        return a->a.doubles(i->i,s->s.map(b));
-    }
-    /*
-    * Fluent filter operation using primitive types
-    * e.g.
-    * <pre>
-    *  {@code
-    *    import static cyclops.ReactiveSeq.filterDoubles;
-    *
-    *    ReactiveSeq.ofDoubles(1d,2d,3d)
-    *               .to(filterDoubles(i->i>2));
-    *
-    *   //[3d]
-    *  }
-    *  </pre>
-    *
-    */
-    @Deprecated //moved to cyclops.companion.Functions
-    public static Function<? super ReactiveSeq<Double>, ? extends ReactiveSeq<Double>> filterLongs(DoublePredicate b){
-
-        return a->a.doubles(i->i,s->s.filter(b));
-    }
-    /*
-     * Fluent flatMap operation using primitive types
-     * e.g.
-     * <pre>
-     *  {@code
-     *    import static cyclops.ReactiveSeq.flatMapDoubles;
-     *
-     *    ReactiveSeq.ofDoubles(1d,2d,3d)
-     *               .to(flatMapDoubles(i->DoubleStream.of(i*2)));
-     *
-     *   //[2d,4d,6d]
-     *  }
-     *  </pre>
-     *
-     */
-    @Deprecated //moved to cyclops.companion.Functions
-    public static Function<? super ReactiveSeq<Double>, ? extends ReactiveSeq<Double>> flatMapDoubles(DoubleFunction<? extends DoubleStream> b){
-
-        return a->a.doubles(i->i,s->s.flatMap(b));
-    }
-    /*
-     * Fluent integer concat operation using primitive types
-     * e.g.
-     * <pre>
-     *  {@code
-     *    import static cyclops.ReactiveSeq.concatDoubles;
-     *
-     *    ReactiveSeq.ofDoubles(1d,2d,3d)
-     *               .to(concatDoubles(ReactiveSeq.ofDoubles(5,6,7,8,9)));
-     *
-     *   //[1d,2d,3d,5d,6d,7d,8d,9d]
-     *  }
-     *  </pre>
-     *
-     */
-    @Deprecated //moved to cyclops.companion.Functions
-    public static Function<? super ReactiveSeq<Double>, ? extends ReactiveSeq<Double>> concatDoubles( ReactiveSeq<Double> b){
-
-        return a->fromSpliterator(DoubleStream.concat(a.mapToDouble(i->i),b.mapToDouble(i->i)).spliterator());
-    }
 
     /**
      * Efficiently construct a ReactiveSeq from a single value
@@ -2676,7 +2320,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             return prependAll(values);
         }
         return ReactiveSeq.defer(()-> {
-            long check = new Long(pos);
+            long check =  Long.valueOf(pos);
             boolean added[] = {false};
 
 
@@ -2705,7 +2349,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             return prependStream(ReactiveSeq.fromIterable(values));
         }
         return ReactiveSeq.defer(()-> {
-            long check = new Long(pos);
+            long check = Long.valueOf(pos);
             boolean added[] = {false};
             return ReactiveSeq.<T>concat(zipWithIndex().flatMap(t -> {
                 if (t._2() < check && !added[0])
@@ -2730,7 +2374,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         }
 
         return ReactiveSeq.defer(()-> {
-            long check = new Long(pos);
+            long check =  Long.valueOf(pos);
             boolean added[] = {false};
 
             return ReactiveSeq.<T>concat(zipWithIndex().flatMap(t -> {
@@ -2769,8 +2413,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     default ReactiveSeq<T> deleteBetween(int start, int end){
         return ReactiveSeq.defer(()->{
-            long check =  new Long(start);
-            long endCheck = new Long(end);
+            long check =   Long.valueOf(start);
+            long endCheck =  Long.valueOf(end);
 
             return  zipWithIndex().flatMap(t-> {
                         if (t._2() < check)
@@ -3364,10 +3008,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return Spouts.from(publisher);
     }
 
-    @Deprecated
-    public static <T> ReactiveSeq<T> generate(Generator<T> gen){
-        return gen.stream();
-    }
     /**
      * Construct a ReactiveSeq from an Iterable
      *
@@ -4470,22 +4110,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return (ReactiveSeq<R>)IterableX.super.zip4(second,third,fourth,fn);
     }
 
-    @Deprecated //name will be refactored to merge in the future
-    default ReactiveSeq<T> mergeP(final Publisher<T>... publishers) {
-        return mergeP(QueueFactories.boundedQueue(5_000),publishers);
-    }
+
     default ReactiveSeq<T> merge(final Publisher<T>... publishers) {
-        return mergeP(QueueFactories.boundedQueue(5_000),publishers);
+        return merge(QueueFactories.boundedQueue(5_000),publishers);
     }
 
 
-    default ReactiveSeq<T> backpressureAware(){
-        return this;
-    }
 
-    default ReactiveSeq<T> merge(final QueueFactory<T> factory,final Publisher<T>... publishers){
-        return mergeP(factory,publishers);
-    }
+
     /**
      * A potentially asynchronous merge operation where data from each publisher may arrive out of order (if publishers
      * are configured to publish asynchronously.
@@ -4494,8 +4126,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      *
      */
-    @Deprecated //name will be refactored to merge in the future
-    default ReactiveSeq<T> mergeP(final QueueFactory<T> factory,final Publisher<T>... publishers) {
+    default ReactiveSeq<T> merge(final QueueFactory<T> factory, final Publisher<T>... publishers) {
         return defer(()->{
             final Counter c = new Counter();
             c.active.set(publishers.length + 1);
@@ -4540,7 +4171,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             final QueueBasedSubscriber<T> init = QueueBasedSubscriber.subscriber(QueueFactories.boundedQueue(5_000), c, publishers.length);
 
             final Supplier<Continuation> sp = () -> {
-                backpressureAware().subscribe(init);
+                subscribe(init);
                 for (final Publisher next : publishers) {
                     next.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, publishers.length));
                 }
@@ -4604,7 +4235,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             Seq<ReactiveSeq<T>> list = multicast(2);
             Publisher<R> pub = (Publisher<R>) path2.apply(list.getOrElse(1, empty()));
             ReactiveSeq<R> seq = (ReactiveSeq<R>) path1.apply(list.getOrElse(0, empty()));
-            return seq.mergeP(pub);
+            return seq.merge(pub);
         });
 
     }
@@ -4618,7 +4249,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
             ReactiveSeq<R> res1 = d._1().parallel(fj, path1);
             ReactiveSeq<R> res2 = d._2().parallel(fj, path2);
-            return res1.mergeP(res2);
+            return res1.merge(res2);
         });
 
 
@@ -4633,7 +4264,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             Publisher<R> pub2 = (Publisher<R>) path2.apply(list.getOrElse(1, empty()));
             Publisher<R> pub3 = (Publisher<R>) path3.apply(list.getOrElse(2, empty()));
             ReactiveSeq<R> seq = (ReactiveSeq<R>) path1.apply(list.getOrElse(0, empty()));
-            return seq.mergeP(pub2, pub3);
+            return seq.merge(pub2, pub3);
         });
 
 
@@ -4651,7 +4282,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             ReactiveSeq<R> res1 = d._1().parallel(fj, path1);
             ReactiveSeq<R> res2 = d._2().parallel(fj, path2);
             ReactiveSeq<R> res3 = d._3().parallel(fj, path3);
-            return res1.mergeP(res2, res3);
+            return res1.merge(res2, res3);
         });
 
 
@@ -4695,7 +4326,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             Publisher<R> pub3 = (Publisher<R>) path3.apply(list.getOrElse(2, empty()));
             Publisher<R> pub4 = (Publisher<R>) path4.apply(list.getOrElse(3, empty()));
             ReactiveSeq<R> seq = (ReactiveSeq<R>) path1.apply(list.getOrElse(0, empty()));
-            return seq.mergeP(pub2, pub3, pub4);
+            return seq.merge(pub2, pub3, pub4);
         });
 
     }
@@ -4710,7 +4341,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             ReactiveSeq<R> res2 = d._2().parallel(fj, path2);
             ReactiveSeq<R> res3 = d._3().parallel(fj, path3);
             ReactiveSeq<R> res4 = d._4().parallel(fj, path4);
-            return res1.mergeP(res2, res3, res4);
+            return res1.merge(res2, res3, res4);
         });
 
     }

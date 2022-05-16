@@ -1,7 +1,6 @@
 package cyclops.futurestream.react.base;
 
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.joining;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
@@ -15,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import com.oath.cyclops.ReactiveConvertableSequence;
+
 import cyclops.data.ImmutableMap;
 import cyclops.data.TreeSet;
 import java.util.Arrays;
@@ -33,8 +32,6 @@ import java.util.stream.Stream;
 
 import cyclops.data.Seq;
 import cyclops.data.Vector;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.MapX;
 
 import cyclops.control.Option;
 import cyclops.futurestream.FutureStream;
@@ -45,7 +42,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.oath.cyclops.async.adapters.Queue;
-import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.util.SimpleTimer;
 
 public abstract class BaseSequentialSeqTest {
@@ -153,7 +149,7 @@ public abstract class BaseSequentialSeqTest {
 	@Test
 	public void batchBySizeSet(){
 		System.out.println(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).block());
-		assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).block().get(0).size(),is(1));
+		assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).block().get(0).orElse(null).size(),is(1));
 		assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).block().size(),is(1));
 	}
 	@Test
@@ -209,7 +205,7 @@ public abstract class BaseSequentialSeqTest {
 	@Test
 	public void batchByTimeSet(){
 
-		assertThat(of(1,1,1,1,1,1).groupedByTime(1500,TimeUnit.MICROSECONDS,()-> TreeSet.empty()).block().get(0).size(),is(1));
+		assertThat(of(1,1,1,1,1,1).groupedByTime(1500,TimeUnit.MICROSECONDS,()-> TreeSet.empty()).block().get(0).orElse(null).size(),is(1));
 	}
 	@Test
 	public void batchByTimeInternalSize(){
@@ -227,7 +223,7 @@ public abstract class BaseSequentialSeqTest {
 			shards.put(4,new Queue());
 			shards.put(5,new Queue());
 			shards.put(6,new Queue());
-			assertThat(of(1,2,3,4,5,6).shard(MapX.fromMap(shards),Function.identity()).size(),is(6));
+			assertThat(of(1,2,3,4,5,6).shard(shards,Function.identity()).size(),is(6));
 		}
 	}
 	@Test
@@ -656,12 +652,12 @@ public abstract class BaseSequentialSeqTest {
 	    }
 	@Test
 	public void splitAtHeadInvestigate(){
-		System.out.println("0" + of(1, 2, 3).splitAt(0)._2().to(ReactiveConvertableSequence::converter).listX());
+		System.out.println("0" + of(1, 2, 3).splitAt(0)._2().to(Seq::fromIterable).listView());
 		System.out.println("head " + of(1, 2, 3).splitAtHead()._1());
-		System.out.println("tail "+of(1, 2, 3).splitAtHead()._2().to(ReactiveConvertableSequence::converter).listX());
+		System.out.println("tail "+of(1, 2, 3).splitAtHead()._2().to(Seq::fromIterable).listView());
 		System.out.println(of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
-		System.out.println(of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().to(ReactiveConvertableSequence::converter).listX());
-		assertThat(of(1,2,3).splitAtHead()._2().to(ReactiveConvertableSequence::converter).listX(),equalTo(ListX.of(2,3)));
+		System.out.println(of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().to(Seq::fromIterable).listView());
+		assertThat(of(1,2,3).splitAtHead()._2().to(Seq::fromIterable).listView(),equalTo(List.of(2,3)));
 	}
 	    @Test
 	    public void testSplitAtHead() {

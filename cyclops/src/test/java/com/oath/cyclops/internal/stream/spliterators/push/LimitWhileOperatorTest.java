@@ -173,7 +173,7 @@ public class LimitWhileOperatorTest {
         assertNull(error.get());
 
     }
-    
+
     @Test
     public void predicateError(){
         AtomicReference<Vector<Integer>> data = new AtomicReference(Vector.empty());
@@ -201,7 +201,7 @@ public class LimitWhileOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Spouts.async(ReactiveSeq.of(1,2,3,4,5),ex)
+        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .takeWhile(i -> true)
             .forEach(n->{
                 assertFalse(complete.get());
@@ -226,7 +226,7 @@ public class LimitWhileOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Spouts.async(ReactiveSeq.of(1,2,3,4,5),ex)
+        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .takeWhile(i -> i<1)
             .forEach(n->{
                 assertFalse(complete.get());
@@ -252,7 +252,7 @@ public class LimitWhileOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Spouts.async(ReactiveSeq.of(1,2,3,4,5),ex)
+        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .takeWhile(i -> i<0)
             .forEach(n->{
                 assertFalse(complete.get());
@@ -279,7 +279,7 @@ public class LimitWhileOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Subscription s =  Spouts.async(ReactiveSeq.of(1,2,3,4,5),ex)
+        Subscription s =  Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .takeWhile(i -> true)
             .forEach(2, n -> {
                 assertFalse(complete.get());
@@ -307,7 +307,7 @@ public class LimitWhileOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Subscription s = Spouts.async(ReactiveSeq.of(1,2,3,4,5),ex)
+        Subscription s = Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .takeWhile(i -> i<3)
             .forEach(2, n -> {
                 assertFalse(complete.get());
@@ -335,7 +335,7 @@ public class LimitWhileOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Spouts.async(ReactiveSeq.of(1,2,3,4,5),ex)
+        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .takeWhile(i ->{ throw new RuntimeException();})
             .forEach(n->{
                 assertFalse(complete.get());

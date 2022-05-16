@@ -8,8 +8,8 @@ import java.util.stream.Collector;
 import com.oath.cyclops.internal.react.stream.EagerStreamWrapper;
 import com.oath.cyclops.internal.react.stream.LazyStreamWrapper;
 import com.oath.cyclops.util.ThrowsSoftened;
-import cyclops.reactive.collections.mutable.ListX;
-import cyclops.reactive.companion.CyclopsCollectors;
+import cyclops.data.Seq;
+
 
 public interface BlockingStream<U> {
 
@@ -21,8 +21,8 @@ public interface BlockingStream<U> {
      * <pre>
      * {@code
     	List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-    			.applyHKT((it) -> it * 100)
-    			.applyHKT((it) -> "*" + it)
+    			.apply((it) -> it * 100)
+    			.apply((it) -> "*" + it)
     			.block();
     	}
 
@@ -39,14 +39,14 @@ public interface BlockingStream<U> {
      *         InterruptedException,ExecutionException
      */
     @ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
-    default ListX<U> block() {
+    default Seq<U> block() {
         final Object lastActive = getLastActive();
         if (lastActive instanceof EagerStreamWrapper) {
             final EagerStreamWrapper last = (EagerStreamWrapper) lastActive;
-            return BlockingStreamHelper.block(this, CyclopsCollectors.toListX(), last);
+            return BlockingStreamHelper.block(this, Seq.collector(), last);
         } else {
             final LazyStreamWrapper<U> last = (LazyStreamWrapper) lastActive;
-            return BlockingStreamHelper.block(this, CyclopsCollectors.toListX(), last);
+            return BlockingStreamHelper.block(this, Seq.collector(), last);
         }
     }
 

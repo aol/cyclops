@@ -188,7 +188,7 @@ public class LazySequentialSeqObjectPoolsTest extends BaseSequentialSeqTest {
 	@Test
 	public void testZipWithFutures(){
 		Stream stream = of("a","b");
-		List<Tuple2<Integer,String>> result = of(1,2).actOnFutures().zip(stream).block();
+		List<Tuple2<Integer,String>> result = of(1,2).actOnFutures().zip(stream).block().listView();
 
 		assertThat(result,is(asList(tuple(1,"a"),tuple(2,"b"))));
 	}
@@ -197,18 +197,18 @@ public class LazySequentialSeqObjectPoolsTest extends BaseSequentialSeqTest {
 	@Test
 	public void testZipFuturesWithIndex(){
 
-		List<Tuple2<String,Long>> result = of("a","b").actOnFutures().zipWithIndex().block();
+		List<Tuple2<String,Long>> result = of("a","b").actOnFutures().zipWithIndex().block().listView();
 
 		assertThat(result,is(asList(tuple("a",0l),tuple("b",1l))));
 	}
 	@Test
 	public void duplicateFutures(){
-		List<String> list = of("a","b").actOnFutures().duplicate()._1().block();
+		List<String> list = of("a","b").actOnFutures().duplicate()._1().block().listView();
 		assertThat(list,is(asList("a","b")));
 	}
 	@Test
 	public void duplicateFutures2(){
-		List<String> list = of("a","b").actOnFutures().duplicate()._2().block();
+		List<String> list = of("a","b").actOnFutures().duplicate()._2().block().listView();
 		assertThat(list,is(asList("a","b")));
 	}
 }

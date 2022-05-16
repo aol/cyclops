@@ -19,7 +19,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static cyclops.matching.Api.Case;
+
 
 /**
  * A type that represents a Monad that wraps a single value

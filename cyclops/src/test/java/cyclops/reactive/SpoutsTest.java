@@ -1,8 +1,6 @@
 package cyclops.reactive;
 
-import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
-import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Semigroups;
 import com.oath.cyclops.async.QueueFactories;
@@ -14,7 +12,6 @@ import cyclops.function.Effect;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import cyclops.data.tuple.Tuple2;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
@@ -32,7 +29,6 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.oath.cyclops.types.foldable.Evaluation.LAZY;
 import static cyclops.reactive.ReactiveSeq.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -486,36 +482,7 @@ public class SpoutsTest {
         assertThat(count,equalTo(30));
     }
 
-    @Test
-    public void asyncBufferBlock() throws InterruptedException {
 
-        Subscription sub = Spouts.asyncBufferBlock(10, s -> {
-                    if (i == 0) {
-                        Effect e = () -> {
-                            s.onNext("hello " + i++);
-                        };
-                        e.cycle(30).runAsync();
-                    }
-                }
-            ).forEach(2, in->count++);
-
-
-
-        Thread.sleep(500);
-        sub.request(30);
-        Thread.sleep(500);
-        assertThat(i,equalTo(30));
-        assertThat(count,equalTo(30));
-
-    }
-    @Test
-    public void asyncStream(){
-        assertThat(Arrays.asList(1,2,3),equalTo(Spouts.async(ReactiveSeq.of(1,2,3),Executors.newFixedThreadPool(1)).toList()));
-    }
-    @Test
-    public void asyncStreamAsync(){
-        assertThat(Arrays.asList(1,2,3),equalTo(Spouts.async(ReactiveSeq.of(1,2,3),Executors.newFixedThreadPool(1)).toList()));
-    }
     @Test
     public void combineLatest(){
        for(int i=0;i<10_000;i++) {
@@ -619,7 +586,7 @@ public class SpoutsTest {
         for(int x=100;x<10000;x=x+1000) {
             Set<Integer> result = new HashSet<>(x);
             int max = x;
-            Iterator<Integer> it = Spouts.<Integer>async(sub -> {
+            Iterator<Integer> it = Spouts.<Integer>reactive(sub -> {
 
                 for (int i = 0; i < max; i++) {
                     sub.onNext(i);
@@ -655,14 +622,7 @@ public class SpoutsTest {
                         s4->s4.filter(i->i%4==3).map(i->i*10000))
                 .toList(), Matchers.equalTo(Arrays.asList(8, 100, 2000, 30000, 16, 500, 6000, 70000, 24, 900, 10000, 110000)));
     }
-    @Test
-    public void async(){
-       assertThat(Spouts.async(sub->{
-            sub.onNext(1);
-            sub.onNext(2);
-            sub.onComplete();
-           }).toList(),equalTo(Arrays.asList(1,2)));
-    }
+
     @Test
     public void generate() throws Exception {
         assertThat(Spouts.generate(()->1)
@@ -734,11 +694,7 @@ public class SpoutsTest {
        // assertThat(Spouts.amb(ListX.of(nextAsync(),Spouts.of(100,200,300))).listX(),equalTo(ListX.of(100,200,300)));
     }
 
-    @Test
-    public void nextAsyncToListX(){
-        System.out.println(nextAsync().toList());
 
-    }
     @Test
     public void publishToAndMerge(){
         com.oath.cyclops.async.adapters.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
@@ -774,7 +730,7 @@ public class SpoutsTest {
         System.out.println("Merge!");
      //   tp._1.mergeP(tp._2).printOut();
 
-        Spouts.of("a","b","c").mergeP(ReactiveSeq.of("bb","cc")).printOut();
+        Spouts.of("a","b","c").merge(ReactiveSeq.of("bb","cc")).printOut();
     }
     @Test
     public void fanOut2(){
@@ -938,23 +894,7 @@ public class SpoutsTest {
 
         return sub.reactiveStream();
     }
-    private ReactiveSeq<Integer> nextAsync() {
-        AsyncSubscriber<Integer> sub = Spouts.asyncSubscriber();
-        new Thread(()->{
 
-            sub.awaitInitialization();
-            try {
-                //not a reactive-stream so we don't know with certainty when demand signalled
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            sub.onNext(1);
-            sub.onNext(2);
-            sub.onComplete();
-        }).start();
-        return sub.stream();
-    }
 
     @Test
     public void takeWhile(){

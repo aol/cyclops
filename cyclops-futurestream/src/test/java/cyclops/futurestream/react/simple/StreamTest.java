@@ -9,6 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
 
+import cyclops.data.ImmutableList;
 import org.junit.Test;
 
 import cyclops.futurestream.SimpleReact;
@@ -22,7 +23,7 @@ public class StreamTest {
 			ExecutionException {
 
 
-		List<String> strings = new SimpleReact()
+        ImmutableList<String> strings = new SimpleReact()
 								.<String>fromStream(new SimpleReact()
 												.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 												.with(it -> "*" + it).stream())
@@ -43,7 +44,7 @@ public class StreamTest {
 													.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 													.then(it -> "*" + it).streamCompletableFutures();
 
-		List<String> strings = new SimpleReact()
+        ImmutableList<String> strings = new SimpleReact()
 								.<String>fromStream(stream)
 								.then(it ->  it + "*")
 								.block();

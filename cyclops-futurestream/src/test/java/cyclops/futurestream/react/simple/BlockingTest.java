@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.oath.cyclops.types.futurestream.SimpleReactStream;
+import cyclops.data.ImmutableList;
 import org.junit.Test;
 
 import cyclops.futurestream.SimpleReact;
@@ -28,7 +29,7 @@ public class BlockingTest {
 				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 200)
 				.block()
-				.parallelStream()
+				.stream()
 				.filter(f -> f > 300)
 				.map(m -> m - 5)
 				.reduce(0, (acc, next) -> acc + next);
@@ -39,21 +40,21 @@ public class BlockingTest {
 	@Test
 	public void testTypeInferencingCapture(){
 		List<String> result = new SimpleReact().ofAsync(() -> "World",()-> "Hello").then( in -> "hello")
-				.capture(e -> e.printStackTrace()).block();
+				.capture(e -> e.printStackTrace()).block().listView();
 		assertThat(result.size(),is(2));
 
 	}
 	@Test
 	public void testTypeInferencingThen(){
 		List<String> result = new SimpleReact().ofAsync(() -> "World",()-> "Hello").then( in -> "hello")
-				.block();
+				.block().listView();
 		assertThat(result.size(),is(2));
 
 	}
 	@Test
 	public void testTypeInferencingThenPredicate(){
 		List<String> result = new SimpleReact().ofAsync(() -> "World",()-> "Hello").then( in -> "hello")
-				.block(state -> state.getCompleted()>3);
+				.block(state -> state.getCompleted()>3).listView();
 		assertThat(result.size(),is(2));
 
 	}
@@ -67,7 +68,7 @@ public class BlockingTest {
 				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
-				.block();
+				.block().listView();
 
 		assertThat(strings.size(), is(3));
 
@@ -100,7 +101,7 @@ public class BlockingTest {
 				})
 				.onFail(e -> 1)
 				.then(it -> "*" + it)
-				.block(status -> status.getCompleted() > 1);
+				.block(status -> status.getCompleted() > 1).listView();
 
 		assertThat(strings.size(), is(greaterThan(1)));
 
@@ -138,7 +139,7 @@ public class BlockingTest {
 
 
 				}).capture(e -> error[0] = e.getCause())
-				.block(status -> status.getCompleted() >= 1);
+				.block(status -> status.getCompleted() >= 1).listView();
 
 		assertThat(results.size(), is(0));
 		assertThat(error[0], instanceOf(RuntimeException.class));
@@ -156,7 +157,7 @@ public class BlockingTest {
 					throw new RuntimeException("boo!");
 
 				}).capture(e -> count.incrementAndGet())
-				.block(status -> status.getCompleted() >= 1);
+				.block(status -> status.getCompleted() >= 1).listView();
 
 		assertThat(results.size(), is(0));
 		assertThat(count.get(), is(3));
@@ -176,7 +177,7 @@ public class BlockingTest {
 					return it;
 
 				}).capture(e -> count.incrementAndGet())
-				.block(status -> status.getAllCompleted() >0);
+				.block(status -> status.getAllCompleted() >0).listView();
 
 		assertThat(results.size(), is(0));
 		assertThat(count.get(), is(1));
@@ -198,7 +199,7 @@ public class BlockingTest {
 				})
 				.then( it -> "*" + it)
 				.capture(e -> count.incrementAndGet())
-				.block(status -> status.getAllCompleted() >0);
+				.block(status -> status.getAllCompleted() >0).listView();
 
 		assertThat(strings.size(), is(0));
 		assertThat(count.get(), is(1));
@@ -207,7 +208,7 @@ public class BlockingTest {
 	public void testBreakoutAllCompletedAndTime() throws InterruptedException,
 			ExecutionException {
 	        count = new AtomicInteger(0);
-			List<Integer> result = new SimpleReact()
+			 ImmutableList<Integer> result = new SimpleReact()
 					.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 					.then(it -> it * 100)
 					.then(it -> {
@@ -236,7 +237,7 @@ public class BlockingTest {
 					return it;
 				}).onFail(e -> 1)
 				.then(it -> "*" + it)
-				.block(status -> status.getCompleted() > 5);
+				.block(status -> status.getCompleted() > 5).listView();
 
 		assertThat(strings.size(), is(3));
 
@@ -248,7 +249,7 @@ public class BlockingTest {
 		.<Integer> ofAsync(() -> 1, () -> 2, () -> 3, () -> 5)
 		.then( it -> it*100)
 		.then( it -> sleep(it))
-		.block().takeRight(1).get(0);
+		.block().takeRight(1).get(0).orElse(-1);
 
 		assertThat(result,is(500));
 	}
@@ -291,7 +292,7 @@ public class BlockingTest {
 		.<Set<Integer>,Set<Integer>>allOf(Collectors.toSet(), it -> {
 			assertThat (it,is( Set.class));
 			return it;
-		}).block().takeRight(1).get(0);
+		}).block().takeRight(1).get(0).orElse(null);
 
 		assertThat(result.size(),is(4));
 	}

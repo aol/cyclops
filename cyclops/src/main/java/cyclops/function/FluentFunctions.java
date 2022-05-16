@@ -830,19 +830,7 @@ public class FluentFunctions {
             });
         }
 
-        /**
-         * Visit the result of this Function once it has been executed, if the Function executes successfully the
-         * result will be passes to the eventConsumer, if there is an error it will be passed to the errorConsumer
-         *
-         * @param eventConsumer Consumer to recieve result on successful execution
-         * @param errorConsumer Consumer to recieve error on failure
-         * @return Function with event vistor attached.
-         */
-        @Deprecated //use foldEvent instead
-        public FluentFunction<T, R> visitEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
 
-            return foldEvent(eventConsumer,errorConsumer);
-        }
         public FluentFunction<T, R> foldEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
 
             return FluentFunctions.of(t1 -> {
@@ -1189,19 +1177,7 @@ public class FluentFunctions {
             });
         }
 
-        /**
-         * Visit the result of this BiFunction once it has been executed, if the Function executes successfully the
-         * result will be passes to the eventConsumer, if there is an error it will be passed to the errorConsumer
-         *
-         * @param eventConsumer Consumer to recieve result on successful execution
-         * @param errorConsumer Consumer to recieve error on failure
-         * @return BiFunction with event vistor attached.
-         */
-        @Deprecated //use foldEvent
-        public FluentBiFunction<T1, T2, R> visitEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
 
-            return foldEvent(eventConsumer,errorConsumer);
-        }
         public FluentBiFunction<T1, T2, R> foldEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
 
             return FluentFunctions.of((t1, t2) -> {
@@ -1595,19 +1571,7 @@ public class FluentFunctions {
                 }
             });
         }
-        /**
-         * Visit the result of this TriFunction once it has been executed, if the Function executes successfully the
-         * result will be passes to the eventConsumer, if there is an error it will be passed to the errorConsumer
-         *
-         * @param eventConsumer Consumer to recieve result on successful execution
-         * @param errorConsumer Consumer to recieve error on failure
-         * @return TriFunction with event vistor attached.
-         */
-        @Deprecated //use foldEvent instead
-        public FluentTriFunction<T1, T2, T3, R> visitEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
 
-            return foldEvent(eventConsumer,errorConsumer);
-        }
         public FluentTriFunction<T1, T2, T3, R> foldEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
 
             return FluentFunctions.of((t1, t2, t3) -> {

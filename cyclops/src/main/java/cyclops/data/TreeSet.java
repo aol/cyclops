@@ -13,7 +13,6 @@ import cyclops.data.tuple.Tuple4;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
-import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
@@ -85,10 +84,7 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     static <T> TreeSet<T> generate(Supplier<T> s, int max){
         return fromStream(ReactiveSeq.generate(s).limit(max),Comparators.naturalOrderIdentityComparator());
     }
-    @Deprecated
-    static <T> TreeSet<T> generate(Generator<T> s){
-        return fromStream(ReactiveSeq.generate(s),Comparators.naturalOrderIdentityComparator());
-    }
+
     static TreeSet<Integer> range(final int start, final int end) {
         return TreeSet.fromStream(ReactiveSeq.range(start,end),Comparator.naturalOrder());
 

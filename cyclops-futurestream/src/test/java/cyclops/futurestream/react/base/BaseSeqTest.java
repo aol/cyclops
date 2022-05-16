@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
+import cyclops.data.ImmutableList;
 import cyclops.data.ImmutableMap;
 import cyclops.data.TreeSet;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +35,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.data.Vector;
-import cyclops.reactive.collections.mutable.MapX;
+
 import cyclops.control.Option;
 import cyclops.futurestream.FutureStream;
 import cyclops.reactive.ReactiveSeq;
@@ -46,7 +47,6 @@ import org.junit.Test;
 
 
 import com.oath.cyclops.async.adapters.Queue;
-import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.util.SimpleTimer;
 //see BaseSequentialSeqTest for in order tests
 public abstract class BaseSeqTest {
@@ -136,7 +136,7 @@ public abstract class BaseSeqTest {
 	public void batchBySizeSet(){
 
 
-		assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).block().get(0).size(),is(1));
+		assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).block().get(0).orElse(null).size(),is(1));
 
 		assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).block().size(),is(1));
 	}
@@ -194,9 +194,9 @@ public abstract class BaseSeqTest {
 	@Test
 	public void batchByTimeSet(){
 		for(int i=0;i<5000;i++){
-			List <TreeSet<Integer>> set = ofThread(1,1,1,1,1,1).groupedByTime(1500,TimeUnit.MICROSECONDS,()-> TreeSet.empty()).block();
+			ImmutableList<TreeSet<Integer>> set = ofThread(1,1,1,1,1,1).groupedByTime(1500,TimeUnit.MICROSECONDS,()-> TreeSet.empty()).block();
 
-			assertThat(set.get(0).size(),is(1));
+			assertThat(set.get(0).orElse(null).size(),is(1));
 
 
 
@@ -216,7 +216,7 @@ public abstract class BaseSeqTest {
 		shards.put(5,new Queue());
 		shards.put(6,new Queue());
 		for(int i=0;i<100;i++)
-			assertThat(of(1,2,3,4,5,6).shard(MapX.fromMap(shards),Function.identity()).size(),is(6));
+			assertThat(of(1,2,3,4,5,6).shard(shards, Function.identity()).size(),is(6));
 	}
 	@Test
 	public void shardStreams(){

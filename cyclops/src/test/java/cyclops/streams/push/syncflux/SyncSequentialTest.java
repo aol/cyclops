@@ -99,7 +99,7 @@ public class SyncSequentialTest extends BaseSequentialTest {
     @Test
     public void mergePTest(){
         for(int i=0;i<100;i++) {
-            List<Integer> list = of(3, 6, 9).mergeP(of(2, 4, 8), of(1, 5, 7)).toList();
+            List<Integer> list = of(3, 6, 9).merge(of(2, 4, 8), of(1, 5, 7)).toList();
 
             assertThat("List is " + list,list, hasItems(1, 2, 3, 4, 5, 6, 7, 8, 9));
             assertThat("List is " + list,list.size(), Matchers.equalTo(9));

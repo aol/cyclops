@@ -42,7 +42,7 @@ public class SimpleReactTest {
 
 	@Test
 	public void streamOfEmpty(){
-		List value = BaseSimpleReactStream.empty().block();
+		List value = BaseSimpleReactStream.empty().block().listView();;
 		assertThat(value.size(),is(0));
 	}
 	@Test
@@ -294,7 +294,7 @@ public class SimpleReactTest {
 		List<String> strings = new SimpleReact()
 				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then((it) -> it * 100).then((it) -> "*" + it)
-				.block(status -> status.getCompleted() > 1);
+				.block(status -> status.getCompleted() > 1).listView();;
 
 		assertThat(strings.get(0), is(containsString("*")));
 		assertThat(Integer.valueOf(strings.get(0).substring(1)),
@@ -314,7 +314,7 @@ public class SimpleReactTest {
 			assertThat (it,instanceOf( Set.class));
 			return it;
 		}).capture(e -> e.printStackTrace())
-		.block(status -> false).takeRight(1).get(0);
+		.block(status -> false).takeRight(1).get(0).orElse(null);
 
 		assertThat(result.size(),is(4));
 	}
@@ -332,7 +332,7 @@ public class SimpleReactTest {
 						throw new RuntimeException("boo!");
 
 					return it;
-				}).onFail(e -> 1).then((it) -> "*" + it).block();
+				}).onFail(e -> 1).then((it) -> "*" + it).block().listView();;
 
 		boolean foundOne[] = { false };
 		strings.forEach((string) -> {
@@ -351,7 +351,7 @@ public class SimpleReactTest {
 		List<String> strings = new SimpleReact()
 				.<Integer> ofAsync(() -> 1,() -> 2,(Supplier<Integer>) () -> {
 					throw new RuntimeException("boo!");
-				}).onFail(e -> 1).then((it) -> "*" + it).block();
+				}).onFail(e -> 1).then((it) -> "*" + it).block().listView();;
 
 		boolean foundOne[] = { false };
 		strings.forEach((string) -> {
@@ -376,7 +376,7 @@ public class SimpleReactTest {
 
 					return it;
 				}).onFail(e -> 1).then((it) -> "*" + it)
-				.capture(e -> error[0] = e).block();
+				.capture(e -> error[0] = e).block().listView();;
 
 		boolean foundOne[] = { false };
 		strings.forEach((string) -> {
@@ -406,7 +406,7 @@ public class SimpleReactTest {
 						throw new RuntimeException("boo!");
 
 					return it;
-				}).capture(e -> error[0] = e).block();
+				}).capture(e -> error[0] = e).block().listView();;
 
 		boolean foundTwoHundred[] = { false };
 		strings.forEach((string) -> {
@@ -430,7 +430,7 @@ public class SimpleReactTest {
 		 for(int i =0;i<1000;i++){
 			 builder = builder.then( input -> input + " " + counter++);
 		 }
-		 List<String> results = builder.block();
+		 List<String> results = builder.block().listView();;
 		 assertThat(results.get(0).length(),greaterThan(100));
 	}
 	@Test
@@ -440,16 +440,16 @@ public class SimpleReactTest {
 		 for(int i =0;i<1000;i++){
 			 builder = builder.then( input -> input + " " + counter++);
 		 }
-		 List<String> results = orgBuilder.block();
+		 List<String> results = orgBuilder.block().listView();;
 		 assertThat(results.get(0),is("Hello"));
 
-		 List<String> completeResults =builder.block();
+		 List<String> completeResults =builder.block().listView();;
 		 assertThat( completeResults.get(0).length(),greaterThan(100));
 	}
 	@Test
 	public void testReactMixedTypes(){
 		List list = new ArrayList();
-		List<Object> result = new SimpleReact().ofAsync(() -> "Hello",()-> list).block();
+		List<Object> result = new SimpleReact().ofAsync(() -> "Hello",()-> list).block().listView();;
 		assertThat(result.size(),is(2));
 		assertThat(result,hasItem("Hello"));
 		assertThat(result,hasItem(list));
@@ -462,7 +462,7 @@ public class SimpleReactTest {
 		responses.put("Hello", (byte) 4);
 		responses.put(list,true);
 
-		List<Object> result = new SimpleReact().ofAsync(() -> "Hello",()-> list).then( it -> responses.get(it)).block();
+		List<Object> result = new SimpleReact().ofAsync(() -> "Hello",()-> list).then( it -> responses.get(it)).block().listView();;
 		assertThat(result.size(),is(2));
 
 		assertThat(result,hasItem((byte)4));
@@ -472,27 +472,27 @@ public class SimpleReactTest {
 
 	@Test
 	public void testReactPrimitive(){
-		List<Boolean> result = new SimpleReact().ofAsync(() -> true,()->true).block();
+		List<Boolean> result = new SimpleReact().ofAsync(() -> true,()->true).block().listView();;
 		assertThat(result.size(),is(2));
 		assertThat(result.get(0),is(true));
 
 	}
 	@Test
 	public void testThenPrimitive(){
-		List<Boolean> result = new SimpleReact().ofAsync(() -> 1,()-> 1).then(it -> true).block();
+		List<Boolean> result = new SimpleReact().ofAsync(() -> 1,()-> 1).then(it -> true).block().listView();;
 		assertThat(result.size(),is(2));
 		assertThat(result.get(0),is(true));
 
 	}
 	@Test
 	public void testReactNull(){
-		List<String> result = new SimpleReact().ofAsync(() -> null,()-> "Hello").block();
+		List<String> result = new SimpleReact().ofAsync(() -> null,()-> "Hello").block().listView();;
 		assertThat(result.size(),is(2));
 
 	}
 	@Test
 	public void testThenNull(){
-		List<String> result = new SimpleReact().ofAsync(() -> "World",()-> "Hello").then( in -> (String)null).block();
+		List<String> result = new SimpleReact().ofAsync(() -> "World",()-> "Hello").then( in -> (String)null).block().listView();;
 		assertThat(result.size(),is(2));
 		assertThat(result.get(0),is(nullValue()));
 
@@ -502,7 +502,7 @@ public class SimpleReactTest {
 		List<String> result = new SimpleReact()
 									.ofAsync(() -> {throw new RuntimeException();},()-> "Hello")
 									.onFail( e ->{ System.out.println(e);return "World";})
-									.block();
+									.block().listView();;
 
 		assertThat(result.size(),is(2));
 

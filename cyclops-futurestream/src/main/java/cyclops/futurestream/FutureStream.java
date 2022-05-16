@@ -1,6 +1,5 @@
 package cyclops.futurestream;
 
-import com.oath.cyclops.async.adapters.Signal;
 import com.oath.cyclops.internal.react.async.future.FastFuture;
 import com.oath.cyclops.internal.react.exceptions.SimpleReactProcessingException;
 import com.oath.cyclops.internal.react.stream.CloseableIterator;
@@ -38,8 +37,6 @@ import cyclops.function.Monoid;
 
 import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streamable;
-import cyclops.reactive.Spouts;
-import cyclops.reactive.collections.mutable.ListX;
 import lombok.val;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -172,13 +169,13 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default FutureStream<U> mergeP(final Publisher<U>... publishers) {
-        return fromStream(stream().mergeP(publishers));
+    default FutureStream<U> merge(final Publisher<U>... publishers) {
+        return fromStream(stream().merge(publishers));
     }
 
     @Override
-    default FutureStream<U> mergeP(final QueueFactory<U> factory, final Publisher<U>... publishers) {
-        return fromStream(stream().mergeP(factory,publishers));
+    default FutureStream<U> merge(final QueueFactory<U> factory, final Publisher<U>... publishers) {
+        return fromStream(stream().merge(factory,publishers));
     }
 
     @Override
@@ -2518,34 +2515,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     }
 
-    /* Optional empty, if empty Stream. Otherwise collects to a List
-     *	@return this Stream as an Optional
-     * @see cyclops2.stream.ReactiveSeq#optional()
 
-    @Override
-    default Optional<ListX<U>> optional() {
-        return Optional.of(block())
-                       .flatMap(list -> list.size() == 0 ? Optional.<ListX<U>> empty() : Optional.of(list));
-    }
-*/
-    /*
-     * <pre>
-     * {@code
-     * FutureStream.of(1,2,3,4)
-                        .toCompletableFuture()
-
-        //Future of	[1,2,3,4]
-     *
-     * }
-     * </pre>
-     * Future is populated asynchronously using current Streams task executor
-     * @return This Stream as a CompletableFuture
-     * @see cyclops2.stream.ReactiveSeq#toCompletableFuture()
-     */
-    default CompletableFuture<ListX<U>> toCompletableFuture() {
-        return CompletableFuture.completedFuture(this)
-                                .thenApplyAsync(s -> s.block(), getTaskExecutor());
-    }
 
     /*
      * @see java.util.stream.BaseStream#spliterator()

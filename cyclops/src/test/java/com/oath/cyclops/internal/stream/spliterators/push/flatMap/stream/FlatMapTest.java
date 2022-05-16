@@ -1,6 +1,5 @@
 package com.oath.cyclops.internal.stream.spliterators.push.flatMap.stream;
 
-import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
@@ -88,7 +87,7 @@ public class FlatMapTest {
     public void flatMapAsync2(){
         for(int k=0;k<100;k++) {
             List<Integer> res = Spouts.of(1, 2, 3)
-                    .flatMap(i -> nextAsync())
+                    .flatMap(i -> Spouts.from(Flux.just(1,2).subscribeOn(Schedulers.elastic())))
                     .toList();
             assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
@@ -269,21 +268,5 @@ public class FlatMapTest {
 
         return sub.reactiveStream();
     }
-    private Stream<Integer> nextAsync() {
-        AsyncSubscriber<Integer> sub = Spouts.asyncSubscriber();
-        new Thread(()->{
 
-            sub.awaitInitialization();
-            try {
-                //not a reactive-stream so we don't know with certainty when demand signalled
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            sub.onNext(1);
-            sub.onNext(2);
-            sub.onComplete();
-        }).start();
-        return sub.stream();
-    }
 }

@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import cyclops.data.HashMap;
+import cyclops.data.ImmutableList;
 import org.junit.Test;
 
 
@@ -104,7 +105,7 @@ public class AllOfTest {
 	@Test
 	public void testBlockompletableFuture(){
 		List<String> urls = Arrays.asList("hello","world","2");
-		List<String> result = new SimpleReact().fromStream(urls.stream()
+        ImmutableList<String> result = new SimpleReact().fromStream(urls.stream()
 				.<CompletableFuture<String>>map(it ->  handle(it)))
 
 				.capture(e ->

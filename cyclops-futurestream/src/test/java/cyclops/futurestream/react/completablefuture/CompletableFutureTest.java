@@ -37,7 +37,7 @@ public class CompletableFutureTest {
 
 		new SimpleReact(new ForkJoinPool(3)).ofAsync( ()-> 100, ()->200, ()->400).then( it-> sleep(it)).then(it -> queue.poll().complete(it));
 
-		List<String> result = convertedToStrings.block();
+		List<String> result = convertedToStrings.block().listView();
 
 		assertThat(result.size(),is(3));
 		assertThat(result,hasItem("400*"));

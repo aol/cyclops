@@ -16,7 +16,6 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
-import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -70,10 +69,7 @@ public final class DifferenceList<T> implements Folds<T>,
     public static <T> DifferenceList<T> generate(Supplier<T> s,long times){
         return fromStream(ReactiveSeq.generate(s).limit(times));
     }
-    @Deprecated
-    public static <T> DifferenceList<T> generate(Generator<T> s){
-        return fromStream(ReactiveSeq.generate(s));
-    }
+
     public static <T> DifferenceList<T> iterate(final T seed, final UnaryOperator<T> f) {
         return fromStream(ReactiveSeq.iterate(seed,f));
 
@@ -380,12 +376,14 @@ public final class DifferenceList<T> implements Folds<T>,
 
     @Override
     public <U> DifferenceList<Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {
-        return (DifferenceList<Tuple2<T, U>>)ImmutableList.super.zipWithPublisher(other);
+        ImmutableList<? extends Tuple2<T, ? extends U>> x = ImmutableList.super.zipWithPublisher(other);
+        return (DifferenceList<Tuple2<T, U>>)x;
     }
 
     @Override
     public <U> DifferenceList<Tuple2<T, U>> zip(Iterable<? extends U> other) {
-        return (DifferenceList<Tuple2<T, U>>)ImmutableList.super.zip(other);
+        ImmutableList<? extends Tuple2<T, ? extends U>> x = ImmutableList.super.zip(other);
+        return (DifferenceList<Tuple2<T,U>>) x;
     }
 
     @Override
@@ -435,12 +433,14 @@ public final class DifferenceList<T> implements Folds<T>,
 
     @Override
     public <S, U> DifferenceList<Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third) {
-        return (DifferenceList<Tuple3<T, S, U>>)ImmutableList.super.zip3(second,third);
+        ImmutableList<? extends Tuple3<T, ? extends S, ? extends U>> x = ImmutableList.super.zip3(second, third);
+        return (DifferenceList<Tuple3<T, S, U>>)x;
     }
 
     @Override
     public <T2, T3, T4> DifferenceList<Tuple4<T, T2, T3, T4>> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth) {
-        return (DifferenceList<Tuple4<T, T2, T3, T4>>)ImmutableList.super.zip4(second,third,fourth);
+        ImmutableList<? extends Tuple4<T, ? extends T2, ? extends T3, ? extends T4>> x = ImmutableList.super.zip4(second, third, fourth);
+        return (DifferenceList<Tuple4<T, T2, T3, T4>>)x;
     }
 
     @Override
@@ -475,7 +475,8 @@ public final class DifferenceList<T> implements Folds<T>,
 
     @Override
     public <U> DifferenceList<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
-        return (DifferenceList<Tuple2<T, U>>)ImmutableList.super.zipWithStream(other);
+        ImmutableList<? extends Tuple2<T, ? extends U>> x = ImmutableList.super.zipWithStream(other);
+        return (DifferenceList<Tuple2<T, U>>)x;
     }
 
     @Override

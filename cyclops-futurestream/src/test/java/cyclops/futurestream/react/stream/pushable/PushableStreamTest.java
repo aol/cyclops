@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.oath.cyclops.react.threads.SequentialElasticPools;
+import cyclops.data.Seq;
 import cyclops.stream.StreamSource;
 import cyclops.stream.pushable.PushableFutureStream;
 import cyclops.stream.pushable.PushableReactiveSeq;
@@ -28,9 +29,6 @@ import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.Signal;
-import cyclops.reactive.collections.immutable.PersistentSetX;
-import cyclops.reactive.collections.immutable.LinkedListX;
-import cyclops.reactive.collections.mutable.SetX;
 import cyclops.stream.pushable.MultipleStreamSource;
 import cyclops.stream.pushable.PushableStream;
 
@@ -39,33 +37,7 @@ import reactor.core.publisher.Flux;
 
 public class PushableStreamTest {
 
-    @Test
-    public void pipes() throws InterruptedException{
 
-        Flux.from(LinkedListX.of(10,20,30));
-
-        SetX.fromPublisher(Flux.just(10,20,30));
-
-        PersistentSetX.of(1,2,3)
-             .mergeMap(i->Flux.just(i,i*10))
-             .to().vectorX();
-
-        /**
-        Pipes<String, Integer> bus = Pipes.of();
-        bus.register("reactor", QueueFactories.<Integer>boundedNonBlockingQueue(1000)
-                                              .build());
-        //bus.publishTo("reactor",Flux.just(10,20,30));
-        bus.publishTo("reactor",ReactiveSeq.of(10,20,30));
-
-        System.out.println(Thread.currentThread().getId());
-       System.out.println(bus.futureStream("reactor", new LazyReact(50,50))
-            .getValue()
-           .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
-           .toList());//.forEach(System.out::println);
-
-        Thread.sleep(1500);
-        **/
-    }
 
 	@Test
 	public void testLazyFutureStream() {

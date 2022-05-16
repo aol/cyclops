@@ -225,7 +225,7 @@ public class SkipWhileOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Spouts.async(ReactiveSeq.of(1,2,3,4,5),ex)
+        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .dropWhile(i -> false)
             .forEach(n->{
                 assertFalse(complete.get());
@@ -250,7 +250,7 @@ public class SkipWhileOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Spouts.async(ReactiveSeq.of(1,2,3,4,5),ex)
+        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .dropWhile(i -> i<4)
             .forEach(n->{
                 assertFalse(complete.get());
@@ -276,7 +276,7 @@ public class SkipWhileOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Spouts.async(ReactiveSeq.of(1,2,3,4,5),ex)
+        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .dropWhile(i -> i<0)
             .forEach(n->{
                 assertFalse(complete.get());
@@ -303,7 +303,7 @@ public class SkipWhileOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Subscription s =  Spouts.async(ReactiveSeq.of(1,2,3,4,5),ex)
+        Subscription s =  Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .dropWhile(i -> false)
             .forEach(2, n -> {
                 assertFalse(complete.get());
@@ -331,7 +331,7 @@ public class SkipWhileOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Subscription s = Spouts.async(ReactiveSeq.of(1,2,3,4,5),ex)
+        Subscription s = Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .dropWhile(i -> i<2)
             .forEach(2, n -> {
                 assertFalse(complete.get());
@@ -359,7 +359,7 @@ public class SkipWhileOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Spouts.async(ReactiveSeq.of(1,2,3,4,5),ex)
+        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .dropWhile(i ->{ throw new RuntimeException();})
             .forEach(n->{
                 assertFalse(complete.get());

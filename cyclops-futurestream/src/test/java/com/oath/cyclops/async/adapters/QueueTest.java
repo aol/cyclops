@@ -486,7 +486,7 @@ public class QueueTest {
 		}, () -> q.offer(5),()->{ sleep(1000); return q.close();});
 
 		Collection<String> results = parallel().fromStream(q.stream())
-				.then(it -> "*" + it).block();
+				.then(it -> "*" + it).block().listView();
 
 		assertThat(results.size(), equalTo(4));
 
@@ -512,7 +512,7 @@ public class QueueTest {
 			List<String> result = parallel().fromStream(q.stream())
 					.then(it -> "*" + it).peek(it -> found.getAndAdd(1))
 					.peek(it -> System.out.println(it))
-					.block();
+					.block().listView();
 
 			assertThat(result, hasItem("*1"));
 

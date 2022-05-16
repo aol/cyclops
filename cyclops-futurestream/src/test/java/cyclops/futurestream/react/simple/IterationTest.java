@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import cyclops.data.ImmutableList;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -18,7 +19,7 @@ public class IterationTest {
 	@Test
 	public void testIterate() throws InterruptedException, ExecutionException {
 		List<Integer> list = Arrays.asList(1,2,3,4);
-		List<String> strings = new SimpleReact()
+        ImmutableList<String> strings = new SimpleReact()
 				.<Integer> from(list.iterator())
 				.peek(it -> System.out.println(it))
 				.then(it -> it * 100)
@@ -31,7 +32,7 @@ public class IterationTest {
 	@Test
 	public void testReactWithCollection() throws InterruptedException, ExecutionException {
 		List<Integer> list = Arrays.asList(1,2,3,4);
-		List<String> strings = new SimpleReact()
+        ImmutableList<String> strings = new SimpleReact()
 				.<Integer> from(list)
 				.peek(it -> System.out.println(it))
 				.then(it -> it * 100)
@@ -62,7 +63,7 @@ public class IterationTest {
 	@Test
 	public void testIterateLargeMaxSize() throws InterruptedException, ExecutionException {
 		List<Integer> list = Arrays.asList(1,2,3,4);
-		List<String> strings = new SimpleReact()
+        ImmutableList<String> strings = new SimpleReact()
 				.<Integer> from(list.iterator())
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
@@ -74,7 +75,7 @@ public class IterationTest {
 	@Test
 	public void testIterateEmptyIterator() throws InterruptedException, ExecutionException {
 		List<Integer> list = Arrays.asList();
-		List<String> strings = new SimpleReact()
+        ImmutableList<String> strings = new SimpleReact()
 				.<Integer> from(list.iterator())
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
@@ -88,7 +89,7 @@ public class IterationTest {
 
 
 		Iterator<Integer> iterator = createInfiniteIterator();
-		List<String> strings = new SimpleReact()
+        ImmutableList<String> strings = new SimpleReact()
 				.<Integer> from(iterator)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
@@ -100,7 +101,7 @@ public class IterationTest {
 	@Test @Ignore
 	public void testIterateMaxSize0() throws InterruptedException, ExecutionException {
 		Iterator<Integer> iterator = createInfiniteIterator();
-		List<String> strings = new SimpleReact()
+        ImmutableList<String> strings = new SimpleReact()
 				.<Integer> from(iterator)
 				.then(it -> it * 100)
 				.then(it -> "*" + it)

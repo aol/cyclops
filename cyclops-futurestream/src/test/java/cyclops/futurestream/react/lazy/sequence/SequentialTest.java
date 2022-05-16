@@ -21,6 +21,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.data.ImmutableList;
+import cyclops.data.Seq;
 import cyclops.futurestream.LazyReact;
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,7 +31,7 @@ import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streams;
 import cyclops.companion.Streamable;
-import com.oath.cyclops.data.collections.extensions.CollectionX;
+
 
 public class SequentialTest {
 	@Test
@@ -244,7 +246,7 @@ public class SequentialTest {
 	}
 	@Test
 	public void testLazy(){
-		CollectionX<Integer> col = CollectionX.fromCollection(LazyReact.sequentialBuilder().of(1,2,3,4,5)
+		ImmutableList<Integer> col = Seq.fromIterable(LazyReact.sequentialBuilder().of(1,2,3,4,5)
 											.peek(System.out::println).to()
 											.lazyCollection());
 

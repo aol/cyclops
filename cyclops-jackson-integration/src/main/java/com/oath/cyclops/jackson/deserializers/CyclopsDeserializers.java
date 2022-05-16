@@ -74,9 +74,7 @@ public class CyclopsDeserializers  extends Deserializers.Base {
     if (raw == Trampoline.class) {
       return new TrampolineDeserializer(type);
     }
-    if (raw == Unrestricted.class) {
-      return new TrampolineDeserializer(type);
-    }
+
     if(tuples.contains(raw)) {
       return new TupleDeserializer(raw);
     }
@@ -131,9 +129,7 @@ public class CyclopsDeserializers  extends Deserializers.Base {
       if (raw == Trampoline.class) {
           return new TrampolineDeserializer(type);
       }
-      if (raw == Unrestricted.class) {
-          return new TrampolineDeserializer(type);
-      }
+
       if(tuples.contains(raw)) {
           return new TupleDeserializer(raw);
       }

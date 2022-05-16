@@ -20,7 +20,6 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
-import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -131,10 +130,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     static <T> LazySeq<T> generate(Supplier<T> s,long times){
         return fromStream(ReactiveSeq.generate(s).limit(times));
     }
-    @Deprecated
-    static <T> LazySeq<T> generate(Generator<T> s){
-        return fromStream(ReactiveSeq.generate(s));
-    }
+
      static LazySeq<Integer> range(final int start, final int end) {
         return LazySeq.fromStream(ReactiveSeq.range(start,end));
 

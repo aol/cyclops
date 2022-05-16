@@ -27,16 +27,31 @@ subprojects {
     apply plugin: 'signing'
 
     group 'com.oath.cyclops'
-//  sourceCompatibility = 1.8
-//  targetCompatibility = 1.8
+
 
     java {
         withJavadocJar()
         withSourcesJar()
 
-        targetCompatibility = JavaVersion.VERSION_1_8
-        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
     }
+
+    tasks.withType(JavaCompile) {
+        options.compilerArgs += "--enable-preview"
+        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
+    }
+
+    tasks.withType(Test) {
+        jvmArgs += "--enable-preview"
+
+    }
+    tasks.withType(JavaExec) {
+        jvmArgs += "--enable-preview"
+    }
+
+
 
 
     if (JavaVersion.current().isJava8Compatible()) {
@@ -54,11 +69,7 @@ subprojects {
     artifacts {
         archives javadocJar, sourcesJar
     }
-    /**
-    signing {
-        sign configurations.archives
-    }
- **/
+
     dependencies {
         compileOnly "org.projectlombok:lombok:${lombokVersion}"
         annotationProcessor "org.projectlombok:lombok:${lombokVersion}"

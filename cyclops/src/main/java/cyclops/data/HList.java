@@ -32,7 +32,7 @@ public interface HList<T1 extends HList<T1>> extends SealedOr<HList<T1>> {
 
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    @EqualsAndHashCode(of={"head,tail"})
+    @EqualsAndHashCode(of={"head","tail"})
     public static class HCons<T1, T2 extends HList<T2>> implements Deconstruct2<T1,HList<T2>>, HList<HCons<T1,T2>> {
 
         public final T1 head;

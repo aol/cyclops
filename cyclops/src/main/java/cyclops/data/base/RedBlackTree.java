@@ -5,7 +5,6 @@ import com.oath.cyclops.matching.Deconstruct.Deconstruct5;
 import com.oath.cyclops.matching.Sealed2;
 import cyclops.control.Option;
 
-import cyclops.matching.Api;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,6 +14,7 @@ import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple5;
 import lombok.experimental.Wither;
 
+
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.function.Function;
@@ -22,12 +22,16 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static cyclops.data.base.RedBlackTree.Node.*;
-import static cyclops.matching.Api.Case;
 
 
 public interface RedBlackTree extends Serializable{
     static <K,V> Tree<K,V> rootIsBlack(Tree<K,V> root){
-        return Api.MatchType(root).with(Case(node->node.withBlack(true)),Case(leaf->leaf));
+        return switch(root){
+            case Node<K,V> node -> node.withBlack(true);
+            case Leaf<K,V> leaf -> leaf;
+            default ->  root;
+        };
+
     }
     public static <K,V> Tree<K,V> fromStream(Comparator<? super K> comp, Stream<? extends Tuple2<? extends K, ? extends V>> stream){
         Tree<K,V> tree[] = new Tree[1];

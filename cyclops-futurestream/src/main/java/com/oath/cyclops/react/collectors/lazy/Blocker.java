@@ -1,6 +1,5 @@
 package com.oath.cyclops.react.collectors.lazy;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
@@ -11,8 +10,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import cyclops.reactive.collections.immutable.LinkedListX;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.ImmutableList;
+import cyclops.data.Seq;
 import com.oath.cyclops.react.Status;
 import com.oath.cyclops.util.SimpleTimer;
 import com.oath.cyclops.util.ThrowsSoftened;
@@ -26,7 +25,7 @@ public class Blocker<U> {
     @SuppressWarnings("rawtypes")
     private final List<CompletableFuture<?>> lastActive;
     private final Optional<Consumer<Throwable>> errorHandler;
-    private final CompletableFuture<List<U>> promise = new CompletableFuture<>();
+    private final CompletableFuture<ImmutableList<U>> promise = new CompletableFuture<>();
 
     private final SimpleTimer timer = new SimpleTimer();
     private final AtomicInteger completed = new AtomicInteger();
@@ -36,21 +35,21 @@ public class Blocker<U> {
 
     @SuppressWarnings("unchecked")
     @ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
-    public ListX<U> block(final Predicate<Status<U>> breakout) {
+    public ImmutableList<U> block(final Predicate<Status<U>> breakout) {
 
 
         return nonBlocking(breakout).join();
 
     }
-    public CompletableFuture<ListX<U>> nonBlocking(final Predicate<Status<U>> breakout) {
+    public CompletableFuture<ImmutableList<U>> nonBlocking(final Predicate<Status<U>> breakout) {
 
         if (lastActive.size() == 0)
-            return CompletableFuture.completedFuture(ListX.empty());
+            return CompletableFuture.completedFuture(Seq.empty());
         lastActive.forEach(f -> f.whenComplete((result, ex) -> {
             testBreakoutConditionsBeforeUnblockingCurrentThread(breakout, result, (Throwable) ex);
         }));
 
-        return promise.thenApply(ListX::fromIterable);
+        return promise;
 
     }
 
@@ -63,7 +62,7 @@ public class Blocker<U> {
         }
 
         return new Status(
-                          completed.get(), errors.get(), lastActive.size(), timer.getElapsedNanoseconds(), LinkedListX.fromIterable(currentResults));
+                          completed.get(), errors.get(), lastActive.size(), timer.getElapsedNanoseconds(), Seq.fromIterable(currentResults));
 
     }
 
@@ -78,8 +77,7 @@ public class Blocker<U> {
         }
 
         if (breakoutConditionsMet(breakout, status) || allResultsReturned(status.getCompleted() + status.getErrors())) {
-            promise.complete(new LinkedList<U>(
-                                               currentResults));
+            promise.complete(Seq.fromIterable(currentResults));
         }
     }
 

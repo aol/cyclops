@@ -1,7 +1,6 @@
 package cyclops.futurestream.react.async.pipes;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -10,13 +9,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 
 import com.oath.cyclops.types.reactive.QueueBasedSubscriber;
 import cyclops.control.*;
+import cyclops.data.Seq;
 import cyclops.futurestream.LazyReact;
 import cyclops.futurestream.Pipes;
 import com.oath.cyclops.async.QueueFactories;
@@ -26,7 +25,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.collections.mutable.ListX;
+
 
 
 import lombok.val;
@@ -55,7 +54,7 @@ public class PipesTest {
         results.add(ev.get());
         results.add(ev.get());
 
-        assertThat(results,equalTo(ListX.of(10,20,30)));
+        assertThat(results,equalTo(Seq.of(10,20,30)));
 
 
         //finished!
@@ -89,7 +88,7 @@ public class PipesTest {
         results.add(ev.get());
 
 
-        assertThat(results,equalTo(ListX.of(Maybe.of(10),Maybe.of(20),Maybe.of(30))));
+        assertThat(results,equalTo(Seq.of(Maybe.of(10),Maybe.of(20),Maybe.of(30))));
 
 
 
@@ -110,7 +109,7 @@ public class PipesTest {
         results.add(bus.oneOrError("reactor").get());
         results.add(bus.oneOrError("reactor").get());
 
-        assertThat(results,equalTo(ListX.of(10,20,30).map(Option::some)));
+        assertThat(results,equalTo(Seq.of(10,20,30).map(Option::some)));
 
 
     }
@@ -223,8 +222,8 @@ public class PipesTest {
         pipes.push("hello", "world3");
         pipes.push("hello", "world4");
         q.close();
-        assertThat(pipes.xValues("hello",2),equalTo(ListX.of("world","world2")));
-        assertThat(pipes.xValues("hello",2),equalTo(ListX.of("world3","world4")));
+        assertThat(pipes.xValues("hello",2),equalTo(Seq.of("world","world2")));
+        assertThat(pipes.xValues("hello",2),equalTo(Seq.of("world3","world4")));
 
 
     }
@@ -292,46 +291,7 @@ public class PipesTest {
                 .get(),equalTo("world2"));
 
     }
-	@Test
-    public void oneValueOrError() throws InterruptedException{
-        Queue q = new Queue<>();
-        pipes.register("hello", q);
-        pipes.push("hello", "world");
-        pipes.push("hello", "world2");
 
-        q.close();
-        assertThat(pipes.oneValueOrError("hello").toOptional()
-             .get().get(),equalTo(Option.some("world")));
-        assertThat(pipes.oneValueOrError("hello").toOptional()
-                .get().get(),equalTo(Option.some("world2")));
-
-    }
-	@Test
-    public void oneValueOrErrorTry() throws InterruptedException{
-        Queue q = new Queue<>();
-        pipes.register("hello", q);
-        pipes.push("hello", "world");
-        pipes.push("hello", "world2");
-
-        q.close();
-        assertThat(pipes.oneValueOrError("hello",Throwable.class).toOptional()
-             .get().get(),equalTo(Option.some("world")));
-        assertThat(pipes.oneValueOrError("hello").toOptional()
-                .get().get(),equalTo(Option.some("world2")));
-
-    }
-	@Test
-    public void oneValueOrErrorTryException() throws InterruptedException{
-        Queue q = new Queue<>();
-        pipes.register("hello", q);
-        pipes.push("hello", "world");
-
-        q.close();
-        assertThat(pipes.oneValueOrError("hello",Throwable.class),equalTo(Option.some(Try.success("world"))));
-        assertThat(pipes.oneValueOrError("hello",Throwable.class).toOptional()
-                .get().failureGet().orElse(null),instanceOf(NoSuchElementException.class));
-
-    }
 
 	@Test @Ignore
 	public void subscribeTo(){

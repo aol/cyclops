@@ -14,7 +14,6 @@ import cyclops.data.tuple.Tuple4;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
-import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -69,10 +68,7 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
     static <T> IntMap<T> generate(Supplier<T> s, int max){
         return fromStream(ReactiveSeq.generate(s).limit(max));
     }
-    @Deprecated
-    static <T> IntMap<T> generate(Generator<T> s){
-        return fromStream(ReactiveSeq.generate(s));
-    }
+
     static IntMap<Integer> range(final int start, final int end) {
         return IntMap.fromStream(ReactiveSeq.range(start,end));
 

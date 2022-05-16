@@ -177,11 +177,11 @@ public interface Folds<T> extends Iterable<T>  {
 
         Seq<T> list = stream().seq();
 
-        int precision = new Double(Math.log10(list.size())).intValue();
+        int precision = Double.valueOf(Math.log10(list.size())).intValue();
 
 
         return list.zipWithIndex().map(t -> t.map2(idx -> {
-            double d = (idx / new Double(list.size()));
+            double d = (idx / Double.valueOf(list.size()));
             return new BigDecimal((d*100),new MathContext(precision));
         }));
 
@@ -195,7 +195,7 @@ public interface Folds<T> extends Iterable<T>  {
         List<T> list = stream().collect(Collectors.toList());
         if(list.size()==0)
             return Option.none();
-        Long pos = new Double(Math.ceil( (percentile / 100) * list.size())).longValue();
+        Long pos = Double.valueOf(Math.ceil( (percentile / 100) * list.size())).longValue();
         if(pos<0 || pos > list.size()){
             return Option.none();
         }

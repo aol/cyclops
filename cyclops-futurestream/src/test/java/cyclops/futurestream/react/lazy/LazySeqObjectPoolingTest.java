@@ -97,7 +97,7 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	public void testZipWithFutures(){
 		FutureStream stream = of("a","b");
 		FutureStream<Tuple2<Integer,String>> seq = of(1,2).actOnFutures().zip(stream);
-		List<Tuple2<Integer,String>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(CyclopsCollectors.toList());
+		List<Tuple2<Integer,String>> result = seq.block().listView();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(CyclopsCollectors.toList());
 		assertThat(result.size(),is(asList(tuple(1,"a"),tuple(2,"b")).size()));
 	}
 
@@ -105,14 +105,14 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	public void testZipWithFuturesStream(){
 		Stream stream = of("a","b");
 		FutureStream<Tuple2<Integer,String>> seq = of(1,2).actOnFutures().zip(stream);
-		List<Tuple2<Integer,String>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(CyclopsCollectors.toList());
+		List<Tuple2<Integer,String>> result = seq.block().listView();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(CyclopsCollectors.toList());
 		assertThat(result.size(),is(asList(tuple(1,"a"),tuple(2,"b")).size()));
 	}
 	@Test
 	public void testZipWithFuturesCoreStream(){
 		Stream stream = Stream.of("a","b");
 		FutureStream<Tuple2<Integer,String>> seq = of(1,2).actOnFutures().zip(stream);
-		List<Tuple2<Integer,String>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(CyclopsCollectors.toList());
+		List<Tuple2<Integer,String>> result = seq.block().listView();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(CyclopsCollectors.toList());
 		assertThat(result.size(),is(asList(tuple(1,"a"),tuple(2,"b")).size()));
 	}
 
@@ -121,12 +121,12 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	public void testZipFuturesWithIndex(){
 
 		 FutureStream<Tuple2<String,Long>> seq = of("a","b").actOnFutures().zipWithIndex();
-		List<Tuple2<String,Long>> result = seq.block();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(CyclopsCollectors.toList());
+		List<Tuple2<String,Long>> result = seq.block().listView();//.map(tuple -> Tuple.tuple(tuple.v1.join(),tuple.v2)).collect(CyclopsCollectors.toList());
 		assertThat(result.size(),is(asList(tuple("a",0l),tuple("b",1l)).size()));
 	}
 	@Test
 	public void duplicateFutures(){
-		List<String> list = of("a","b").actOnFutures().duplicate()._1().block();
+		List<String> list = of("a","b").actOnFutures().duplicate()._1().block().listView();
 		assertThat(sortedList(list),is(asList("a","b")));
 	}
 	private <T> List<T> sortedList(List<T> list) {
@@ -135,7 +135,7 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 
 	@Test
 	public void duplicateFutures2(){
-		List<String> list = of("a","b").actOnFutures().duplicate()._2().block();
+		List<String> list = of("a","b").actOnFutures().duplicate()._2().block().listView();
 		assertThat(sortedList(list),is(asList("a","b")));
 	}
 

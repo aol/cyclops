@@ -21,11 +21,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple;
 import cyclops.futurestream.LazyReact;
-import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.futurestream.FutureStream;
 import cyclops.data.tuple.Tuple2;
@@ -136,20 +134,6 @@ public class BaseSequentialTest {
 
 	@Test
 	public void presentConvert(){
-
-		assertTrue(of(1).to(ReactiveConvertableSequence::converter).optional().isPresent());
-		assertTrue(of(1).to(ReactiveConvertableSequence::converter).listX().size()>0);
-		assertTrue(of(1).to(ReactiveConvertableSequence::converter).dequeX().size()>0);
-		assertTrue(of(1).to(ReactiveConvertableSequence::converter).linkedListX().size()>0);
-		assertTrue(of(1).to(ReactiveConvertableSequence::converter).queueX().size()>0);
-		assertTrue(of(1).to(ReactiveConvertableSequence::converter).vectorX().size()>0);
-		assertTrue(of(1).to(ReactiveConvertableSequence::converter).persistentQueueX().size()>0);
-		assertTrue(of(1).to(ReactiveConvertableSequence::converter).setX().size()>0);
-		assertTrue(of(1).to(ReactiveConvertableSequence::converter).sortedSetX().size()>0);
-		assertTrue(of(1).to(ReactiveConvertableSequence::converter).orderedSetX().size()>0);
-		assertTrue(of(1).to(ReactiveConvertableSequence::converter).bagX().size()>0);
-
-		assertTrue(of(1).to(ReactiveConvertableSequence::converter).mapX(t->t,t->t).size()>0);
 
 		assertTrue(of(1).toSet().size()>0);
 		assertTrue(of(1).toList().size()>0);

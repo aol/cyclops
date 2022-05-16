@@ -2,12 +2,11 @@ package cyclops.futurestream.react;
 
 import com.oath.cyclops.streams.BaseSequentialTest;
 import cyclops.futurestream.LazyReact;
-import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.data.tuple.Tuple2;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -33,21 +32,21 @@ public class FutureSequentialTest extends BaseSequentialTest {
     @Test
     public void duplicateReplay(){
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1).duplicate();
-        assertThat(t._1().limit(1).toList(),equalTo(ListX.of(1)));
-        assertThat(t._2().limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t._1().limit(1).toList(),equalTo(List.of(1)));
+        assertThat(t._2().limit(1).toList(),equalTo(List.of(1)));
     }
     @Test
     public void takeReplay() {
         final ReactiveSeq<Integer> t = of(1).map(i -> i).flatMap(i -> Stream.of(i));
-        assertThat(t.limit(1).toList(), equalTo(ListX.of(1)));
+        assertThat(t.limit(1).toList(), equalTo(List.of(1)));
 
     }
     @Test
     public void splitLimit() {
         ReactiveSeq<Integer> stream = of(1);
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = stream.duplicate();
-        assertThat(stream.limit(1).toList(), equalTo(ListX.of(1)));
-        assertThat(t._1().limit(1).toList(), equalTo(ListX.of(1)));
+        assertThat(stream.limit(1).toList(), equalTo(List.of(1)));
+        assertThat(t._1().limit(1).toList(), equalTo(List.of(1)));
 
     }
 

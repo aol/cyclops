@@ -30,7 +30,6 @@ dependencies {
     api project(':cyclops')
     api 'com.fasterxml.jackson.core:jackson-databind:'+jacksonVersion
     compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
-    testImplementation project(':cyclops-reactive-collections')
     testImplementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:'+jacksonVersion
     testImplementation group: 'junit', name: 'junit', version: '4.12'
     testImplementation group: 'junit', name: 'junit', version: '4.12'

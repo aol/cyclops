@@ -105,7 +105,7 @@ public class TopicTest {
 			.ofAsync(()->parallel()
 				.fromStream(topic.stream())
 				.then(it -> it + "*")
-				.block(),
+				.block().listView(),
 
 				()->parallel()
 					.fromStream(topic.stream())
@@ -120,7 +120,7 @@ public class TopicTest {
 		sleep(400); //wait until Topic has been read from
 		topic.close();
 
-		List<Collection<String>> result = stage.block();
+		List<Collection<String>> result = stage.block().listView();
 		assertThat(result.get(0),instanceOf(List.class));
 		assertThat(result.get(0),hasItem("hello*"));
 		assertThat(result.get(0),hasItem("world*"));
@@ -212,7 +212,7 @@ public class TopicTest {
 			System.out.println("Closing!");
 			topic.close();
 			System.out.println("Closed! Blocking..");
-			List<Collection<String>> result = stage.block();
+			List<Collection<String>> result = stage.block().listView();
 			System.out.println("Completed " + result.size());
 
 
@@ -257,7 +257,7 @@ public class TopicTest {
 			System.out.println("Closing!");
 			topic.close();
 			System.out.println("Closed! Blocking..");
-			List<Collection<String>> result = stage.block();
+			List<Collection<String>> result = stage.block().listView();
 			System.out.println("Completed " + result.size());
 
 

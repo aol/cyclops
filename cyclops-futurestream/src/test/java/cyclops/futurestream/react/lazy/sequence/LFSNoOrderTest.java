@@ -23,9 +23,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.ReactiveConvertableSequence;
+import cyclops.data.Seq;
 import cyclops.data.Vector;
-import cyclops.reactive.collections.mutable.ListX;
 import cyclops.futurestream.FutureStream;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -55,7 +54,7 @@ public  class LFSNoOrderTest {
 	}
 	@Test
     public void stream(){
-        assertThat(of(1,2,3).stream().to(ReactiveConvertableSequence::converter).listX(),hasItems(1,2,3));
+        assertThat(of(1,2,3).stream().to(Seq::fromIterable).listView(),hasItems(1,2,3));
     }
 
 

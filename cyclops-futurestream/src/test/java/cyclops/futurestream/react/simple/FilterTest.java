@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import cyclops.data.ImmutableList;
 import org.junit.Test;
 
 import cyclops.futurestream.SimpleReact;
@@ -22,7 +23,7 @@ public class FilterTest {
 			ExecutionException {
 		 int expected = Arrays.asList("*1","*2","*3").stream().filter(it -> it.startsWith("*"))
 		 .collect(Collectors.toList()).size();
-		List<String> result = new SimpleReact()
+        ImmutableList<String> result = new SimpleReact()
 				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> "*" + it)
 				.filter(it -> it.startsWith("*"))
@@ -36,7 +37,7 @@ public class FilterTest {
 			ExecutionException {
 		 int expected = Arrays.asList("*1","*2","*3").stream().filter(it -> !it.startsWith("*"))
 		 .collect(Collectors.toList()).size();
-		List<String> result = new SimpleReact()
+        ImmutableList<String> result = new SimpleReact()
 				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> "*" + it)
 				.filter(it -> !it.startsWith("*"))
@@ -49,7 +50,7 @@ public class FilterTest {
 	public void testFilter() throws InterruptedException,
 			ExecutionException {
 
-		List<String> result = new SimpleReact()
+        ImmutableList<String> result = new SimpleReact()
 				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> "*" + it)
 				.filter(it -> it.startsWith("*"))
@@ -61,7 +62,7 @@ public class FilterTest {
 	@Test
 	public void testNegativeFilter() throws InterruptedException,
 			ExecutionException {
-		List<String> result = new SimpleReact()
+        ImmutableList<String> result = new SimpleReact()
 				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> "*" + it)
 				.filter(it -> !it.startsWith("*"))
@@ -75,7 +76,7 @@ public class FilterTest {
 	public void testFilterFirst() throws InterruptedException,
 			ExecutionException {
 
-		List<String> result = new SimpleReact()
+        ImmutableList<String> result = new SimpleReact()
 				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.filter(it -> 1!=it)
 				.peek(it -> System.out.println(it))
@@ -91,7 +92,7 @@ public class FilterTest {
 	public void testFilterExceptions() throws InterruptedException,
 			ExecutionException {
 
-		List<String> result = new SimpleReact()
+        ImmutableList<String> result = new SimpleReact()
 				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.filter(it -> 1!=it)
 				.<String>then(it -> "*" + it)

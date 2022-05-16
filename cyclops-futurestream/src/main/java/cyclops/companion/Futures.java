@@ -4,8 +4,8 @@ import com.oath.cyclops.react.collectors.lazy.Blocker;
 import com.oath.cyclops.react.threads.SequentialElasticPools;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.Future;
+import cyclops.data.ImmutableList;
 import cyclops.futurestream.SimpleReact;
-import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Either;
 import com.oath.cyclops.react.Status;
 
@@ -61,7 +61,7 @@ public interface Futures {
    * @return Future which will be populated with a Quorum of results
    */
   @SafeVarargs
-  public static <T> Future<ListX<T>> quorum(Predicate<Status<T>> breakout, Future<T>... fts) {
+  public static <T> Future<ImmutableList<T>> quorum(Predicate<Status<T>> breakout, Future<T>... fts) {
 
     List<CompletableFuture<?>> list = Stream.of(fts)
       .map(Future::getFuture)
@@ -94,7 +94,7 @@ public interface Futures {
    * @return Future which will be populated with a Quorum of results
    */
   @SafeVarargs
-  public static <T> Future<ListX<T>> quorum(Predicate<Status<T>> breakout, Consumer<Throwable> errorHandler, Future<T>... fts) {
+  public static <T> Future<ImmutableList<T>> quorum(Predicate<Status<T>> breakout, Consumer<Throwable> errorHandler, Future<T>... fts) {
 
     List<CompletableFuture<?>> list = Stream.of(fts)
       .map(Future::getFuture)

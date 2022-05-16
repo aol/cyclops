@@ -24,7 +24,7 @@ public class ReactPoolTest {
 	public void testReact(){
 
 		ReactPool<SimpleReact> pool = ReactPool.boundedPool(asList(new SimpleReact(),new SimpleReact()));
-		List<String> result = pool.react( (er) -> er.ofAsync(()->"hello",()->"world").block() );
+		List<String> result = pool.react( (er) -> er.ofAsync(()->"hello",()->"world").block() ).listView();
 		assertThat(result.size(),is(2));
 	}
 
@@ -60,7 +60,7 @@ public class ReactPoolTest {
 	public void testElastic(){
 		for(int i=0;i<1000;i++){
 			ReactPool<LazyReact> pool = ReactPool.elasticPool(()->new LazyReact());
-			List<String> result = pool.react( (er) -> er.ofAsync(()->"hello",()->"world").block() );
+			List<String> result = pool.react( (er) -> er.ofAsync(()->"hello",()->"world").block() ).listView();
 			assertThat(result.size(),is(2));
 		}
 	}
@@ -68,7 +68,7 @@ public class ReactPoolTest {
 	public void testUnbounded(){
 
 		ReactPool<LazyReact> pool = ReactPool.unboundedPool(asList(new LazyReact(),new LazyReact()));
-		List<String> result = pool.react( (er) -> er.ofAsync(()->"hello",()->"world").block() );
+		List<String> result = pool.react( (er) -> er.ofAsync(()->"hello",()->"world").block() ).listView();
 		pool.populate(new LazyReact());
 		assertThat(result.size(),is(2));
 	}
@@ -97,7 +97,7 @@ public class ReactPoolTest {
 
 		ReactPool<SimpleReact> pool = ReactPool.syncrhonousPool();
 		new SimpleReact().ofAsync( ()->populate(pool));
-		List<String> result = pool.react( (sr) -> sr.ofAsync(()->"hello",()->"world").peek(System.out::println).block() );
+		List<String> result = pool.react( (sr) -> sr.ofAsync(()->"hello",()->"world").peek(System.out::println).block() ).listView();
 		assertThat(result.size(),is(2));
 	}
 

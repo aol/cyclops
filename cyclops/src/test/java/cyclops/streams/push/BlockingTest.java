@@ -1,6 +1,5 @@
 package cyclops.streams.push;
 
-import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 
 import cyclops.reactive.ReactiveSeq;
@@ -23,43 +22,7 @@ import static org.junit.Assert.assertTrue;
  * Created by johnmcclean on 14/01/2017.
  */
 public class BlockingTest {
-    @Test
-    public void blockingOrNot(){
 
-        for(int k=0;k<10;k++) {
-            AsyncSubscriber<Integer> sub = Spouts.asyncSubscriber();
-
-            System.out.println("Starting!");
-            Thread t = new Thread(() -> {
-                //  System.out.println("Initiailizing..");
-                while (!sub.isInitialized()) {
-                    // System.out.println(sub.isInitialized());
-                    LockSupport.parkNanos(0l);
-                }
-                //  System.out.println("Initialized!");
-                try {
-                    Thread.sleep(5);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                System.out.println("On Next!");
-                for (int i = 0; i < 100; i++) {
-                    sub.onNext(1);
-                }
-                System.out.println("On Complete!");
-                sub.onComplete();
-            });
-
-            t.start();
-            System.out.println("Setting up Stream!");
-            //sub.onComplete();
-            assertThat(sub.stream().peek(System.out::println).collect(Collectors.toList()).size(), equalTo(100));
-            //   sub.stream().forEach(System.out::println);
-            sub.onNext(1);
-            System.out.println("End!");
-        }
-
-    }
 
     @Test
     public void reactiveStreams(){

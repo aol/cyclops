@@ -264,229 +264,6 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
             .flatMap(Function.identity());
     }
 
-    @Deprecated
-    public static class Comprehensions {
-
-        public static <T, F, R1, R2, R3, R4, R5, R6, R7> IO<R7> forEach(IO<T> io,
-                                                                        Function<? super T, IO<R1>> value2,
-                                                                        Function<? super Tuple2<? super T, ? super R1>, IO<R2>> value3,
-                                                                        Function<? super Tuple3<? super T, ? super R1, ? super R2>, IO<R3>> value4,
-                                                                        Function<? super Tuple4<? super T, ? super R1, ? super R2, ? super R3>, IO<R4>> value5,
-                                                                        Function<? super Tuple5<T, ? super R1, ? super R2, ? super R3, ? super R4>, IO<R5>> value6,
-                                                                        Function<? super Tuple6<T, ? super R1, ? super R2, ? super R3, ? super R4, ? super R5>, IO<R6>> value7,
-                                                                        Function<? super Tuple7<T, ? super R1, ? super R2, ? super R3, ? super R4, ? super R5, ? super R6>, IO<R7>> value8
-        ) {
-
-            return io.flatMap(in -> {
-
-                IO<R1> a = value2.apply(in);
-                return a.flatMap(ina -> {
-                    IO<R2> b = value3.apply(Tuple.tuple(in, ina));
-                    return b.flatMap(inb -> {
-
-                        IO<R3> c = value4.apply(Tuple.tuple(in, ina, inb));
-
-                        return c.flatMap(inc -> {
-                            IO<R4> d = value5.apply(Tuple.tuple(in, ina, inb, inc));
-                            return d.flatMap(ind -> {
-                                IO<R5> e = value6.apply(Tuple.tuple(in, ina, inb, inc, ind));
-                                return e.flatMap(ine -> {
-                                    IO<R6> f = value7.apply(Tuple.tuple(in, ina, inb, inc, ind, ine));
-                                    return f.flatMap(inf -> {
-                                        IO<R7> g = value8.apply(Tuple.tuple(in, ina, inb, inc, ind, ine, inf));
-                                        return g;
-
-                                    });
-
-                                });
-                            });
-
-                        });
-
-                    });
-
-
-                });
-
-
-            });
-
-        }
-
-        public static <T, F, R1, R2, R3, R4, R5, R6> IO<R6> forEach(IO<T> io,
-                                                                    Function<? super T, IO<R1>> value2,
-                                                                    Function<? super Tuple2<? super T, ? super R1>, IO<R2>> value3,
-                                                                    Function<? super Tuple3<? super T, ? super R1, ? super R2>, IO<R3>> value4,
-                                                                    Function<? super Tuple4<? super T, ? super R1, ? super R2, ? super R3>, IO<R4>> value5,
-                                                                    Function<? super Tuple5<T, ? super R1, ? super R2, ? super R3, ? super R4>, IO<R5>> value6,
-                                                                    Function<? super Tuple6<T, ? super R1, ? super R2, ? super R3, ? super R4, ? super R5>, IO<R6>> value7
-        ) {
-
-            return io.flatMap(in -> {
-
-                IO<R1> a = value2.apply(in);
-                return a.flatMap(ina -> {
-                    IO<R2> b = value3.apply(Tuple.tuple(in, ina));
-                    return b.flatMap(inb -> {
-
-                        IO<R3> c = value4.apply(Tuple.tuple(in, ina, inb));
-
-                        return c.flatMap(inc -> {
-                            IO<R4> d = value5.apply(Tuple.tuple(in, ina, inb, inc));
-                            return d.flatMap(ind -> {
-                                IO<R5> e = value6.apply(Tuple.tuple(in, ina, inb, inc, ind));
-                                return e.flatMap(ine -> {
-                                    IO<R6> f = value7.apply(Tuple.tuple(in, ina, inb, inc, ind, ine));
-                                    return f;
-                                });
-                            });
-
-                        });
-
-                    });
-
-
-                });
-
-
-            });
-
-        }
-
-        public static <T, F, R1, R2, R3, R4, R5> IO<R5> forEach(IO<T> io,
-                                                                Function<? super T, IO<R1>> value2,
-                                                                Function<? super Tuple2<? super T, ? super R1>, IO<R2>> value3,
-                                                                Function<? super Tuple3<? super T, ? super R1, ? super R2>, IO<R3>> value4,
-                                                                Function<? super Tuple4<? super T, ? super R1, ? super R2, ? super R3>, IO<R4>> value5,
-                                                                Function<? super Tuple5<T, ? super R1, ? super R2, ? super R3, ? super R4>, IO<R5>> value6
-        ) {
-
-            return io.flatMap(in -> {
-
-                IO<R1> a = value2.apply(in);
-                return a.flatMap(ina -> {
-                    IO<R2> b = value3.apply(Tuple.tuple(in, ina));
-                    return b.flatMap(inb -> {
-
-                        IO<R3> c = value4.apply(Tuple.tuple(in, ina, inb));
-
-                        return c.flatMap(inc -> {
-                            IO<R4> d = value5.apply(Tuple.tuple(in, ina, inb, inc));
-                            return d.flatMap(ind -> {
-                                IO<R5> e = value6.apply(Tuple.tuple(in, ina, inb, inc, ind));
-                                return e;
-                            });
-                        });
-
-                    });
-
-
-                });
-
-
-            });
-
-        }
-
-        public static <T, F, R1, R2, R3, R4> IO<R4> forEach(IO<T> io,
-                                                            Function<? super T, IO<R1>> value2,
-                                                            Function<? super Tuple2<? super T, ? super R1>, IO<R2>> value3,
-                                                            Function<? super Tuple3<? super T, ? super R1, ? super R2>, IO<R3>> value4,
-                                                            Function<? super Tuple4<? super T, ? super R1, ? super R2, ? super R3>, IO<R4>> value5
-
-        ) {
-
-            return io.flatMap(in -> {
-
-                IO<R1> a = value2.apply(in);
-                return a.flatMap(ina -> {
-                    IO<R2> b = value3.apply(Tuple.tuple(in, ina));
-                    return b.flatMap(inb -> {
-
-                        IO<R3> c = value4.apply(Tuple.tuple(in, ina, inb));
-
-                        return c.flatMap(inc -> {
-                            IO<R4> d = value5.apply(Tuple.tuple(in, ina, inb, inc));
-                            return d;
-                        });
-
-                    });
-
-
-                });
-
-
-            });
-
-        }
-
-        public static <T, F, R1, R2, R3> IO<R3> forEach(IO<T> io,
-                                                        Function<? super T, IO<R1>> value2,
-                                                        Function<? super Tuple2<? super T, ? super R1>, IO<R2>> value3,
-                                                        Function<? super Tuple3<? super T, ? super R1, ? super R2>, IO<R3>> value4
-
-        ) {
-
-            return io.flatMap(in -> {
-
-                IO<R1> a = value2.apply(in);
-                return a.flatMap(ina -> {
-                    IO<R2> b = value3.apply(Tuple.tuple(in, ina));
-                    return b.flatMap(inb -> {
-
-                        IO<R3> c = value4.apply(Tuple.tuple(in, ina, inb));
-
-                        return c;
-
-                    });
-
-
-                });
-
-
-            });
-
-        }
-
-        public static <T, F, R1, R2> IO<R2> forEach(IO<T> io,
-                                                    Function<? super T, IO<R1>> value2,
-                                                    Function<? super Tuple2<T, R1>, IO<R2>> value3
-
-        ) {
-
-            return io.flatMap(in -> {
-
-                IO<R1> a = value2.apply(in);
-                return a.flatMap(ina -> {
-                    IO<R2> b = value3.apply(Tuple.tuple(in, ina));
-                    return b;
-
-
-                });
-
-
-            });
-
-        }
-
-        public static <T, F, R1> IO<R1> forEach(IO<T> io,
-                                                Function<? super T, IO<R1>> value2
-
-
-        ) {
-
-            return io.flatMap(in -> {
-
-                IO<R1> a = value2.apply(in);
-                return a;
-
-
-            });
-
-        }
-
-
-    }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public final class ReactiveSeqIO<T> implements IO<T> {
@@ -821,6 +598,229 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
 
         }
 
+
+
+    }
+    @Deprecated
+    public static class Comprehensions {
+
+        public static <T, F, R1, R2, R3, R4, R5, R6, R7> IO<R7> forEach(IO<T> io,
+                                                                        Function<? super T, IO<R1>> value2,
+                                                                        Function<? super Tuple2<? super T, ? super R1>, IO<R2>> value3,
+                                                                        Function<? super Tuple3<? super T, ? super R1, ? super R2>, IO<R3>> value4,
+                                                                        Function<? super Tuple4<? super T, ? super R1, ? super R2, ? super R3>, IO<R4>> value5,
+                                                                        Function<? super Tuple5<T, ? super R1, ? super R2, ? super R3, ? super R4>, IO<R5>> value6,
+                                                                        Function<? super Tuple6<T, ? super R1, ? super R2, ? super R3, ? super R4, ? super R5>, IO<R6>> value7,
+                                                                        Function<? super Tuple7<T, ? super R1, ? super R2, ? super R3, ? super R4, ? super R5, ? super R6>, IO<R7>> value8
+        ) {
+
+            return io.flatMap(in -> {
+
+                IO<R1> a = value2.apply(in);
+                return a.flatMap(ina -> {
+                    IO<R2> b = value3.apply(Tuple.tuple(in, ina));
+                    return b.flatMap(inb -> {
+
+                        IO<R3> c = value4.apply(Tuple.tuple(in, ina, inb));
+
+                        return c.flatMap(inc -> {
+                            IO<R4> d = value5.apply(Tuple.tuple(in, ina, inb, inc));
+                            return d.flatMap(ind -> {
+                                IO<R5> e = value6.apply(Tuple.tuple(in, ina, inb, inc, ind));
+                                return e.flatMap(ine -> {
+                                    IO<R6> f = value7.apply(Tuple.tuple(in, ina, inb, inc, ind, ine));
+                                    return f.flatMap(inf -> {
+                                        IO<R7> g = value8.apply(Tuple.tuple(in, ina, inb, inc, ind, ine, inf));
+                                        return g;
+
+                                    });
+
+                                });
+                            });
+
+                        });
+
+                    });
+
+
+                });
+
+
+            });
+
+        }
+
+        public static <T, F, R1, R2, R3, R4, R5, R6> IO<R6> forEach(IO<T> io,
+                                                                    Function<? super T, IO<R1>> value2,
+                                                                    Function<? super Tuple2<? super T, ? super R1>, IO<R2>> value3,
+                                                                    Function<? super Tuple3<? super T, ? super R1, ? super R2>, IO<R3>> value4,
+                                                                    Function<? super Tuple4<? super T, ? super R1, ? super R2, ? super R3>, IO<R4>> value5,
+                                                                    Function<? super Tuple5<T, ? super R1, ? super R2, ? super R3, ? super R4>, IO<R5>> value6,
+                                                                    Function<? super Tuple6<T, ? super R1, ? super R2, ? super R3, ? super R4, ? super R5>, IO<R6>> value7
+        ) {
+
+            return io.flatMap(in -> {
+
+                IO<R1> a = value2.apply(in);
+                return a.flatMap(ina -> {
+                    IO<R2> b = value3.apply(Tuple.tuple(in, ina));
+                    return b.flatMap(inb -> {
+
+                        IO<R3> c = value4.apply(Tuple.tuple(in, ina, inb));
+
+                        return c.flatMap(inc -> {
+                            IO<R4> d = value5.apply(Tuple.tuple(in, ina, inb, inc));
+                            return d.flatMap(ind -> {
+                                IO<R5> e = value6.apply(Tuple.tuple(in, ina, inb, inc, ind));
+                                return e.flatMap(ine -> {
+                                    IO<R6> f = value7.apply(Tuple.tuple(in, ina, inb, inc, ind, ine));
+                                    return f;
+                                });
+                            });
+
+                        });
+
+                    });
+
+
+                });
+
+
+            });
+
+        }
+
+        public static <T, F, R1, R2, R3, R4, R5> IO<R5> forEach(IO<T> io,
+                                                                Function<? super T, IO<R1>> value2,
+                                                                Function<? super Tuple2<? super T, ? super R1>, IO<R2>> value3,
+                                                                Function<? super Tuple3<? super T, ? super R1, ? super R2>, IO<R3>> value4,
+                                                                Function<? super Tuple4<? super T, ? super R1, ? super R2, ? super R3>, IO<R4>> value5,
+                                                                Function<? super Tuple5<T, ? super R1, ? super R2, ? super R3, ? super R4>, IO<R5>> value6
+        ) {
+
+            return io.flatMap(in -> {
+
+                IO<R1> a = value2.apply(in);
+                return a.flatMap(ina -> {
+                    IO<R2> b = value3.apply(Tuple.tuple(in, ina));
+                    return b.flatMap(inb -> {
+
+                        IO<R3> c = value4.apply(Tuple.tuple(in, ina, inb));
+
+                        return c.flatMap(inc -> {
+                            IO<R4> d = value5.apply(Tuple.tuple(in, ina, inb, inc));
+                            return d.flatMap(ind -> {
+                                IO<R5> e = value6.apply(Tuple.tuple(in, ina, inb, inc, ind));
+                                return e;
+                            });
+                        });
+
+                    });
+
+
+                });
+
+
+            });
+
+        }
+
+        public static <T, F, R1, R2, R3, R4> IO<R4> forEach(IO<T> io,
+                                                            Function<? super T, IO<R1>> value2,
+                                                            Function<? super Tuple2<? super T, ? super R1>, IO<R2>> value3,
+                                                            Function<? super Tuple3<? super T, ? super R1, ? super R2>, IO<R3>> value4,
+                                                            Function<? super Tuple4<? super T, ? super R1, ? super R2, ? super R3>, IO<R4>> value5
+
+        ) {
+
+            return io.flatMap(in -> {
+
+                IO<R1> a = value2.apply(in);
+                return a.flatMap(ina -> {
+                    IO<R2> b = value3.apply(Tuple.tuple(in, ina));
+                    return b.flatMap(inb -> {
+
+                        IO<R3> c = value4.apply(Tuple.tuple(in, ina, inb));
+
+                        return c.flatMap(inc -> {
+                            IO<R4> d = value5.apply(Tuple.tuple(in, ina, inb, inc));
+                            return d;
+                        });
+
+                    });
+
+
+                });
+
+
+            });
+
+        }
+
+        public static <T, F, R1, R2, R3> IO<R3> forEach(IO<T> io,
+                                                        Function<? super T, IO<R1>> value2,
+                                                        Function<? super Tuple2<? super T, ? super R1>, IO<R2>> value3,
+                                                        Function<? super Tuple3<? super T, ? super R1, ? super R2>, IO<R3>> value4
+
+        ) {
+
+            return io.flatMap(in -> {
+
+                IO<R1> a = value2.apply(in);
+                return a.flatMap(ina -> {
+                    IO<R2> b = value3.apply(Tuple.tuple(in, ina));
+                    return b.flatMap(inb -> {
+
+                        IO<R3> c = value4.apply(Tuple.tuple(in, ina, inb));
+
+                        return c;
+
+                    });
+
+
+                });
+
+
+            });
+
+        }
+
+        public static <T, F, R1, R2> IO<R2> forEach(IO<T> io,
+                                                    Function<? super T, IO<R1>> value2,
+                                                    Function<? super Tuple2<T, R1>, IO<R2>> value3
+
+        ) {
+
+            return io.flatMap(in -> {
+
+                IO<R1> a = value2.apply(in);
+                return a.flatMap(ina -> {
+                    IO<R2> b = value3.apply(Tuple.tuple(in, ina));
+                    return b;
+
+
+                });
+
+
+            });
+
+        }
+
+        public static <T, F, R1> IO<R1> forEach(IO<T> io,
+                                                Function<? super T, IO<R1>> value2
+
+
+        ) {
+
+            return io.flatMap(in -> {
+
+                IO<R1> a = value2.apply(in);
+                return a;
+
+
+            });
+
+        }
 
 
     }

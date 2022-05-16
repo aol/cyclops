@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 
 import com.oath.cyclops.types.futurestream.BaseSimpleReactStream;
 import com.oath.cyclops.types.futurestream.SimpleReactStream;
+import cyclops.data.ImmutableList;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
@@ -80,13 +81,13 @@ public class TakeSkipSliceTest {
 	public void testSplitFuturesAt2(){
 		assertThat(sortedList(of(1,2,3,4,5).splitAt(2)
 											._2()
-											.block()).size(),
+											.block().listView()).size(),
 											is(asList(3,4,5).size()));
 	}
 	@Test
 	public void duplicateFuturesa(){
-		List<String> list = of("a","b").duplicate()._1().block();
-		assertThat(sortedList(list),is(asList("a","b")));
+        ImmutableList<String> list = of("a","b").duplicate()._1().block();
+		assertThat(sortedList(list.listView()),is(asList("a","b")));
 	}
 	private <T> List<T> sortedList(List<T> list) {
 		return list.stream().sorted().collect(Collectors.toList());
@@ -94,21 +95,21 @@ public class TakeSkipSliceTest {
 
 	@Test
 	public void duplicateFutures2(){
-		List<String> list = of("a","b").duplicate()._2().block();
+		List<String> list = of("a","b").duplicate()._2().block().listView();
 		assertThat(sortedList(list),is(asList("a","b")));
 
 	}
 	@Test
 	public void testZipWithFutures(){
 		SimpleReactStream stream = of("a","b");
-		List<Tuple2<Integer,String>> result = of(1,2).zip(stream).block();
+		List<Tuple2<Integer,String>> result = of(1,2).zip(stream).block().listView();;
 
 		assertThat(result.size(),is(asList(tuple(1,"a"),tuple(2,"b")).size()));
 	}
 	@Test
 	public void testZipWithFuturesStream(){
 		Stream stream = Stream.of("a","b");
-		List<Tuple2<Integer,String>> result = of(1,2).zip(stream).block();
+		List<Tuple2<Integer,String>> result = of(1,2).zip(stream).block().listView();;
 
 		assertThat(result.size(),is(asList(tuple(1,"a"),tuple(2,"b")).size()));
 	}
@@ -117,13 +118,13 @@ public class TakeSkipSliceTest {
 	@Test
 	public void testZipFuturesWithIndex(){
 
-		List<Tuple2<String,Long>> result  = of("a","b").zipWithIndex().block();
+		List<Tuple2<String,Long>> result  = of("a","b").zipWithIndex().block().listView();;
 
 		assertThat(result.size(),is(asList(tuple("a",0l),tuple("b",1l)).size()));
 	}
 	@Test
 	public void duplicateFutures(){
-		List<String> list = of("a","b").duplicate()._1().block();
+		List<String> list = of("a","b").duplicate()._1().block().listView();;
 		assertThat(sortedList(list),is(asList("a","b")));
 	}
 	private boolean sleep(int i) {

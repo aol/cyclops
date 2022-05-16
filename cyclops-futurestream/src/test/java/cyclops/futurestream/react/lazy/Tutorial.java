@@ -8,6 +8,7 @@ import com.oath.cyclops.types.persistent.PersistentCollection;
 import cyclops.control.Eval;
 import cyclops.control.Future;
 import cyclops.data.HashMap;
+import cyclops.data.ImmutableList;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.futurestream.LazyReact;
@@ -32,8 +33,6 @@ import cyclops.reactive.ReactiveSeq;
 import org.junit.Ignore;
 import org.junit.Test;
 
-
-import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.react.SimpleReactFailedStageException;
 import cyclops.futurestream.FutureStream;
 import com.oath.cyclops.types.futurestream.SimpleReactStream;
@@ -53,7 +52,7 @@ public class Tutorial {
                                                             .foldFuture(Executors.newFixedThreadPool(1),s->s.foldLeft( 50,(acc,next) -> acc+next));
         //CompletableFuture[1550]
 
-        Eval<Integer> lazyResult = ListX.of(1,2,3,4)
+        Eval<Integer> lazyResult = Seq.of(1,2,3,4)
                                         .map(i->i*10)
                                         .foldLazy(s->s
                                         .foldLeft( 50,(acc,next) -> acc+next));
@@ -188,7 +187,7 @@ public class Tutorial {
 	public void errorHandling() {
 
 
-		List<String> results = LazyReact.sequentialCommonBuilder()
+		ImmutableList<String> results = LazyReact.sequentialCommonBuilder()
 
 				.ofAsync(() -> "new event1", () -> "new event2")
 				.retry(this::unreliable,2,1,TimeUnit.MILLISECONDS).onFail(e -> "default")
@@ -347,7 +346,7 @@ public class Tutorial {
 	@Test
 	public void gettingStarted() {
 
-		List<String> results = new SimpleReact()
+        ImmutableList<String> results = new SimpleReact()
 				.ofAsync(() -> readData("data1"), () -> readData("data2"))
 				.onFail(RuntimeException.class, this::loadFromDb)
 				.peek(System.out::println).then(this::processData).block();
@@ -502,7 +501,7 @@ public class Tutorial {
 	@Test
 	@Ignore
 	public void onePerSecondAndBatch() {
-		List<Vector<String>> collected = LazyReact.sequentialCommonBuilder()
+        ImmutableList<Vector<String>> collected = LazyReact.sequentialCommonBuilder()
                                                  .generateAsync(() -> status)
 				.withQueueFactory(QueueFactories.boundedQueue(1))
 				.onePer(1, TimeUnit.SECONDS).groupedByTime(10, TimeUnit.SECONDS)
@@ -515,7 +514,7 @@ public class Tutorial {
 	 */
 	@Test @Ignore
 	public void secondsTimeInterval() {
-		List<Vector<Integer>> collected = LazyReact
+        ImmutableList<Vector<Integer>> collected = LazyReact
 				.sequentialCommonBuilder().iterate(0, it -> it + 1)
 				//.limit(100)
 				.withQueueFactory(QueueFactories.boundedQueue(1))
@@ -528,7 +527,7 @@ public class Tutorial {
 	@Test
 	@Ignore
 	public void range() {
-		List<Vector<Integer>> collected = LazyReact
+        ImmutableList<Vector<Integer>> collected = LazyReact
 				.sequentialCommonBuilder()
 				.from(IntStream.range(0, 10)).grouped(5)
 				.block();

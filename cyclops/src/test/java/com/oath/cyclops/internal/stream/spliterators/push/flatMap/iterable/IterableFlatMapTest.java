@@ -1,6 +1,5 @@
 package com.oath.cyclops.internal.stream.spliterators.push.flatMap.iterable;
 
-import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
@@ -270,20 +269,7 @@ public class IterableFlatMapTest {
         return sub.reactiveStream();
     }
     private ReactiveSeq<Integer> nextAsync() {
-        AsyncSubscriber<Integer> sub = Spouts.asyncSubscriber();
-        new Thread(()->{
+        return Spouts.from(Flux.just(1,2).subscribeOn(Schedulers.elastic()));
 
-            sub.awaitInitialization();
-            try {
-                //not a reactive-stream so we don't know with certainty when demand signalled
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            sub.onNext(1);
-            sub.onNext(2);
-            sub.onComplete();
-        }).start();
-        return sub.stream();
     }
 }

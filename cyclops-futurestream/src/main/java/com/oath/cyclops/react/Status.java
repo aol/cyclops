@@ -2,9 +2,7 @@ package com.oath.cyclops.react;
 
 import com.oath.cyclops.types.persistent.PersistentList;
 
-import cyclops.reactive.collections.immutable.LinkedListX;
-
-import lombok.AllArgsConstructor;
+import cyclops.data.Seq;
 
 /**
  * Class that returned to blocking predicates for short circuiting result toX
@@ -13,14 +11,7 @@ import lombok.AllArgsConstructor;
  *
  * @param <T> Result type
  */
-@AllArgsConstructor
-public class Status<T> {
-
-    private final int completed;
-    private final int errors;
-    private final int total;
-    private final long elapsedNanos;
-    private final LinkedListX<T> resultsSoFar;
+public record Status<T> (int completed, int errors, int total, long elapsedNanos, Seq<T> resultsSoFar){
 
     public final int getAllCompleted() {
         return completed + errors;

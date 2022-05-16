@@ -1,10 +1,8 @@
 package cyclops.streams;
 
-import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import com.oath.cyclops.util.SimpleTimer;
 import com.google.common.collect.Lists;
 import cyclops.companion.Monoids;
-import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 
 
@@ -12,14 +10,10 @@ import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 import cyclops.control.Eval;
 import cyclops.control.Future;
 import cyclops.data.Bag;
-import cyclops.data.Chain;
-import cyclops.data.ImmutableList;
-import cyclops.function.Predicates;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.companion.Streamable;
 import cyclops.data.EnumerationTest.Days;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -38,6 +32,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static cyclops.companion.Functions.*;
 import static cyclops.function.Predicates.anyOf;
 import static cyclops.function.Predicates.greaterThan;
 import static cyclops.function.Predicates.hasItems;
@@ -47,7 +42,6 @@ import static cyclops.reactive.ReactiveSeq.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static cyclops.data.tuple.Tuple.tuple;
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
 public class ReactiveSeqTest {
@@ -765,22 +759,6 @@ public class ReactiveSeqTest {
         assertThat(plus2.toList(), equalTo(Arrays.asList(3, 4, 5)));
         assertThat(by10Plus2.toList(), equalTo(Arrays.asList(12, 22, 32)));
     }
-/**
-    @Test @Ignore
-    public void limitPushTest(){
-        ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
-        ReactiveSeq<String> stream = pushable.stream();
-        ReactiveSeq<List<String>> res = stream.map(i->i+"-hello").limit(2)
-                                               .collectSeq(CyclopsCollectors.toList());
-        pushable.onNext("hello1");
-        pushable.onNext("hello2");
-        pushable.onNext("hello3");
-
-
-       //LimitSpliterator only supports iteration
-        assertThat(res.single().size(),equalTo(3));
-    }
- **/
 
     @Test
     public void forEachWithErrorPush(){
@@ -812,19 +790,6 @@ public class ReactiveSeqTest {
     }
 
 
-
-    @Test @Ignore
-    public void limitLast(){
-        AsyncSubscriber<String> pushable = Spouts.asyncSubscriber();
-        ReactiveSeq<String> stream = pushable.stream();
-        pushable.onNext("hello1");
-
-        pushable.onNext("hello2");
-        pushable.onNext("hello3");
-        pushable.onComplete();
-       // stream.printOut();
-        stream.takeRight(2).zipWithStream(Stream.of(1,2)).printOut();
-    }
 
     @Test
     public void testFlatMap(){

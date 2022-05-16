@@ -275,24 +275,7 @@ public class MergeLatestTest {
             .expectNext(1, 2, 3)
             .verifyComplete();
     }
-    @Test
-    public void mergeEmpty(){
 
-
-
-        AtomicReference<Vector<Integer>> data = new AtomicReference(Vector.empty());
-        AtomicBoolean complete = new AtomicBoolean(false);
-        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
-        Spouts.<Integer>merge(Spouts.<ReactiveSeq<Integer>>of()) .forEach(z->{
-            assertFalse(complete.get());
-            data.updateAndGet(s->s.plus(z));
-        },e->{
-            error.set(e);
-        },()->{
-            complete.set(true);
-        });
-        Assert.assertThat(complete.get(), equalTo(true));
-    }
     @Test
     public void mergeLatestEmpty(){
 
@@ -315,13 +298,13 @@ public class MergeLatestTest {
 
     @Test
     public void mergeOne(){
-        StepVerifier.create(Spouts.merge(Spouts.of(Spouts.of(1))))
+        StepVerifier.create(Spouts.mergeLatest(Spouts.of(Spouts.of(1))))
             .expectNext(1)
             .verifyComplete();
         StepVerifier.create(Spouts.mergeLatestList(Seq.of(Spouts.of(1))))
             .expectNext(1)
             .verifyComplete();
-        StepVerifier.create(Spouts.merge(Spouts.of(Spouts.of(1))))
+        StepVerifier.create(Spouts.mergeLatest(Spouts.of(Spouts.of(1))))
             .expectNext(1)
             .verifyComplete();
     }

@@ -4,14 +4,12 @@ import com.oath.cyclops.hkt.Higher;
 
 import com.oath.cyclops.internal.stream.spliterators.push.*;
 import com.oath.cyclops.types.reactive.BufferOverflowPolicy;
-import com.oath.cyclops.types.reactive.PushSubscriber;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.*;
 import com.oath.cyclops.internal.stream.ReactiveStreamX;
 import com.oath.cyclops.internal.stream.ReactiveStreamX.Type;
 import com.oath.cyclops.internal.stream.spliterators.UnfoldSpliterator;
-import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 import cyclops.data.Seq;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
@@ -28,9 +26,7 @@ import java.util.Spliterator;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -47,71 +43,7 @@ public interface Spouts {
         return Spouts.generate(ExceptionSoftener.softenSupplier(cs)).take(1l);
     }
 
-    /**
-     * Create an Subscriber for Observable style asynchronous push based Streams.
-     * Streams generated from AsyncSubscribers are not backpressure aware (in cases
-     * where backpressue is not needed they may perform better).
-     * For backpressure aware Streams see {@link Spouts#reactiveSubscriber}
-     *
-     * @param <T> Stream data type
-     * @return Async Stream Subscriber
-     */
-    @Deprecated
-    static <T> AsyncSubscriber<T> asyncSubscriber(){
-        return new AsyncSubscriber<T>();
-    }
 
-    /**
-     * Create a Stream that accepts data via the Subsriber passed into the supplied Consumer.
-     * reactive-streams susbscription is ignored (i.e. this Stream is backpressure free)
-     *
-     * <pre>
-     *     {@code
-     *      ReactiveSeq<Integer> input = Spouts.async(subscriber->{
-     *                                                          listener.onEvent(subscriber::onNext);
-     *                                                          listener.onError(susbscriber::onError);
-     *                                                          closeListener.onEvent(subscriber::onClose);
-     *                                                      });
-     *      }
-     * </pre>
-     *
-     * @param sub
-     * @param <T>
-     * @return
-     */
-    @Deprecated
-    static <T> ReactiveSeq<T> async(Consumer<? super PushSubscriber<T>> sub){
-        AsyncSubscriber<T> s = asyncSubscriber();
-        return s.registerAndstream(()->{
-            while(!s.isInitialized()){
-                LockSupport.parkNanos(1l);
-            }
-            sub.accept(s);
-
-        });
-    }
-
-    /**
-     * Create a push based Stream with <b>no backpressure</b> fromm the provided Stream.
-     * The provided Stream will be executed on the provided executor and pushed to the returned Stream
-     *
-     * @param seq Stream to execute and push to a new non-backpressure aware Stream
-     * @param exec
-     * @param <T>
-     * @return
-     */
-    @Deprecated
-    static <T> ReactiveSeq<T> async(Stream<T> seq, Executor exec){
-          return async(s->{
-
-            ReactiveSeq.fromStream(seq).foldFuture(exec,t->{
-
-                PushSubscriber<T> local = s;
-                t.forEach(local::onNext,local::onError,local::onComplete);
-                return null;
-            });
-        });
-    }
 
     /**
      * Create a buffering reactive-streams source. Your subscriber can respect or ignore reactive-streams backpressure.
@@ -169,18 +101,7 @@ public interface Spouts {
     static <T> ReactiveSeq<T> reactiveBuffer(Queue<T> buffer,BufferOverflowPolicy policy, Consumer<? super Subscriber<T>> onNext){
         return Spouts.reactiveStream(new BufferingSinkOperator<T>(buffer, onNext, policy));
     }
-    @Deprecated
-    static <T> ReactiveSeq<T> asyncBuffer(int buffer, Consumer<? super PushSubscriber<T>> onNext){
-        return Spouts.asyncStream(new BufferingSinkOperator<T>(new ManyToManyConcurrentArrayQueue<T>(buffer),c-> onNext.accept(PushSubscriber.of(c)), BufferOverflowPolicy.DROP));
-    }
-    @Deprecated
-    static <T> ReactiveSeq<T> asyncBufferBlock(int buffer, Consumer<? super PushSubscriber<T>> onNext){
-        return Spouts.asyncStream(new BufferingSinkOperator<T>(new ManyToManyConcurrentArrayQueue<T>(buffer), c-> onNext.accept(PushSubscriber.of(c)), BufferOverflowPolicy.BLOCK));
-    }
-    @Deprecated
-    static <T> ReactiveSeq<T> asyncBuffer(Queue<T> buffer,BufferOverflowPolicy policy, Consumer<? super PushSubscriber<T>> onNext){
-        return Spouts.asyncStream(new BufferingSinkOperator<T>(buffer, c-> onNext.accept(PushSubscriber.of(c)), policy));
-    }
+
     static <T> ReactiveSeq<T> reactive(Stream<T> seq, Executor exec){
         Future<Subscriber<T>> subscriber = Future.future();
         Future<Subscription> sub = Future.future();
@@ -256,10 +177,6 @@ public interface Spouts {
     static <T> ReactiveSeq<T> reactiveStream(Operator<T> s){
         return new ReactiveStreamX<>(s,Type.BACKPRESSURE);
     }
-    @Deprecated
-    static <T> ReactiveSeq<T> asyncStream(Operator<T> s){
-        return new ReactiveStreamX<>(s,Type.NO_BACKPRESSURE);
-    }
     static <T> ReactiveSeq<T> syncStream(Operator<T> s){
         return new ReactiveStreamX<>(s);
     }
@@ -319,10 +236,6 @@ public interface Spouts {
         if(pub instanceof ReactiveSeq)
             return (ReactiveSeq<T>)pub;
         return reactiveStream(new PublisherToOperator<T>((Publisher<T>)pub));
-    }
-    @Deprecated //use mergeLatest
-    static <T> ReactiveSeq<T> merge(Publisher<? extends Publisher<T>> publisher){
-        return mergeLatest(publisher);
     }
 
 
@@ -474,12 +387,7 @@ public interface Spouts {
                             .map(p->new PublisherToOperator<T>(p))));
 
     }
-    @Deprecated
-    public static  <T> ReactiveSeq<T> lazyConcat(Publisher<Publisher<T>> pubs){
 
-        return reactiveStream(new LazyArrayConcatonatingOperator<T>(Spouts.from(pubs).seq()
-                .map(p->new PublisherToOperator<T>(p))));
-    }
     public static  <T> ReactiveSeq<T> concat(Stream<? extends T>... streams){
 
         ReactiveSeq<Stream<T>> rs = ReactiveSeq.of((Stream[]) streams);

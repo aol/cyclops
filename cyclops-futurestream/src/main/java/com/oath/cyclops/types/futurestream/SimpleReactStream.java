@@ -1,12 +1,13 @@
 package com.oath.cyclops.types.futurestream;
 
-import com.oath.cyclops.ReactiveConvertableSequence;
+
 import com.oath.cyclops.internal.react.stream.EagerStreamWrapper;
 import com.oath.cyclops.react.StageWithResults;
 import com.oath.cyclops.react.Status;
 import com.oath.cyclops.react.async.subscription.Continueable;
 import com.oath.cyclops.react.collectors.lazy.Blocker;
 import com.oath.cyclops.util.ThrowsSoftened;
+import cyclops.data.ImmutableList;
 import cyclops.futurestream.LazyReact;
 import cyclops.futurestream.FutureStream;
 import cyclops.reactive.ReactiveSeq;
@@ -19,7 +20,7 @@ import com.oath.cyclops.internal.react.exceptions.FilteredExecutionPathException
 import com.oath.cyclops.react.SimpleReactFailedStageException;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
-import cyclops.reactive.collections.mutable.ListX;
+
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -340,16 +341,16 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
             .forEach(next -> next.cancel(true));
     }
 
-    default ListX<SimpleReactStream<U>> copySimpleReactStream(final int times) {
+    default ReactiveSeq<SimpleReactStream<U>> copySimpleReactStream(final int times) {
 
-        return (ListX) Streams.toBufferingCopier(getLastActive().stream()
+        return (ReactiveSeq) Streams.toBufferingCopier(getLastActive().stream()
                                                                     .iterator(),
                                                      times)
                                   .stream()
                                   .map(it -> StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false))
                                   .<BaseSimpleReactStream<U>> map(fs -> this.getSimpleReact()
                                                                             .construct(fs))
-                                  .to(ReactiveConvertableSequence::converter).listX();
+                                  .to(ReactiveSeq::fromIterable);
     }
 
     /*
@@ -804,7 +805,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *         first). throws InterruptedException,ExecutionException
      */
     @ThrowsSoftened({ InterruptedException.class, ExecutionException.class })
-    default ListX<U> block(final Predicate<Status<U>> breakout) {
+    default ImmutableList<U> block(final Predicate<Status<U>> breakout) {
         return new Blocker<U>(
                               (List)getLastActive().list(), getErrorHandler()).block(breakout);
     }

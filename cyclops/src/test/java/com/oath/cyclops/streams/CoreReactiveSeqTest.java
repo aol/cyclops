@@ -126,7 +126,7 @@ public  class CoreReactiveSeqTest {
     }
     @Test
     public void mergePTest(){
-        List<Integer> list = ReactiveSeq.of(3,6,9).mergeP(ReactiveSeq.of(2,4,8),ReactiveSeq.of(1,5,7)).toList();
+        List<Integer> list = ReactiveSeq.of(3,6,9).merge(ReactiveSeq.of(2,4,8),ReactiveSeq.of(1,5,7)).toList();
         assertThat(list,hasItems(1,2,3,4,5,6,7,8,9));
         assertThat(list.size(),equalTo(9));
     }

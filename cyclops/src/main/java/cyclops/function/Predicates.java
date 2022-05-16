@@ -384,10 +384,7 @@ public class Predicates {
     public static <T1 extends Comparable<T1>> Predicate<? super T1> equal(final T1 v) {
         return test -> test.compareTo(v) == 0;
     }
-    @Deprecated //collides with Object#equals use equal instead
-    public static <T1 extends Comparable<T1>> Predicate<? super T1> equals(final T1 v) {
-        return equal(v);
-    }
+
 
     public static <T1> Predicate<? super T1> nullValue() {
         return test -> test == null;

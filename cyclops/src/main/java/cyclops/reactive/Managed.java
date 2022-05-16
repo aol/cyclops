@@ -318,7 +318,6 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
     IO<T> io(Function<T,IO<T>> convert) {
         return apply(convert);
     }
-
     @Deprecated
     public static class Comprehensions {
 
@@ -536,5 +535,4 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
 
 
     }
-
 }

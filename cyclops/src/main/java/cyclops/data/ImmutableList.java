@@ -28,7 +28,6 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.Stream;
 
-import static cyclops.matching.Api.*;
 
 
 public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,ImmutableList.None<T>>,
@@ -73,7 +72,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
     }
 
-    @Deprecated //internal method (to be hidden in future release)
+    @Deprecated//internal method (to be hidden in future release)
     default boolean equalToDirectAccess(Iterable<T> iterable){
         int size = size();
         Iterator<T> it = iterable.iterator();
@@ -234,14 +233,17 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
                 return current.fold(c->true, n->false);
             }
 
+            private T head(Some<T> some){
+                current = some.tail();
+                return some.head();
+            }
             @Override
             public T next() {
-               return MatchType(current).with(Case(list->{
-                                                        current = list.tail();
-                                                        return list.head();
-                                                    }),
-                                Case(nil->null));
-
+                return switch(current){
+                    case Some<T> some -> head(some);
+                    case None<T> none -> null;
+                    default -> null;
+                };
             }
         };
     }

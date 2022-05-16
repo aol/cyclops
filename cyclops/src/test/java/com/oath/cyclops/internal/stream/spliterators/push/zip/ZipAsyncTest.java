@@ -1,7 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push.zip;
 
 import com.oath.cyclops.internal.stream.spliterators.push.Fixtures;
-import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import cyclops.control.Future;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -228,20 +227,7 @@ public class ZipAsyncTest {
 
     }
     private ReactiveSeq<Integer> nextAsync() {
-        AsyncSubscriber<Integer> sub = Spouts.asyncSubscriber();
-        new Thread(()->{
+        return Spouts.from(Flux.just(1,2).subscribeOn(Schedulers.elastic()));
 
-            sub.awaitInitialization();
-            try {
-                //not a reactive-stream so we don't know with certainty when demand signalled
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            sub.onNext(1);
-            sub.onNext(2);
-            sub.onComplete();
-        }).start();
-        return sub.stream();
     }
 }

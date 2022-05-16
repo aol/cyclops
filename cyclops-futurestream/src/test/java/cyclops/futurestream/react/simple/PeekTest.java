@@ -9,6 +9,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 
+import cyclops.data.ImmutableList;
 import org.junit.Test;
 
 import cyclops.futurestream.SimpleReact;
@@ -19,7 +20,7 @@ public class PeekTest {
 	public void testPeek() throws InterruptedException,
 			ExecutionException {
 		Queue<String> peeked = new  ConcurrentLinkedQueue<String>();
-		List<String> strings = new SimpleReact()
+		ImmutableList<String> strings = new SimpleReact()
 				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.then(it -> it * 100)
 				.<String>then(it -> "*" + it)
@@ -37,7 +38,7 @@ public class PeekTest {
 	public void testPeekFirst() throws InterruptedException,
 			ExecutionException {
 		Queue<Integer> peeked = new  ConcurrentLinkedQueue<Integer>();
-		List<String> strings = new SimpleReact()
+		ImmutableList<String> strings = new SimpleReact()
 				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.peek(it -> peeked.add(it))
 				.then(it -> it * 100)
@@ -53,7 +54,7 @@ public class PeekTest {
 	public void testPeekMultiple() throws InterruptedException,
 			ExecutionException {
 		Queue<Integer> peeked = new  ConcurrentLinkedQueue<Integer>();
-		List<String> strings = new SimpleReact()
+        ImmutableList<String> strings = new SimpleReact()
 				.<Integer> ofAsync(() -> 1, () -> 2, () -> 3)
 				.peek(it -> peeked.add(it))
 				.peek(it -> peeked.add(it))

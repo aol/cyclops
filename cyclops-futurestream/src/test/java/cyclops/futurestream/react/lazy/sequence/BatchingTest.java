@@ -28,7 +28,6 @@ import cyclops.futurestream.LazyReact;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.reactive.collections.mutable.ListX;
 import lombok.Value;
 public class BatchingTest {
 	@Test

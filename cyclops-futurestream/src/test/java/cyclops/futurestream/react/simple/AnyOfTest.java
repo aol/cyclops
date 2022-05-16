@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import cyclops.data.ImmutableList;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -32,7 +33,7 @@ public class AnyOfTest {
 	@Test
 	public void testAnyOfCompletableFutureOnFailRecovers(){
 		List<String> urls = Arrays.asList("hello","world","2");
-		List<String> result = new SimpleReact().fromStream(urls.stream()
+        ImmutableList<String> result = new SimpleReact().fromStream(urls.stream()
 				.<CompletableFuture<String>>map(it ->  handle(it)))
 
 				.capture(e ->
@@ -47,7 +48,7 @@ public class AnyOfTest {
 	@Test
 	public void testAnyOfCompletableExceptionally(){
 		List<String> urls = Arrays.asList("hello","world","2");
-		List<String> result = new SimpleReact().fromStream(urls.stream()
+        ImmutableList<String> result = new SimpleReact().fromStream(urls.stream()
 				.<CompletableFuture<String>>map(it ->  handle(it)))
 
 				.capture(e ->

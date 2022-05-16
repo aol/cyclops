@@ -3,7 +3,6 @@ package cyclops.futurestream.react.lazy;
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.oath.cyclops.data.ReactiveWitness;
 import cyclops.futurestream.LazyReact;
 import cyclops.futurestream.FutureStream;
 import cyclops.reactive.ReactiveSeq;

@@ -244,8 +244,7 @@ public interface Validated<E,T> extends Sealed2<NonEmptyList<E>,T>, Transformabl
         }
     }
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    @EqualsAndHashCode
-    public final class Invalid<E,T> implements Validated<E,T>{
+    final class Invalid<E,T> implements Validated<E,T>{
         private final Either<NonEmptyList<E>,T> either;
 
 

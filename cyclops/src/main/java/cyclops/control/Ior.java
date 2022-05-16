@@ -511,7 +511,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
     public static <ST, PT> Ior<PT, ST> accumulateLeft(final Monoid<ST> reducer, final Iterable<Ior<ST, PT>> iors) {
         return sequenceLeft(iors).map(s -> s.reduce(reducer));
     }
-    
+
 
     /**
      *  Turn a toX of Iors into a single Ior with Lists of values.
@@ -1007,7 +1007,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
         }
 
         @AllArgsConstructor(access = AccessLevel.PACKAGE)
-        @EqualsAndHashCode(of = {"left", "right"})
+        @EqualsAndHashCode(of = {"secondary", "primary"})
         public static class Both<ST, PT> implements Ior<ST, PT> {
             private final ST secondary;
             private final PT primary;

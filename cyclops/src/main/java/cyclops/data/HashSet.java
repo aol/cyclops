@@ -14,7 +14,6 @@ import cyclops.data.tuple.Tuple4;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
-import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -73,10 +72,7 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
     public static <T> HashSet<T> generate(Supplier<T> s, int max){
         return fromStream(ReactiveSeq.generate(s).limit(max));
     }
-    @Deprecated
-    public static <T> HashSet<T> generate(Generator<T> s){
-        return fromStream(ReactiveSeq.generate(s));
-    }
+
     public static HashSet<Integer> range(final int start, final int end) {
         return HashSet.fromStream(ReactiveSeq.range(start,end));
 

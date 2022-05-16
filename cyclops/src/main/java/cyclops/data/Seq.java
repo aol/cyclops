@@ -19,7 +19,6 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
-import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -34,13 +33,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 //safe list implementation that does not support exceptional states
-public interface Seq<T> extends ImmutableList<T>,
+public sealed interface Seq<T> extends ImmutableList<T>,
                                 Folds<T>,
                                 Filters<T>,
                                 Transformable<T>,
                                 PersistentList<T>,
                                  Serializable,
-                                Higher<seq,T> {
+                                Higher<seq,T>  permits Seq.Cons, Seq.Nil {
 
     static <T> Collector<T, List<T>, Seq<T>> collector() {
         Collector<T, ?, List<T>> c  = Collectors.toList();
@@ -161,10 +160,7 @@ public interface Seq<T> extends ImmutableList<T>,
     static <T> Seq<T> generate(Supplier<T> s, int max){
         return fromStream(ReactiveSeq.generate(s).limit(max));
     }
-    @Deprecated
-    static <T> Seq<T> generate(Generator<T> s){
-        return fromStream(ReactiveSeq.generate(s));
-    }
+
     static Seq<Integer> range(final int start, final int end) {
         return Seq.fromStream(ReactiveSeq.range(start,end));
 
@@ -762,7 +758,6 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    @EqualsAndHashCode(of={"head,tail"})
     public static final class Cons<T> implements ImmutableList.Some<T>, Seq<T>, Serializable {
         private static final long serialVersionUID = 1L;
         public final T head;

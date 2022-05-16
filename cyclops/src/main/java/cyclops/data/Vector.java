@@ -16,7 +16,6 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
-import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
@@ -179,10 +178,7 @@ public class Vector<T> implements ImmutableList<T>,
     public static <T> Vector<T> generate(Supplier<T> s, int max){
         return fromStream(ReactiveSeq.generate(s).limit(max));
     }
-    @Deprecated
-    public static <T> Vector<T> generate(Generator<T> s){
-        return fromStream(ReactiveSeq.generate(s));
-    }
+
     public static Vector<Integer> range(final int start, final int end) {
         return Vector.fromStream(ReactiveSeq.range(start,end));
 

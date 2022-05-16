@@ -35,7 +35,7 @@ public class RxJavaConversionTest {
 								.limit(5)
 								.peek(title -> saveTitle(title) )
 								.peek(System.out::println)
-								.block();
+								.block().listView();
 
 	   assertThat(titles.size(),is(5));
 	   assertThat(savedCalled,is(5));
@@ -49,7 +49,7 @@ public class RxJavaConversionTest {
 								.skip(5)
 								.peek(title -> saveTitle(title) )
 								.peek(System.out::println)
-								.block();
+								.block().listView();
 
 	   assertThat(titles.size(),is(4));
 	   assertThat(savedCalled,is(4));

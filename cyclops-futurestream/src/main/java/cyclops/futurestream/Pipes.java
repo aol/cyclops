@@ -1,13 +1,14 @@
 package cyclops.futurestream;
 
-import com.oath.cyclops.ReactiveConvertableSequence;
+
 import com.oath.cyclops.react.threads.SequentialElasticPools;
 import com.oath.cyclops.types.reactive.ValueSubscriber;
 import com.oath.cyclops.async.adapters.Adapter;
 import com.oath.cyclops.util.box.LazyImmutable;
 import cyclops.data.HashMap;
+import cyclops.data.ImmutableList;
 import cyclops.data.ImmutableMap;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple0;
 import cyclops.control.*;
@@ -259,12 +260,12 @@ public class Pipes<K, V> {
      * @param x Number of elements to return
      * @return List of the next x elements from the Adapter identified by the provided key
      */
-    public ListX<V> xValues(final K key, final long x) {
+    public ImmutableList<V> xValues(final K key, final long x) {
 
         return get(key).map(a -> a.stream()
                                     .limit(x)
-                                    .to(ReactiveConvertableSequence::converter).listX())
-                       .orElse(ListX.empty());
+                                    .to(Seq::fromIterable))
+                       .orElse(Seq.empty());
     }
 
     /**
@@ -310,62 +311,7 @@ public class Pipes<K, V> {
                                                                         "no adapter for key " + key)));
     }
 
-    /**
-     * Extact one value from the selected pipe or an zero Maybe if it doesn't exist. Currently only Adapter's and not Publishers
-     * are managed by Pipes so Publisher errors are not propagated (@see {@link Pipes#oneValue(Object)} or @see {@link Pipes#oneOrError(Object)} is better at the moment.
-     *
-     *  <pre>
-     *  {@code
-     *  Queue<String> q = new Queue<>();
-        pipes.register("hello", q);
-        pipes.push("hello", "world");
-        pipes.push("hello", "world2");
 
-
-        pipes.oneValueOrError("hello",Throwable.class).getValue(); //Try["world"]
-
-     *  }
-     *  </pre>
-     *
-     * @param key
-     * @param classes
-     * @return
-     */
-    @Deprecated //errors aren't propagated across Adapters (at least without continuations)
-    public <X extends Throwable> Option<Try<V, X>> oneValueOrError(final K key, final Class<X>... classes) {
-        final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
-        return get(key).peek(a -> a.stream()
-                                   .subscribe(sub))
-                       .map(a -> sub.toTry(classes));
-    }
-
-    /**
-     * Extact one value from the selected pipe or an zero Maybe if it doesn't exist. Currently only Adapter's and not Publishers
-     * are managed by Pipes so Publisher errors are not propagated (@see {@link Pipes#oneValue(Object)} or @see {@link Pipes#oneOrError(Object)} is better at the moment.
-     *
-     *  <pre>
-     *  {@code
-     *  Queue<String> q = new Queue<>();
-        pipes.register("hello", q);
-        pipes.push("hello", "world");
-        pipes.push("hello", "world2");
-
-
-        pipes.oneValueOrError("hello").getValue(); //Try["world"]
-
-     *  }
-     *  </pre>
-     *
-     * @param key : Adapter identifier
-     * @return
-     */
-    @Deprecated //errors aren't propagated across Adapters (at least without continuations)
-    public Option<Try<V, Throwable>> oneValueOrError(final K key) {
-        final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
-        return get(key).peek(a -> a.stream()
-                                   .subscribe(sub))
-                       .map(a -> sub.toTry(Throwable.class));
-    }
 
     /**
      * Asynchronously extract a value from the Adapter identified by the provided Key

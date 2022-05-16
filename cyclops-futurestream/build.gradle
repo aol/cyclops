@@ -30,7 +30,6 @@ configurations {
 dependencies {
 
     api project(':cyclops')
-    api project(':cyclops-reactive-collections')
 
 
     testImplementation project(':cyclops').sourceSets.test.output

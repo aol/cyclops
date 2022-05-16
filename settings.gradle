@@ -1,10 +1,5 @@
 rootProject.name = 'com.oath.cyclops'
 include ':cyclops'
-include ':cyclops-anym'
 include 'cyclops-futurestream'
-include 'cyclops-pure'
-include 'cyclops-reactive-collections'
-include 'cyclops-reactor-integration'
-include 'cyclops-rxjava2-integration'
 include 'cyclops-jackson-integration'
 
