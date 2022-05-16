@@ -31,6 +31,7 @@ dependencies {
     api 'com.fasterxml.jackson.core:jackson-databind:'+jacksonVersion
     compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
     testImplementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:'+jacksonVersion
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
     testImplementation group: 'junit', name: 'junit', version: '4.12'
     testImplementation group: 'junit', name: 'junit', version: '4.12'
     testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
