@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.stream.Stream;
 
+import static com.oath.cyclops.Iterations.LONG_CYCLE;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -306,7 +307,7 @@ public abstract class BaseImmutableListTest extends AbstractIterableXTest {
     }
   @Test
   public void mergeMap(){
-    for(int l=0;l<100_000;l++) {
+    for(int l=0;l<LONG_CYCLE;l++) {
       System.out.println("************Iteration " + l);
       System.out.println("************Iteration " + l);
       System.out.println("************Iteration " + l);
@@ -323,7 +324,7 @@ public abstract class BaseImmutableListTest extends AbstractIterableXTest {
   }
   @Test
   public void mergeMap3(){
-    for(int l=0;l<100_000;l++) {
+    for(int l=0;l<LONG_CYCLE;l++) {
       System.out.println("************Iteration " + l);
       System.out.println("************Iteration " + l);
       System.out.println("************Iteration " + l);

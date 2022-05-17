@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
 
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertFalse;
@@ -153,7 +154,7 @@ public class AsyncRSFlatMapPTest {
     }
     @Test
     public void flatMapPub1(){
-        for(int l=0;l<1_000;l++) {
+        for(int l=0;l<SHORT_CYCLE;l++) {
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
@@ -168,7 +169,7 @@ public class AsyncRSFlatMapPTest {
     }
     @Test
     public void flatMapPub(){
-        for(int l=0;l<1_000;l++) {
+        for(int l=0;l<SHORT_CYCLE;l++) {
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
@@ -182,7 +183,7 @@ public class AsyncRSFlatMapPTest {
     }
     @Test
     public void flatMapP(){
-        for(int l=0;l<1_000;l++) {
+        for(int l=0;l<SHORT_CYCLE;l++) {
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
@@ -194,7 +195,7 @@ public class AsyncRSFlatMapPTest {
     }
     @Test
     public void flatMapPConc(){
-        for(int l=0;l<1_000;l++) {
+        for(int l=0;l<SHORT_CYCLE;l++) {
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
@@ -214,7 +215,7 @@ public class AsyncRSFlatMapPTest {
     }
     @Test
     public void flatMapP2(){
-        for(int l=0;l<1_000;l++) {
+        for(int l=0;l<SHORT_CYCLE;l++) {
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
@@ -226,7 +227,7 @@ public class AsyncRSFlatMapPTest {
     }
     @Test
     public void flatMapP2a(){
-        for(int l=0;l<1_000;l++) {
+        for(int l=0;l<SHORT_CYCLE;l++) {
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);

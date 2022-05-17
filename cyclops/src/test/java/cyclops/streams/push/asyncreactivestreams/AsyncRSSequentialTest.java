@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
 import static java.lang.Thread.sleep;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -99,7 +100,7 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
     }
     @Test
     public void mergePTest(){
-        for(int i=0;i<100;i++) {
+        for(int i=0;i<SHORT_CYCLE;i++) {
             System.out.println("*********************ITERATION " + i);
             System.out.println("*********************ITERATION " + i);
             System.out.println("*********************ITERATION " + i);
@@ -132,11 +133,6 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
 
     @Test
     public void testCycleAsync() {
-      //  of(1, 2).collectStream(CyclopsCollectors.listX())
-        //        .concatMap(i->i.cycle(3)).printOut();
-
-       // of(1, 2).cycle().limit(6).forEach(n->System.out.println("Next " + n));
-
 
         assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle().limit(6).toList());
         assertEquals(asList(1, 2, 3, 1, 2, 3), of(1, 2, 3).cycle().limit(6).toList());
@@ -147,10 +143,6 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
     public void multicast(){
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1,2,3,4,5,6,7,8).duplicate();
 
-//        t.v1.forEach(e->System.out.println("First " + e));
- //       t.v2.printOut();
-
-
         assertThat(t._1().limit(1).toList(),equalTo(Arrays.asList(1)));
         System.out.println("Second!");
         assertThat(t._2().limit(1).toList(),equalTo(Arrays.asList(1)));
@@ -159,10 +151,6 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
     @Test
     public void multicastCycle(){
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1,2,3,4,5,6,7,8).duplicate();
-
-//        t.v1.forEach(e->System.out.println("First " + e));
-        //       t.v2.printOut();
-
 
         assertThat(t._1().limit(1).toList(),equalTo(Arrays.asList(1)));
         System.out.println("Second!");
@@ -173,7 +161,6 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
     public void duplicateReplay(){
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1).duplicate();
         assertThat(t._1().limit(1).toList(),equalTo(Arrays.asList(1)));
-//        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
     }
     @Test
     public void limitSkip(){

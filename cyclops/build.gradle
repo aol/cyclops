@@ -11,8 +11,7 @@ apply from: custom('jacoco-version')
 apply from: custom('jacoco-config')
 apply from: custom('jacoco-excludes')
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+
 
 jar {
     manifest {
@@ -25,6 +24,19 @@ repositories {
     jcenter()
 }
 
+tasks.withType(JavaCompile) {
+    options.compilerArgs += ['--enable-preview']
+    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_17
+}
+
+tasks.withType(Test) {
+    jvmArgs += "--enable-preview"
+
+}
+tasks.withType(JavaExec) {
+    jvmArgs += "--enable-preview"
+}
 
 
 dependencies {
@@ -86,7 +98,7 @@ test {
     }
     minHeapSize = "512m" // initial heap size
     maxHeapSize = "1024m" // maximum heap size
-    jvmArgs '-XX:MaxPermSize=256m' // mem argument for the test JVM
+
 
 }
 

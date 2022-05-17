@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
 import static cyclops.reactive.Spouts.of;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -39,7 +40,7 @@ public class FlatMapTest {
     }
     @Test
     public void flatMapFlux(){
-        for(int i=0;i<10000;i++){
+        for(int i=0;i<SHORT_CYCLE;i++){
             System.out.println("************Iteration " + i);
             Assert.assertThat(flux(1)
                             .flatMap(in -> flux(1, 2, 3))
@@ -51,7 +52,7 @@ public class FlatMapTest {
 
     @Test
     public void flatMapList(){
-        for(int i=0;i<1000;i++){
+        for(int i=0;i<SHORT_CYCLE;i++){
             System.out.println("************Iteration " + i);
             Assert.assertThat(flux(1)
                             .flatMap(in -> of(1, 2, 3))
@@ -62,8 +63,7 @@ public class FlatMapTest {
     }
     @Test
     public void flatMapS() throws InterruptedException{
-        //of(1,2,3)
-        //		.flatMapP(i->Maybe.of(i)).printOut();
+
 
         Assert.assertThat(of(1,2,3)
                 .flatMap(i-> Maybe.of(i).stream())
@@ -85,7 +85,7 @@ public class FlatMapTest {
     }
     @Test
     public void flatMapAsync2(){
-        for(int k=0;k<100;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             List<Integer> res = Spouts.of(1, 2, 3)
                     .flatMap(i -> Spouts.from(Flux.just(1,2).subscribeOn(Schedulers.elastic())))
                     .toList();
@@ -107,7 +107,7 @@ public class FlatMapTest {
     }
     @Test
     public void flatMapPAsync3(){
-        for(int k=0;k<10;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             List<Integer> res = Spouts.of(1, 2, 3)
                     .flatMap(i -> nextAsyncRS())
                     .toList();
@@ -132,7 +132,7 @@ public class FlatMapTest {
     AtomicBoolean complete;
     @Test
     public void flatMapAsyncRS(){
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             complete = new AtomicBoolean(false);
             count = new AtomicInteger(0);
             ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
@@ -173,7 +173,7 @@ public class FlatMapTest {
 
     @Test
     public void flatMapAsyncRS2(){
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             System.out.println("********0---------------------K " + k);
             ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
             Spouts.of(1, 2, 3).peek(System.out::println)
@@ -204,7 +204,7 @@ public class FlatMapTest {
     }
     @Test
     public void flatMapAsyncRS3(){
-        for(int k=0;k<100;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
 
 
             List<Integer> res = Spouts.of(1, 2, 3).peek(System.out::println)
@@ -260,8 +260,6 @@ public class FlatMapTest {
             }
             sub.onComplete();
 
-
-            // Flux.just(1,2).forEachAsync(sub);
 
 
         }).start();

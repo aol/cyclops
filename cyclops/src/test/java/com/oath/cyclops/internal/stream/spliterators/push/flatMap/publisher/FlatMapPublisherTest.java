@@ -24,6 +24,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static com.oath.cyclops.Iterations.LONG_CYCLE;
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
 import static cyclops.reactive.Spouts.of;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -54,7 +56,7 @@ public class FlatMapPublisherTest {
                 .forEach(System.out::println);
         System.out.println("Print out finished");
 
-       for(int i=0;i<100;i++){
+       for(int i=0;i<SHORT_CYCLE;i++){
             System.out.println("************Iteration " + i);
             System.out.println("************Iteration " + i);
             System.out.println("************Iteration " + i);
@@ -69,7 +71,7 @@ public class FlatMapPublisherTest {
     @Test
     public void flatMapFluxMaxCon(){
 
-        for(int i=0;i<1000;i++){
+        for(int i=0;i<SHORT_CYCLE;i++){
             System.out.println("************Iteration " + i);
             System.out.println("************Iteration " + i);
             System.out.println("************Iteration " + i);
@@ -86,7 +88,7 @@ public class FlatMapPublisherTest {
 
     @Test
     public void flatMapList(){
-        for(int i=0;i<100_000;i++){
+        for(int i=0;i<LONG_CYCLE;i++){
             System.out.println("Iteration " + i);
             List<Integer> list = flux(1)
                     .mergeMap(in -> of(1, 2, 3))
@@ -155,7 +157,7 @@ public class FlatMapPublisherTest {
 
     @Test
     public void concurrentFlatMapP1(){
-        for(int k=0;k<500;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
@@ -185,7 +187,7 @@ public class FlatMapPublisherTest {
     }
     @Test
     public void concurrentFlatMapP2(){
-        for(int k=0;k<500;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
@@ -200,7 +202,7 @@ public class FlatMapPublisherTest {
     }
     @Test
     public void concurrentFlatMapP(){
-        for(int k=0;k<500;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
@@ -231,7 +233,7 @@ public class FlatMapPublisherTest {
 
     @Test
     public void concurrentFlatMapPIteration(){
-        for(int k=0;k<500;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
@@ -279,7 +281,7 @@ public class FlatMapPublisherTest {
 
     @Test
     public void flatMapPAsync2(){
-        for(int k=0;k<500;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
@@ -309,7 +311,7 @@ public class FlatMapPublisherTest {
     }
     @Test
     public void flatMapPAsync2Synchronous(){
-        for(int k=0;k<5000;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
@@ -339,7 +341,7 @@ public class FlatMapPublisherTest {
     }
     @Test
     public void flatMapPAsync2Iterator(){
-        for(int k=0;k<500;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
@@ -389,7 +391,7 @@ public class FlatMapPublisherTest {
 
     @Test
     public void flatMapPAsyncFlux(){
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             List<Integer> res =  Spouts.from(Flux.just(1, 2, 3)
                     .flatMap(i -> nextAsync())
@@ -412,7 +414,7 @@ public class FlatMapPublisherTest {
     }
     @Test
     public void flatMapPAsync3(){
-        for(int k=0;k<10;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             List<Integer> res = Spouts.of(1, 2, 3)
                     .mergeMap(i -> nextAsync())
                     .toList();
@@ -437,7 +439,7 @@ public class FlatMapPublisherTest {
     volatile AtomicBoolean complete;
     @Test
     public void flatMapPAsyncRS(){
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k);
@@ -495,7 +497,7 @@ public class FlatMapPublisherTest {
 
     @Test
     public void flatMapPAsyncRS2(){
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             System.out.println("********0---------------------K " + k);
 
 
@@ -521,43 +523,10 @@ public class FlatMapPublisherTest {
         }
 
     }
-    /**
-    @Test
-    public void flatMapPAsyncRS2Conc(){
-        for(int k=0;k<1000;k++) {
-            System.out.println("********0---------------------K " + k);
 
-
-
-
-            List<Integer> res = of(1, 2, 3)
-                    .peek(System.out::println)
-                    .flatMapP(2,i -> nextAsync())
-                    .collect(Collectors.toList());
-            System.out.println(res);
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
-
-            assertThat(res, hasItems(1, 2));
-            int one = 0;
-            int two = 0;
-            for (Integer next : res) {
-                if (next == 1) {
-                    one++;
-                }
-                if (next == 2) {
-                    two++;
-                }
-            }
-            assertThat(one, equalTo(3));
-            assertThat(two, equalTo(3));
-
-        }
-
-    }
-     **/
     @Test
     public void arrayConcat(){
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             System.out.println("********0---------------------K " + k);
 
 
@@ -588,7 +557,7 @@ public class FlatMapPublisherTest {
 
     @Test
     public void arrayConcatIt(){
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             System.out.println("********0---------------------K " + k);
 
 
@@ -619,7 +588,7 @@ public class FlatMapPublisherTest {
     }
     @Test
     public void flatMapPAsyncRS3(){
-        for(int k=0;k<100;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
 
             Flux<Integer> flux = Flux.from(Spouts.of(1, 2, 3).peek(System.out::println)
                     .mergeMap(i -> nextAsync()));

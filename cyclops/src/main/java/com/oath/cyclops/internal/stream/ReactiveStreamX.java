@@ -762,8 +762,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public <X extends Throwable> void forEach(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
 
-        source.subscribeAll(consumerElement, consumerError, () -> {
-            });
+        this.source.subscribe(consumerElement, consumerError, () -> {
+        }).request(Long.MAX_VALUE);
 
 
 
@@ -772,7 +772,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public <X extends Throwable> void forEach(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,
                                               final Runnable onComplete) {
-            source.subscribeAll(consumerElement, consumerError, onComplete);
+        this.source.subscribe(consumerElement, consumerError, onComplete).request(Long.MAX_VALUE);
 
 
 

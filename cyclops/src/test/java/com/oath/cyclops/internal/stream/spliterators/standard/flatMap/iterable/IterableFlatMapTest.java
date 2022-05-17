@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
 import static cyclops.reactive.Spouts.of;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -38,7 +39,7 @@ public class IterableFlatMapTest {
     }
     @Test
     public void flatMapFlux(){
-        for(int i=0;i<10000;i++){
+        for(int i=0;i<SHORT_CYCLE;i++){
             System.out.println("************Iteration " + i);
             Assert.assertThat(flux(1)
                             .concatMap(in -> flux(1, 2, 3))
@@ -50,7 +51,7 @@ public class IterableFlatMapTest {
 
     @Test
     public void flatMapList(){
-        for(int i=0;i<1000;i++){
+        for(int i=0;i<SHORT_CYCLE;i++){
             System.out.println("************Iteration " + i);
             Assert.assertThat(flux(1)
                             .concatMap(in -> of(1, 2, 3))
@@ -61,8 +62,7 @@ public class IterableFlatMapTest {
     }
     @Test
     public void flatMapS() throws InterruptedException{
-        //of(1,2,3)
-        //		.flatMapP(i->Maybe.of(i)).printOut();
+
 
         Assert.assertThat(of(1,2,3)
                 .concatMap(i-> Maybe.of(i))

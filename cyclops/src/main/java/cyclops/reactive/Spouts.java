@@ -194,7 +194,7 @@ public interface Spouts {
         else
             return syncStream(new RangeIntOperator(end,start));
     }
-    public static  ReactiveSeq<Long> rangeLong(long start, long end){
+    static  ReactiveSeq<Long> rangeLong(long start, long end){
         if(start<end)
             return syncStream(new RangeLongOperator(start,end));
         else
