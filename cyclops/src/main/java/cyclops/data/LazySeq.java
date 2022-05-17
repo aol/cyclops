@@ -1323,6 +1323,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
         @Override
         public boolean equals(Object o) {
+            LazySeq<T> c = ref.get();
+            c.equals(o);
             return ref.get().equals(o);
         }
 

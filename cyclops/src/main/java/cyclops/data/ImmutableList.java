@@ -239,11 +239,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
             }
             @Override
             public T next() {
-                return switch(current){
-                    case Some<T> some -> head(some);
-                    case None<T> none -> null;
-                    default -> null;
-                };
+                return current.fold(list-> head(list), nil->null);
             }
         };
     }
