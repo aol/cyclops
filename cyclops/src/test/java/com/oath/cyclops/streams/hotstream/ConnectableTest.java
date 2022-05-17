@@ -113,12 +113,12 @@ public class ConnectableTest {
               .map(i -> i.toString())
               .schedule("* * * * * ?", scheduled)
               .connect(blockingQueue)
-              .onePer(2, TimeUnit.SECONDS)
+              .onePer(20, TimeUnit.MILLISECONDS)
               .peek(i->System.out.println("BQ " + blockingQueue))
               .peek(System.out::println)
               .forEach(c->captured=c);
 
-          assertThat(System.currentTimeMillis() - diff,greaterThan(1500l));
+          assertThat(System.currentTimeMillis() - diff,greaterThan(15l));
     }
 	@Test
 	public void backpressurePrimed(){

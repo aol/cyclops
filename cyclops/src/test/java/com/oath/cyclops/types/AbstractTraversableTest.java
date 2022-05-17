@@ -257,27 +257,7 @@ public abstract class AbstractTraversableTest {
 
 
 
-    @Test
-    public void limitTimeEmpty(){
-        List<Integer> result = ReactiveSeq.<Integer>of()
-                                        .peek(i->sleep(i*100))
-                                        .take(1000,TimeUnit.MILLISECONDS)
-                                        .toList();
 
-
-        assertThat(result,equalTo(Arrays.asList()));
-    }
-
-    @Test
-    public void skipTimeEmpty(){
-        List<Integer> result = ReactiveSeq.<Integer>of()
-                                        .peek(i->sleep(i*100))
-                                        .drop(1000,TimeUnit.MILLISECONDS)
-                                        .toList();
-
-
-        assertThat(result,equalTo(Arrays.asList()));
-    }
     private int sleep(Integer i) {
         try {
             Thread.currentThread().sleep(i);

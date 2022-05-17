@@ -111,4 +111,9 @@ public class AppendTest extends BaseImmutableListTest {
     @Override
     public void testCycleUntilNoOrd() {
     }
+
+    @Override //slow test
+    public void sliceTest(){
+
+    }
 }

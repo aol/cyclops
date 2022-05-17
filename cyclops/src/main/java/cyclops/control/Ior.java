@@ -1007,7 +1007,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
         }
 
         @AllArgsConstructor(access = AccessLevel.PACKAGE)
-        @EqualsAndHashCode(of = {"secondary", "primary"})
+        @EqualsAndHashCode(of = {"left", "right"})
         public static class Both<ST, PT> implements Ior<ST, PT> {
             private final ST secondary;
             private final PT primary;

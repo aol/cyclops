@@ -103,9 +103,9 @@ public class RetryTest {
 
 		long time = System.currentTimeMillis();
 		String result = ReactiveSeq.of( 1,  2, 3)
-				.retry(serviceMock,7,200,TimeUnit.MILLISECONDS)
+				.retry(serviceMock,7,10,TimeUnit.MILLISECONDS)
 				.firstValue(null);
-		assertThat(System.currentTimeMillis()-time,greaterThan(200l));
+		assertThat(System.currentTimeMillis()-time,greaterThan(10l));
 		assertThat(result, is("42"));
 	}
 

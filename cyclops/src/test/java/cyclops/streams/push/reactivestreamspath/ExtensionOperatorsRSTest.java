@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static cyclops.reactive.ReactiveSeq.of;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -170,16 +171,7 @@ public class ExtensionOperatorsRSTest {
 	public void singleOptonal2(){
 		assertFalse(Spouts.of(1,2).single().isPresent());
 	}
-	@Test
-	public void limitTime(){
-		List<Integer> result = Spouts.of(1,2,3,4,5,6)
-										.peek(i->sleep(i*100))
-										.take(1000,TimeUnit.MILLISECONDS)
-										.toList();
 
-
-		assertThat(result,equalTo(Arrays.asList(1,2,3)));
-	}
 	@Test
 	public void limitTimeEmpty(){
 		List<Integer> result = Spouts.<Integer>of()
@@ -190,16 +182,26 @@ public class ExtensionOperatorsRSTest {
 
 		assertThat(result,equalTo(Arrays.asList()));
 	}
-	@Test
-	public void skipTime(){
-		List<Integer> result = Spouts.of(1,2,3,4,5,6)
-										.peek(i->sleep(i*100))
-										.drop(1000,TimeUnit.MILLISECONDS)
-										.toList();
+    @Test
+    public void skipTime(){
+        List<Integer> result = of(1,2,3,4,5,6)
+            .map(i->i==4?sleep(101)-97 : i)
+            .drop(100,TimeUnit.MILLISECONDS)
+            .toList();
 
 
-		assertThat(result,equalTo(Arrays.asList(4,5,6)));
-	}
+        assertThat(result,equalTo(Arrays.asList(4,5,6)));
+    }
+    @Test
+    public void limitTime(){
+        List<Integer> result = of(1,2,3,4,5,6)
+            .map(i->i==4?sleep(101) : i)
+            .take(100, TimeUnit.MILLISECONDS)
+            .toList();
+
+
+        assertThat(result,equalTo(Arrays.asList(1,2,3)));
+    }
 	@Test
 	public void skipTimeEmpty(){
 		List<Integer> result = ReactiveSeq.<Integer>of()

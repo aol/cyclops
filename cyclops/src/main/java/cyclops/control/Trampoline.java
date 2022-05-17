@@ -236,7 +236,7 @@ public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> 
      * @param trampoline Next stage in Trampoline
      * @return Trampoline with more work
      */
-    public static <T> Trampoline<T> more(final Trampoline<Trampoline<T>> trampoline) {
+     static <T> Trampoline<T> more(final Trampoline<Trampoline<T>> trampoline) {
         return new Trampoline<T>() {
 
 

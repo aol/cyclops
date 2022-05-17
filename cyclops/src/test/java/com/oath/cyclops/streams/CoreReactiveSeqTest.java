@@ -568,8 +568,8 @@ public  class CoreReactiveSeqTest {
 	@Test
 	public void skipTime(){
 		List<Integer> result = of(1,2,3,4,5,6)
-				.peek(i->sleep(i*100))
-				.drop(1000,TimeUnit.MILLISECONDS)
+				.map(i->i==4?sleep(101)-97 : i)
+				.drop(100,TimeUnit.MILLISECONDS)
 				.toList();
 
 
@@ -578,8 +578,8 @@ public  class CoreReactiveSeqTest {
 	@Test
 	public void limitTime(){
 		List<Integer> result = of(1,2,3,4,5,6)
-				.peek(i->sleep(i*100))
-				.take(1000, TimeUnit.MILLISECONDS)
+               .map(i->i==4?sleep(101) : i)
+				.take(100, TimeUnit.MILLISECONDS)
 				.toList();
 
 

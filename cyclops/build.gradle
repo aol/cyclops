@@ -85,7 +85,8 @@ task testNG(type: Test) {
 
 test {
     reports.html.destination = file("$buildDir/reports/test")
-    forkEvery = 1
+    forkEvery = 100
+   // maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
     testLogging {
         events "started", "passed", "skipped", "failed"//, "standardOut", "standardError"
     }

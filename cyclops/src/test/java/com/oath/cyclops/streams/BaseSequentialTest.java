@@ -1,5 +1,6 @@
 package com.oath.cyclops.streams;
 
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.*;
@@ -855,7 +856,7 @@ public class BaseSequentialTest {
     }
     @Test
     public void insertAtSOutOfRangeEmpty() {
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             List<String> result = of().insertStreamAt(1, Stream.of(100, 200, 300))
                     .map(it -> it + "!!").collect(Collectors.toList());
 
@@ -865,7 +866,7 @@ public class BaseSequentialTest {
     @Test
     public void insertAtIOutOfRangeEmpty() {
        // for(int k=0;k<ITERATIONS;k++) {
-        for(int k=0;k<10_000;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             List<String> result = of().insertAt(1, Arrays.asList(100))
                     .map(it -> it + "!!").collect(Collectors.toList());
 

@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static com.oath.cyclops.Iterations.VERY_SHORT_CYCLE;
 import static cyclops.reactive.ReactiveSeq.of;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -67,7 +68,7 @@ public class FlatMapPublisherTest {
     }
     @Test
     public void flatMapPAsync2(){
-        for(int k=0;k<100;k++) {
+        for(int k=0;k<VERY_SHORT_CYCLE;k++) {
             List<Integer> res = of(1, 2, 3)
                     .mergeMap(i -> nextAsync())
                     .toList();
@@ -89,7 +90,7 @@ public class FlatMapPublisherTest {
     }
     @Test
     public void flatMapPAsync3(){
-        for(int k=0;k<10;k++) {
+        for(int k=0;k<VERY_SHORT_CYCLE;k++) {
             List<Integer> res = Spouts.of(1, 2, 3)
                     .mergeMap(i -> nextAsync())
                     .toList();
@@ -244,7 +245,7 @@ public class FlatMapPublisherTest {
 **/
     @Test
     public void flatMapPAsyncRS3(){
-        for(int k=0;k<100;k++) {
+        for(int k=0;k<VERY_SHORT_CYCLE;k++) {
 
             List<Integer> res = Spouts.from(of(1, 2, 3).peek(System.out::println)
                                       .mergeMap(i -> nextAsync()))

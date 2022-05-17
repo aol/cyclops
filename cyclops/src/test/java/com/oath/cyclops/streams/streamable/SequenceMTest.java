@@ -1,6 +1,7 @@
 package com.oath.cyclops.streams.streamable;
 
 
+import static cyclops.reactive.ReactiveSeq.of;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
@@ -140,19 +141,10 @@ public class SequenceMTest {
 	public void single2(){
 		assertThat(Streamable.of(1,2).singleOrElse(null),equalTo(null));
 	}
-	@Test
-	public void limitTime(){
-		List<Integer> result = Streamable.of(1,2,3,4,5,6)
-										.peek(i->sleep(i*100))
-										.take(1000,TimeUnit.MILLISECONDS)
-										.toList();
 
-
-		assertThat(result,equalTo(Arrays.asList(1,2,3)));
-	}
 	@Test
 	public void limitTimeEmpty(){
-		List<Integer> result = ReactiveSeq.<Integer>of()
+		List<Integer> result = Streamable.<Integer>of()
 										.peek(i->sleep(i*100))
 										.take(1000,TimeUnit.MILLISECONDS)
 										.toList();
@@ -160,19 +152,29 @@ public class SequenceMTest {
 
 		assertThat(result,equalTo(Arrays.asList()));
 	}
-	@Test
-	public void skipTime(){
-		List<Integer> result = Streamable.of(1,2,3,4,5,6)
-										.peek(i->sleep(i*100))
-										.drop(1000,TimeUnit.MILLISECONDS)
-										.toList();
+    @Test
+    public void skipTime(){
+        List<Integer> result = Streamable.of(1,2,3,4,5,6)
+            .map(i->i==4?sleep(101)-97 : i)
+            .drop(100,TimeUnit.MILLISECONDS)
+            .toList();
 
 
-		assertThat(result,equalTo(Arrays.asList(4,5,6)));
-	}
+        assertThat(result,equalTo(Arrays.asList(4,5,6)));
+    }
+    @Test
+    public void limitTime(){
+        List<Integer> result = Streamable.of(1,2,3,4,5,6)
+            .map(i->i==4?sleep(101) : i)
+            .take(100, TimeUnit.MILLISECONDS)
+            .toList();
+
+
+        assertThat(result,equalTo(Arrays.asList(1,2,3)));
+    }
 	@Test
 	public void skipTimeEmpty(){
-		List<Integer> result = ReactiveSeq.<Integer>of()
+		List<Integer> result = Streamable.<Integer>of()
 										.peek(i->sleep(i*100))
 										.drop(1000,TimeUnit.MILLISECONDS)
 										.toList();

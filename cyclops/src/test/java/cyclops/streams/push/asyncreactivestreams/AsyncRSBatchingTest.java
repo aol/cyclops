@@ -121,34 +121,7 @@ public class AsyncRSBatchingTest {
 				.fixedDelay(1l, TimeUnit.MICROSECONDS).peek(System.out::println)
 				.forEach(a->{});
 	}
-	@Test
-	public void onePerSecond() {
 
-		long start = System.currentTimeMillis();
-				iterate(0, it -> it + 1)
-				.limit(3)
-				.onePer(1, TimeUnit.SECONDS)
-				.map(seconds -> "hello!")
-				.peek(System.out::println)
-				.toList();
-
-	 assertTrue(System.currentTimeMillis()-start>1900);
-
-	}
-	@Test
-	public void xPerSecond() throws InterruptedException {
-	    Thread.sleep(500);
-		long start = System.currentTimeMillis();
-				iterate(1, it -> it + 1)
-				.xPer(1,1, TimeUnit.SECONDS)
-				.limit(3)
-				.map(seconds -> "hello!")
-				.peek(System.out::println)
-				.toList();
-	 System.out.println("time = " +(System.currentTimeMillis()-start));
-	 assertTrue("failed time was " + (System.currentTimeMillis()-start),System.currentTimeMillis()-start>1600);
-
-	}
 
 	@Value
 	static class Status{

@@ -126,18 +126,7 @@ public class BatchingTest {
 				.fixedDelay(1l, TimeUnit.MICROSECONDS).peek(System.out::println)
 				.forEach(a->{});
 	}
-	@Test
-	public void onePerSecond() {
 
-
-				iterate(0, it -> it + 1)
-				.limit(100)
-				.onePer(1, TimeUnit.MICROSECONDS)
-				.map(seconds -> "hello!")
-				.peek(System.out::println)
-				.toList();
-
-	}
 
 	@Value
 	static class Status{

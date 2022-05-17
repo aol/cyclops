@@ -540,7 +540,7 @@ public class EvalTest {
     public void streamUntilTime(){
         assertThat(Eval.always(()->times++)
             .peek(System.out::println)
-            .streamUntil(1000, TimeUnit.MILLISECONDS).count(),greaterThan(10L));
+            .streamUntil(100, TimeUnit.MILLISECONDS).count(),greaterThan(10L));
     }
     @Test
     public void streamWhile(){

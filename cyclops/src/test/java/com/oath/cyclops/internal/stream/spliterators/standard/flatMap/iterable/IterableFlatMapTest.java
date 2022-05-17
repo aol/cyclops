@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import static com.oath.cyclops.Iterations.SHORT_CYCLE;
+import static com.oath.cyclops.Iterations.VERY_SHORT_CYCLE;
 import static cyclops.reactive.Spouts.of;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -84,7 +85,7 @@ public class IterableFlatMapTest {
     }
     @Test
     public void flatMapAsync2(){
-        for(int k=0;k<100;k++) {
+        for(int k=0;k<VERY_SHORT_CYCLE;k++) {
             List<Integer> res = Spouts.of(1, 2, 3)
                     .concatMap(i -> Spouts.from(Flux.just(1,2).subscribeOn(Schedulers.elastic())))
                     .toList();
@@ -106,7 +107,7 @@ public class IterableFlatMapTest {
     }
     @Test
     public void flatMapPAsync3(){
-        for(int k=0;k<10;k++) {
+        for(int k=0;k<VERY_SHORT_CYCLE;k++) {
             List<Integer> res = Spouts.of(1, 2, 3)
                     .concatMap(i -> nextAsyncRS())
                     .toList();
@@ -131,7 +132,7 @@ public class IterableFlatMapTest {
     AtomicBoolean complete;
     @Test
     public void flatMapAsyncRS(){
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             complete = new AtomicBoolean(false);
             count = new AtomicInteger(0);
             ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
@@ -172,7 +173,7 @@ public class IterableFlatMapTest {
 
     @Test
     public void flatMapAsyncRS2(){
-        for(int k=0;k<1000;k++) {
+        for(int k=0;k<SHORT_CYCLE;k++) {
             System.out.println("********0---------------------K " + k);
             ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
             Spouts.of(1, 2, 3).peek(System.out::println)
@@ -203,7 +204,7 @@ public class IterableFlatMapTest {
     }
     @Test
     public void flatMapAsyncRS3(){
-        for(int k=0;k<100;k++) {
+        for(int k=0;k<VERY_SHORT_CYCLE;k++) {
 
 
 

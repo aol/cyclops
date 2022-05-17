@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.oath.cyclops.Iterations.SHORT_CYCLE;
+import static cyclops.reactive.ReactiveSeq.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -212,27 +213,26 @@ public  class SyncReactiveStreamXTest {
 		}
 		return i;
 	}
-	@Test
-	public void skipTime(){
-		List<Integer> result = of(1,2,3,4,5,6)
-				.peek(i->sleep(i*100))
-				.drop(1000,TimeUnit.MILLISECONDS)
-				.toList();
-
-        assertThat(result.size(), Matchers.isOneOf(3,4));
-		assertThat(result,hasItems(4,5,6));
-	}
-	@Test
-	public void limitTime(){
-		List<Integer> result = of(1,2,3,4,5,6)
-				.peek(i->sleep(i*100))
-				.take(1000, TimeUnit.MILLISECONDS)
-				.toList();
+    @Test
+    public void skipTime(){
+        List<Integer> result = of(1,2,3,4,5,6)
+            .map(i->i==4?sleep(101)-97 : i)
+            .drop(100,TimeUnit.MILLISECONDS)
+            .toList();
 
 
-		assertThat(result,hasItems(1,2,3));
-		assertThat(result.size(),greaterThanOrEqualTo(3));
-	}
+        assertThat(result,equalTo(Arrays.asList(4,5,6)));
+    }
+    @Test
+    public void limitTime(){
+        List<Integer> result = of(1,2,3,4,5,6)
+            .map(i->i==4?sleep(101) : i)
+            .take(100, TimeUnit.MILLISECONDS)
+            .toList();
+
+
+        assertThat(result,equalTo(Arrays.asList(1,2,3)));
+    }
     @Test
 	public void skipUntil(){
 		assertEquals(asList(3, 4, 5), of(1, 2, 3, 4, 5).dropUntil(i -> i % 3 == 0).toList());

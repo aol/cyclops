@@ -106,9 +106,9 @@ public class SyncRetryTest {
 
 		long time = System.currentTimeMillis();
 		String result = of( 1,  2, 3)
-				.retry(serviceMock,7,200,TimeUnit.MILLISECONDS)
+				.retry(serviceMock,7,20,TimeUnit.MILLISECONDS)
 				.firstValue(null);
-		assertThat(System.currentTimeMillis()-time,greaterThan(200l));
+		assertThat(System.currentTimeMillis()-time,greaterThan(20l));
 		assertThat(result, is("42"));
 	}
 

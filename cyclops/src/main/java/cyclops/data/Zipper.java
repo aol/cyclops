@@ -5,9 +5,7 @@ import cyclops.control.Option;
 import com.oath.cyclops.hkt.DataWitness.zipper;
 import cyclops.data.tuple.Tuple3;
 import cyclops.reactive.ReactiveSeq;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.Wither;
+import lombok.With;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 
@@ -17,15 +15,14 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-@AllArgsConstructor
-@Getter
-@Wither
-public class Zipper<T> implements Iterable<T>,
+
+
+@With
+public record Zipper<T> (ImmutableList<T> left, T point, ImmutableList<T> right) implements Iterable<T>,
                                     Higher<zipper,T> {
 
-    private final ImmutableList<T> left;
-    private final T point;
-    private final ImmutableList<T> right;
+
+
 
 
     public static <T> Zipper<T> of(ImmutableList<T> left, T value, ImmutableList<T> right){
@@ -189,5 +186,15 @@ public class Zipper<T> implements Iterable<T>,
     @Override
     public Iterator<T> iterator() {
         return stream().iterator();
+    }
+
+    public Zipper<T> withLeft(ImmutableList<T> left) {
+        return new Zipper<>(left, this.point, this.right);
+    }
+    public Zipper<T> withRight(ImmutableList<T> right) {
+        return new Zipper<>(this.left, this.point, right);
+    }
+    public Zipper<T> withPoint(T point) {
+        return new Zipper<>(this.left, point, this.right);
     }
 }

@@ -49,12 +49,12 @@ public class LazyTest implements Printable {
 
     }
 	@Test
-	public void onePerSecond() {
+	public void onePer() {
 
 		long start = System.currentTimeMillis();
 		LazyReact.sequentialBuilder().iterate(0, it -> it + 1)
 				.limit(3)
-				.onePer(1, TimeUnit.SECONDS)
+				.onePer(100, TimeUnit.MILLISECONDS)
 				.map(seconds -> "hello!")
 				.peek(System.out::println)
 				.toList();

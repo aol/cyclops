@@ -135,12 +135,12 @@ public class ZipperTest {
 
     @Test
     public void filterLeft() throws Exception {
-        assertThat(z.filterLeft(i->i>2).getLeft(),equalTo(LazySeq.of(3)));
+        assertThat(z.filterLeft(i->i>2).left(),equalTo(LazySeq.of(3)));
     }
 
     @Test
     public void filterRight() throws Exception {
-        assertThat(z.filterRight(i->i<25).getRight(),equalTo(LazySeq.of(10,20)));
+        assertThat(z.filterRight(i->i<25).right(),equalTo(LazySeq.of(10,20)));
     }
 
     @Test
@@ -155,35 +155,35 @@ public class ZipperTest {
 
     @Test
     public void withLeft() throws Exception {
-        assertThat(z.withLeft(right).getRight(),equalTo(right));
+        assertThat(z.withLeft(right).right(),equalTo(right));
     }
 
     @Test
     public void withPoint() throws Exception {
-        assertThat(z.withPoint(10).getPoint(),equalTo(10));
+        assertThat(z.withPoint(10).point(),equalTo(10));
     }
 
     @Test
     public void withRight() throws Exception {
-        assertThat(z.withRight(left).getRight(),equalTo(left));
+        assertThat(z.withRight(left).right(),equalTo(left));
     }
 
     @Test
     public void getLeft() throws Exception {
-        assertThat(z.getLeft(),equalTo(left));
-        assertThat(z.next().orElse(z2).getLeft().seq(),equalTo(LazySeq.of(1,2,3,5).seq()));
+        assertThat(z.left(),equalTo(left));
+        assertThat(z.next().orElse(z2).left().seq(),equalTo(LazySeq.of(1,2,3,5).seq()));
     }
 
     @Test
     public void getPoint() throws Exception {
-        assertThat(z.getPoint(),equalTo(5));
-        assertThat(z.next().orElse(z2).getPoint(),equalTo(10));
+        assertThat(z.point(),equalTo(5));
+        assertThat(z.next().orElse(z2).point(),equalTo(10));
     }
 
     @Test
     public void getRight() throws Exception {
-        assertThat(z.getRight(),equalTo(right));
-        assertThat(z.next().orElse(z2).getRight(),equalTo(LazySeq.of(20,30)));
+        assertThat(z.right(),equalTo(right));
+        assertThat(z.next().orElse(z2).right(),equalTo(LazySeq.of(20,30)));
 
     }
 

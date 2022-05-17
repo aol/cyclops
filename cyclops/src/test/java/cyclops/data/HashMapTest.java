@@ -6,6 +6,7 @@ import cyclops.data.tuple.Tuple2;
 import lombok.AllArgsConstructor;
 import lombok.ToString;
 import org.hamcrest.MatcherAssert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -27,7 +28,7 @@ public class HashMapTest {
     }
 
 
-    @Test
+    @Test @Ignore //long running test
     public void read100_000_00(){
 
         //6247
@@ -48,7 +49,7 @@ public class HashMapTest {
         assertThat(v.size(),equalTo(100_000_00));
         assertThat(al.size(),equalTo(100_000_00));
     }
-    @Test
+    @Test @Ignore //long running test
     public void read100_000_00Stream(){
 
         //6247

@@ -8,6 +8,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
+
 
 public class FlatMapCollect {
 
@@ -23,7 +25,7 @@ public class FlatMapCollect {
  @Fork(1)
 
  public void streamFlatMap(Blackhole bh){
-  for(int k=0;k<100;k++) {
+  for(int k=0;k<SHORT_CYCLE;k++) {
    bh.consume(Stream.of(1, 2, 3)
            .flatMap(i -> Stream.of(i * 2,i*2,i*2,i*2))
            .collect(Collectors.toList()));
