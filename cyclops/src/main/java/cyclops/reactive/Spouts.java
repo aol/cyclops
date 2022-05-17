@@ -102,56 +102,7 @@ public interface Spouts {
         return Spouts.reactiveStream(new BufferingSinkOperator<T>(buffer, onNext, policy));
     }
 
-    static <T> ReactiveSeq<T> reactive(Stream<T> seq, Executor exec){
-        Future<Subscriber<T>> subscriber = Future.future();
-        Future<Subscription> sub = Future.future();
-        AtomicBoolean complete = new AtomicBoolean();
-        AtomicLong requested = new AtomicLong(0);
-        ReactiveSeq.fromStream(seq).foldFuture(exec,t->{
-            Subscriber<T> local = subscriber.getFuture().join();
-            Subscription streamSub = t.forEach(0,local::onNext,local::onError,()->{
-                complete.set(true);
-                local.onComplete();
 
-            });
-            sub.complete(new Subscription() {
-                @Override
-                public void request(long n) {
-                    requested.addAndGet(n);
-                }
-
-                @Override
-                public void cancel() {
-                    streamSub.cancel();
-                }
-            });
-            while(!complete.get()){
-                long next = requested.get();
-                if(next==0){
-                    Thread.yield();
-                }else {
-                    while (!requested.compareAndSet(next, 0)) {
-                        next = requested.get();
-                    }
-                    streamSub.request(next);
-                }
-            }
-
-            return null;
-        });
-        return reactiveStream(new PublisherToOperator<T>(new Publisher<T>() {
-
-
-            @Override
-            public void subscribe(Subscriber<? super T> s) {
-
-                subscriber.complete((Subscriber<T>)s);
-                s.onSubscribe(sub.getFuture().join());
-
-
-            }
-        }));
-    }
 
 
     /**

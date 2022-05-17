@@ -17,6 +17,8 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static com.oath.cyclops.Iterations.LONG_CYCLE;
+import static com.oath.cyclops.Iterations.VERY_SHORT_CYCLE;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static cyclops.data.tuple.Tuple.tuple;
@@ -60,7 +62,7 @@ public class AsyncRSZippingTest {
 	@Test
 	public void zipLatest(){
 
-	    for(int i=0;i<10_000;i++) {
+	    for(int i=0;i<LONG_CYCLE;i++) {
             List<Tuple2<Integer, Integer>> list = of(1, 2, 3, 4, 5, 6)
                     .zipLatest(of(100, 200, 300, 400), Tuple::tuple)
                     .collect(Collectors.toList());
@@ -202,7 +204,7 @@ public class AsyncRSZippingTest {
 	@Test
 	public void zip2of(){
 
-	    for(int i=0;i<10;i++) {
+	    for(int i=0;i<VERY_SHORT_CYCLE;i++) {
 	        System.out.println("i is " + i);
             List<Tuple2<Integer, Integer>> list = of(1, 2, 3, 4, 5, 6)
                     .zip(of(100, 200, 300, 400))

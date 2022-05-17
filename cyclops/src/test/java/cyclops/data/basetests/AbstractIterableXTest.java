@@ -54,6 +54,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
 import static cyclops.data.tuple.Tuple.tuple;
 import static cyclops.reactive.ReactiveSeq.fromIntStream;
 import static java.util.Arrays.asList;
@@ -2220,7 +2221,7 @@ public abstract class AbstractIterableXTest {
 
 	        @Test
 	        public void testFoldLeft() {
-	            for(int i=0;i<100;i++){
+	            for(int i=0;i<SHORT_CYCLE;i++){
 	                Supplier<IterableX<String>> s = () -> of("a", "b", "c");
 
 	                assertTrue(s.get().foldLeft("", String::concat).contains("a"));
@@ -3295,7 +3296,7 @@ public abstract class AbstractIterableXTest {
     public void takeArray() throws InterruptedException{
 
         List<Integer> list= new ArrayList<>();
-        for(int i=0;i<1000;i++)
+        for(int i=0;i<SHORT_CYCLE;i++)
             list.add(i);
         assertThat(of(list.toArray())
                 .take(100)
@@ -3306,7 +3307,7 @@ public abstract class AbstractIterableXTest {
     public void dropArray() throws InterruptedException{
 
         List<Integer> list= new ArrayList<>();
-        for(int i=0;i<1000;i++)
+        for(int i=0;i<SHORT_CYCLE;i++)
             list.add(i);
         assertThat(of(list.toArray())
                 .drop(100)

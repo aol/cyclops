@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static cyclops.data.tuple.Tuple.tuple;
@@ -59,7 +60,7 @@ public class SyncZippingTest {
 	}
 	@Test
 	public void zipUnevenRight(){
-		for(int i=0;i<100;i++) {
+		for(int i=0;i<SHORT_CYCLE;i++) {
 			System.out.println(i);
 			assertEquals(asList("a"), of("a").toList());
 			assertEquals(asList(tuple("a", 0L)), of("a").zip(of(0L, 1L, 2L)).toList());
@@ -76,7 +77,7 @@ public class SyncZippingTest {
 	}
 	@Test
 	public void zipUnevenLeft(){
-		for(int i=0;i<100;i++) {
+		for(int i=0;i<SHORT_CYCLE;i++) {
 			System.out.println(i);
 			assertEquals(asList(tuple("a", 0L)), of("a", "b").zip(of(0L)).toList());
 			assertEquals(asList(tuple("a", 0L), tuple("b", 1L)), of("a", "b", "c").zip(of(0L, 1L)).toList());
@@ -163,7 +164,7 @@ public class SyncZippingTest {
 	@Test
 	public void zip2of(){
 
-	    for(int i=0;i<1000;i++) {
+	    for(int i=0;i<SHORT_CYCLE;i++) {
 	        System.out.println("i is " + i);
             List<Tuple2<Integer, Integer>> list = of(1, 2, 3, 4, 5, 6)
                     .zip(of(100, 200, 300, 400))

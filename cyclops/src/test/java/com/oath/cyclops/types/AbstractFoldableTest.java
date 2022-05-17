@@ -1,5 +1,6 @@
 package com.oath.cyclops.types;
 
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
@@ -136,7 +137,7 @@ public abstract class AbstractFoldableTest {
         assertThat(col.size(),equalTo(5));
     }
     public void testFoldLeft() {
-        for(int i=0;i<100;i++){
+        for(int i=0;i<SHORT_CYCLE;i++){
             Supplier<Folds<String>> s = () -> of("a", "b", "c");
 
             assertTrue(s.get().foldLeft("", String::concat).contains("a"));

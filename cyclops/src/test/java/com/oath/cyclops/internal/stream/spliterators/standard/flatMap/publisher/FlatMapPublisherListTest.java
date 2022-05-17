@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import static com.oath.cyclops.Iterations.LONG_CYCLE;
 import static cyclops.reactive.ReactiveSeq.of;
 import static org.hamcrest.CoreMatchers.equalTo;
 
@@ -29,7 +30,7 @@ public class FlatMapPublisherListTest {
     }
     @Test
     public void flatMapList(){
-        for(int i=0;i<100_000;i++){
+        for(int i=0;i<LONG_CYCLE;i++){
             System.out.println("Iteration " + i);
             List<Integer> list = flux(1)
                     .mergeMap(1, in -> of(1, 2, 3))

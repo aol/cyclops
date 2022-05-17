@@ -226,7 +226,7 @@ public class SkipWhileClosedOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
+        SpoutsFixtures.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .dropWhileInclusive(i -> false)
             .forEach(n->{
                 assertFalse(complete.get());
@@ -251,7 +251,7 @@ public class SkipWhileClosedOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
+        SpoutsFixtures.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .dropWhileInclusive(i -> i<4)
             .forEach(n->{
                 assertFalse(complete.get());
@@ -277,7 +277,7 @@ public class SkipWhileClosedOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
+        SpoutsFixtures.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .dropWhileInclusive(i -> i<0)
             .forEach(n->{
                 assertFalse(complete.get());
@@ -332,7 +332,7 @@ public class SkipWhileClosedOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Subscription s = Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
+        Subscription s = SpoutsFixtures.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .dropWhileInclusive(i -> i<2)
             .forEach(4, n -> {
                 assertFalse(complete.get());
@@ -360,7 +360,7 @@ public class SkipWhileClosedOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
+        SpoutsFixtures.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .dropWhileInclusive(i ->{ throw new RuntimeException();})
             .forEach(n->{
                 assertFalse(complete.get());

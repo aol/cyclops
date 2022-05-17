@@ -1,6 +1,7 @@
 package com.oath.cyclops.streams.streamable;
 
 
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
 import static cyclops.companion.Streamable.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
@@ -366,7 +367,7 @@ public  class CoreStreamableTest {
 
 	    @Test
 	    public void testFoldLeft() {
-	    	for(int i=0;i<100;i++){
+	    	for(int i=0;i<SHORT_CYCLE;i++){
 		        Supplier<Streamable<String>> s = () -> of("a", "b", "c");
 
 		        assertTrue(s.get().reduce("", String::concat).contains("a"));

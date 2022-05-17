@@ -29,6 +29,8 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.oath.cyclops.Iterations.LONG_CYCLE;
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
 import static cyclops.reactive.ReactiveSeq.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -485,7 +487,7 @@ public class SpoutsTest {
 
     @Test
     public void combineLatest(){
-       for(int i=0;i<10_000;i++) {
+       for(int i=0;i<LONG_CYCLE;i++) {
 
            assertThat("Iteration " + i,Spouts.of(100, 200, 300)
                             .zipLatest(nextAsyncRS(), (a, b) -> b)
@@ -577,10 +579,7 @@ public class SpoutsTest {
             System.out.println("next " + it.next());
         }
     }
-    @Test
-    public void publishOn(){
-        assertThat(Spouts.reactive(Stream.of(1,2),Executors.newFixedThreadPool(1)).toList(), CoreMatchers.equalTo(Arrays.asList(1,2)));
-    }
+
     @Test
     public void iteratorTest(){
         for(int x=100;x<10000;x=x+1000) {
@@ -683,7 +682,7 @@ public class SpoutsTest {
     @Test
     public void ambMonoid(){
 
-        for(int i=0;i<1000;i++) {
+        for(int i=0;i<SHORT_CYCLE;i++) {
             assertThat(Monoids.<Integer>ambReactiveSeq().foldLeft(Stream.of((Spouts.of(1, 2, 3)), Spouts.of(100, 200, 300))).toList(), isOneOf(Arrays.asList(100, 200, 300), Arrays.asList(1, 2, 3)));
 
         }

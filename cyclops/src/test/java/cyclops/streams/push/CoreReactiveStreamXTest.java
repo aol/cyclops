@@ -23,6 +23,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
+import static com.oath.cyclops.Iterations.VERY_SHORT_CYCLE;
 import static cyclops.reactive.Spouts.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
@@ -47,7 +49,7 @@ public  class CoreReactiveStreamXTest {
 
 	@Test
 	public void flatMap(){
-		for(int i=0;i<10;i++){
+		for(int i=0;i<VERY_SHORT_CYCLE;i++){
 			System.out.println("Iteration " + i);
 			assertThat(of(1)
 							.flatMap(in -> of(1, 2, 3))
@@ -539,7 +541,7 @@ public  class CoreReactiveStreamXTest {
 
 	    @Test
 	    public void testFoldLeft() {
-	    	for(int i=0;i<100;i++){
+	    	for(int i=0;i<SHORT_CYCLE;i++){
 		        Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
 
 		        assertTrue(s.get().reduce("", String::concat).contains("a"));

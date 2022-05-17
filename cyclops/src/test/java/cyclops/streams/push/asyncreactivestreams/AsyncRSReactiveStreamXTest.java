@@ -26,6 +26,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.oath.cyclops.Iterations.LONG_CYCLE;
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -50,7 +52,7 @@ public  class AsyncRSReactiveStreamXTest {
 
     @Test
     public void iterateCycleStream(){
-        for(int i=0;i<10000l;i++) {
+        for(int i=0;i<SHORT_CYCLE;i++) {
             System.out.println("Next cycle " + i);
             Iterator<Integer> it =  of(1).stream().cycle(2).iterator();//of(1).stream().cycle(2).iterator();
             List<Integer> list2 = new ArrayList<>();
@@ -62,7 +64,7 @@ public  class AsyncRSReactiveStreamXTest {
     }
     @Test
     public void iterateFlatMapStream(){
-        for(int i=0;i<100000l;i++) {
+        for(int i=0;i<SHORT_CYCLE;i++) {
             System.out.println("Next cycle " + i);
             Iterator<Integer> it =  of(1).stream().concatMap(a->ReactiveSeq.of(a*2)).iterator();
             List<Integer> list2 = new ArrayList<>();
@@ -218,7 +220,7 @@ public  class AsyncRSReactiveStreamXTest {
 	@Test
 	public void onEmptySwitchEmpty(){
 	   //for(int i=0;i<ITERATIONS;i++){
-        for(int i=0;i<100_000;i++){
+        for(int i=0;i<LONG_CYCLE;i++){
 	       System.out.println("Iteration " + i);
             assertThat(of()
                             .onEmptySwitch(() -> of(1, 2, 3))
@@ -304,7 +306,7 @@ public  class AsyncRSReactiveStreamXTest {
     @Test
     public void onEmptySwitchGet2(){
         // for(int i=0;i<ITERATIONS;i++){
-        for(int i=0;i<100_000;i++){
+        for(int i=0;i<LONG_CYCLE;i++){
             System.out.println("Iteration " + i);
             assertThat(of()
                     .onEmptyGet(() -> 1)
@@ -640,7 +642,7 @@ public  class AsyncRSReactiveStreamXTest {
 
 	    @Test
 	    public void testFoldLeft() {
-	    	for(int i=0;i<100;i++){
+	    	for(int i=0;i<SHORT_CYCLE;i++){
 		        Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
 
 		        assertTrue(s.get().reduce("", String::concat).contains("a"));

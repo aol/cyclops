@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -62,7 +63,7 @@ public class MergeLatestTest {
     }
     @Test
     public void mergeStreamSimple3(){
-        for(int i=0;i<10;i++) {
+        for(int i=0;i<SHORT_CYCLE;i++) {
             int size1 = 100;
             int size2 = 500;
             int size3 = 600;

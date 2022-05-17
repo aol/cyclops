@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -195,7 +196,7 @@ public  class SyncReactiveStreamXTest {
 	}
 	@Test
 	public void onEmptySwitchEmpty(){
-	    for(int i=0;i<1000;i++) {
+	    for(int i=0;i<SHORT_CYCLE;i++) {
             assertThat(of()
                             .onEmptySwitch(() -> of(1, 2, 3))
                             .toList(),
@@ -537,7 +538,7 @@ public  class SyncReactiveStreamXTest {
 
 	    @Test
 	    public void testFoldLeft() {
-	    	for(int i=0;i<100;i++){
+	    	for(int i=0;i<SHORT_CYCLE;i++){
 		        Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
 
 		        assertTrue(s.get().reduce("", String::concat).contains("a"));

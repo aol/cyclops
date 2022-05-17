@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static com.oath.cyclops.Iterations.VERY_SHORT_CYCLE;
 import static cyclops.reactive.Spouts.iterate;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -308,7 +309,7 @@ public class SyncBatchingTest {
 	@Test
 	public void batchBySizeAndTimeTime(){
 
-		for(int i=0;i<10;i++){
+		for(int i=0;i<VERY_SHORT_CYCLE;i++){
 			System.out.println(i);
 			List<Vector<Integer>> list = of(1,2,3,4,5,6)
 					.groupedBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
@@ -322,7 +323,7 @@ public class SyncBatchingTest {
 	@Test
 	public void batchBySizeAndTimeTimeCollection(){
 
-		for(int i=0;i<10;i++){
+		for(int i=0;i<VERY_SHORT_CYCLE;i++){
 			System.out.println(i);
 			List<Vector<Integer>> list = of(1,2,3,4,5,6)
 					.groupedBySizeAndTime(10,1,TimeUnit.MICROSECONDS,()->Vector.empty())
@@ -336,7 +337,7 @@ public class SyncBatchingTest {
 	@Test
 	public void windowBySizeAndTimeTime(){
 
-		for(int i=0;i<10;i++){
+		for(int i=0;i<VERY_SHORT_CYCLE;i++){
 			System.out.println(i);
 			List<Vector<Integer>> list = of(1,2,3,4,5,6)
 					.map(n-> n==6? sleep(1) : n)

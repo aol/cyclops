@@ -1,6 +1,7 @@
 package cyclops.streams.push.hotstream;
 
 import cyclops.reactive.Spouts;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -16,15 +17,15 @@ public class SchedulingTest {
 
 	ScheduledExecutorService ex =Executors.newScheduledThreadPool(1);
 	AtomicInteger count = new AtomicInteger(0);
-	@Test
+	@Test @Ignore
 	public void cronTest() throws InterruptedException{
 		Spouts.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
 				.schedule("* * * * * ?", ex);
-		
+
 		Thread.sleep(5000);
-		
+
 	}
 	@Test
 	public void cronDebounceTest() throws InterruptedException{
@@ -36,33 +37,33 @@ public class SchedulingTest {
 				.debounce(1,TimeUnit.DAYS)
 				.peek(System.out::println)
 				.toList(),equalTo(Arrays.asList(1)));
-		
-		
+
+
 	}
 	@Test
 	public void fixedRateTest() throws InterruptedException{
 		assertThat(Spouts.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
-				.scheduleFixedRate(1000, ex)
+				.scheduleFixedRate(10, ex)
 				.connect()
 				.debounce(1,TimeUnit.DAYS)
 				.peek(System.out::println)
 				.toList(),equalTo(Arrays.asList(1)));
-		
-		
+
+
 	}
 	@Test
 	public void fixedRateDelay() throws InterruptedException{
 		assertThat(Spouts.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
-				.scheduleFixedDelay(1000, ex)
+				.scheduleFixedDelay(10, ex)
 				.connect()
 				.debounce(1,TimeUnit.DAYS)
 				.peek(System.out::println)
 				.toList(),equalTo(Arrays.asList(1)));
-		
-		
+
+
 	}
 }

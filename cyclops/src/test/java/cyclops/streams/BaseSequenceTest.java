@@ -1,5 +1,6 @@
 package cyclops.streams;
 
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
 import static cyclops.reactive.ReactiveSeq.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
@@ -342,7 +343,7 @@ public  class BaseSequenceTest {
 
 	    @Test
 	    public void testFoldLeft() {
-	    	for(int i=0;i<100;i++){
+	    	for(int i=0;i<SHORT_CYCLE;i++){
 		        Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
 
 		        assertTrue(s.get().reduce("", String::concat).contains("a"));

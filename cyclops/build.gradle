@@ -67,15 +67,7 @@ dependencies {
 
 }
 
-/**
-jacocoTestReport {
-    afterEvaluate {
-        classDirectories = files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['com/aol/cyclops2/util/stream/scheduling/cron/**'])
-        })
-    }
-}
-**/
+
 jmh {
     jmhVersion = '1.29'
     humanOutputFile = null

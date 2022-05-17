@@ -1,5 +1,7 @@
 package com.oath.cyclops.lambda.functions;
 
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
+import static com.oath.cyclops.Iterations.VERY_SHORT_CYCLE;
 import static cyclops.function.Memoize.memoizeBiFunction;
 import static cyclops.function.Memoize.memoizeCallable;
 import static cyclops.function.Memoize.memoizeFunction;
@@ -42,7 +44,7 @@ public class MemoiseTest {
 	    AtomicInteger value = new AtomicInteger(0);
 	    Supplier<Integer> caching = Memoize.memoizeSupplierAsync(()->value.incrementAndGet(), ex,100);
 	    int current = caching.get();
-	    for(int i=0;i<10;i++){
+	    for(int i=0;i<VERY_SHORT_CYCLE;i++){
 	        Thread.sleep(150);
 	        assertTrue(current!=caching.get());
 	        current=caching.get();

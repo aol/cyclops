@@ -225,7 +225,7 @@ public class LimitWhileClosedOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
+        SpoutsFixtures.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .takeWhileInclusive(i -> i<1)
             .forEach(n->{
                 assertFalse(complete.get());
@@ -251,7 +251,7 @@ public class LimitWhileClosedOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
+        SpoutsFixtures.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .takeWhileInclusive(i -> i<0)
             .forEach(n->{
                 assertFalse(complete.get());
@@ -278,9 +278,9 @@ public class LimitWhileClosedOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Subscription s =  Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
+        Subscription s =  SpoutsFixtures.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .takeWhileInclusive(i -> true)
-            .forEach(2, n -> {
+            .forEach(4, n -> {
                 assertFalse(complete.get());
                 data.updateAndGet(sq -> sq.plus(n));
             }, e -> {
@@ -306,9 +306,9 @@ public class LimitWhileClosedOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Subscription s = Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
+        Subscription s = SpoutsFixtures.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .takeWhileInclusive(i -> i<3)
-            .forEach(2, n -> {
+            .forEach(4, n -> {
                 assertFalse(complete.get());
                 data.updateAndGet(sq -> sq.plus(n));
             }, e -> {
@@ -334,7 +334,7 @@ public class LimitWhileClosedOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
+        SpoutsFixtures.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .takeWhileInclusive(i ->{ throw new RuntimeException();})
             .forEach(n->{
                 assertFalse(complete.get());

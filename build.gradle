@@ -36,7 +36,14 @@ subprojects {
         targetCompatibility = JavaVersion.VERSION_17
         sourceCompatibility = JavaVersion.VERSION_17
     }
-
+    test {
+        afterTest { descriptor, result ->
+            def totalTime = result.endTime - result.startTime
+            if(totalTime > 500) {
+                println "Total time of $descriptor.name was $totalTime"
+            }
+        }
+    }
     tasks.withType(JavaCompile) {
         options.compilerArgs += ['--enable-preview']
         targetCompatibility = JavaVersion.VERSION_17

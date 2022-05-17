@@ -9,6 +9,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import cyclops.reactive.ReactiveSeq;
@@ -17,7 +18,8 @@ public class SchedulingTest {
 
 	ScheduledExecutorService ex =Executors.newScheduledThreadPool(1);
 	AtomicInteger count = new AtomicInteger(0);
-	@Test
+
+	@Test @Ignore
 	public void cronTest() throws InterruptedException{
 		ReactiveSeq.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
@@ -45,7 +47,7 @@ public class SchedulingTest {
 		assertThat(ReactiveSeq.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
-				.scheduleFixedRate(1000, ex)
+				.scheduleFixedRate(10, ex)
 				.connect()
 				.debounce(1,TimeUnit.DAYS)
 				.peek(System.out::println)
@@ -58,7 +60,7 @@ public class SchedulingTest {
 		assertThat(ReactiveSeq.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
-				.scheduleFixedDelay(1000, ex)
+				.scheduleFixedDelay(10, ex)
 				.connect()
 				.debounce(1,TimeUnit.DAYS)
 				.peek(System.out::println)

@@ -81,7 +81,7 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
         for(int i=0;i<array.length;i++) {
             array[i]=i;
         }
-        for(int i=0;i<100;i++) {
+        for(int i=0;i<SHORT_CYCLE;i++) {
             List<Integer> list = of(array).collect(Collectors.toList());
             assertThat(list.size(),equalTo(array.length));
         }

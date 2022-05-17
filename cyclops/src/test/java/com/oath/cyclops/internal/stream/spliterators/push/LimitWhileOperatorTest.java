@@ -1,5 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
+import com.oath.cyclops.SpoutsFixtures;
 import cyclops.data.Vector;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -201,7 +202,7 @@ public class LimitWhileOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
+        SpoutsFixtures.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .takeWhile(i -> true)
             .forEach(n->{
                 assertFalse(complete.get());
@@ -226,7 +227,7 @@ public class LimitWhileOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
+        SpoutsFixtures.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .takeWhile(i -> i<1)
             .forEach(n->{
                 assertFalse(complete.get());
@@ -252,7 +253,7 @@ public class LimitWhileOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
+        SpoutsFixtures.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .takeWhile(i -> i<0)
             .forEach(n->{
                 assertFalse(complete.get());
@@ -279,9 +280,9 @@ public class LimitWhileOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Subscription s =  Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
+        Subscription s =  SpoutsFixtures.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .takeWhile(i -> true)
-            .forEach(2, n -> {
+            .forEach(4, n -> {
                 assertFalse(complete.get());
                 data.updateAndGet(sq -> sq.plus(n));
             }, e -> {
@@ -307,9 +308,9 @@ public class LimitWhileOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Subscription s = Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
+        Subscription s = SpoutsFixtures.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .takeWhile(i -> i<3)
-            .forEach(2, n -> {
+            .forEach(4, n -> {
                 assertFalse(complete.get());
                 data.updateAndGet(sq -> sq.plus(n));
             }, e -> {
@@ -335,7 +336,7 @@ public class LimitWhileOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
+        SpoutsFixtures.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .takeWhile(i ->{ throw new RuntimeException();})
             .forEach(n->{
                 assertFalse(complete.get());

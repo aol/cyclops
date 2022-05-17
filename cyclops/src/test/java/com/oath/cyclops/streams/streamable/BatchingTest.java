@@ -1,6 +1,8 @@
 package com.oath.cyclops.streams.streamable;
 
 
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
+import static com.oath.cyclops.Iterations.VERY_SHORT_CYCLE;
 import static cyclops.companion.Streamable.fromIntStream;
 import static cyclops.companion.Streamable.iterate;
 import static cyclops.companion.Streamable.of;
@@ -308,7 +310,7 @@ public class BatchingTest {
 	@Test
 	public void windowBySizeAndTimeTime(){
 
-		for(int i=0;i<10;i++){
+		for(int i=0;i<VERY_SHORT_CYCLE;i++){
 			System.out.println(i);
 			List<Vector<Integer>> list = of(1,2,3,4,5,6)
 					.map(n-> n==6? sleep(1) : n)

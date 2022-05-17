@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
 import static cyclops.companion.Functions.*;
 import static cyclops.function.Predicates.anyOf;
 import static cyclops.function.Predicates.greaterThan;
@@ -272,7 +273,7 @@ public class ReactiveSeqTest {
 
     @Test
     public void recoverTest(){
-        for(int i=0;i<100;i++) {
+        for(int i=0;i<SHORT_CYCLE;i++) {
             Map<String, List<String>> txn = new HashMap<>();
             txn.put("5000", Lists.newArrayList("5001", "5002", "5003", "5004a"));
             txn.put("6000", Lists.newArrayList("6001", "6002a", "6003", "6004"));
@@ -345,27 +346,6 @@ public class ReactiveSeqTest {
 
 
 
-    }
-    @Test
-    public void compareFindFirst(){
-        for(int i=0;i<10;i++)
-            count += Stream.of(1,2,3)
-                            .findFirst().get();
-        long time = System.currentTimeMillis();
-        for(int i=0;i<50000;i++)
-            count += Stream.of(1,2,3)
-                    .findFirst().get();
-
-        long stream = System.currentTimeMillis()-time;
-        for(int i=0;i<10;i++)
-            count += of(1,2,3)
-                             .findFirst().get();
-        long time2 = System.currentTimeMillis();
-        for(int k=0;k<50000;k++)
-            count += of(1,2,3)
-                                 .findFirst().get();
-        long rs = System.currentTimeMillis()-time2;
-        System.out.println("Stream " + stream + " rs " + rs + " count " + count);
     }
 
 

@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -38,7 +39,7 @@ public class Processor {
     @Test
     public void testFailure() throws MalformedURLException {
 
-        for(int i=0;i<100;i++) {
+        for(int i=0;i<SHORT_CYCLE;i++) {
             System.out.println("*********** " + i);
             URLDataFileMetadata failingURL = new URLDataFileMetadata(10l, "url", new URL("http://oath23232.com"));
 

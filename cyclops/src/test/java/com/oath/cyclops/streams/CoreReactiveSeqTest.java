@@ -1,5 +1,7 @@
 package com.oath.cyclops.streams;
 
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
+import static com.oath.cyclops.Iterations.VERY_SHORT_CYCLE;
 import static cyclops.reactive.ReactiveSeq.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
@@ -155,7 +157,7 @@ public  class CoreReactiveSeqTest {
     }
     @Test
     public void duplicatePropertiesTest(){
-        for(int i=0;i<100;i++) {
+        for(int i=0;i<SHORT_CYCLE;i++) {
             Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> tuples = ReactiveSeq.range(0,i).duplicate();
 
             Tuple2<Iterator<Integer>, Iterator<Integer>> its = tuples.map1(s -> s.iterator())
@@ -182,7 +184,7 @@ public  class CoreReactiveSeqTest {
     }
     @Test
     public void bufferingCopierTest(){
-        for(int i=0;i<10;i++) {
+        for(int i=0;i<VERY_SHORT_CYCLE;i++) {
             for(int k=1;k<5;k++) {
                 System.out.println (" Length : " + i + " - copies " + k);
                 Seq<Iterable<Integer>> list = Streams.toBufferingCopier(LazySeq.range(0, i), k);
@@ -257,7 +259,7 @@ public  class CoreReactiveSeqTest {
     }
     @Test
     public void triplicatePropertiesTest(){
-        for(int i=0;i<100;i++) {
+        for(int i=0;i<SHORT_CYCLE;i++) {
             Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> tuples = ReactiveSeq.range(0,i).triplicate();
 
             Tuple3<Iterator<Integer>, Iterator<Integer>, Iterator<Integer>> its = tuples.map1(s -> s.iterator())
@@ -400,7 +402,7 @@ public  class CoreReactiveSeqTest {
 
     @Test
 	public void ambTest(){
-        for(int i=0;i<10;i++) {
+        for(int i=0;i<VERY_SHORT_CYCLE;i++) {
             assertThat(ReactiveSeq.of(1, 2, 3).ambWith(Flux.just(10, 20, 30)).toList(), isOneOf(Arrays.asList(1, 2, 3), Arrays.asList(10, 20, 30)));
         }
 	}
@@ -857,7 +859,7 @@ public  class CoreReactiveSeqTest {
 
 	    @Test
 	    public void testFoldLeft() {
-	    	for(int i=0;i<100;i++){
+	    	for(int i=0;i<SHORT_CYCLE;i++){
 		        Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
 
 		        assertTrue(s.get().reduce("", String::concat).contains("a"));

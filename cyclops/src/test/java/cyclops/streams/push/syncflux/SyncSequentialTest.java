@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.oath.cyclops.Iterations.SHORT_CYCLE;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
@@ -79,7 +80,7 @@ public class SyncSequentialTest extends BaseSequentialTest {
         for(int i=0;i<array.length;i++) {
             array[i]=i;
         }
-        for(int i=0;i<100;i++) {
+        for(int i=0;i<SHORT_CYCLE;i++) {
             List<Integer> list = of(array).collect(Collectors.toList());
             assertThat(list.size(),equalTo(array.length));
         }
@@ -98,7 +99,7 @@ public class SyncSequentialTest extends BaseSequentialTest {
     }
     @Test
     public void mergePTest(){
-        for(int i=0;i<100;i++) {
+        for(int i=0;i<SHORT_CYCLE;i++) {
             List<Integer> list = of(3, 6, 9).merge(of(2, 4, 8), of(1, 5, 7)).toList();
 
             assertThat("List is " + list,list, hasItems(1, 2, 3, 4, 5, 6, 7, 8, 9));
