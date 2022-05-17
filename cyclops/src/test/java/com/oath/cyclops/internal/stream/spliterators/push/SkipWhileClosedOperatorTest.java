@@ -1,5 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
+import com.oath.cyclops.SpoutsFixtures;
 import cyclops.data.Vector;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -303,9 +304,9 @@ public class SkipWhileClosedOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Subscription s =  Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
+        Subscription s =  SpoutsFixtures.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .dropWhileInclusive(i -> false)
-            .forEach(2, n -> {
+            .forEach(4, n -> {
                 assertFalse(complete.get());
                 data.updateAndGet(sq -> sq.plus(n));
             }, e -> {
@@ -333,7 +334,7 @@ public class SkipWhileClosedOperatorTest {
 
         Subscription s = Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .dropWhileInclusive(i -> i<2)
-            .forEach(2, n -> {
+            .forEach(4, n -> {
                 assertFalse(complete.get());
                 data.updateAndGet(sq -> sq.plus(n));
             }, e -> {

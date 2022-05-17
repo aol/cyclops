@@ -188,7 +188,7 @@ public interface Spouts {
         return syncStream(new IteratePredicateOperator<T>(seed,f,pred));
 
     }
-    public static ReactiveSeq<Integer> range(int start, int end){
+    static ReactiveSeq<Integer> range(int start, int end){
         if(start<end)
             return syncStream(new RangeIntOperator(start,end));
         else
@@ -200,29 +200,29 @@ public interface Spouts {
         else
             return syncStream(new RangeLongOperator(end,start));
     }
-    public static  <T> ReactiveSeq<T> of(T value){
+    static  <T> ReactiveSeq<T> of(T value){
         return syncStream(new SingleValueOperator<T>(value));
     }
 
-    public static <T> ReactiveSeq<T> ofNullable(T nullable){
+    static <T> ReactiveSeq<T> ofNullable(T nullable){
         if(nullable==null){
             return empty();
         }
         return of(nullable);
     }
-    public static <T> ReactiveSeq<T> empty(){
+    static <T> ReactiveSeq<T> empty(){
         return of();
     }
 
-    public static  <T> ReactiveSeq<T> of(T... values){
+    static  <T> ReactiveSeq<T> of(T... values){
         return syncStream(new ArrayOfValuesOperator<T>(values));
     }
-    public static  <T> ReactiveSeq<T> fromIterable(Iterable<T> iterable){
+    static  <T> ReactiveSeq<T> fromIterable(Iterable<T> iterable){
         if(iterable instanceof ReactiveStreamX)
             return (ReactiveSeq<T>)iterable;
         return syncStream(new IterableSourceOperator<T>(iterable));
     }
-    public static  <T> ReactiveSeq<T> fromSpliterator(Spliterator<T> spliterator){
+    static  <T> ReactiveSeq<T> fromSpliterator(Spliterator<T> spliterator){
         return syncStream(new SpliteratorToOperator<T>(spliterator));
     }
     /**
@@ -382,13 +382,13 @@ public interface Spouts {
     static <U, T> ReactiveSeq<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return reactiveStream(new SpliteratorToOperator<T>(new UnfoldSpliterator<>(seed, unfolder)));
     }
-    public static  <T> ReactiveSeq<T> concat(Publisher<Publisher<T>> pubs){
+    static  <T> ReactiveSeq<T> concat(Publisher<Publisher<T>> pubs){
         return reactiveStream(new LazyArrayConcatonatingOperator<T>(Spouts.from(pubs).seq()
                             .map(p->new PublisherToOperator<T>(p))));
 
     }
 
-    public static  <T> ReactiveSeq<T> concat(Stream<? extends T>... streams){
+    static  <T> ReactiveSeq<T> concat(Stream<? extends T>... streams){
 
         ReactiveSeq<Stream<T>> rs = ReactiveSeq.of((Stream[]) streams);
         return concat(rs.map(ReactiveSeq::fromStream));
@@ -401,7 +401,7 @@ public interface Spouts {
      * @param future HKT encoded list into a ReactiveSeq
      * @return ReactiveSeq
      */
-    public static <T> ReactiveSeq<T> narrowK(final Higher<reactiveSeq, T> future) {
+    static <T> ReactiveSeq<T> narrowK(final Higher<reactiveSeq, T> future) {
         return (ReactiveSeq<T>) future;
     }
 

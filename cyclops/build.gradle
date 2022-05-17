@@ -45,10 +45,11 @@ dependencies {
     api 'org.agrona:Agrona:0.9.1'
     api 'org.reactivestreams:reactive-streams:1.0.0'
     api 'io.kindedj:kindedj:'+kindedJVersion
+    api "io.projectreactor:reactor-core:${reactorVersion}"
 
-    testImplementation group: 'io.projectreactor', name: 'reactor-test', version: '3.2.2.RELEASE'
+    testImplementation group: 'io.projectreactor', name: 'reactor-test', version: reactorVersion
     testImplementation 'com.github.stefanbirkner:system-rules:1.10.0'
-    testImplementation 'io.projectreactor:reactor-core:3.2.2.RELEASE'
+
     testImplementation 'com.google.guava:guava:19.0'
     testImplementation 'org.reactivestreams:reactive-streams-tck:1.0.0'
     testImplementation 'junit:junit:4.12'

@@ -1,5 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
+import com.oath.cyclops.SpoutsFixtures;
 import cyclops.data.Vector;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -199,7 +200,7 @@ public class LimitWhileClosedOperatorTest {
         AtomicBoolean complete = new AtomicBoolean(false);
         AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
 
-        Spouts.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
+        SpoutsFixtures.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .takeWhileInclusive(i -> true)
             .forEach(n->{
                 assertFalse(complete.get());
