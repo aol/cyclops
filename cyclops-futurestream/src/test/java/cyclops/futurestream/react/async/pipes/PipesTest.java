@@ -54,7 +54,7 @@ public class PipesTest {
         results.add(ev.get());
         results.add(ev.get());
 
-        assertThat(results,equalTo(Seq.of(10,20,30)));
+        assertThat(Seq.of(10,20,30).listView(),equalTo(results));
 
 
         //finished!
@@ -88,7 +88,7 @@ public class PipesTest {
         results.add(ev.get());
 
 
-        assertThat(results,equalTo(Seq.of(Maybe.of(10),Maybe.of(20),Maybe.of(30))));
+        assertThat(results,equalTo(List.of(Maybe.of(10),Maybe.of(20),Maybe.of(30))));
 
 
 
@@ -109,10 +109,9 @@ public class PipesTest {
         results.add(bus.oneOrError("reactor").get());
         results.add(bus.oneOrError("reactor").get());
 
-        assertThat(results,equalTo(Seq.of(10,20,30).map(Option::some)));
-
-
+        assertThat(Seq.fromIterable(results),equalTo(Seq.of(10,20,30).map(Option::some)));
     }
+
 	@Test
     public void futureStreamTest(){
 

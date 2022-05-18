@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
+import cyclops.data.Seq;
 import org.junit.Test;
 
 import cyclops.futurestream.SimpleReact;
@@ -17,7 +18,7 @@ public class FlatMapTest {
 		assertThat( new SimpleReact()
 										.of(1,2,3)
 										.flatMapToCompletableFuture(i->CompletableFuture.completedFuture(i))
-										.block(),equalTo(Arrays.asList(1,2,3)));
+										.block(),equalTo(Seq.of(1,2,3)));
 	}
 	@Test
 	public void flatMapCfSync(){
@@ -25,13 +26,13 @@ public class FlatMapTest {
 										.of(1,2,3)
 										.sync()
 										.flatMapToCompletableFuture(i->CompletableFuture.completedFuture(i))
-										.block(),equalTo(Arrays.asList(1,2,3)));
+										.block(),equalTo(Seq.of(1,2,3)));
 	}
 	@Test
 	public void flatMapCfSync2(){
 		assertThat( new SimpleReact()
 										.of(1,2,3)
 										.flatMapToCompletableFutureSync(i->CompletableFuture.completedFuture(i))
-										.block(),equalTo(Arrays.asList(1,2,3)));
+										.block(),equalTo(Seq.of(1,2,3)));
 	}
 }

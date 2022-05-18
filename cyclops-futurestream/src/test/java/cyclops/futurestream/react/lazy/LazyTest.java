@@ -59,7 +59,7 @@ public class LazyTest implements Printable {
 				.peek(System.out::println)
 				.toList();
 
-	 assertTrue(System.currentTimeMillis()-start>1900);
+	 assertTrue(System.currentTimeMillis()-start>190);
 
 	}
 	@Test
@@ -250,29 +250,29 @@ public class LazyTest implements Printable {
 	@Test
 	public void lazyReactStream() {
 		assertThat(LazyReact.sequentialBuilder().ofAsync(() -> 1).map(list -> 1 + 2)
-				.block(),equalTo(Arrays.asList(3)));
+				.block(),equalTo(Seq.of(3)));
 	}
 	@Test
 	public void lazyReactParAndConc() {
 		assertThat(new LazyReact(2,2).ofAsync(() -> 1).map(list -> 1 + 2)
-				.block(),equalTo(Arrays.asList(3)));
+				.block(),equalTo(Seq.of(3)));
 	}
 
 	@Test
 	public void lazyParallel() {
 		assertThat(LazyReact.parallelBuilder().ofAsync(() -> 1).map(list -> 1 + 2)
-				.block(),equalTo(Arrays.asList(3)));
+				.block(),equalTo(Seq.of(3)));
 	}
 
 	@Test
 	public void lazyReactStreamList() {
 		assertThat(LazyReact.sequentialBuilder().react(asList(() -> 1))
-				.map(list -> 1 + 2).block(),equalTo(Arrays.asList(3)));
+				.map(list -> 1 + 2).block(),equalTo(Seq.of(3)));
 	}
 
 	@Test
 	public void lazyParallelList() {
 		assertThat(LazyReact.parallelBuilder().react(asList(() -> 1))
-				.map(list -> 1 + 2).block(),equalTo(Arrays.asList(3)));
+				.map(list -> 1 + 2).block(),equalTo(Seq.of(3)));
 	}
 }

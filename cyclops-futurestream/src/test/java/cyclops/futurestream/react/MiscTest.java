@@ -5,6 +5,7 @@ import cyclops.control.Future;
 import cyclops.data.HashSet;
 import cyclops.data.ImmutableList;
 import cyclops.data.ImmutableSet;
+import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.futurestream.LazyReact;
 import cyclops.futurestream.SimpleReact;
@@ -33,7 +34,7 @@ public class MiscTest {
   @Test
   public void fromFluxSimpleReactStream(){
     assertThat( new SimpleReact().fromPublisher(Flux.just(1,2,3)).block(),equalTo(
-      Arrays.asList(1,2,3)));
+      Seq.of(1,2,3)));
   }
   @Test
   public void testBreakout(){

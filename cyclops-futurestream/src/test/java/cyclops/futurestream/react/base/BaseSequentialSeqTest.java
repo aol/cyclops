@@ -752,7 +752,7 @@ public abstract class BaseSequentialSeqTest {
 
 		@Test
 		public void flatten() throws Exception {
-			assertThat(this.<Integer>of(1,2).flatMap(i -> asList(i, -i).stream()).block(),equalTo(asList(1, -1, 2, -2)));
+			assertThat(this.<Integer>of(1,2).flatMap(i -> asList(i, -i).stream()).block(),equalTo(Seq.of(1, -1, 2, -2)));
 		}
 
 

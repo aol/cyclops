@@ -1552,8 +1552,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @param times to copy this Stream
      * @return List with specified number of copies
      */
-    default List<FutureStream<U>> copy(final int times) {
-        return (List) LazySimpleReactStream.super.copySimpleReactStream(times);
+    default ReactiveSeq<FutureStream<U>> copy(final int times) {
+        return (ReactiveSeq)LazySimpleReactStream.super.copySimpleReactStream(times);
 
     }
 

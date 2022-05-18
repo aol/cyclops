@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.oath.cyclops.react.ThreadPools;
+import cyclops.data.Seq;
 import cyclops.futurestream.react.base.BaseSequentialSeqTest;
 import cyclops.futurestream.FutureStream;
 import cyclops.data.tuple.Tuple2;
@@ -178,7 +179,7 @@ public class LazySequentialSeqObjectPoolsTest extends BaseSequentialSeqTest {
 		assertThat( LazyReact.sequentialCommonBuilder().iterate(1, n -> n+1)
 				.flatMap(i -> Arrays.asList(i, 0, -i).stream())
 				.limit(10).block(),
-				equalTo(Arrays.asList(1, 0, -1, 2, 0, -2, 3, 0, -3, 4)));
+				equalTo(Seq.of(1, 0, -1, 2, 0, -2, 3, 0, -3, 4)));
 	}
 
 
