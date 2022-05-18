@@ -280,7 +280,7 @@ public class LimitWhileClosedOperatorTest {
 
         Subscription s =  SpoutsFixtures.reactive(ReactiveSeq.of(1,2,3,4,5),ex)
             .takeWhileInclusive(i -> true)
-            .forEach(4, n -> {
+            .forEach(5, n -> {
                 assertFalse(complete.get());
                 data.updateAndGet(sq -> sq.plus(n));
             }, e -> {
