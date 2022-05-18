@@ -319,7 +319,7 @@ public class LimitWhileOperatorTest {
                 complete.set(true);
             });
 
-        while(data.get().size()<2){
+        while(!complete.get()){
             LockSupport.parkNanos(100l);
         }
 
