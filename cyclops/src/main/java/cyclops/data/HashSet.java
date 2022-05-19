@@ -3,9 +3,7 @@ package cyclops.data;
 
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentSet;
-import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Option;
-import com.oath.cyclops.hkt.DataWitness.hashSet;
 import cyclops.data.base.HAMT;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
@@ -28,7 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Serializable {
+public final class HashSet<T> implements  ImmutableSet<T>, Serializable {
     private static final long serialVersionUID = 1L;
     @Getter
     private final HAMT.Node<T,T> map;

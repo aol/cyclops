@@ -2,14 +2,12 @@ package cyclops.data;
 
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentQueue;
-import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
-import com.oath.cyclops.hkt.DataWitness.bankersQueue;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -25,7 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,T>, Serializable {
+public interface BankersQueue<T> extends ImmutableQueue<T>, Serializable {
 
     static <T> Collector<T, List<T>, BankersQueue<T>> collector() {
         Collector<T, ?, List<T>> c  = Collectors.toList();

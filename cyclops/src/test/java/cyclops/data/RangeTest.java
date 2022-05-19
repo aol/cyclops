@@ -3,9 +3,9 @@ package cyclops.data;
 import cyclops.companion.Comparators;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
+import cyclops.function.Ord;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.data.EnumerationTest.Days;
-import cyclops.function.Ord;
 import org.junit.Test;
 
 import static cyclops.data.Enumeration.enums;

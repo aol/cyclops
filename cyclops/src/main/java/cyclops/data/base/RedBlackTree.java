@@ -12,6 +12,7 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple5;
+import lombok.With;
 import lombok.experimental.Wither;
 
 
@@ -33,7 +34,7 @@ public interface RedBlackTree extends Serializable{
         };
 
     }
-    public static <K,V> Tree<K,V> fromStream(Comparator<? super K> comp, Stream<? extends Tuple2<? extends K, ? extends V>> stream){
+    static <K,V> Tree<K,V> fromStream(Comparator<? super K> comp, Stream<? extends Tuple2<? extends K, ? extends V>> stream){
         Tree<K,V> tree[] = new Tree[1];
         tree[0]= new Leaf(comp);
         stream.forEach(t->{
@@ -41,10 +42,10 @@ public interface RedBlackTree extends Serializable{
         });
         return tree[0];
     }
-    public static <K,V> Tree<K,V> empty(Comparator<? super K> comp){
+    static <K,V> Tree<K,V> empty(Comparator<? super K> comp){
         return new Leaf<K,V>(comp);
     }
-    public static interface Tree<K,V> extends Sealed2<Node<K,V>,Leaf<K,V>> {
+    static interface Tree<K,V> extends Sealed2<Node<K,V>,Leaf<K,V>> {
 
         boolean isEmpty();
         boolean isBlack();
@@ -122,7 +123,7 @@ public interface RedBlackTree extends Serializable{
     }
 
     @AllArgsConstructor
-    @Wither
+    @With
     public static final class Node<K,V> implements Tree<K,V>, Deconstruct5<Boolean,Tree<K,V>,Tree<K,V>, K,V> {
         private final boolean isBlack;
         private final Tree<K,V> left;

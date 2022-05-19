@@ -1,6 +1,6 @@
 package cyclops.function;
 
-import com.oath.cyclops.hkt.Higher;
+
 import lombok.AllArgsConstructor;
 
 import java.util.Comparator;
@@ -8,22 +8,22 @@ import java.util.Comparator;
 import static cyclops.function.Ord.Ordering.*;
 
 
-public interface Ord<W,T> {
-    public enum Ordering {LESS, EQUAL, MORE}
+public interface Ord<T> {
+    enum Ordering {LESS, EQUAL, MORE}
 
 
-    Ordering compare(Higher<W,T> first, Higher<W,T> second);
+    Ordering compare(T first, T second);
 
-    public static <W,T> Ord<W,T> ord(Comparator<Higher<W,T>> comp){
+    static <T> Ord<T> ord(Comparator<T> comp){
         return new OrdByComparotor(comp);
     }
     @AllArgsConstructor
-    public static class OrdByComparotor<W,T> implements Ord<W,T>{
-        private final Comparator<Higher<W,T>> comp;
+    class OrdByComparotor<T> implements Ord<T>{
+        private final Comparator<T> comp;
 
 
         @Override
-        public Ordering compare(Higher<W, T> first, Higher<W, T> second) {
+        public Ordering compare(T first, T second) {
             int pos =  comp.compare(first,second);
             if(pos < 0)
                 return LESS;

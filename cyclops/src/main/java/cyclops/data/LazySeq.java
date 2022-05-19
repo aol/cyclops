@@ -1,8 +1,6 @@
 package cyclops.data;
 
 
-import com.oath.cyclops.hkt.DataWitness.lazySeq;
-import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.functor.Transformable;
@@ -37,8 +35,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
                                     Folds<T>,
                                     Filters<T>,
                                     Transformable<T>,
-                                    Serializable,
-                                    Higher<lazySeq,T> {
+                                    Serializable {
 
 
     static <T> Collector<T, List<T>, LazySeq<T>> collector() {
@@ -878,12 +875,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     static <T> LazySeq<T> lazy(T head, Supplier<ImmutableList<T>> tail) {
         return Cons.cons(Eval.now(head),()->tail.get().lazySeq());
     }
-    public static <T> LazySeq<T> narrowK(final Higher<lazySeq, T> list) {
-      return (LazySeq<T>)list;
-    }
-    public static <C2,T> Higher<C2, Higher<lazySeq,T>> widen2(Higher<C2, LazySeq<T>> list){
-      return (Higher)list;
-    }
+
   @Override
   ImmutableList<T> onEmptySwitch(Supplier<? extends ImmutableList<T>> supplier);
 
@@ -1491,9 +1483,6 @@ public interface LazySeq<T> extends  ImmutableList<T>,
       public LazySeq<T> filter(Predicate<? super T> pred) {
         return this;
       }
-    }
-    public static <T> Higher<lazySeq, T> widen(LazySeq<T> narrow) {
-      return narrow;
     }
 
 }

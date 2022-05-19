@@ -3,15 +3,10 @@ package cyclops.data;
 
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentList;
-import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
 import cyclops.control.Option;
-import com.oath.cyclops.hkt.DataWitness.nonEmptyList;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import org.reactivestreams.Publisher;
@@ -20,15 +15,12 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.Stream;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@EqualsAndHashCode(of={"head","tail"})
-public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
-                                        ImmutableList<T>,
-                                        ImmutableList.Some<T>,
-                                        Higher<nonEmptyList,T> {
 
-    private final T head;
-    private final ImmutableList<T> tail;
+public record NonEmptyList<T> (T head, ImmutableList<T> tail) implements Deconstruct2<T,ImmutableList<T>>,
+                                        ImmutableList<T>,
+                                        ImmutableList.Some<T>  {
+
+
 
     @Override
     public<R> ImmutableList<R> unitIterable(Iterable<R> it){
@@ -181,15 +173,6 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
         return of(head,tail.appendAll(value));
     }
 
-    @Override
-    public ImmutableList<T> tail() {
-        return tail;
-    }
-
-    @Override
-    public T head() {
-        return head;
-    }
 
     @Override
     public NonEmptyList<T> reverse() {
@@ -318,7 +301,7 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), head, tail);
+        return Objects.hash(head, tail);
     }
 
     @Override

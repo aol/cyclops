@@ -1,7 +1,5 @@
 package cyclops.reactive;
 
-import com.oath.cyclops.hkt.DataWitness.io;
-import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.util.ExceptionSoftener;
@@ -36,7 +34,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 
-public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,Publisher<T> {
+public interface IO<T> extends To<IO<T>>,ReactiveTransformable<T>,Publisher<T> {
 
     public static <T> IO<T> sync(T s) {
         return SyncIO.of(s);
@@ -65,13 +63,6 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
         return ReactiveSeqIO.fromPublisher(p);
     }
 
-
-    public static <T> IO<T> narrowK(final Higher<io, T> io) {
-        return (IO<T>)io;
-    }
-    public static <T> Higher<io, T> widen(IO<T> narrow) {
-        return narrow;
-    }
 
     public static <T, X extends Throwable> IO<T> withCatch(CheckedSupplier<? extends T> cf) {
         return fromPublisher(Try.withCatch(()->cf.get(),Throwable.class));

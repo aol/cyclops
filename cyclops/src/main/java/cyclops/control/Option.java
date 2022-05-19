@@ -1,7 +1,5 @@
 package cyclops.control;
 
-import com.oath.cyclops.hkt.DataWitness.option;
-import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Sealed2;
 import com.oath.cyclops.types.*;
 import com.oath.cyclops.types.foldable.To;
@@ -43,7 +41,6 @@ public interface Option<T>  extends To<Option<T>>,
                                     Recoverable<T>,
                                     Sealed2<T, Option.None<T>>,
                                     Iterable<T>,
-                                    Higher<option,T>,
                                     Serializable{
 
 
@@ -75,23 +72,14 @@ public interface Option<T>  extends To<Option<T>>,
       boolean cont = true;
       do {
         cont = next[0].fold(p -> p.fold(s -> {
-          next[0] = narrowK(fn.apply(s));
+          next[0] = fn.apply(s);
           return true;
         }, pr -> false), () -> false);
       } while (cont);
 
       return next[0].map(x->x.fold(l->null, r->r));
     }
-    public static <T> Option<T> narrowK(final Higher<option, T> opt) {
-      return (Option<T>)opt;
-    }
-    public static <T> Higher<option, T> widen(Option<T> narrow) {
-    return narrow;
-  }
-    public static <C2,T> Higher<C2, Higher<option,T>> widen2(Higher<C2, Option<T>> nestedMaybe){
 
-      return (Higher)nestedMaybe;
-    }
     /**
      * @return Get the zero Maybe (single instance)
      */

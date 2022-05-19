@@ -13,8 +13,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.hkt.Higher2;
 import com.oath.cyclops.matching.Sealed2;
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.OrElseValue;
@@ -26,7 +24,6 @@ import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.recoverable.RecoverableFrom;
 import cyclops.function.*;
 
-import com.oath.cyclops.hkt.DataWitness.tryType;
 import cyclops.reactive.ReactiveSeq;
 
 import lombok.*;
@@ -133,8 +130,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                                                      RecoverableFrom<X,T>,Value<T>,
                                                      Unit<T>, Transformable<T>, Filters<T>,
                                                      Sealed2<T,X>,
-                                                     OrElseValue<T,Try<T,X>>,
-                                                     Higher2<tryType,X,T> {
+                                                     OrElseValue<T,Try<T,X>> {
 
 
 
@@ -142,7 +138,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         return 2;
     }
     final Either<X,T> xor;
-    @Wither(AccessLevel.PRIVATE)
+    @With(AccessLevel.PRIVATE)
     private final Class<? extends Throwable>[] classes;
 
     public Either<X,T> asEither(){
@@ -166,9 +162,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         } while (cont);
         return next[0].map(x->x.orElse(null));
     }
-    public static <X extends Throwable,T> Higher<Higher<tryType,X>, T> widen(Try<T,X> narrow) {
-        return narrow;
-    }
+
 
     public Trampoline<Either<X,T>> toTrampoline() {
         return xor.toTrampoline();
@@ -1025,12 +1019,6 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
 
-    public static <T,X extends Throwable> Try<T,X> narrowK2(final Higher2<tryType, X,T> t) {
-        return (Try<T,X>)t;
-    }
-    public static <T,X extends Throwable> Try<T,X> narrowK(final Higher<Higher<tryType, X>,T> t) {
-        return (Try)t;
-    }
 
 
 

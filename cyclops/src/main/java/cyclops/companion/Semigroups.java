@@ -14,7 +14,6 @@ import cyclops.data.Vector;
 import cyclops.function.Semigroup;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.function.NaturalTransformation;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import org.reactivestreams.Publisher;
 
@@ -458,9 +457,7 @@ public interface Semigroups {
     static <A> Semigroup<Function<A,A>> functionComposition(){
         return  (a,b)->a.andThen(b);
     }
-    static <A> Semigroup<NaturalTransformation<A,A>> naturalTransformationComposition(){
-        return  (a,b)->a.andThen(b);
-    }
+
 
 
 }

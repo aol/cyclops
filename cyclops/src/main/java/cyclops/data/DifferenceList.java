@@ -1,8 +1,6 @@
 package cyclops.data;
 
 
-import com.oath.cyclops.hkt.DataWitness.differenceList;
-import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
@@ -37,8 +35,7 @@ import java.util.stream.Stream;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DifferenceList<T> implements Folds<T>,
                                           Transformable<T>,
-                                          ImmutableList<T>,
-                                          Higher<differenceList,T> {
+                                          ImmutableList<T>{
 
 
     private final Function<ImmutableList<T>,Trampoline<ImmutableList<T>>> appending;

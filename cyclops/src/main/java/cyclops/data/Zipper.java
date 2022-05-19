@@ -1,8 +1,6 @@
 package cyclops.data;
 
-import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Option;
-import com.oath.cyclops.hkt.DataWitness.zipper;
 import cyclops.data.tuple.Tuple3;
 import cyclops.reactive.ReactiveSeq;
 import lombok.With;
@@ -18,8 +16,7 @@ import java.util.function.Predicate;
 
 
 @With
-public record Zipper<T> (ImmutableList<T> left, T point, ImmutableList<T> right) implements Iterable<T>,
-                                    Higher<zipper,T> {
+public record Zipper<T> (ImmutableList<T> left, T point, ImmutableList<T> right) implements Iterable<T> {
 
 
 

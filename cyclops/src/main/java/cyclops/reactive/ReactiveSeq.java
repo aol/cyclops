@@ -1,7 +1,6 @@
 package cyclops.reactive;
 
 
-import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.internal.stream.spliterators.*;
 
 
@@ -41,7 +40,6 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 
 import lombok.val;
 import cyclops.data.tuple.Tuple;
@@ -115,8 +113,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         Contains<T>,
                                         Unit<T>,
                                         RecoverableTraversable<T>,
-                                        ReactiveTransformable<T>,
-                                        Higher<reactiveSeq,T> {
+                                        ReactiveTransformable<T> {
 
     @Override
     Object[] toArray();
@@ -262,9 +259,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return Enumeration.enums( values).streamThenTo(start,step,end);
 
     }
-    public static <T> Higher<reactiveSeq, T> widen(ReactiveSeq<T> narrow) {
-    return narrow;
-  }
+
 
 
 
@@ -4457,17 +4452,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
 
-    /**
-     * Convert the raw Higher Kinded Type for ReactiveSeq types into the ReactiveSeq type definition class
-     *
-     * @param future HKT encoded list into a ReactiveSeq
-     * @return ReactiveSeq
-     */
-    public static <T> ReactiveSeq<T> narrowK(final Higher<reactiveSeq, T> future) {
-        return (ReactiveSeq<T>) future;
-    }
 
-    public static  <T,R> ReactiveSeq<R> tailRec(T initial, Function<? super T, ? extends ReactiveSeq<? extends Either<T, R>>> fn) {
+    static  <T,R> ReactiveSeq<R> tailRec(T initial, Function<? super T, ? extends ReactiveSeq<? extends Either<T, R>>> fn) {
         ReactiveSeq<Either<T, R>>  lazy = ReactiveSeq.of(Either.left(initial));
         List<Either<T, R>> next = lazy.toList();
         boolean newValue[] = {true};

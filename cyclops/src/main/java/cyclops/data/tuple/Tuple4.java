@@ -1,16 +1,11 @@
 package cyclops.data.tuple;
 
 
-import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.hkt.Higher4;
-import com.oath.cyclops.types.foldable.EqualTo;
-import com.oath.cyclops.types.foldable.OrderedBy;
 import com.oath.cyclops.types.foldable.To;
 import cyclops.companion.Comparators;
 import cyclops.function.Function4;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
-import com.oath.cyclops.hkt.DataWitness.tuple4;
 import lombok.AllArgsConstructor;
 
 import java.io.Serializable;
@@ -26,10 +21,7 @@ import java.util.function.Supplier;
 @AllArgsConstructor
 public class Tuple4<T1,T2,T3,T4> implements To<Tuple4<T1,T2,T3,T4>>,
                                         Serializable,
-                                        Higher4<tuple4,T1,T2,T3,T4>,
-                                        EqualTo<Higher<Higher<Higher<tuple4,T1>,T2>,T3>,T4,Tuple4<T1,T2,T3,T4>>,
-                                        OrderedBy<Higher<Higher<Higher<tuple4,T1>,T2>,T3>,T4,Tuple4<T1,T2,T3,T4>>,
-                                        Comparable<Tuple4<T1,T2,T3,T4>>{
+                                        Comparable<Tuple4<T1,T2,T3,T4>> {
 
     private static final long serialVersionUID = 1L;
 
@@ -185,15 +177,6 @@ public class Tuple4<T1,T2,T3,T4> implements To<Tuple4<T1,T2,T3,T4>>,
     public String toString() {
         return String.format("[%s,%s,%s,%s]", _1(),_2(),_3(),_4());
     }
-
-
-    public static <T1,T2,T3,T4> Tuple4<T1,T2,T3,T4> narrowK3(Higher4<tuple4,T1,T2,T3,T4> ds){
-        return (Tuple4<T1,T2,T3,T4>)ds;
-    }
-    public static <T1,T2,T3,T4> Tuple4<T1,T2,T3,T4> narrowK(Higher<Higher<Higher<Higher<tuple4,T1>,T2>,T3>,T4> ds){
-        return (Tuple4<T1,T2,T3,T4>)ds;
-    }
-
 
     @Override
     public boolean equals(Object o) {

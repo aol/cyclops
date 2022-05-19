@@ -1,7 +1,5 @@
 package cyclops.control;
 
-import com.oath.cyclops.hkt.DataWitness.validated;
-import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Sealed2;
 import com.oath.cyclops.types.OrElseValue;
 import com.oath.cyclops.types.Value;
@@ -14,7 +12,6 @@ import cyclops.function.Semigroup;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import org.reactivestreams.Publisher;
 
 import java.io.Serializable;
@@ -26,7 +23,6 @@ import java.util.function.Supplier;
 
 public interface Validated<E,T> extends Sealed2<NonEmptyList<E>,T>, Transformable<T>, Iterable<T>,
                                         OrElseValue<T,Validated<E,T>>,
-                                        Higher<validated,T>, Value<T>,
                                         Serializable {
 
 

@@ -1,11 +1,7 @@
 package cyclops.data.tuple;
 
 
-import com.oath.cyclops.hkt.DataWitness.tuple1;
-import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.Filters;
-import com.oath.cyclops.types.foldable.EqualTo;
-import com.oath.cyclops.types.foldable.OrderedBy;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.Either;
@@ -28,10 +24,7 @@ public class Tuple1<T> implements To<Tuple1<T>>,
                                   Serializable,
                                   Transformable<T>,
                                   Filters<T>,
-                                  EqualTo<tuple1,T,Tuple1<T>>,
-                                  OrderedBy<tuple1,T,Tuple1<T>>,
-                                  Comparable<Tuple1<T>>,
-                                  Higher<tuple1,T>{
+                                  Comparable<Tuple1<T>>{
 
     private static final long serialVersionUID = 1L;
 
@@ -125,9 +118,6 @@ public class Tuple1<T> implements To<Tuple1<T>>,
         return String.format("[%s]", _1());
     }
 
-    public static <T> Tuple1<T> narrowK(Higher<tuple1,T> ds){
-        return (Tuple1<T>)ds;
-    }
 
     public static  <T,R> Tuple1<R> tailRec(T initial, Function<? super T, ? extends Tuple1<? extends Either<T, R>>> fn){
         Tuple1<? extends Either<T, R>> next[] = new Tuple1[1];
@@ -136,12 +126,13 @@ public class Tuple1<T> implements To<Tuple1<T>>,
         do {
 
             cont = next[0].fold(p -> p.fold(s -> {
-                next[0] = narrowK(fn.apply(s));
+                next[0] = fn.apply(s);
                 return true;
             }, __ -> false));
         } while (cont);
         return next[0].map(x->x.orElse(null));
     }
+
 
     @Override
     public Option<T> filter(Predicate<? super T> predicate) {

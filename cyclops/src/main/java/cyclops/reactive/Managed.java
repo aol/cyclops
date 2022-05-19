@@ -1,7 +1,5 @@
 package cyclops.reactive;
 
-import com.oath.cyclops.hkt.DataWitness.managed;
-import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.Future;
@@ -69,7 +67,7 @@ import java.util.function.Supplier;
  */
 
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, Publisher<T>{
+public  abstract class Managed<T> implements To<Managed<T>>, Publisher<T>{
 
 
 

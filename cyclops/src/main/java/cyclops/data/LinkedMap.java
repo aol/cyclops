@@ -2,12 +2,9 @@ package cyclops.data;
 
 
 import com.oath.cyclops.types.persistent.PersistentMap;
-import com.oath.cyclops.hkt.Higher2;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
-import com.oath.cyclops.hkt.DataWitness.linkedHashMap;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,12 +14,11 @@ import cyclops.data.tuple.Tuple2;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class LinkedMap<K,V> implements ImmutableMap<K,V>, Higher2<linkedHashMap,K,V> {
+public final class LinkedMap<K,V> implements ImmutableMap<K,V> {
 
     private final ImmutableMap<K, V> map;
     private final Vector<Tuple2<K, V>> order;

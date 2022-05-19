@@ -1,11 +1,6 @@
 package cyclops.data.tuple;
 
 
-import com.oath.cyclops.hkt.DataWitness.tuple2;
-import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.hkt.Higher2;
-import com.oath.cyclops.types.foldable.EqualTo;
-import com.oath.cyclops.types.foldable.OrderedBy;
 import com.oath.cyclops.types.foldable.To;
 import cyclops.control.Either;
 import cyclops.companion.Comparators;
@@ -25,10 +20,7 @@ import java.util.function.Supplier;
 @AllArgsConstructor
 public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
                                         Serializable,
-                                        EqualTo<Higher<tuple2,T1>,T2,Tuple2<T1,T2>>,
-                                        OrderedBy<Higher<tuple2,T1>,T2,Tuple2<T1,T2>>,
-                                        Comparable<Tuple2<T1,T2>>,
-                                        Higher2<tuple2,T1,T2> {
+                                        Comparable<Tuple2<T1,T2>> {
 
     private static final long serialVersionUID = 1L;
 
@@ -136,14 +128,6 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
     }
 
 
-
-    public static <T1,T2> Tuple2<T1,T2> narrowK2(Higher2<tuple2,T1,T2> ds){
-        return (Tuple2<T1,T2>)ds;
-    }
-    public static <T1,T2> Tuple2<T1,T2> narrowK(Higher<Higher<tuple2, T1>, T2> ds){
-        return (Tuple2<T1,T2>)ds;
-    }
-
     public static  <T1,T2,R> Tuple2<T1,R> tailRec(Monoid<T1> op,T2 initial, Function<? super T2, ? extends Tuple2<T1,? extends Either<T2, R>>> fn){
         Tuple2<T1,? extends Either<T2, R>> next[] = new Tuple2[1];
         next[0] = Tuple2.of(op.zero(), Either.left(initial));
@@ -151,7 +135,7 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
         do {
 
             cont = next[0].fold((a, p) -> p.fold(s -> {
-                next[0] = narrowK(fn.apply(s)).map1(t1->op.apply(next[0]._1(),t1));
+                next[0] = narrow(fn.apply(s)).map1(t1->op.apply(next[0]._1(),t1));
                 return true;
             }, __ -> false));
         } while (cont);
@@ -188,9 +172,6 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
     public static <K, V> Tuple2< K, V> narrow(Tuple2<? extends K, ? extends V> t) {
         return (Tuple2<K,V>)t;
     }
-    public static <T1,T2> Higher2<tuple2,T1, T2> widen(Tuple2<T1,T2> narrow) {
-    return narrow;
-  }
 
     public  <T3> Tuple3<T1, T2,T3>  concat(Tuple1<T3> tuple) {
         return Tuple.tuple(_1(),_2(),tuple._1());

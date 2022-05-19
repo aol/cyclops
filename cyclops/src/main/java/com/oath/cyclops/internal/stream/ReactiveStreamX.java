@@ -1255,7 +1255,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             return prependStream(ReactiveSeq.fromIterable(values));
         }
         return Spouts.deferFromStream(()-> {
-            long check = new Long(pos);
+            long check = Long.valueOf(pos);
             boolean added[] = {false};
             return  Spouts.of(zipWithIndex().flatMap(t -> {
                 if (t._2() < check && !added[0])
@@ -1286,7 +1286,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         }
 
         return Spouts.deferFromStream(()-> {
-            long check = new Long(pos);
+            long check = Long.valueOf(pos);
             boolean added[] = {false};
 
             return Spouts.of(zipWithIndex().flatMap(t -> {

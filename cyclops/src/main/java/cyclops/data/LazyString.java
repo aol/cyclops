@@ -1,9 +1,7 @@
 package cyclops.data;
 
 
-import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Option;
-import com.oath.cyclops.hkt.DataWitness.lazyString;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -20,7 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class LazyString implements ImmutableList<Character>,Higher<lazyString,Character>, Serializable {
+public final class LazyString implements ImmutableList<Character>, Serializable {
     private static final long serialVersionUID = 1L;
     private final LazySeq<Character> string;
 

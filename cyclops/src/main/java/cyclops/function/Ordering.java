@@ -48,7 +48,7 @@ public interface Ordering<T> extends Comparator<T> {
         return compareResult >= 0;
     }
 
-    public static <T> Ordering<T> of(Comparator<? super T> comp){
+    static <T> Ordering<T> of(Comparator<? super T> comp){
         if(comp instanceof  Ordering)
             return (Ordering)comp;
         return (left,right)->comp.compare(left,right);

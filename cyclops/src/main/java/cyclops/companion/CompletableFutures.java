@@ -4,11 +4,8 @@ import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.hkt.Higher;
-
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.control.Either;
-import com.oath.cyclops.hkt.DataWitness.future;
 
 import cyclops.control.Future;
 import cyclops.function.Function3;
@@ -38,8 +35,8 @@ public class CompletableFutures {
         return cf;
     }
     public static  <T,R> CompletableFuture<R> tailRec(T initial, Function<? super T, ? extends CompletableFuture<? extends Either<T, R>>> fn){
-        Higher<future, R> x = Future.tailRec(initial, fn.andThen(Future::of));
-        return Future.narrowK(x).getFuture();
+        var x = Future.tailRec(initial, fn.andThen(Future::of));
+        return Future.narrow(x).getFuture();
     }
 
 

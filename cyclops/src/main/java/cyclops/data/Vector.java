@@ -1,8 +1,6 @@
 package cyclops.data;
 
 
-import com.oath.cyclops.hkt.DataWitness.vector;
-import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import cyclops.control.Either;
@@ -28,8 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Vector<T> implements ImmutableList<T>,
-                                  Serializable,
-                                 Higher<vector,T> {
+                                  Serializable {
 
     private final BAMT.NestedArray<T> root;
     private final BAMT.ActiveTail<T> tail;
@@ -63,12 +60,6 @@ public class Vector<T> implements ImmutableList<T>,
         return fromIterable(it);
     }
 
-  public static <T> Vector<T> narrowK(final Higher<vector, T> list) {
-    return (Vector<T>)list;
-  }
-  public static <C2,T> Higher<C2, Higher<vector,T>> widen2(Higher<C2, Vector<T>> list){
-    return (Higher)list;
-  }
 
   @Override
   public <R1, R2, R3, R> Vector<R> forEach4(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3, Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
@@ -1113,7 +1104,5 @@ public class Vector<T> implements ImmutableList<T>,
 
       return Vector.fromStream(Either.sequenceRight(next).orElse(ReactiveSeq.empty()));
     }
-    public static <T> Higher<vector, T> widen(Vector<T> narrow) {
-      return narrow;
-    }
+
 }

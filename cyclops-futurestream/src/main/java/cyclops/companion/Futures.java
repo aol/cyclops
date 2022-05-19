@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public interface Futures {
-  public static  <T,R> Future<R> tailRec(T initial, Function<? super T, ? extends Future<? extends Either<T, R>>> fn){
+   static  <T,R> Future<R> tailRec(T initial, Function<? super T, ? extends Future<? extends Either<T, R>>> fn){
     SimpleReact sr = SequentialElasticPools.simpleReact.nextReactor();
     return Future.of(()->{
       Future<? extends Either<T, R>> next[] = new Future[1];
@@ -27,7 +27,7 @@ public interface Futures {
       boolean cont = true;
       do {
         cont = next[0].fold(p ->  p.fold(s -> {
-          next[0] = Future.narrowK(fn.apply(s));
+          next[0] = Future.narrow(fn.apply(s));
           return true;
         }, pr -> false), () -> false);
       }while(cont);

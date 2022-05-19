@@ -1,9 +1,7 @@
 package cyclops.data;
 
 
-import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Option;
-import com.oath.cyclops.hkt.DataWitness.range;
 import cyclops.function.Ordering;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
@@ -18,7 +16,7 @@ import java.util.function.Function;
 import static cyclops.data.tuple.Tuple.tuple;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class Range<T> implements Iterable<T>, Higher<range,T>, Serializable{
+public final class Range<T> implements Iterable<T>, Serializable{
 
     private static final long serialVersionUID = 1L;
 

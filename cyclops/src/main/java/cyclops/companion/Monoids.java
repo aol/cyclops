@@ -13,8 +13,6 @@ import cyclops.data.HashSet;
 import cyclops.data.TreeSet;
 import cyclops.function.Monoid;
 
-import cyclops.function.NaturalTransformation;
-import cyclops.function.Semigroup;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 
@@ -416,9 +414,6 @@ public interface Monoids {
      */
     static Monoid<Boolean> booleanConjunction = Monoid.of(true, Semigroups.booleanConjunction);
 
-    static <A> Monoid<NaturalTransformation<A,A>> naturalTransformationComposition(){
-        return Monoid.of(NaturalTransformation.identity(), Semigroups.naturalTransformationComposition());
-    }
 
     /**
      * @return Monoid for composing function

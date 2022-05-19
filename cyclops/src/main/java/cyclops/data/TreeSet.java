@@ -3,10 +3,8 @@ package cyclops.data;
 
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentSet;
-import com.oath.cyclops.hkt.Higher;
 import cyclops.companion.Comparators;
 import cyclops.control.Option;
-import com.oath.cyclops.hkt.DataWitness.treeSet;
 import cyclops.data.base.RedBlackTree;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -27,7 +25,6 @@ import java.util.stream.Stream;
 
 
 public final class TreeSet<T> implements ImmutableSortedSet<T>,
-                                         Higher<treeSet,T>,
                                          Serializable {
 
     private final RedBlackTree.Tree<T,T> map;

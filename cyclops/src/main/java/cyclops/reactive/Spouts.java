@@ -1,7 +1,5 @@
 package cyclops.reactive;
 
-import com.oath.cyclops.hkt.Higher;
-
 import com.oath.cyclops.internal.stream.spliterators.push.*;
 import com.oath.cyclops.types.reactive.BufferOverflowPolicy;
 import com.oath.cyclops.types.traversable.IterableX;
@@ -12,7 +10,6 @@ import com.oath.cyclops.internal.stream.ReactiveStreamX.Type;
 import com.oath.cyclops.internal.stream.spliterators.UnfoldSpliterator;
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 import cyclops.data.Seq;
-import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 
 import cyclops.function.checked.CheckedSupplier;
 import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
@@ -23,10 +20,8 @@ import org.reactivestreams.Subscription;
 
 import java.util.Queue;
 import java.util.Spliterator;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -346,15 +341,6 @@ public interface Spouts {
     }
 
 
-    /**
-     * Convert the raw Higher Kinded Type for ReactiveSeq types into the ReactiveSeq type definition class
-     *
-     * @param future HKT encoded list into a ReactiveSeq
-     * @return ReactiveSeq
-     */
-    static <T> ReactiveSeq<T> narrowK(final Higher<reactiveSeq, T> future) {
-        return (ReactiveSeq<T>) future;
-    }
 
 
 }

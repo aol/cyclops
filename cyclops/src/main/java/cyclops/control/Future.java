@@ -1,9 +1,6 @@
 package cyclops.control;
 
 
-import com.oath.cyclops.hkt.Higher;
-
-
 import com.oath.cyclops.types.OrElseValue;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.ReactiveTransformable;
@@ -14,7 +11,6 @@ import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import com.oath.cyclops.hkt.DataWitness.future;
 
 
 import com.oath.cyclops.types.MonadicValue;
@@ -70,7 +66,6 @@ import java.util.concurrent.*;
 public class Future<T> implements To<Future<T>>,
                                   MonadicValue<T>,
                                   Completable<T>,
-                                  Higher<future,T>,
                                   RecoverableFrom<Throwable,T>,
                                   Zippable<T>,
                                   ReactiveTransformable<T>,
@@ -81,9 +76,7 @@ public class Future<T> implements To<Future<T>>,
       Future<? extends Either<T, R>> ft = fn.apply(initial);
       return ft.flatMap(e -> e.fold(t->Future.of(() -> Future.<T,R>tailRec(t,fn)).flatMap(a->a),r->Future.ofResult(r)));
     }
-    public static <T> Higher<future, T> widen(Future<T> narrow) {
-    return narrow;
-  }
+
 
 
     @Override
@@ -137,15 +130,7 @@ public class Future<T> implements To<Future<T>>,
         });
 
     }
-    /**
-     * Convert the raw Higher Kinded Type for  FutureType types into the FutureType type definition class
-     *
-     * @param future HKT encoded list into a FutureType
-     * @return FutureType
-     */
-    public static <T> Future<T> narrowK(final Higher<future, T> future) {
-        return (Future<T>)future;
-    }
+
 
     /**
      * An zero Future

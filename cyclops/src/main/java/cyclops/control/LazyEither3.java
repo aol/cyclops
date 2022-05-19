@@ -1,7 +1,5 @@
 package cyclops.control;
 
-import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.hkt.Higher3;
 import com.oath.cyclops.matching.Sealed3;
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.OrElseValue;
@@ -13,7 +11,6 @@ import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.reactive.Completable;
 import cyclops.function.*;
 
-import com.oath.cyclops.hkt.DataWitness.lazyEither3;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import lombok.AccessLevel;
@@ -46,13 +43,9 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
                                                  Filters<RT>,
                                                 BiTransformable<LT2, RT>,
                                                 To<LazyEither3<LT1, LT2, RT>>,
-                                                Sealed3<LT1,LT2,RT>,
-                                                Higher3<lazyEither3,LT1,LT2,RT> {
+                                                Sealed3<LT1,LT2,RT> {
 
 
-    public static <LT1,LT2,T> Higher<Higher<Higher<lazyEither3, LT1>, LT2>,T> widen(LazyEither3<LT1,LT2,T> narrow) {
-      return narrow;
-    }
     default LazyEither3<LT1,LT2, RT> filter(Predicate<? super RT> test, Function<? super RT, ? extends LT1> rightToLeft){
       return flatMap(e->test.test(e) ? LazyEither3.right(e) : LazyEither3.left1(rightToLeft.apply(e)));
     }
@@ -1371,12 +1364,5 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
         }
 
     }
-    public static <L1,L2,T> LazyEither3<L1,L2,T> narrowK3(final Higher3<lazyEither3, L1,L2,T> xor) {
-        return (LazyEither3<L1,L2,T>)xor;
-    }
-    public static <L1,L2,T> LazyEither3<L1,L2,T> narrowK(final Higher<Higher<Higher<lazyEither3, L1>,L2>,T> xor) {
-        return (LazyEither3<L1,L2,T>)xor;
-    }
-
 
 }

@@ -1,7 +1,5 @@
 package cyclops.control;
 
-import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.hkt.Higher2;
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.OrElseValue;
 import com.oath.cyclops.types.Value;
@@ -11,7 +9,6 @@ import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.reactive.ValueSubscriber;
 import cyclops.function.*;
-import com.oath.cyclops.hkt.DataWitness.ior;
 import cyclops.reactive.ReactiveSeq;
 
 import lombok.AccessLevel;
@@ -40,11 +37,9 @@ import java.util.function.*;
  * @param <LT> Left type
  * @param <RT> Right type
  */
-public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,Ior<LT, RT>>,Unit<RT>, Transformable<RT>, Filters<RT>,  BiTransformable<LT, RT> ,Higher2<ior, LT, RT> {
+public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,Ior<LT, RT>>,Unit<RT>, Transformable<RT>, Filters<RT>,  BiTransformable<LT, RT>  {
 
-    public static <L,T> Higher<Higher<ior,L>, T> widen(Ior<L,T> narrow) {
-    return narrow;
-  }
+
 
 
     Ior<LT,RT> recover(Supplier<? extends RT> value);
@@ -1169,11 +1164,6 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
                 return present.apply(primary);
             }
         }
-    public static <ST,T> Ior<ST,T> narrowK2(final Higher2<ior, ST,T> ior) {
-        return (Ior<ST,T>)ior;
-    }
-    public static <ST,T> Ior<ST,T> narrowK(final Higher<Higher<ior, ST>,T> ior) {
-        return (Ior<ST,T>)ior;
-    }
+
 
 }

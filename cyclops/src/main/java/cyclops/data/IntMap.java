@@ -4,10 +4,8 @@ package cyclops.data;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentList;
-import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Eval;
 import cyclops.control.Option;
-import com.oath.cyclops.hkt.DataWitness.intMap;
 import cyclops.data.base.IntPatriciaTrie;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -27,7 +25,7 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T> {
+public class IntMap<T> implements ImmutableList<T>,Serializable {
 
 
     @Override

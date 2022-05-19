@@ -1,13 +1,9 @@
 package cyclops.data;
 
 import com.oath.cyclops.types.persistent.PersistentMap;
-import com.oath.cyclops.hkt.Higher2;
-import cyclops.companion.Comparators;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
-import com.oath.cyclops.hkt.DataWitness.hashMap;
 import cyclops.data.base.HAMT;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
@@ -18,14 +14,13 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
 
 
 @AllArgsConstructor
-public final class HashMap<K,V> implements ImmutableMap<K,V>,PersistentMap<K,V>,Higher2<hashMap,K,V>, Serializable{
+public final class HashMap<K,V> implements ImmutableMap<K,V>,PersistentMap<K,V>, Serializable {
 
     private final HAMT.Node<K,V> map;
     private static final long serialVersionUID = 1L;

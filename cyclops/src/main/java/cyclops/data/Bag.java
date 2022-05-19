@@ -1,8 +1,6 @@
 package cyclops.data;
 
-import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.persistent.PersistentBag;
-import com.oath.cyclops.hkt.DataWitness.bag;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -18,7 +16,6 @@ import java.util.stream.Stream;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Bag<T> implements ImmutableSet<T>,
                                 PersistentBag<T>,
-                                Higher<bag,T>,
                                 Serializable {
 
     private static final long serialVersionUID = 1L;

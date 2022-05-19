@@ -1,13 +1,11 @@
 package cyclops.data;
 
-import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct3;
 import com.oath.cyclops.matching.Sealed2;
 import com.oath.cyclops.types.foldable.Folds;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 
-import com.oath.cyclops.hkt.DataWitness.diet;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -25,7 +23,6 @@ import static cyclops.data.tuple.Tuple.tuple;
 //Discrete Interval Encoded Tree
 public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>,
                                  Iterable<T>,
-                                 Higher<diet,T>,
                                  Folds<T> {
 
     public static <T> DIET<T> empty(){

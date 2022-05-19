@@ -19,11 +19,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.data.Seq;
 import cyclops.data.Vector;

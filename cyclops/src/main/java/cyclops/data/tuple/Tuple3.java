@@ -1,16 +1,11 @@
 package cyclops.data.tuple;
 
 
-import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.hkt.Higher3;
-import com.oath.cyclops.types.foldable.EqualTo;
-import com.oath.cyclops.types.foldable.OrderedBy;
 import com.oath.cyclops.types.foldable.To;
 import cyclops.companion.Comparators;
 import cyclops.function.Function3;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
-import com.oath.cyclops.hkt.DataWitness.tuple3;
 import lombok.AllArgsConstructor;
 
 import java.io.Serializable;
@@ -26,10 +21,7 @@ import java.util.function.Supplier;
 @AllArgsConstructor//(access = AccessLevel.PROTECTED)
 public class Tuple3<T1,T2,T3> implements To<Tuple3<T1,T2,T3>>,
                                         Serializable,
-                                        Higher3<tuple3,T1,T2,T3> ,
-                                        EqualTo<Higher<Higher<tuple3,T1>,T2>,T3,Tuple3<T1,T2,T3>>,
-                                        OrderedBy<Higher<Higher<tuple3,T1>,T2>,T3,Tuple3<T1,T2,T3>>,
-                                        Comparable<Tuple3<T1,T2,T3>>{
+                                        Comparable<Tuple3<T1,T2,T3>> {
 
     private static final long serialVersionUID = 1L;
 
@@ -151,13 +143,6 @@ public class Tuple3<T1,T2,T3> implements To<Tuple3<T1,T2,T3>>,
         return String.format("[%s,%s,%s]", _1(),_2(),_3());
     }
 
-
-    public static <T1,T2,T3> Tuple3<T1,T2,T3> narrowK3(Higher3<tuple3,T1,T2,T3> ds){
-        return (Tuple3<T1,T2,T3>)ds;
-    }
-    public static <T1,T2,T3> Tuple3<T1,T2,T3> narrowK(Higher<Higher<Higher<tuple3,T1>,T2>,T3> ds){
-        return (Tuple3<T1,T2,T3>)ds;
-    }
 
 
     @Override

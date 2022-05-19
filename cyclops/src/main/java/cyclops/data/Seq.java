@@ -1,8 +1,6 @@
 package cyclops.data;
 
 
-import com.oath.cyclops.hkt.DataWitness.seq;
-import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.functor.Transformable;
@@ -22,7 +20,6 @@ import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import org.reactivestreams.Publisher;
 
 import java.io.Serializable;
@@ -38,8 +35,7 @@ public sealed interface Seq<T> extends ImmutableList<T>,
                                 Filters<T>,
                                 Transformable<T>,
                                 PersistentList<T>,
-                                 Serializable,
-                                Higher<seq,T>  permits Seq.Cons, Seq.Nil {
+                                 Serializable permits Seq.Cons, Seq.Nil {
 
     static <T> Collector<T, List<T>, Seq<T>> collector() {
         Collector<T, ?, List<T>> c  = Collectors.toList();
@@ -342,12 +338,7 @@ public sealed interface Seq<T> extends ImmutableList<T>,
     }
 
 
-    public static <T> Seq<T> narrowK(final Higher<seq, T> list) {
-      return (Seq<T>)list;
-    }
-    public static <C2,T> Higher<C2, Higher<seq,T>> widen2(Higher<C2, Seq<T>> list){
-      return (Higher)list;
-    }
+
     @Override
     default Seq<T> removeStream(Stream<? extends T> stream) {
         return (Seq<T>)ImmutableList.super.removeStream(stream);
@@ -1141,8 +1132,5 @@ public sealed interface Seq<T> extends ImmutableList<T>,
       }
     }
 
-  public static <T> Higher<seq, T> widen(Seq<T> narrow) {
-    return narrow;
-  }
 
 }

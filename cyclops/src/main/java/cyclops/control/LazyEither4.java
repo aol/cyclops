@@ -1,8 +1,5 @@
 package cyclops.control;
 
-import com.oath.cyclops.hkt.DataWitness.lazyEither4;
-import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.hkt.Higher4;
 import com.oath.cyclops.matching.Sealed4;
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.OrElseValue;
@@ -24,7 +21,6 @@ import org.reactivestreams.Subscription;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.*;
@@ -50,18 +46,15 @@ import java.util.function.*;
  */
 public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
                                                       Filters<RT>,
-                                                      Higher4<lazyEither4,LT1,LT2,LT3,RT>,
-                                                      BiTransformable<LT3, RT>,
+    BiTransformable<LT3, RT>,
                                                       To<LazyEither4<LT1, LT2,LT3, RT>>,
                                                       OrElseValue<RT,LazyEither4<LT1,LT2,LT3,RT>>,
                                                       Sealed4<LT1,LT2,LT3,RT>,
-                                                      Unit<RT>{
+                                                      Unit<RT> {
 
 
     Option<RT> get();
-    public static <LT1,LT2,LT3,T> Higher<Higher<Higher<Higher<lazyEither4, LT1>, LT2>,LT3>,T> widen(LazyEither4<LT1,LT2,LT3,T> narrow) {
-      return narrow;
-    }
+
 
     /**
      * Create a reactive CompletableEither
@@ -1607,14 +1600,6 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         }
 
 
-    }
-
-
-    public static <L1,L2,L3,T> LazyEither4<L1,L2,L3,T> narrowK3(final Higher4<lazyEither4, L1,L2,L3,T> xor) {
-        return (LazyEither4<L1,L2,L3,T>)xor;
-    }
-    public static <L1,L2,L3,T> LazyEither4<L1,L2,L3,T> narrowK(final Higher<Higher<Higher<Higher<lazyEither4, L1>,L2>,L3>,T> xor) {
-        return (LazyEither4<L1,L2,L3,T>)xor;
     }
 
 

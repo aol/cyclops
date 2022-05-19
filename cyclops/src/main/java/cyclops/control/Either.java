@@ -1,7 +1,5 @@
 package cyclops.control;
 
-import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.hkt.Higher2;
 import com.oath.cyclops.matching.Sealed2;
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.OrElseValue;
@@ -11,9 +9,6 @@ import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 
-import cyclops.companion.Monoids;
-import cyclops.companion.Reducers;
-import cyclops.data.ImmutableList;
 import cyclops.data.LazySeq;
 import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple2;
@@ -21,7 +16,6 @@ import cyclops.function.*;
 import cyclops.companion.Semigroups;
 
 import com.oath.cyclops.types.reactive.ValueSubscriber;
-import com.oath.cyclops.hkt.DataWitness.either;
 
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
@@ -118,19 +112,18 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
                                          Sealed2<LT, RT>,Value<RT>,
                                          OrElseValue<RT,Either<LT, RT>>,
                                          Unit<RT>, Transformable<RT>, Filters<RT>,
-                                         Serializable,
-                                         Higher2<either, LT, RT> {
+                                         Serializable {
 
 
 
 
-    public static  <L,T,R> Either<L,R> tailRec(T initial, Function<? super T, ? extends Either<L,? extends Either<T, R>>> fn){
+    static  <L,T,R> Either<L,R> tailRec(T initial, Function<? super T, ? extends Either<L,? extends Either<T, R>>> fn){
         Either<L,? extends Either<T, R>> next[] = new Either[1];
         next[0] = Either.right(Either.left(initial));
         boolean cont = true;
         do {
             cont = next[0].fold(p -> p.fold(s -> {
-                next[0] = narrowK(fn.apply(s));
+                next[0] = fn.apply(s);
                 return true;
             }, pr -> false), () -> false);
         } while (cont);
@@ -138,9 +131,6 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
         return next[0].map(x->x.fold(l->null, r->r));
     }
 
-    public static <L,T> Higher<Higher<either,L>, T> widen(Either<L,T> narrow) {
-        return narrow;
-    }
 
     default int arity(){
         return 2;
@@ -188,12 +178,6 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
         return visitAny(either,fn);
     }
 
-    public static <ST,T> Either<ST,T> narrowK2(final Higher2<either, ST,T> xor) {
-        return (Either<ST,T>)xor;
-    }
-    public static <ST,T> Either<ST,T> narrowK(final Higher<Higher<either, ST>,T> xor) {
-        return (Either<ST,T>)xor;
-    }
     /**
      * Construct a Right Either from the supplied publisher
      * <pre>
@@ -209,7 +193,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
      * @param pub Publisher to construct an Either from
      * @return Either constructed from the supplied Publisher
      */
-    public static <T> Either<Throwable, T> fromPublisher(final Publisher<T> pub) {
+    static <T> Either<Throwable, T> fromPublisher(final Publisher<T> pub) {
         final ValueSubscriber<T> sub = ValueSubscriber.subscriber();
         pub.subscribe(sub);
         return sub.toLazyEither();

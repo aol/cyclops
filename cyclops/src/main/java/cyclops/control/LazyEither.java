@@ -1,8 +1,5 @@
 package cyclops.control;
 
-import com.oath.cyclops.hkt.DataWitness.either;
-import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.hkt.Higher2;
 import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.types.MonadicValue;
 import cyclops.companion.Semigroups;
@@ -107,15 +104,8 @@ import java.util.function.*;
 public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
 
-  public static <ST,T> LazyEither<ST,T> narrowK2(final Higher2<either, ST,T> xor) {
-     return fromEither(Either.narrowK2(xor));
 
-  }
-  public static <ST,T> LazyEither<ST,T> narrowK(final Higher<Higher<either, ST>,T> xor) {
-    return fromEither(Either.narrowK(xor));
-  }
-
-    public static  <L,T,R> LazyEither<L,R> tailRec(T initial, Function<? super T, ? extends LazyEither<L,? extends Either<T, R>>> fn){
+    static  <L,T,R> LazyEither<L,R> tailRec(T initial, Function<? super T, ? extends LazyEither<L,? extends Either<T, R>>> fn){
         LazyEither<L,? extends Either<T, R>> next[] = new LazyEither[1];
         next[0] = LazyEither.right(Either.left(initial));
         boolean cont = true;

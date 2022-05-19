@@ -2,9 +2,7 @@ package cyclops.data;
 
 
 import com.oath.cyclops.types.persistent.PersistentMap;
-import com.oath.cyclops.hkt.Higher2;
 import cyclops.control.Option;
-import com.oath.cyclops.hkt.DataWitness.trieMap;
 import cyclops.data.base.HashedPatriciaTrie;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
@@ -24,8 +22,7 @@ import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class TrieMap<K,V> implements  ImmutableMap<K,V>,
-                                            Higher2<trieMap,K,V>,
-                                            Serializable{
+    Serializable {
 
     private static final long serialVersionUID = 1L;
     HashedPatriciaTrie.Node<K,V> map;

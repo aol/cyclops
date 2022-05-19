@@ -1,6 +1,5 @@
 package cyclops.control;
 
-import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct1;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.foldable.To;
@@ -8,7 +7,6 @@ import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.util.ExceptionSoftener;
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.function.*;
-import com.oath.cyclops.hkt.DataWitness.eval;
 
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -58,8 +56,7 @@ import java.util.stream.Stream;
  */
 public interface Eval<T> extends To<Eval<T>>,Function0<T>,
                                   Deconstruct1<T>,
-                                  MonadicValue<T>,
-                                  Higher<eval ,T>{
+                                  MonadicValue<T> {
 
 
     default Tuple1<T> unapply(){
@@ -67,19 +64,17 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
 
-    public static <T> Eval<T> eval(Supplier<T> s){
+    static <T> Eval<T> eval(Supplier<T> s){
         if(s instanceof Eval)
             return (Eval<T>)s;
         return later(s);
     }
 
-    public static  <T,R> Eval<R> tailRec(T initial, Function<? super T, ? extends Eval<? extends Either<T, R>>> fn){
-        return narrowK(fn.apply(initial)).flatMap( eval ->
+    static  <T,R> Eval<R> tailRec(T initial, Function<? super T, ? extends Eval<? extends Either<T, R>>> fn){
+        return narrow(fn.apply(initial)).flatMap( eval ->
                 eval.fold(s->tailRec(s,fn), p-> Eval.now(p)));
     }
-    public static <T> Higher<eval, T> widen(Eval<T> narrow) {
-    return narrow;
-  }
+
 
 
     static <T> Eval<T> async(final Executor ex, final Supplier<T> s){
@@ -99,15 +94,6 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
     /**
-     * Convert the raw Higher Kinded Type for Evals types into the Eval interface
-     *
-     * @param future HKT encoded list into a OptionalType
-     * @return Eval
-     */
-    public static <T> Eval<T> narrowK(final Higher<eval, T> future) {
-        return (Eval<T>)future;
-    }
-    /**
      * Create an Eval instance from a reactive-streams publisher
      *
      * <pre>
@@ -121,7 +107,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @param pub Publisher to create the Eval from
      * @return Eval created from Publisher
      */
-    public static <T> Eval<T> fromPublisher(final Publisher<T> pub) {
+    static <T> Eval<T> fromPublisher(final Publisher<T> pub) {
         if(pub instanceof Eval)
             return (Eval<T>)pub;
         CompletableEval<T, T> result = eval();

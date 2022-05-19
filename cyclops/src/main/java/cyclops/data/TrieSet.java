@@ -3,10 +3,8 @@ package cyclops.data;
 
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentSet;
-import com.oath.cyclops.hkt.Higher;
 
 import cyclops.control.Option;
-import com.oath.cyclops.hkt.DataWitness.trieSet;
 import cyclops.data.base.HashedPatriciaTrie;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
@@ -29,7 +27,6 @@ import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class TrieSet<T> implements ImmutableSet<T>,
-                                         Higher<trieSet,T>,
                                          Serializable{
     private static final long serialVersionUID = 1L;
     private final HashedPatriciaTrie.Node<T,T> map;

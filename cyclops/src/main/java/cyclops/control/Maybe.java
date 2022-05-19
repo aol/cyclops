@@ -2,7 +2,6 @@ package cyclops.control;
 
 
 import com.oath.cyclops.async.adapters.Queue;
-import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Present;
 import cyclops.data.tuple.*;
@@ -14,7 +13,6 @@ import cyclops.function.Reducer;
 
 import cyclops.function.Function3;
 import cyclops.function.Function4;
-import com.oath.cyclops.hkt.DataWitness.option;
 
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
@@ -79,11 +77,8 @@ public interface Maybe<T> extends Option<T> {
 
     }
     public static  <T,R> Maybe<R> tailRec(T initial, Function<? super T, ? extends Maybe<? extends Either<T, R>>> fn){
-        return narrowK(fn.apply(initial)).flatMap( eval -> eval.fold(s->tailRec(s,fn), p->Maybe.just(p)));
+        return narrow(fn.apply(initial)).flatMap( eval -> eval.fold(s->tailRec(s,fn), p->Maybe.just(p)));
     }
-    public static <T> Higher<option, T> widen(Maybe<T> narrow) {
-    return narrow;
-  }
 
 
     static <T> Maybe<T> async(final Executor ex, final Supplier<T> s){
@@ -240,19 +235,6 @@ public interface Maybe<T> extends Option<T> {
     }
 
 
-    public static <C2,T> Higher<C2, Higher<option,T>> widen2(Higher<C2, Maybe<T>> nestedMaybe){
-
-        return (Higher)nestedMaybe;
-    }
-    /**
-     * Convert the raw Higher Kinded Type for MaybeType types into the MaybeType type definition class
-     *
-     * @param future HKT encoded list into a MaybeType
-     * @return MaybeType
-     */
-    public static <T> Maybe<T> narrowK(final Higher<option, T> future) {
-        return Maybe.fromOption(Option.narrowK(future));
-    }
 
 
     public static <T> Maybe<T> fromOption(Option<T> opt){
@@ -261,17 +243,7 @@ public interface Maybe<T> extends Option<T> {
       return fromIterable(opt);
     }
 
-    /**
-     * Convert the HigherKindedType definition for a Maybe into
-     *
-     * @param maybe Constructor to convert back into narrowed type
-     * @return Optional from Higher Kinded Type
-     */
-    public static <T> Optional<T> narrowOptional(final Higher<option, T> maybe) {
 
-        return narrowK(maybe).toOptional();
-
-    }
     @SuppressWarnings("rawtypes")
     final static Maybe EMPTY = new Nothing<>();
 
