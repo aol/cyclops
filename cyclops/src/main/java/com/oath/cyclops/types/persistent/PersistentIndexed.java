@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 public interface PersistentIndexed<T> extends PersistentCollection<T> {
+
     Option<T> get(int index);
     T getOrElse(int index, T alt);
     T getOrElseGet(int index, Supplier<? extends T> alt);

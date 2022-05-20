@@ -18,7 +18,7 @@ public class DuplicationTest {
     }
 	@Test
 	public void testDuplicate(){
-		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies = of(1,2,3,4,5,6).duplicate();
+		 Tuple2<FutureStream<Integer>, FutureStream<Integer>> copies = of(1,2,3,4,5,6).duplicate();
 		 assertTrue(copies._1().anyMatch(i->i==2));
 		 assertTrue(copies._2().anyMatch(i->i==2));
 	}
@@ -44,7 +44,7 @@ public class DuplicationTest {
 
 	@Test
 	public void testDuplicateFilter(){
-		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
+		 Tuple2<FutureStream<Integer>, FutureStream<Integer>> copies =of(1,2,3,4,5,6).duplicate();
 		 assertTrue(copies._1().filter(i->i%2==0).toList().size()==3);
 		 assertTrue(copies._2().filter(i->i%2==0).toList().size()==3);
 	}
@@ -65,7 +65,7 @@ public class DuplicationTest {
 	}
 	@Test
 	public void testDuplicateLimit(){
-		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
+		 Tuple2<FutureStream<Integer>, FutureStream<Integer>> copies =of(1,2,3,4,5,6).duplicate();
 		 assertTrue(copies._1().limit(3).toList().size()==3);
 		 assertTrue(copies._2().limit(3).toList().size()==3);
 	}

@@ -77,7 +77,6 @@ public class MiscTest {
     ReactiveSeq<String> seq = Spouts.from(Vector.of(1, 2, 3, 4)
       .plus(5)
       .map(i -> "connect toNested Akka, RxJava and more with reactiveBuffer-streams" + i));
-
     ImmutableSet<String> setX =  seq.to(s->new LazyReact().fromStream(s))
       .map(data->"fan out across threads with futureStreams" + data)
       .to(HashSet::fromIterable);

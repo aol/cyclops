@@ -274,7 +274,7 @@ public class LazyReact implements ReactBuilder {
      * @param s Stream of CompletableFutures
      * @return FutureStream
      */
-    public <U> FutureStream<U> constructFutures(final Stream<CompletableFuture<U>> s) {
+    public <U> FutureStream<U> constructFutures(final Stream<CompletableFuture<? extends U>> s) {
         final LazyReact toUse = withStreamOfFutures(true);
         return toUse.construct((Stream<U>) s);
     }
@@ -473,7 +473,7 @@ public class LazyReact implements ReactBuilder {
      *	@return FutureStream
      * @see com.oath.cyclops.react.stream.BaseSimpleReact#fromStream(java.util.stream.Stream)
      */
-    public <U> FutureStream<U> fromStreamFutures(final Stream<CompletableFuture<U>> stream) {
+    public <U> FutureStream<U> fromStreamFutures(final Stream<CompletableFuture<? extends U>> stream) {
 
         return constructFutures(stream);
     }
@@ -501,7 +501,7 @@ public class LazyReact implements ReactBuilder {
      * @see com.oath.cyclops.react.stream.BaseSimpleReact#react(java.util.function.Supplier[])
      */
     @SafeVarargs
-    public final <U> FutureStream<U> ofAsync(final Supplier<U>... actions) {
+    public final <U> FutureStream<U> ofAsync(final Supplier<? extends U>... actions) {
 
         return reactI(actions);
 
@@ -559,7 +559,7 @@ public class LazyReact implements ReactBuilder {
     }
 
     @SafeVarargs
-    private final <U> FutureStream<U> reactI(final Supplier<U>... actions) {
+    private final <U> FutureStream<U> reactI(final Supplier<? extends U>... actions) {
 
         return constructFutures(Stream.of(actions)
                                       .map(next -> CompletableFuture.supplyAsync(next, getExecutor())));

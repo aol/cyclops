@@ -1,5 +1,14 @@
 package com.oath.cyclops.types.reactive;
 
+import com.oath.cyclops.async.adapters.Queue;
+import com.oath.cyclops.internal.react.FutureStreamImpl;
+import com.oath.cyclops.internal.react.exceptions.SimpleReactProcessingException;
+import com.oath.cyclops.internal.react.stream.LazyStreamWrapper;
+import cyclops.futurestream.FutureStream;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -8,14 +17,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import com.oath.cyclops.internal.react.exceptions.SimpleReactProcessingException;
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-
-import com.oath.cyclops.async.adapters.Queue;
-import com.oath.cyclops.internal.react.stream.LazyStreamWrapper;
-
 /**
  * Reactive Streams publisher, that publishes on the calling thread
  *
@@ -23,12 +24,18 @@ import com.oath.cyclops.internal.react.stream.LazyStreamWrapper;
  *
  * @param <T> Type of publisher
  */
-public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
-    LazyStreamWrapper getLastActive();
+public record FutureStreamSynchronousPublisher<T> (FutureStreamImpl<T> stream) implements Publisher<T> {
+    LazyStreamWrapper getLastActive(){
+        return stream.getLastActive();
+    }
 
-    void cancel();
+    void cancel(){
+        stream.cancel();
+    }
 
-    void forwardErrors(Consumer<Throwable> c);
+    void forwardErrors(Consumer<Throwable> c){
+        stream.forwardErrors(c);
+    }
 
 
 
@@ -36,7 +43,7 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
      * @see org.reactivestreams.Publisher#forEachAsync(org.reactivestreams.Subscriber)
      */
     @Override
-    default void subscribe(final Subscriber<? super T> s) {
+    public void subscribe(final Subscriber<? super T> s) {
 
         try {
 
@@ -174,6 +181,8 @@ public interface FutureStreamSynchronousPublisher<T> extends Publisher<T> {
     /**
      * @return An async transfer Queue from which to recieve this Publishers data
      */
-    Queue<T> toQueue();
+    Queue<T> toQueue(){
+        return stream.toQueue();
+    }
 
 }

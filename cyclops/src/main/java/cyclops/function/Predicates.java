@@ -479,6 +479,10 @@ public class Predicates {
         return (Predicate<T>)p;
     }
 
+    public static <U> Predicate<? super U> notNull() {
+        return  t -> t != null;
+    }
+
     private static class TimeSample<T> implements Predicate<T>{
         private final AtomicReference<SimpleTimer> timer = new AtomicReference(null);
         private final  long nanos;

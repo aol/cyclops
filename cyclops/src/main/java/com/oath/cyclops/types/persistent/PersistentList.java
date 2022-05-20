@@ -3,6 +3,7 @@ package com.oath.cyclops.types.persistent;
 import com.oath.cyclops.types.persistent.views.ListView;
 
 public interface PersistentList<T> extends PersistentIndexed<T> {
+
     PersistentList<T> plus(T e);
 
 

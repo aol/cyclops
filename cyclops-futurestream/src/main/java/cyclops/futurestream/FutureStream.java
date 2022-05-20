@@ -1,5 +1,7 @@
 package cyclops.futurestream;
 
+import com.oath.cyclops.async.adapters.Signal;
+import com.oath.cyclops.async.adapters.Topic;
 import com.oath.cyclops.internal.react.async.future.FastFuture;
 import com.oath.cyclops.internal.react.exceptions.SimpleReactProcessingException;
 import com.oath.cyclops.internal.react.stream.CloseableIterator;
@@ -10,11 +12,12 @@ import com.oath.cyclops.internal.stream.FutureOpterationsImpl;
 import com.oath.cyclops.react.SimpleReactFailedStageException;
 import com.oath.cyclops.react.async.subscription.Continueable;
 import com.oath.cyclops.react.collectors.lazy.LazyResultConsumer;
+import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.futurestream.*;
 import com.oath.cyclops.types.persistent.PersistentCollection;
-import com.oath.cyclops.types.reactive.FutureStreamSynchronousPublisher;
 import com.oath.cyclops.types.reactive.ReactiveStreamsTerminalFutureOperations;
 import com.oath.cyclops.types.stream.Connectable;
+import com.oath.cyclops.types.stream.PausableConnectable;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.Future;
@@ -35,6 +38,7 @@ import cyclops.function.Function4;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 
+import cyclops.function.Predicates;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streamable;
 import lombok.val;
@@ -49,6 +53,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
@@ -56,21 +61,18 @@ import java.util.stream.*;
 
 public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                          LazyStream<U>,
-                                          ReactiveSeq<U>,
+                                          IterableX<U>,
+                                          Stream<U>,
                                           LazyToQueue<U>,
-                                          ConfigurableStream<U, FastFuture<U>>,
-                                          FutureStreamSynchronousPublisher<U> {
+                                          ConfigurableStream<U, FastFuture<U>>, To<FutureStream<U>> {
 
-    default  <R> R toType(Function<? super FutureStream<U>,? extends R> fn){
-    return fn.apply(this);
-  }
-    @Override
-    default Seq<ReactiveSeq<U>> multicast(int num) {
-        return stream().multicast(num);
+
+    default Seq<FutureStream<U>> multicast(int num) {
+        return stream().multicast(num).map(this::fromStream);
     }
 
-    @Override
-    default ReactiveSeq<U> changes(){
+
+    default FutureStream<U> changes(){
         return fromStream(stream().changes());
     }
 
@@ -79,27 +81,27 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return stream().takeOne();
     }
 
-    @Override
+
     default LazyEither<Throwable, U> findFirstOrError(){
         return stream().findFirstOrError();
     }
 
-    @Override
+
     default <R> FutureStream<R> parallel(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<? extends R>> fn) {
         return fromStream(stream().parallel(fj,fn));
     }
-   @Override
+
    default <U1, R> FutureStream<R> zipLatest(final Publisher<? extends U1> other, final BiFunction<? super U, ? super U1, ? extends R> zipper) {
        return fromStream(stream().zipLatest(other, zipper));
    }
 
 
-    @Override
+
     default <R> FutureStream<R> reduceAll(R identity, BiFunction<R, ? super U, R>  accumulator) {
         return fromStream(stream().reduceAll(identity,accumulator));
     }
 
-    @Override
+
     default <R, A> FutureStream<R> collectAll(Collector<? super U, A, R> collector) {
         return fromStream(stream().collectAll(collector));
     }
@@ -109,14 +111,55 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(stream().append(value));
     }
 
-    @Override
+
     default FutureStream<Tuple2<U, Long>> timestamp() {
         return fromStream(stream().timestamp());
     }
 
-    @Override
+    /**
+     * Retry a transformation if it fails. Default settings are to retry up to 7
+     * times, with an doubling backoff period starting @ 2 seconds delay before
+     * retry.
+     *
+     * <pre>
+     * {@code
+     *
+     *
+     *
+     * 		String result = FutureStream.of( 1,  2, 3)
+     * 				.retry(this::makeIOCall, 7, 2, TimeUnit.SECONDS)
+     * 				.firstValue();
+     *
+     * 		//result = [service call result]
+     * }
+     * </pre>
+     *
+     * @param fn
+     *            Function to retry if fails
+     *
+     */
+    default <R> FutureStream<R> retry(final Function<? super U, ? extends R> fn) {
+        return retry(fn, 7, 2, TimeUnit.SECONDS);
+    }
+
     default <R> FutureStream<R> retry(final Function<? super U, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (FutureStream)ReactiveSeq.super.retry(fn,retries,delay,timeUnit);
+        final Function<U, R> retry = t -> {
+            final long[] sleep = { timeUnit.toMillis(delay) };
+            Throwable exception = null;
+            for (int count = retries; count >=0; count--) {
+                try {
+                    return fn.apply(t);
+                } catch (final Throwable e) {
+                    exception = e;
+                    ExceptionSoftener.softenRunnable(() -> Thread.sleep(sleep[0]))
+                        .run();
+                    sleep[0] = sleep[0] * 2;
+                }
+            }
+            throw ExceptionSoftener.throwSoftenedException(exception);
+
+        };
+        return map(retry);
     }
 
 
@@ -168,62 +211,75 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(stream().zip4(second,third,fourth,fn));
     }
 
-    @Override
+
     default FutureStream<U> merge(final Publisher<U>... publishers) {
         return fromStream(stream().merge(publishers));
     }
 
-    @Override
+
     default FutureStream<U> merge(final QueueFactory<U> factory, final Publisher<U>... publishers) {
         return fromStream(stream().merge(factory,publishers));
     }
+    default FutureStream<U> publishTo(Adapter<U>... adapters){
+        return peek(e->{
+            for(Adapter<U> next:  adapters){
+                next.offer(e);
+            }
+        });
+    }
+    default FutureStream<U> publishTo(Signal<U>... signals){
+        return peek(e->{
+            for(Signal<U> next:  signals){
+                next.set(e);
+            }
+        });
+    }
 
-    @Override
+
     default FutureStream<U> merge(Adapter<U>... adapters) {
         return fromStream(stream().merge(adapters));
     }
 
-    @Override
+
     default <R1, R2, R3> FutureStream<R3> fanOutZipIn(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R1>> path1,
                                                       Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R2>> path2,
                                                       BiFunction<? super R1, ? super R2, ? extends R3> zipFn) {
         return fromStream(stream().fanOutZipIn(path1,path2,zipFn));
     }
 
-    @Override
+
     default <R1, R2, R3> FutureStream<R3> parallelFanOutZipIn(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<? extends R1>> path1,
                                                               Function<? super Stream<U>, ? extends Stream<? extends R2>> path2,
                                                               BiFunction<? super R1, ? super R2, ? extends R3> zipFn) {
         return fromStream(stream().parallelFanOutZipIn(fj,path1,path2,zipFn));
     }
 
-    @Override
     default <R> FutureStream<R> fanOut(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path1,
                                                 Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path2) {
         return fromStream(stream().fanOut(path1,path2));
     }
 
-    @Override
+
     default <R> FutureStream<R> parallelFanOut(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<? extends R>> path1,
                                                Function<? super Stream<U>, ? extends Stream<? extends R>> path2) {
         return fromStream(stream().parallelFanOut(fj,path1,path2));
     }
 
-    @Override
+
     default <R> FutureStream<R> fanOut(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path1,
                                        Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path2,
                                        Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path3) {
         return fromStream(stream().fanOut(path1,path2,path3));
     }
 
-    @Override
+
     default <R> FutureStream<R> parallelFanOut(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<? extends R>> path1,
                                                Function<? super Stream<U>, ? extends Stream<? extends R>> path2,
                                                Function<? super Stream<U>, ? extends Stream<? extends R>> path3) {
         return fromStream(stream().parallelFanOut(fj,path1, path2, path3));
     }
 
-    @Override
+
     default <R1, R2, R3, R4> FutureStream<R4> parallelFanOutZipIn(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<? extends R1>> path1,
                                                                   Function<? super Stream<U>, ? extends Stream<? extends R2>> path2,
                                                                   Function<? super Stream<U>, ? extends Stream<? extends R3>> path3,
@@ -231,7 +287,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(stream().parallelFanOutZipIn(fj,path1, path2, path3,zipFn));
     }
 
-    @Override
+
     default <R1, R2, R3, R4> FutureStream<R4> fanOutZipIn(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R1>> path1,
                                                           Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R2>> path2,
                                                           Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R3>> path3,
@@ -239,15 +295,15 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(stream().fanOutZipIn(path1, path2, path3,zipFn));
     }
 
-    @Override
-    default <R> ReactiveSeq<R> fanOut(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path1,
+
+    default <R> FutureStream<R> fanOut(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path1,
                                        Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path2,
                                        Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path3,
                                        Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R>> path4) {
         return fromStream(stream().fanOut(path1, path2, path3,path4));
     }
 
-    @Override
+
     default <R> FutureStream<R> parallelFanOut(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<? extends R>> path1,
                                                Function<? super Stream<U>, ? extends Stream<? extends R>> path2,
                                                Function<? super Stream<U>, ? extends Stream<? extends R>> path3,
@@ -255,7 +311,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(stream().parallelFanOut(fj,path1, path2, path3,path4));
     }
 
-    @Override
+
     default <R1, R2, R3, R4, R5> FutureStream<R5> fanOutZipIn(Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R1>> path1,
                                                               Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R2>> path2,
                                                               Function<? super ReactiveSeq<U>, ? extends ReactiveSeq<? extends R3>> path3,
@@ -264,7 +320,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(stream().fanOutZipIn(path1, path2, path3,path4,zipFn));
     }
 
-    @Override
+
     default <R1, R2, R3, R4, R5> FutureStream<R5> parallelFanOutZipIn(ForkJoinPool fj, Function<? super Stream<U>, ? extends Stream<? extends R1>> path1,
                                                                       Function<? super Stream<U>, ? extends Stream<? extends R2>> path2,
                                                                       Function<? super Stream<U>, ? extends Stream<? extends R3>> path3,
@@ -276,10 +332,10 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
 
-    public static LazyReact builder(int maxActiveTasks, Executor exec){
+    static LazyReact builder(int maxActiveTasks, Executor exec){
         return new LazyReact(maxActiveTasks,exec);
     }
-    public static LazyReact builder(){
+    static LazyReact builder(){
         return new LazyReact();
     }
 
@@ -294,13 +350,12 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return this.getSimpleReact().fromStream(Stream.of(Lambda.λ(()->this.collect(c))).map(Supplier::get));
     }
     default FutureStream<U> fold(Monoid<U> monoid){
-        return this.getSimpleReact().fromStream(Stream.of(Lambda.λ(()->this.reduce(monoid))).map(Supplier::get));
+        return this.getSimpleReact().<U>fromStream(Stream.of(Lambda.λ(()->this.reduce(monoid))).map(Supplier::get));
     }
 
 
 
 
-    @Override
     default FutureStream<U> appendStream(Stream<? extends U> other) {
         return fromStream(ReactiveSeq.oneShotStream(stream()).appendStream(other));
     }
@@ -311,7 +366,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
 
-    @Override
+
     default FutureStream<U> prependStream(Stream<? extends U> other) {
         return fromStream(ReactiveSeq.oneShotStream(stream()).prependStream(other));
     }
@@ -320,7 +375,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     @Override
     default FutureStream<U> prependAll(Iterable<? extends U> other) {
 
-        return fromStream(this.prependAll(other));
+        return fromStream(ReactiveSeq.oneShotStream(stream()).prependAll(other));
     }
 
 
@@ -344,20 +399,19 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
 
-    @Override
-    default <U1> FutureStream<Tuple2<U, U1>> crossJoin(ReactiveSeq<? extends U1> other) {
-        Streamable<? extends U1> s = Streamable.fromStream(other);
+    default <U1> FutureStream<Tuple2<U, U1>> crossJoin(FutureStream<? extends U1> other) {
+        Streamable<? extends U1> s = Streamable.fromStream(other.stream());
         return fromStream(stream().forEach2(a->ReactiveSeq.fromIterable(s), Tuple::tuple));
     }
 
-    @Override
+
     default <U1> FutureStream<U> sorted(Function<? super U, ? extends U1> function, Comparator<? super U1> comparator) {
         return fromStream(ReactiveSeq.oneShotStream(stream()).sorted(function,comparator));
 
     }
 
     /**
-     * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
+     * coflatMap pattern, can be used to perform  reductions / collections / folds and other terminal operations mid-stream
      *
      * <pre>
      * {@code
@@ -376,19 +430,18 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     default <R> FutureStream<R> coflatMap(Function<? super ReactiveSeq<U>, ? extends R> fn){
 
-        return this.getSimpleReact().<R>generate(()->fn.apply(this))
+        return this.getSimpleReact().<R>generate(()->fn.apply(this.stream()))
                                     .limit(1);
     }
 
     @Override
     default FutureStream<U> filterNot(final Predicate<? super U> fn) {
 
-        return (FutureStream<U>) ReactiveSeq.super.filterNot(fn);
+        return filter(fn.negate());
     }
     @Override
     default FutureStream<U> notNull() {
-
-        return (FutureStream<U>) ReactiveSeq.super.notNull();
+        return filter(Predicates.notNull());
     }
 
 
@@ -402,13 +455,11 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
-     */
+
     @Override
     default <T2, R> FutureStream<R> zip(BiFunction<? super U, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
 
-        return (FutureStream<R>)ReactiveSeq.super.zip(fn, publisher);
+        return fromStream(stream().zip(fn,publisher));
     }
 
     /**
@@ -423,18 +474,15 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @return FutureStream that adds the time between elements in millis to
      *         each element
      */
-    @Override
     default FutureStream<Tuple2<U, Long>> elapsed() {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .elapsed());
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.stream.ReactiveSeq#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
-     */
+
     @Override
     default FutureStream<U> combine(final BiPredicate<? super U, ? super U> predicate, final BinaryOperator<U> op) {
-        return fromStream(Streams.combine(this, predicate, op));
+        return fromStream(Streams.combine(this.stream(), predicate, op));
     }
     @Override
     default FutureStream<U> combine(final Monoid<U> op, final BiPredicate<? super U, ? super U> predicate) {
@@ -457,85 +505,15 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *            Supplier that will generate the alternative Stream
      * @return Stream that will switch to an alternative Stream if empty
      */
-    @Override
     default FutureStream<U> onEmptySwitch(final Supplier<? extends Stream<U>> switchTo) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .onEmptySwitch(switchTo));
     }
 
 
-    /* (non-Javadoc)
-     * @see cyclops2.stream.ReactiveSeq#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction)
-     */
-    @Override
-    default <R1, R2, R3, R> FutureStream<R> forEach4(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
-                                                     BiFunction<? super U, ? super R1, ? extends BaseStream<R2, ?>> stream2,
-                                                     Function3<? super U, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
-                                                     Function4<? super U, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-
-        return (FutureStream<R>)ReactiveSeq.super.forEach4(stream1, stream2, stream3, yieldingFunction);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.stream.ReactiveSeq#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction, com.oath.cyclops.util.function.QuadFunction)
-     */
-    @Override
-    default <R1, R2, R3, R> FutureStream<R> forEach4(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
-                                                     BiFunction<? super U, ? super R1, ? extends BaseStream<R2, ?>> stream2,
-                                                     Function3<? super U, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
-                                                     Function4<? super U, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                     Function4<? super U, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-
-        return (FutureStream<R>)ReactiveSeq.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.stream.ReactiveSeq#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction)
-     */
-    @Override
-    default <R1, R2, R> FutureStream<R> forEach3(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
-                                                 BiFunction<? super U, ? super R1, ? extends BaseStream<R2, ?>> stream2,
-                                                 Function3<? super U, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-
-        return (FutureStream<R>)ReactiveSeq.super.forEach3(stream1, stream2, yieldingFunction);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.stream.ReactiveSeq#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.TriFunction)
-     */
-    @Override
-    default <R1, R2, R> FutureStream<R> forEach3(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
-                                                 BiFunction<? super U, ? super R1, ? extends BaseStream<R2, ?>> stream2,
-                                                 Function3<? super U, ? super R1, ? super R2, Boolean> filterFunction,
-                                                 Function3<? super U, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-
-        return (FutureStream<R>)ReactiveSeq.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.stream.ReactiveSeq#forEach2(java.util.function.Function, java.util.function.BiFunction)
-     */
-    @Override
-    default <R1, R> FutureStream<R> forEach2(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
-                                             BiFunction<? super U, ? super R1, ? extends R> yieldingFunction) {
-
-        return (FutureStream<R>)ReactiveSeq.super.forEach2(stream1, yieldingFunction);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.stream.ReactiveSeq#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
-     */
-    @Override
-    default <R1, R> FutureStream<R> forEach2(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
-                                             BiFunction<? super U, ? super R1, Boolean> filterFunction,
-                                             BiFunction<? super U, ? super R1, ? extends R> yieldingFunction) {
-
-        return (FutureStream<R>)ReactiveSeq.super.forEach2(stream1, filterFunction, yieldingFunction);
-    }
-
 
     /**
-     * Remove all occurances of the specified element from the Stream
+     * Remove first occurance of the specified element from the Stream
      * <pre>
      * {@code
      * 	FutureStream.of(1,2,3,4,5,1,2,3).removeValue(1)
@@ -549,8 +527,18 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     @Override
     default FutureStream<U> removeValue(final U t) {
+        boolean[] found = {false};
+        return fromStream(stream().filter(v -> {
+                if (found[0])
+                    return true;
+                if (v == t) {
+                    found[0] = true;
+                    return false;
+                }
+                return true;
 
-        return (FutureStream<U>) ReactiveSeq.super.removeValue(t);
+            }));
+
     }
 
     /**
@@ -570,7 +558,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @param end index exclusive
      * @return LqzyFutureStream between supplied indexes of original Sequence
      */
-    @Override
     default FutureStream<U> subStream(final int start, final int end) {
         return this.fromStream(ReactiveSeq.oneShotStream(stream())
                                           .subStream(start, end));
@@ -675,25 +662,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     @Override
     LazyReact getSimpleReact();
 
-    /*
-     * Subscribe to this Stream
-     * If this Stream is executing in async mode it will operate as an Async Publisher, otherwise it will operate as a Synchronous publisher.
-     * async() or sync() can be used just prior to forEachAsync.
-     *
-     * <pre>
-     * {@code
-     *  FutureStreamSubscriber<Integer> sub = new FutureStreamSubscriber();
-        FutureStream.of(1,2,3).forEachAsync(sub);
-        sub.getStream().forEach(System.out::println);
-     * }
-     * </pre>
-     *	@param s Subscriber
-     * @see org.reactivestreams.Publisher#forEachAsync(org.reactivestreams.Subscriber)
-     */
-    @Override
-    default void subscribe(final Subscriber<? super U> s) {
-        FutureStreamSynchronousPublisher.super.subscribe(s);
-    }
+
 
     /**
      * @return an Iterator that chunks all completed elements from this stream since last it.next() call into a toX
@@ -881,9 +850,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
         return LazyToQueue.super.toQueue();
     }
-    @Override
+
     default <R> FutureStream<R> parallel(Function<? super Stream<U>,? extends Stream<? extends R>> fn){
-        return fromStream(ReactiveSeq.super.parallel(fn));
+        return fromStream(stream().parallel(fn));
 
     }
 
@@ -1211,7 +1180,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @return Next stage of stream, with only 1 element per specified time
      *         windows
      */
-    @Override
     default FutureStream<U> debounce(final long time, final TimeUnit unit) {
         return fromStream(Streams.debounce(stream(),time, unit));
 
@@ -1279,11 +1247,10 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *	@return batched stream
      * @see com.oath.cyclops.react.stream.traits.FutureStream#batchBySizeAndTime(int, long, java.util.concurrent.TimeUnit)
      */
-    @Override
-    default ReactiveSeq<Vector<U>> groupedBySizeAndTime(final int size, final long time, final TimeUnit unit) {
+    default FutureStream<Vector<U>> groupedBySizeAndTime(final int size, final long time, final TimeUnit unit) {
         return fromStream(stream().groupedBySizeAndTime(size, time, unit));
      }
-    @Override
+
     default <C extends PersistentCollection<? super U>,R> FutureStream<R> groupedBySizeAndTime(final int size, final long time,
                                                                             final TimeUnit unit,
                                                                             final Supplier<C> factory,
@@ -1345,7 +1312,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *            will be selected)/
      * @return Next stage in Stream with jitter applied
      */
-    @Override
     default FutureStream<U> jitter(final long jitterInNanos) {
         return fromStream(Streams.jitter(stream(),jitterInNanos));
     }
@@ -1385,7 +1351,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     @Override
     default FutureStream<U> fixedDelay(final long time, final TimeUnit unit) {
-        return fromStream(Streams.fixedDelay(stream(),time, unit));
+        return fromStream(stream().fixedDelay(time, unit));
     }
 
     /**
@@ -1409,7 +1375,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     @Override
     default FutureStream<U> onePer(final long time, final TimeUnit unit) {
-        return fromStream(Streams.onePer(stream(),time, unit));
+        return fromStream(stream().onePer(time, unit));
 
     }
 
@@ -1437,7 +1403,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     @Override
     default FutureStream<U> xPer(final int x, final long time, final TimeUnit unit) {
-        return fromStream(Streams.xPer(stream(),x, time, unit));
+        return fromStream(stream().xPer(x, time, unit));
     }
 
     /**
@@ -1459,7 +1425,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *            Time unit during which all elements should be collected
      * @return Stream of Lists
      */
-    @Override
     default FutureStream<Vector<U>> groupedByTime(final long time, final TimeUnit unit) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .groupedByTime(time, unit));
@@ -1490,13 +1455,11 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *            Instantiates the collections used in the batching
      * @return Stream of collections
      */
-    @Override
     default <C extends PersistentCollection<? super U>> FutureStream<C> groupedByTime(final long time, final TimeUnit unit, final Supplier<C> factory) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .groupedByTime(time, unit, factory));
 
     }
-    @Override
     default <C extends PersistentCollection<? super U>,R> FutureStream<R> groupedByTime(final long time, final TimeUnit unit,
                                                                             final Supplier<C> factory,
                                                                             Function<? super C, ? extends R> finalizer) {
@@ -1742,18 +1705,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(Streams.flatMapCompletableFuture(stream(), flatFn));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.aol.simple.react.stream.FutureStreamImpl#retry(java.util.function
-     * .Function)
-     */
-    @Override
-    default <R> FutureStream<R> retry(final Function<? super U, ? extends R> fn) {
 
-        return (FutureStream) ReactiveSeq.super.retry(fn);
-    }
 
 
 
@@ -1792,7 +1744,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * 3).concat(FutureStream.of(4, 5, 6))
      *
      *
-     * @see #concat(Stream[])
+     *
      */
     @SuppressWarnings({ "unchecked" })
     default FutureStream<U> concat(final Stream<? extends U> other) {
@@ -1811,24 +1763,37 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     * }
     * </pre>
     *
-    * @see #concat(Stream[])
     */
     default FutureStream<U> concat(final U other) {
         return concat(Stream.of(other));
     }
 
-    /**
-     * Concatenate two streams. operating on the underlying futures rather than results.
-     *
-     * <pre>
-     * {@code
-     * // (1, 2, 3, 4, 5, 6)
-     * FutureStream.of(1, 2, 3).concat(4, 5, 6)
-     * }
-     * </pre>
-     *
-     * @see #concat(Stream[])
-     */
+    default Tuple2<U, FutureStream<U>> elementAtAndStream(final long index) {
+
+        final var tuple = this.duplicate();
+        return tuple.map1(s -> s.zipWithIndex()
+            .filter(t -> t._2() == index)
+            .findFirst()
+            .map(t -> t._1())
+            .get());
+
+    }
+    default Topic<U> broadcast(){
+        return stream().broadcast();
+    }
+
+        /**
+         * Concatenate two streams. operating on the underlying futures rather than results.
+         *
+         * <pre>
+         * {@code
+         * // (1, 2, 3, 4, 5, 6)
+         * FutureStream.of(1, 2, 3).concat(4, 5, 6)
+         * }
+         * </pre>
+         *
+         *
+         */
     @SuppressWarnings({ "unchecked" })
     default FutureStream<U> concat(final U... other) {
         return concat(Stream.of(other));
@@ -1903,7 +1868,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @return Limited FutureStream
      *
      */
-    @Override
     default FutureStream<U> limit(final long maxSize) {
         final Continueable sub = this.getSubscription();
         sub.registerLimit(maxSize);
@@ -2015,25 +1979,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
 
-    /*
-     * <pre>
-     * {@code
-     *
-     * // tuple((1, 2, 3), (1, 2, 3))
-     *
-     * FutureStream.of(1, 2, 3).duplicate()
-     * }
-     * </pre>
-     *
-     * @see FutureStream#copy(int)
-     *
-     * @see #duplicate(Stream)
-     */
-    default Tuple2<FutureStream<U>, FutureStream<U>> duplicateFutureStream() {
-        final Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> duplicated = this.duplicate();
-        return Tuple.tuple(
-                          fromStream(duplicated._1()), fromStream(duplicated._2()));
-    }
+
 
 
     /**
@@ -2050,33 +1996,11 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * </code>
      *
      */
-    @Override
-    default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> partition(final Predicate<? super U> predicate) {
+    default Tuple2<FutureStream<U>, FutureStream<U>> partition(final Predicate<? super U> predicate) {
         return ReactiveSeq.oneShotStream(stream())
-                .partition(predicate);
+                .partition(predicate).map1(this::fromStream).map2(this::fromStream);
     }
 
-    /**
-     * Partition an FutureStream into two LazyFutureStreams given a
-     * predicate.
-     * <pre>
-     * {@code
-     * FutureStream.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0)
-     *
-     * results in
-     *
-     * tuple((1, 3, 5), (2, 4, 6))
-     * }</pre>
-     * @param predicate
-     *            Predicate to split Stream
-     * @return FutureStream
-     * @see #partition(Predicate)
-     */
-    default Tuple2<FutureStream<U>, FutureStream<U>> partitionFutureStream(final Predicate<? super U> predicate) {
-        final Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> partition = partition(predicate);
-        return Tuple.tuple(
-                          fromStream(partition._1()), fromStream(partition._2()));
-    }
 
     /*
      * @see cyclops2.stream.ReactiveSeq#slice(long, long)
@@ -2225,7 +2149,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .dropWhile(predicate));
     }
-    @Override
+
     default FutureStream<U> dropWhileInclusive(final Predicate<? super U> predicate) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
             .dropWhileInclusive(predicate));
@@ -2245,8 +2169,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .dropUntil(predicate));
     }
-    @Override
-    default ReactiveSeq<U> dropUntilInclusive(final Predicate<? super U> p){
+
+    default FutureStream<U> dropUntilInclusive(final Predicate<? super U> p){
         return dropWhileInclusive(p.negate());
     }
 
@@ -2264,7 +2188,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(ReactiveSeq.oneShotStream(stream())
                          .takeWhile(predicate));
     }
-    @Override
+
     default FutureStream<U> takeWhileInclusive(final Predicate<? super U> predicate) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                          .takeWhileInclusive(predicate));
@@ -2280,9 +2204,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     @Override
     default FutureStream<U> takeUntil(final Predicate<? super U> predicate) {
-        return fromStream(LazyFutureStreamFunctions.takeUntil(this,predicate));
+        return fromStream(LazyFutureStreamFunctions.takeUntil(stream(),predicate));
     }
-    @Override
+
     default FutureStream<U> takeUntilInclusive(final Predicate<? super U> p) {
 
         return takeWhileInclusive(p.negate());
@@ -2342,7 +2266,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * </pre>
      *
      */
-    @Override
     default <X extends Throwable> FutureStream<U> onEmptyError(final Supplier<? extends X> supplier) {
         return fromStream(ReactiveSeq.oneShotStream(stream()).onEmptyError(supplier));
     }
@@ -2362,9 +2285,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * </pre>
      * @return New cycling stream
      */
-    @Override
     default FutureStream<U> cycle() {
-        return fromStream(Streams.cycle(this));
+        return fromStream(Streams.cycle(stream()));
 
     }
 
@@ -2423,7 +2345,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *	@return New version of this stream converted to execute asynchronously and in parallel
      * @see com.oath.cyclops.react.stream.traits.FutureStream#parallel()
      */
-    @Override
     default FutureStream<U> parallel() {
         return this.withAsync(true)
                    .withTaskExecutor(LazyReact.parallelBuilder()
@@ -2434,7 +2355,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *	@return New version of this stream  converted to execute synchronously and sequentially
      * @see com.oath.cyclops.react.stream.traits.FutureStream#sequential()
      */
-    @Override
     default FutureStream<U> sequential() {
         return this.withAsync(false)
                    .withTaskExecutor(LazyReact.sequentialBuilder()
@@ -2442,13 +2362,13 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
 
-    @Override
+
     default FutureStream<U> unordered() {
         return this;
     }
 
 
-    @Override
+
     default FutureStream<U> onClose(final Runnable closeHandler) {
         getLastActive().stream()
                        .onClose(closeHandler);
@@ -2487,30 +2407,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
 
-    /*
-     * Flatten this stream one level
-     * * <pre>
-     * {@code
-     *  FutureStream.of(Arrays.asList(1,2))
-     *                  .flatten();
-     *
-     *    // stream of 1,2
-     *  }
-     *  </pre>
-     *
-     * @see cyclops2.stream.ReactiveSeq#flatten()
-     */
-    public static <T1> FutureStream<T1> flatten(ReactiveSeq<? extends Stream<? extends T1>> nested){
 
-        ReactiveSeq<? extends T1> res = nested.flatMap(Function.identity());
-        if(res instanceof FutureStream){
-            return (FutureStream<T1>)res;
-        }
-        FutureStream<? extends T1> ret = new LazyReact().fromStream(res);
-        return narrow(ret);
-
-    }
-    public static <T1> FutureStream<T1> narrow(FutureStream<? extends T1> broad){
+    private static <T1> FutureStream<T1> narrow(FutureStream<? extends T1> broad){
         return (FutureStream<T1>)broad;
 
     }
@@ -2533,53 +2431,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return false;
     }
 
-    /*
-     * @see java.util.stream.Stream#mapToInt(java.util.function.ToIntFunction)
-     */
-    @Override
-    default IntStream mapToInt(final ToIntFunction<? super U> mapper) {
-        return stream().mapToInt(mapper);
-    }
-
-    /*
-     * @see java.util.stream.Stream#mapToLong(java.util.function.ToLongFunction)
-     */
-    @Override
-    default LongStream mapToLong(final ToLongFunction<? super U> mapper) {
-        return stream().mapToLong(mapper);
-    }
-
-    /*
-     * @see java.util.stream.Stream#mapToDouble(java.util.function.ToDoubleFunction)
-     */
-    @Override
-    default DoubleStream mapToDouble(final ToDoubleFunction<? super U> mapper) {
-        return stream().mapToDouble(mapper);
-    }
-
-    /*
-     * @see java.util.stream.Stream#flatMapToInt(java.util.function.Function)
-     */
-    @Override
-    default IntStream flatMapToInt(final Function<? super U, ? extends IntStream> mapper) {
-        return stream().flatMapToInt(mapper);
-    }
-
-    /*
-     * @see java.util.stream.Stream#flatMapToLong(java.util.function.Function)
-     */
-    @Override
-    default LongStream flatMapToLong(final Function<? super U, ? extends LongStream> mapper) {
-        return stream().flatMapToLong(mapper);
-    }
-
-    /*
-     * @see java.util.stream.Stream#flatMapToDouble(java.util.function.Function)
-     */
-    @Override
-    default DoubleStream flatMapToDouble(final Function<? super U, ? extends DoubleStream> mapper) {
-        return stream().flatMapToDouble(mapper);
-    }
 
     /*
      * @see java.util.stream.Stream#forEachOrdered(java.util.function.Consumer)
@@ -2606,10 +2457,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return stream().toArray(generator);
     }
 
-    /*
-     * @see cyclops2.stream.ReactiveSeq#findAny()
-     */
-    @Override
+
     default Optional<U> findAny() {
        Object[] result = {null};
             //use forEachRemaining as it is the fast path for many operators
@@ -2622,12 +2470,30 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
 
-    /*
-     * @see cyclops2.stream.ReactiveSeq#toSet()
-     */
+
     @Override
     default Set<U> toSet() {
         return collect(Collectors.toSet());
+    }
+
+    @Override
+    default boolean allMatch(final Predicate<? super U> c) {
+        return IterableX.super.allMatch(c);
+    }
+
+    @Override
+    default boolean anyMatch(final Predicate<? super U> c) {
+        return IterableX.super.anyMatch(c);
+    }
+
+    @Override
+    default boolean noneMatch(final Predicate<? super U> c) {
+        return IterableX.super.noneMatch(c);
+    }
+
+    @Override
+    default <R, A> R collect(final Collector<? super U, A, R> collector) {
+        return IterableX.super.collect(collector);
     }
 
 
@@ -2638,10 +2504,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
 
-    /*
-     * @see cyclops2.stream.ReactiveSeq#distinct(java.util.function.Function)
-     */
-    @Override
     default <R> FutureStream<U> distinct(final Function<? super U, ? extends R> keyExtractor) {
         return fromStream(stream()
                           .distinct());
@@ -2666,10 +2528,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * @see #duplicate(Stream)
      */
-    @Override
-    default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> duplicate() {
+    default Tuple2<FutureStream<U>, FutureStream<U>> duplicate() {
         return Streams.duplicate(stream())
-                .map1(ReactiveSeq::oneShotStream).map2(ReactiveSeq::oneShotStream);
+                .map1(ReactiveSeq::oneShotStream).map1(this::fromStream).map2(ReactiveSeq::oneShotStream).map2(this::fromStream);
     }
     /*
      * Duplicate a FutureStream into two equivalent Streams.
@@ -2688,12 +2549,10 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * @see FutureStream#copy(int)
      *
-     * @see #duplicate(Stream)
      */
-    @Override
-    default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> duplicate(Supplier<Deque<U>> bufferFactory) {
+    default Tuple2<FutureStream<U>, FutureStream<U>> duplicate(Supplier<Deque<U>> bufferFactory) {
         return Streams.duplicate(stream(),bufferFactory)
-                .map1(ReactiveSeq::oneShotStream).map2(ReactiveSeq::oneShotStream);
+            .map1(ReactiveSeq::oneShotStream).map1(this::fromStream).map2(ReactiveSeq::oneShotStream).map2(this::fromStream);
     }
 
     /*
@@ -2701,7 +2560,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * @see cyclops2.stream.ReactiveSeq#triplicate()
      */
-    @Override
     default Tuple3<ReactiveSeq<U>, ReactiveSeq<U>, ReactiveSeq<U>> triplicate() {
         return Streams.triplicate(stream())
                 .map1(ReactiveSeq::oneShotStream).map2(ReactiveSeq::oneShotStream)
@@ -2714,7 +2572,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * @see cyclops2.stream.ReactiveSeq#triplicate()
      */
-    @Override
     default Tuple3<ReactiveSeq<U>, ReactiveSeq<U>, ReactiveSeq<U>> triplicate(Supplier<Deque<U>> bufferFactory) {
         return Streams.triplicate(stream(),bufferFactory)
                 .map1(ReactiveSeq::oneShotStream).map2(ReactiveSeq::oneShotStream)
@@ -2726,7 +2583,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * Quadruplicate the data in this Stream. To quadruplicate into 3 LazyFutureStreams use actOnFutures#quadruplicate
      * @see cyclops2.stream.ReactiveSeq#quadruplicate()
      */
-    @Override
     default Tuple4<ReactiveSeq<U>, ReactiveSeq<U>, ReactiveSeq<U>, ReactiveSeq<U>> quadruplicate() {
         return Streams.quadruplicate(stream())
                 .map1(ReactiveSeq::oneShotStream).map2(ReactiveSeq::oneShotStream)
@@ -2737,7 +2593,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * Quadruplicate the data in this Stream. To quadruplicate into 3 LazyFutureStreams use actOnFutures#quadruplicate
      * @see cyclops2.stream.ReactiveSeq#quadruplicate()
      */
-    @Override
     default Tuple4<ReactiveSeq<U>, ReactiveSeq<U>, ReactiveSeq<U>, ReactiveSeq<U>> quadruplicate(Supplier<Deque<U>> bufferFactory) {
         return Streams.quadruplicate(stream(),bufferFactory)
                 .map1(ReactiveSeq::oneShotStream).map2(ReactiveSeq::oneShotStream)
@@ -2745,30 +2600,26 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     }
 
-    /*
-     * @see cyclops2.stream.ReactiveSeq#splitSequenceAtHead()
-     */
-    @Override
-    default Tuple2<Option<U>, ReactiveSeq<U>> splitAtHead() {
+
+    default Tuple2<Option<U>, FutureStream<U>> splitAtHead() {
         return stream()
-                          .splitAtHead();
+                          .splitAtHead().map2(this::fromStream);
 
     }
 
     /*
      * @see cyclops2.stream.ReactiveSeq#splitAt(int)
      */
-    @Override
-    default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> splitAt(final int where) {
+    default Tuple2<FutureStream<U>, FutureStream<U>> splitAt(final int where) {
         return ReactiveSeq.oneShotStream(stream())
-                          .splitAt(where);
+                          .splitAt(where).map1(this::fromStream).map2(this::fromStream);
 
     }
 
     /*
      * @see cyclops2.stream.ReactiveSeq#splitBy(java.util.function.Predicate)
      */
-    @Override
+
     default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> splitBy(final Predicate<U> splitter) {
         return ReactiveSeq.oneShotStream(stream())
                           .splitBy(splitter);
@@ -2858,16 +2709,16 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                      .concatMap(fn));
     }
     /**
-     * A potentially non-blocking analog of {@link ReactiveSeq#forEach}.
+     * A potentially non-blocking analog of forEach.
      * For push based reactive Stream types (created via Spouts of FutureStream}
      *
      * @param action a <a href="package-summary.html#NonInterference">
      *               non-interfering</a> action to perform on the elements
      */
-    @Override
     default void forEachAsync(final Consumer<? super U> action){
             peek(action).run();
     }
+
     @Override
     default <R> FutureStream<R> mergeMap(final Function<? super U, ? extends Publisher<? extends R>> fn) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
@@ -2880,10 +2731,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
 
-    /*
-     * @see cyclops2.stream.ReactiveSeq#flatMapStream(java.util.function.Function)
-     */
-    @Override
+
     default <R> FutureStream<R> flatMapStream(final Function<? super U, BaseStream<? extends R, ?>> fn) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .flatMapStream(fn));
@@ -2916,17 +2764,13 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(stream().insertAt(pos, values));
     }
 
-    /*
-     * @see cyclops2.stream.ReactiveSeq#deleteBetween(int, int)
-     */
+
     @Override
     default FutureStream<U> deleteBetween(final int start, final int end) {
         return fromStream(stream().deleteBetween(start, end));
     }
 
-    /*
-     * @see cyclops2.stream.ReactiveSeq#insertAtS(int, java.util.stream.Stream)
-     */
+
     @Override
     default FutureStream<U> insertStreamAt(final int pos, final Stream<U> stream) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
@@ -2935,26 +2779,19 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
 
-    /*
-     * @see cyclops2.stream.ReactiveSeq#skip(long, java.util.concurrent.TimeUnit)
-     */
-    @Override
+
     default FutureStream<U> drop(final long time, final TimeUnit unit) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .drop(time, unit));
     }
 
 
-    @Override
     default FutureStream<U> take(final long time, final TimeUnit unit) {
         getSubscription().registerTimeLimit(unit.toNanos(time));
         return fromStream(stream()
                                    .take(time, unit));
     }
 
-    /*
-     * @see cyclops2.stream.ReactiveSeq#skipLast(int)
-     */
     default FutureStream<U> dropRight(final int num) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .dropRight(num));
@@ -2982,7 +2819,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * @see cyclops2.stream.ReactiveSeq#batchBySizeAndTime(int, long, java.util.concurrent.TimeUnit, java.util.function.Supplier)
      */
-    @Override
     default <C extends PersistentCollection<? super U>> FutureStream<C> groupedBySizeAndTime(final int size, final long time, final TimeUnit unit,
                                                                                    final Supplier<C> factory) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
@@ -2995,7 +2831,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .groupedUntil(predicate));
     }
-    @Override
+
+
     default <C extends PersistentCollection<U>,R> FutureStream<R> groupedUntil(final BiPredicate<C, ? super U> predicate, final Supplier<C> factory,
                                                                                Function<? super C, ? extends R> finalizer){
         return fromStream(ReactiveSeq.oneShotStream(stream())
@@ -3006,7 +2843,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(ReactiveSeq.oneShotStream(stream())
                 .groupedUntil(predicate));
     }
-    @Override
+
     default <C extends PersistentCollection<U>,R> FutureStream<R> groupedWhile(final BiPredicate<C, ? super U> predicate, final Supplier<C> factory,
                                                                                Function<? super C, ? extends R> finalizer){
         return fromStream(ReactiveSeq.oneShotStream(stream())
@@ -3060,14 +2897,14 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
 
-    @Override
+
     default FutureStream<U> recover(final Function<? super Throwable, ? extends U> fn) {
         return this.onFail(e -> fn.apply(e.getCause()));
 
     }
 
 
-    @Override
+
     default <EX extends Throwable> FutureStream<U> recover(final Class<EX> exceptionClass, final Function<? super EX, ? extends U> fn) {
         return this.onFail(exceptionClass, e -> fn.apply((EX) e.getCause()));
     }
@@ -3259,7 +3096,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         t2._2().run();
     }
 
-    @Override
+
     default FutureStream<U> onComplete(final Runnable fn) {
         return fromStream(stream().onComplete(fn));
     }
@@ -3320,31 +3157,140 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                 .removeAll(value));
     }
 
-    @Override
+
     default FutureStream<U> recoverWith(final Function<Throwable, ? extends Publisher<? extends U>> fn) {
 
         return fromStream(ReactiveSeq.oneShotStream(stream()).recoverWith(fn));
 
     }
 
-    @Override
+
     default FutureStream<U> recoverWith(final BiFunction<Integer, Throwable, ? extends Publisher<? extends U>> fn) {
-        return (FutureStream<U>)ReactiveSeq.super.recoverWith(fn);
+        return fromStream(ReactiveSeq.oneShotStream(stream()).recoverWith(fn));
 
     }
 
-    @Override
+
     default <X extends Throwable> FutureStream<U> recoverWith(Class<X> type, final BiFunction<Integer, X, ? extends Publisher<? extends U>> fn) {
-        return (FutureStream<U>)ReactiveSeq.super.recoverWith(type,fn);
+        return fromStream(ReactiveSeq.oneShotStream(stream()).recoverWith(type,fn));
     }
 
-    @Override
+
     default FutureStream<U> onError(Consumer<? super Throwable> c) {
         return recover(in->{
             c.accept(in);
             throw ExceptionSoftener.throwSoftenedException(in);
         });
     }
+
+
+    default Optional<U> min(final Comparator<? super U> comparator) {
+        return Streams.min(stream(), comparator);
+    }
+
+
+    default Optional<U> max(final Comparator<? super U> comparator) {
+        return Streams.max(stream(), comparator);
+    }
+
+    default U reduce(final Monoid<U> reducer) {
+        return reduce(reducer.zero(),reducer);
+    }
+
+
+    default Seq<U> reduce(final Iterable<? extends Monoid<U>> reducers) {
+        return Streams.reduce(stream(), reducers);
+    }
+
+    default <R> R fold(Function<? super ReactiveSeq<U>, ? extends R> sync, Function<? super ReactiveSeq<U>, ? extends R> reactiveStreams, Function<? super ReactiveSeq<U>, ? extends R> asyncNoBackPressure) {
+        return sync.apply(stream());
+    }
+
+
+    default Connectable<U> hotStream(final Executor e) {
+        return Streams.hotStream(stream(), e);
+    }
+
+
+    default Connectable<U> primedHotStream(final Executor e) {
+        return Streams.primedHotStream(stream(), e);
+    }
+
+
+    default PausableConnectable<U> pausableHotStream(final Executor e) {
+        return Streams.pausableHotStream(stream(), e);
+    }
+
+
+    default PausableConnectable<U> primedPausableHotStream(final Executor e) {
+        return Streams.primedPausableHotStream(stream(), e);
+    }
+
+    default Connectable<U> schedule(final String cron, final ScheduledExecutorService ex) {
+        return ReactiveSeq.<U> fromStream(this.stream())
+            .schedule(cron, ex);
+    }
+
+
+    default Connectable<U> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
+        return ReactiveSeq.<U> fromStream(this.stream())
+            .scheduleFixedDelay(delay, ex);
+    }
+
+
+    default Connectable<U> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
+        return ReactiveSeq.<U> fromStream(this.stream())
+            .scheduleFixedRate(rate, ex);
+    }
+
+    /*
+     * @see java.util.stream.Stream#mapToInt(java.util.function.ToIntFunction)
+     */
+    @Override
+    default IntStream mapToInt(final ToIntFunction<? super U> mapper) {
+        return stream().mapToInt(mapper);
+    }
+
+    /*
+     * @see java.util.stream.Stream#mapToLong(java.util.function.ToLongFunction)
+     */
+    @Override
+    default LongStream mapToLong(final ToLongFunction<? super U> mapper) {
+        return stream().mapToLong(mapper);
+    }
+
+    /*
+     * @see java.util.stream.Stream#mapToDouble(java.util.function.ToDoubleFunction)
+     */
+    @Override
+    default DoubleStream mapToDouble(final ToDoubleFunction<? super U> mapper) {
+        return stream().mapToDouble(mapper);
+    }
+
+    /*
+     * @see java.util.stream.Stream#flatMapToInt(java.util.function.Function)
+     */
+    @Override
+    default IntStream flatMapToInt(final Function<? super U, ? extends IntStream> mapper) {
+        return stream().flatMapToInt(mapper);
+    }
+
+    /*
+     * @see java.util.stream.Stream#flatMapToLong(java.util.function.Function)
+     */
+    @Override
+    default LongStream flatMapToLong(final Function<? super U, ? extends LongStream> mapper) {
+        return stream().flatMapToLong(mapper);
+    }
+
+    /*
+     * @see java.util.stream.Stream#flatMapToDouble(java.util.function.Function)
+     */
+    @Override
+    default DoubleStream flatMapToDouble(final Function<? super U, ? extends DoubleStream> mapper) {
+        return stream().flatMapToDouble(mapper);
+    }
+
 
 
 }

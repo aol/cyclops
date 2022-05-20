@@ -10,8 +10,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import cyclops.data.*;
-
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -403,7 +401,7 @@ public  class CoreReactiveSeqTest {
     @Test
 	public void ambTest(){
         for(int i=0;i<VERY_SHORT_CYCLE;i++) {
-            assertThat(ReactiveSeq.of(1, 2, 3).ambWith(Flux.just(10, 20, 30)).toList(), isOneOf(Arrays.asList(1, 2, 3), Arrays.asList(10, 20, 30)));
+            assertThat(ReactiveSeq.of(1, 2, 3).firstEmitting(Flux.just(10, 20, 30)).toList(), isOneOf(Arrays.asList(1, 2, 3), Arrays.asList(10, 20, 30)));
         }
 	}
 

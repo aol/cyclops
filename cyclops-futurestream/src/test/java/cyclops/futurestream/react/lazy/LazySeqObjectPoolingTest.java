@@ -239,7 +239,7 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 
 		final FutureStream<Integer> units = new LazyReact(ThreadPools.getCommonFreeThread()).iterate(1, n -> n+1);
 		final FutureStream<Integer> hundreds = new LazyReact(ThreadPools.getCommonFreeThread()).iterate(100, n-> n+100);
-		final ReactiveSeq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
+		final FutureStream<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 
 
 		assertThat(zipped.limit(5).join(),equalTo(of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
@@ -248,9 +248,9 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	@Test
 	public void shouldZipFiniteWithInfiniteSeq() throws Exception {
 		ThreadPools.setUseCommon(false);
-		final ReactiveSeq<Integer> units = new LazyReact(ThreadPools.getCommonFreeThread()).iterate(1, n -> n+1).limit(5);
+		final FutureStream<Integer> units = new LazyReact(ThreadPools.getCommonFreeThread()).iterate(1, n -> n+1).limit(5);
 		final FutureStream<Integer> hundreds = new LazyReact(ThreadPools.getCommonFreeThread()).iterate(100, n-> n+100); // <-- MEMORY LEAK! - no auto-closing yet, so writes infinetely to it's async queue
-		final ReactiveSeq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
+		final FutureStream<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 
 		assertThat(zipped.limit(5).join(),equalTo(of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
 		ThreadPools.setUseCommon(true);
@@ -260,8 +260,8 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
 	public void shouldZipInfiniteWithFiniteSeq() throws Exception {
 		ThreadPools.setUseCommon(false);
 		final FutureStream<Integer> units = new LazyReact(ThreadPools.getCommonFreeThread()).iterate(1, n -> n+1); // <-- MEMORY LEAK!- no auto-closing yet, so writes infinetely to it's async queue
-		final ReactiveSeq<Integer> hundreds = new LazyReact(ThreadPools.getCommonFreeThread()).iterate(100, n-> n+100).limit(5);
-		final ReactiveSeq<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
+		final FutureStream<Integer> hundreds = new LazyReact(ThreadPools.getCommonFreeThread()).iterate(100, n-> n+100).limit(5);
+		final FutureStream<String> zipped = units.zip(hundreds, (n, p) -> n + ": " + p);
 		assertThat(zipped.limit(5).join(),equalTo(of("1: 100", "2: 200", "3: 300", "4: 400", "5: 500").join()));
 		ThreadPools.setUseCommon(true);
 	}
@@ -310,7 +310,7 @@ public class LazySeqObjectPoolingTest extends BaseSeqTest {
     }
     @Test
     public void testSkipUntilInclusive() {
-        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
+        Supplier<FutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
         assertEquals(asList(), s.get().dropUntil(i -> false).toList());
         assertTrue(s.get().dropUntilInclusive(i -> true).toList().size()==4);

@@ -854,7 +854,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            Time unit
      * @return ReactiveSeq that emits x elements per time period
      */
-    default ReactiveSeq<T> xPer(final int x, final long time, final TimeUnit t) {
+    default Traversable<T> xPer(final int x, final long time, final TimeUnit t) {
         return stream().xPer(x, time, t);
     }
 
@@ -878,7 +878,7 @@ public interface Traversable<T> extends Publisher<T>,
      * @param t Time unit
      * @return ReactiveSeq that emits 1 element per time period
      */
-    default ReactiveSeq<T> onePer(final long time, final TimeUnit t) {
+    default Traversable<T> onePer(final long time, final TimeUnit t) {
         return stream().onePer(time, t);
     }
 
@@ -903,7 +903,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            for the delay
      * @return ReactiveSeq that emits each element after a fixed delay
      */
-    default ReactiveSeq<T> fixedDelay(final long l, final TimeUnit unit) {
+    default Traversable<T> fixedDelay(final long l, final TimeUnit unit) {
         return stream().fixedDelay(l, unit);
     }
 }

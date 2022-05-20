@@ -4122,6 +4122,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      */
     default ReactiveSeq<T> merge(final QueueFactory<T> factory, final Publisher<T>... publishers) {
+        //synchronous implementation - async implementation is in ReactiveStreamX::merge
         return defer(()->{
             final Counter c = new Counter();
             c.active.set(publishers.length + 1);
@@ -4419,10 +4420,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return topic;
     }
 
-    default ReactiveSeq<T> ambWith(Publisher<T> racer){
+    default ReactiveSeq<T> firstEmitting(Publisher<T> racer){
         return Spouts.amb(this,racer);
     }
-    default ReactiveSeq<T> ambWith(Publisher<T>... racers){
+    default ReactiveSeq<T> firstEmitting(Publisher<T>... racers){
         Seq<Publisher<T>> list = Seq.of(racers).prepend(this);
 
         return Spouts.amb(list);

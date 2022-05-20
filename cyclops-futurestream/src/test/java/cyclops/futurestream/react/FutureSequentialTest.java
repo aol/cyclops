@@ -1,8 +1,8 @@
 package cyclops.futurestream.react;
 
-import com.oath.cyclops.streams.BaseSequentialTest;
+
+import cyclops.futurestream.FutureStream;
 import cyclops.futurestream.LazyReact;
-import cyclops.reactive.ReactiveSeq;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
@@ -17,7 +17,7 @@ import static org.junit.Assert.assertThat;
  */
 public class FutureSequentialTest extends BaseSequentialTest {
     @Override
-    protected <U> ReactiveSeq<U> of(U... array){
+    protected <U> FutureStream<U> of(U... array){
 
         return LazyReact.sequentialBuilder().of(array);
     }
@@ -31,20 +31,20 @@ public class FutureSequentialTest extends BaseSequentialTest {
     }
     @Test
     public void duplicateReplay(){
-        final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1).duplicate();
+        final Tuple2<FutureStream<Integer>, FutureStream<Integer>> t = of(1).duplicate();
         assertThat(t._1().limit(1).toList(),equalTo(List.of(1)));
         assertThat(t._2().limit(1).toList(),equalTo(List.of(1)));
     }
     @Test
     public void takeReplay() {
-        final ReactiveSeq<Integer> t = of(1).map(i -> i).flatMap(i -> Stream.of(i));
+        final FutureStream<Integer> t = of(1).map(i -> i).flatMap(i -> Stream.of(i));
         assertThat(t.limit(1).toList(), equalTo(List.of(1)));
 
     }
     @Test
     public void splitLimit() {
-        ReactiveSeq<Integer> stream = of(1);
-        final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = stream.duplicate();
+        FutureStream<Integer> stream = of(1);
+        final Tuple2<FutureStream<Integer>, FutureStream<Integer>> t = stream.duplicate();
         assertThat(stream.limit(1).toList(), equalTo(List.of(1)));
         assertThat(t._1().limit(1).toList(), equalTo(List.of(1)));
 

@@ -1,8 +1,8 @@
 package cyclops.futurestream;
 
-import cyclops.reactive.ReactiveSeq;
+
 import cyclops.reactive.Spouts;
-import cyclops.streams.AbstractReactiveSeqTest;
+
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -17,13 +17,13 @@ import static org.junit.Assert.fail;
 
 public class FutureStreamReactiveSeqTest extends AbstractReactiveSeqTest {
     @Override
-    public ReactiveSeq<Integer> of(Integer... values) {
+    public FutureStream<Integer> of(Integer... values) {
         return LazyReact.sequentialBuilder()
                             .of(values);
     }
 
     @Override
-    public ReactiveSeq<Integer> empty() {
+    public FutureStream<Integer> empty() {
         return FutureStream.builder()
                             .of();
     }

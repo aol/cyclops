@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
+import cyclops.control.Future;
 import cyclops.data.ImmutableList;
 import cyclops.data.ImmutableMap;
 import cyclops.data.TreeSet;
@@ -306,7 +307,7 @@ public abstract class BaseSeqTest {
 	public void zipEmpty() throws Exception {
 
 
-		final ReactiveSeq<Integer> zipped = empty.zip(this.<Integer>of(), (a, b) -> a + b);
+		final FutureStream<Integer> zipped = empty.zip(this.<Integer>of(), (a, b) -> a + b);
 		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
 	}
 
@@ -315,7 +316,7 @@ public abstract class BaseSeqTest {
 
 
 
-		final ReactiveSeq<Integer> zipped = empty.zip(nonEmpty, (a, b) -> a + b);
+		final FutureStream<Integer> zipped = empty.zip(nonEmpty, (a, b) -> a + b);
 		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
 	}
 
@@ -323,7 +324,7 @@ public abstract class BaseSeqTest {
 	public void shouldReturnEmptySeqWhenZipNonEmptyWithEmpty() throws Exception {
 
 
-		final ReactiveSeq<Integer> zipped = nonEmpty.zip(empty, (a, b) -> a + b);
+		final FutureStream<Integer> zipped = nonEmpty.zip(empty, (a, b) -> a + b);
 
 
 		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
@@ -336,7 +337,7 @@ public abstract class BaseSeqTest {
 		final FutureStream<Integer> second = of(1, 2, 3);
 
 
-		final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
+		final FutureStream<String> zipped = first.zip(second, (a, b) -> a + b);
 
 
 		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
@@ -350,7 +351,7 @@ public abstract class BaseSeqTest {
 		final FutureStream<Integer> second = of(1, 2, 3, 4);
 
 
-		final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
+		final FutureStream<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
 	}
@@ -359,7 +360,7 @@ public abstract class BaseSeqTest {
 	public void shouldTrimFirstFixedSeqIfLonger() throws Exception {
 		final FutureStream<String> first = of("A", "B", "C","D");
 		final FutureStream<Integer> second = of(1, 2, 3);
-		final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
+		final FutureStream<String> zipped = first.zip(second, (a, b) -> a + b);
 
 
 		assertThat(zipped.collect(Collectors.toList()).size(),equalTo(3));
@@ -418,7 +419,7 @@ public abstract class BaseSeqTest {
 
     @Test
     public void testShuffle() {
-        Supplier<ReactiveSeq<Integer>> s = () ->of(1, 2, 3);
+        Supplier<FutureStream<Integer>> s = () ->of(1, 2, 3);
 
         assertEquals(3, s.get().shuffle().toList().size());
         assertThat(s.get().shuffle().toList(), hasItems(1, 2, 3));
@@ -428,7 +429,7 @@ public abstract class BaseSeqTest {
     @Test
     public void testShuffleRandom() {
     	Random r = new Random();
-        Supplier<ReactiveSeq<Integer>> s = () ->of(1, 2, 3);
+        Supplier<FutureStream<Integer>> s = () ->of(1, 2, 3);
 
         assertEquals(3, s.get().shuffle(r).toList().size());
         assertThat(s.get().shuffle(r).toList(), hasItems(1, 2, 3));
@@ -449,7 +450,7 @@ public abstract class BaseSeqTest {
 
 	@Test
 	public void testDuplicate(){
-		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
+		 Tuple2<FutureStream<Integer>, FutureStream<Integer>> copies =of(1,2,3,4,5,6).duplicate();
 		 assertTrue(copies._1().anyMatch(i->i==2));
 		 assertTrue(copies._2().anyMatch(i->i==2));
 	}
@@ -542,7 +543,7 @@ public abstract class BaseSeqTest {
 
 	    @Test
 	    public void testSkipWhile() {
-	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<FutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertTrue(s.get().dropWhile(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
 
@@ -551,7 +552,7 @@ public abstract class BaseSeqTest {
 
 	    @Test
 	    public void testSkipUntil() {
-	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<FutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertEquals(asList(), s.get().dropUntil(i -> false).toList());
 	        assertTrue(s.get().dropUntil(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
@@ -565,7 +566,7 @@ public abstract class BaseSeqTest {
 	    }
         @Test
         public void testSkipUntilInclusive() {
-            Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
+            Supplier<FutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
             assertEquals(asList(), s.get().dropUntil(i -> false).toList());
             assertTrue(s.get().dropUntilInclusive(i -> true).toList().containsAll(asList(2, 3, 4, 5)));
@@ -580,7 +581,7 @@ public abstract class BaseSeqTest {
 
 	    @Test
 	    public void testLimitWhile() {
-	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
+	        Supplier<FutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertEquals(asList(), s.get().takeWhile(i -> false).toList());
 	        assertTrue( s.get().takeWhile(i -> i < 3).toList().size()!=5);
@@ -606,7 +607,7 @@ public abstract class BaseSeqTest {
 
 	    @Test
 	    public void testPartition() {
-	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+	        Supplier<FutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 	        assertEquals(6, s.get().partition(i -> i % 2 != 0)._1().toList().size() + s.get().partition(i -> i % 2 != 0)._2().toList().size());
 
@@ -621,11 +622,11 @@ public abstract class BaseSeqTest {
 	    public void testPartition100(){
 
 	    	for(int i=0;i<0;i++){
-		    	Supplier<ReactiveSeq<Tuple2<Integer,Integer>>> s = ()-> of(tuple(1, 0),tuple(2, 1), tuple(3, 2), tuple(4, 3), tuple(5, 4), tuple(6, 5));
+		    	Supplier<FutureStream<Tuple2<Integer,Integer>>> s = ()-> of(tuple(1, 0),tuple(2, 1), tuple(3, 2), tuple(4, 3), tuple(5, 4), tuple(6, 5));
 
-		    	Tuple2<ReactiveSeq<Tuple2<Integer, Integer>>, ReactiveSeq<Tuple2<Integer, Integer>>> tuple = s.get().partition(t -> t._2() < 3);
+		    	Tuple2<FutureStream<Tuple2<Integer, Integer>>, FutureStream<Tuple2<Integer, Integer>>> tuple = s.get().partition(t -> t._2() < 3);
 
-		    	Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t2 = tuple.transform((v1, v2) -> Tuple.<ReactiveSeq<Integer>, ReactiveSeq<Integer>>tuple(
+		    	Tuple2<FutureStream<Integer>, FutureStream<Integer>> t2 = tuple.transform((v1, v2) -> Tuple.tuple(
 		                v1.map(t -> t._1()),
 		                v2.map(t -> t._1())
 		            ));
@@ -643,7 +644,7 @@ public abstract class BaseSeqTest {
 	@Test
 	public void testSplitAt() {
 		for (int i = 0; i < 1000; i++) {
-			Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+			Supplier<FutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 			assertEquals(asList(), s.get().splitAt(0)._1().toList());
 			assertTrue(s.get().splitAt(0)._2().toList().containsAll(
@@ -683,7 +684,7 @@ public abstract class BaseSeqTest {
 
 	    @Test
 	    public void testMinByMaxBy() {
-	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
+	        Supplier<FutureStream<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
 	        assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).orElse(-1));
 	        assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).orElse(-1));
@@ -698,7 +699,7 @@ public abstract class BaseSeqTest {
 	    @Test
 	    public void testFoldLeft() {
 	    	for(int i=0;i<100;i++){
-		        Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
+		        Supplier<FutureStream<String>> s = () -> of("a", "b", "c");
 
 		        assertTrue(s.get().foldLeft("", String::concat).contains("a"));
 		        assertTrue(s.get().foldLeft("", String::concat).contains("b"));
@@ -713,7 +714,7 @@ public abstract class BaseSeqTest {
 
 	    @Test
 	    public void testFoldRight(){
-	    	 	Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
+	    	 	Supplier<FutureStream<String>> s = () -> of("a", "b", "c");
 
 		        assertTrue(s.get().foldRight("", String::concat).contains("a"));
 		        assertTrue(s.get().foldRight("", String::concat).contains("b"));
@@ -723,7 +724,7 @@ public abstract class BaseSeqTest {
 
 	    @Test
 	    public void testFoldLeftStringBuilder() {
-	        Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
+	        Supplier<FutureStream<String>> s = () -> of("a", "b", "c");
 
 
 	        assertTrue(s.get().foldLeft(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("a"));
@@ -739,7 +740,7 @@ public abstract class BaseSeqTest {
 
 	    @Test
 	    public void testFoldRighttringBuilder() {
-	        Supplier<ReactiveSeq<String>> s = () -> of("a", "b", "c");
+	        Supplier<FutureStream<String>> s = () -> of("a", "b", "c");
 
 
 	        assertTrue(s.get().foldRight(new StringBuilder(), (t, u) -> u.append("-").append(t)).toString().contains("a"));

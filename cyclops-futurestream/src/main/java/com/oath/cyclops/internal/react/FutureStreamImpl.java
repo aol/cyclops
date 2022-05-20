@@ -1,10 +1,29 @@
 package com.oath.cyclops.internal.react;
 
-import java.util.Comparator;
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.adapters.QueueFactory;
+import com.oath.cyclops.internal.react.stream.LazyStreamWrapper;
+import com.oath.cyclops.react.async.subscription.Continueable;
+import com.oath.cyclops.react.async.subscription.Subscription;
+import com.oath.cyclops.react.collectors.lazy.BatchingCollector;
+import com.oath.cyclops.react.collectors.lazy.LazyResultConsumer;
+import com.oath.cyclops.react.collectors.lazy.MaxActive;
+import com.oath.cyclops.react.threads.ReactPool;
+import com.oath.cyclops.types.reactive.FutureStreamSynchronousPublisher;
+import cyclops.companion.Streams;
+import cyclops.function.Monoid;
+import cyclops.function.Reducer;
+import cyclops.futurestream.FutureStream;
+import cyclops.futurestream.LazyReact;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.With;
+import org.reactivestreams.Subscriber;
+
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
@@ -15,55 +34,28 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.internal.react.stream.LazyStreamWrapper;
-import com.oath.cyclops.react.async.subscription.Continueable;
-import com.oath.cyclops.react.async.subscription.Subscription;
-import com.oath.cyclops.react.collectors.lazy.BatchingCollector;
-import com.oath.cyclops.react.collectors.lazy.LazyResultConsumer;
-import com.oath.cyclops.react.collectors.lazy.MaxActive;
-import com.oath.cyclops.react.threads.ReactPool;
-import com.oath.cyclops.types.reactive.FutureStreamSynchronousPublisher;
-import com.oath.cyclops.types.stream.Connectable;
-import com.oath.cyclops.types.stream.PausableConnectable;
-import cyclops.companion.Streams;
-import cyclops.data.Seq;
-import cyclops.futurestream.FutureStream;
-
-import cyclops.function.Monoid;
-import cyclops.function.Reducer;
-import cyclops.futurestream.LazyReact;
-import cyclops.reactive.ReactiveSeq;
-import com.oath.cyclops.async.QueueFactories;
-import com.oath.cyclops.async.adapters.QueueFactory;
-
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.Wither;
-import org.reactivestreams.Subscriber;
-
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class FutureStreamImpl<U> implements FutureStream<U> {
 
-    @Wither
+    @With
     private final Optional<Consumer<Throwable>> errorHandler;
     private final LazyStreamWrapper<U> lastActive;
 
-    @Wither
+    @With
     private final Supplier<LazyResultConsumer<U>> lazyCollector;
-    @Wither
+    @With
     private final QueueFactory<U> queueFactory;
-    @Wither
+    @With
     private final LazyReact simpleReact;
-    @Wither
+    @With
     private final Continueable subscription;
     private final static ReactPool<LazyReact> pool = ReactPool.elasticPool(() -> new LazyReact(
                                                                                                Executors.newSingleThreadExecutor()));
-    @Wither
+    @With
     private final ConsumerHolder error;
-    @Wither
+    @With
     private final MaxActive maxActive;
 
     @AllArgsConstructor
@@ -97,7 +89,7 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
     @Override
     public void subscribe(Subscriber<? super U> s) {
         if(subscribed.compareAndSet(false,true))
-            FutureStream.super.subscribe(s);
+            new FutureStreamSynchronousPublisher(this).subscribe(s);
     }
 
     public FutureStreamImpl(final LazyReact lazyReact, final Supplier<Stream<U>> stream) {
@@ -122,7 +114,7 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
     }
 
 
-    @Override
+
     public void forwardErrors(final Consumer<Throwable> c) {
         error.forward = c;
     }
@@ -142,7 +134,7 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
         return block(collector);
     }
 
-    @Override
+
     public void close() {
 
     }
@@ -188,31 +180,14 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
     }
 
     /**
-     * Cancel the CompletableFutures in this stage of the stream
+     * Cancel the futures in this stage of the stream
      */
-    @Override
     public void cancel() {
         this.subscription.closeAll();
         //also need to mark cancelled =true and check during toX
     }
 
-    @Override
-    public Connectable<U> schedule(final String cron, final ScheduledExecutorService ex) {
-        return ReactiveSeq.<U> fromStream(this.stream())
-                          .schedule(cron, ex);
-    }
 
-    @Override
-    public Connectable<U> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
-        return ReactiveSeq.<U> fromStream(this.stream())
-                          .scheduleFixedDelay(delay, ex);
-    }
-
-    @Override
-    public Connectable<U> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
-        return ReactiveSeq.<U> fromStream(this.stream())
-                          .scheduleFixedRate(rate, ex);
-    }
 
     @Override
     public <T> FutureStream<T> unitIterable(final Iterable<T> it) {
@@ -230,37 +205,13 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
         return fromStream(stream().prepend(value));
     }
 
-    @Override
-    public <T> FutureStream<T> unit(final T unit) {
-        return fromStream(stream().unit(unit));
-    }
-
-    @Override
-    public Connectable<U> hotStream(final Executor e) {
-        return Streams.hotStream(this, e);
-    }
-
-    @Override
-    public Connectable<U> primedHotStream(final Executor e) {
-        return Streams.primedHotStream(this, e);
-    }
-
-    @Override
-    public PausableConnectable<U> pausableHotStream(final Executor e) {
-        return Streams.pausableHotStream(this, e);
-    }
-
-    @Override
-    public PausableConnectable<U> primedPausableHotStream(final Executor e) {
-        return Streams.primedPausableHotStream(this, e);
-    }
 
 
 
-    @Override
-    public <R> R fold(Function<? super ReactiveSeq<U>, ? extends R> sync, Function<? super ReactiveSeq<U>, ? extends R> reactiveStreams, Function<? super ReactiveSeq<U>, ? extends R> asyncNoBackPressure) {
-        return sync.apply(this);
-    }
+
+
+
+
 
 
 
@@ -271,47 +222,29 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
 
     @Override
     public <T> T foldMapRight(final Reducer<T,U> reducer) {
-        return reducer.foldMap(reverse());
+        return reducer.foldMap(reverse().stream());
 
     }
 
     @Override
     public <R> R foldMap(final Reducer<R,U> reducer) {
-        return reducer.foldMap(this);
+        return reducer.foldMap(stream());
     }
 
     @Override
     public <R> R foldMap(final Function<? super U, ? extends R> mapper, final Monoid<R> reducer) {
 
         return Reducer.fromMonoid(reducer,(U a)-> (R)mapper.apply(a))
-                      .foldMap(this);
+                      .foldMap(stream());
     }
 
-    @Override
-    public U reduce(final Monoid<U> reducer) {
-        return reduce(reducer.zero(),reducer);
-    }
-
-
-    @Override
-    public Seq<U> reduce(final Iterable<? extends Monoid<U>> reducers) {
-        return Streams.reduce(this, reducers);
-    }
 
     @Override
     public U foldRight(final U identity, final BinaryOperator<U> accumulator) {
         return reverse().foldLeft(identity, accumulator);
     }
 
-    @Override
-    public Optional<U> min(final Comparator<? super U> comparator) {
-        return Streams.min(this, comparator);
-    }
 
-    @Override
-    public Optional<U> max(final Comparator<? super U> comparator) {
-        return Streams.max(this, comparator);
-    }
 
     @Override
     public long count() {
@@ -335,7 +268,7 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
     @Override
     public boolean xMatch(final int num, final Predicate<? super U> c) {
 
-        return Streams.xMatch(this, num, c);
+        return Streams.xMatch(stream(), num, c);
     }
 
     @Override
@@ -345,17 +278,17 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
 
     @Override
     public final String join() {
-        return Streams.join(this);
+        return Streams.join(stream());
     }
 
     @Override
     public final String join(final String sep) {
-        return Streams.join(this, sep);
+        return Streams.join(stream(), sep);
     }
 
     @Override
     public String join(final String sep, final String start, final String end) {
-        return Streams.join(this, sep, start, end);
+        return Streams.join(stream(), sep, start, end);
     }
 
 

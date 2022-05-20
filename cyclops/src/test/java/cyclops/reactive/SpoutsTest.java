@@ -9,7 +9,6 @@ import com.oath.cyclops.async.adapters.Topic;
 
 import cyclops.data.Seq;
 import cyclops.function.Effect;
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
@@ -804,7 +803,7 @@ public class SpoutsTest {
 
     @Test
     public void ambTest(){
-        assertThat(Spouts.of(1,2,3).ambWith(Flux.just(10,20,30)).toList(), Matchers.isOneOf(Arrays.asList(1,2,3),Arrays.asList(10,20,30)));
+        assertThat(Spouts.of(1,2,3).firstEmitting(Flux.just(10,20,30)).toList(), Matchers.isOneOf(Arrays.asList(1,2,3),Arrays.asList(10,20,30)));
     }
 
 

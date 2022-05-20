@@ -172,13 +172,13 @@ public  class LFSNoOrderTest {
 
 	@Test
 	public void testDuplicate(){
-		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
+		 Tuple2<FutureStream<Integer>, FutureStream<Integer>> copies =of(1,2,3,4,5,6).duplicate();
 		 assertTrue(copies._1().anyMatch(i->i==2));
 		 assertTrue(copies._2().anyMatch(i->i==2));
 	}
 	@Test
 	public void testTriplicate(){
-		 Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).triplicate();
+		 var copies =of(1,2,3,4,5,6).triplicate();
 		 assertTrue(copies._1().anyMatch(i->i==2));
 		 assertTrue(copies._2().anyMatch(i->i==2));
 		 assertTrue(copies._3().anyMatch(i->i==2));
@@ -186,7 +186,7 @@ public  class LFSNoOrderTest {
 
 	@Test
 	public void testQuadriplicate(){
-		 Tuple4<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
+		 var copies =of(1,2,3,4,5,6).quadruplicate();
 		 assertTrue(copies._1().anyMatch(i->i==2));
 		 assertTrue(copies._2().anyMatch(i->i==2));
 		 assertTrue(copies._3().anyMatch(i->i==2));
@@ -195,7 +195,7 @@ public  class LFSNoOrderTest {
 
 	@Test
 	public void testDuplicateFilter(){
-		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
+		var copies =of(1,2,3,4,5,6).duplicate();
 		 assertTrue(copies._1().filter(i->i%2==0).toList().size()==3);
 		 assertTrue(copies._2().filter(i->i%2==0).toList().size()==3);
 	}
@@ -216,7 +216,7 @@ public  class LFSNoOrderTest {
 	}
 	@Test
 	public void testDuplicateLimit(){
-		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
+		 var copies =of(1,2,3,4,5,6).duplicate();
 		 assertTrue(copies._1().limit(3).toList().size()==3);
 		 assertTrue(copies._2().limit(3).toList().size()==3);
 	}
@@ -391,24 +391,6 @@ public  class LFSNoOrderTest {
 		        assertEquals(3, (int) s.get().map(str->str.length())
 		        					.foldRight(0, (t, u) -> u + t));
 	    }
-
-
-	    //tests converted from lazy-seq suite
-	    @Test
-		public void flattenEmpty() throws Exception {
-				assertTrue(this.<Stream<Integer>>of()
-				                           .to(FutureStream::flatten).toList().isEmpty());
-		}
-
-		@Test
-		public void flatten() throws Exception {
-			assertThat(of(Stream.of(1,2)).to(FutureStream::flatten).toList().size(),equalTo(asList(1,  2).size()));
-		}
-
-
-
-
-
-
+        
 
 }

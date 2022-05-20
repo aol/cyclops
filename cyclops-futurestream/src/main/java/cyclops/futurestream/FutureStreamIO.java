@@ -34,13 +34,13 @@ public final class FutureStreamIO<T> implements IO<T> {
     }
 
     public static <T> IO<T> of(Supplier<? extends T> value){
-        return new FutureStreamIO<T>(FutureStream.narrow(LazyReact.sequentialBuilder().ofAsync(value)));
+        return new FutureStreamIO<T>(LazyReact.sequentialBuilder().ofAsync(value));
     }
     public static <T> IO<T> of(Supplier<? extends T> value, Executor executor){
-        return new FutureStreamIO<T>(FutureStream.narrow(new LazyReact(executor).ofAsync(value)));
+        return new FutureStreamIO<T>(new LazyReact(executor).ofAsync(value));
     }
     public static <T> IO<T> of(Executor executor, Supplier<T>... values){
-        return new FutureStreamIO<T>(FutureStream.narrow(new LazyReact(values.length,executor).ofAsync(values)));
+        return new FutureStreamIO<T>(new LazyReact(values.length,executor).ofAsync(values));
     }
     public static <T> IO<T> of(Future<T> flowable){
         return new FutureStreamIO<>(FutureStream.builder().from(flowable.getFuture()));
@@ -105,7 +105,7 @@ public final class FutureStreamIO<T> implements IO<T> {
 
     @Override
     public ReactiveSeq<T> stream() {
-        return flowable;
+        return flowable.stream();
     }
 
     @Override

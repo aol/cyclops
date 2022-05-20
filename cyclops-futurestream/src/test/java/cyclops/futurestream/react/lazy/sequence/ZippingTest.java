@@ -143,7 +143,7 @@ public class ZippingTest {
 	public void zipEmpty() throws Exception {
 
 
-		final ReactiveSeq<Integer> zipped = empty.zip(ReactiveSeq.<Integer>of(), (a, b) -> a + b);
+		final FutureStream<Integer> zipped = empty.zip(ReactiveSeq.<Integer>of(), (a, b) -> a + b);
 		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
 	}
 
@@ -152,7 +152,7 @@ public class ZippingTest {
 
 
 
-		final ReactiveSeq<Integer> zipped = empty.zip(nonEmpty, (a, b) -> a + b);
+		final FutureStream<Integer> zipped = empty.zip(nonEmpty, (a, b) -> a + b);
 		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
 	}
 
@@ -160,7 +160,7 @@ public class ZippingTest {
 	public void shouldReturnEmptySeqWhenZipNonEmptyWithEmpty() throws Exception {
 
 
-		final ReactiveSeq<Integer> zipped = nonEmpty.zip(empty, (a, b) -> a + b);
+		final FutureStream<Integer> zipped = nonEmpty.zip(empty, (a, b) -> a + b);
 
 
 		assertTrue(zipped.collect(Collectors.toList()).isEmpty());
@@ -169,11 +169,11 @@ public class ZippingTest {
 	@Test
 	public void shouldZipTwoFiniteSequencesOfSameSize() throws Exception {
 
-		final ReactiveSeq<String> first = DuplicationTest.of("A", "B", "C");
-		final ReactiveSeq<Integer> second = DuplicationTest.of(1, 2, 3);
+		final FutureStream<String> first = DuplicationTest.of("A", "B", "C");
+		final FutureStream<Integer> second = DuplicationTest.of(1, 2, 3);
 
 
-		final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
+		final FutureStream<String> zipped = first.zip(second, (a, b) -> a + b);
 
 
 		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
@@ -183,20 +183,20 @@ public class ZippingTest {
 
 	@Test
 	public void shouldTrimSecondFixedSeqIfLonger() throws Exception {
-		final ReactiveSeq<String> first = DuplicationTest.of("A", "B", "C");
-		final ReactiveSeq<Integer> second = DuplicationTest.of(1, 2, 3, 4);
+		final FutureStream<String> first = DuplicationTest.of("A", "B", "C");
+		final FutureStream<Integer> second = DuplicationTest.of(1, 2, 3, 4);
 
 
-		final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
+		final FutureStream<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
 	}
 
 	@Test
 	public void shouldTrimFirstFixedSeqIfLonger() throws Exception {
-		final ReactiveSeq<String> first = DuplicationTest.of("A", "B", "C","D");
-		final ReactiveSeq<Integer> second = DuplicationTest.of(1, 2, 3);
-		final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
+		final FutureStream<String> first = DuplicationTest.of("A", "B", "C","D");
+		final FutureStream<Integer> second = DuplicationTest.of(1, 2, 3);
+		final FutureStream<String> zipped = first.zip(second, (a, b) -> a + b);
 
 
 		assertThat(zipped.collect(Collectors.toList()).size(),equalTo(3));
@@ -217,20 +217,20 @@ public class ZippingTest {
 
 	@Test
 	public void shouldTrimSecondFixedSeqIfLongerStream() throws Exception {
-		final ReactiveSeq<String> first = DuplicationTest.of("A", "B", "C");
-		final ReactiveSeq<Integer> second = DuplicationTest.of(1, 2, 3, 4);
+		final FutureStream<String> first = DuplicationTest.of("A", "B", "C");
+		final FutureStream<Integer> second = DuplicationTest.of(1, 2, 3, 4);
 
 
-		final ReactiveSeq<String> zipped = first.zipWithStream(second, (a, b) -> a + b);
+		final FutureStream<String> zipped = first.zipWithStream(second, (a, b) -> a + b);
 
 		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
 	}
 
 	@Test
 	public void shouldTrimFirstFixedSeqIfLongerStream() throws Exception {
-		final ReactiveSeq<String> first = DuplicationTest.of("A", "B", "C","D");
-		final ReactiveSeq<Integer> second = DuplicationTest.of(1, 2, 3);
-		final ReactiveSeq<String> zipped = first.zipWithStream(second, (a, b) -> a + b);
+		final FutureStream<String> first = DuplicationTest.of("A", "B", "C","D");
+		final FutureStream<Integer> second = DuplicationTest.of(1, 2, 3);
+		final FutureStream<String> zipped = first.zipWithStream(second, (a, b) -> a + b);
 
 
 		assertThat(zipped.collect(Collectors.toList()).size(),equalTo(3));
@@ -250,20 +250,20 @@ public class ZippingTest {
 
 	@Test
 	public void shouldTrimSecondFixedSeqIfLongerSequence() throws Exception {
-		final ReactiveSeq<String> first = DuplicationTest.of("A", "B", "C");
-		final ReactiveSeq<Integer> second = DuplicationTest.of(1, 2, 3, 4);
+		final FutureStream<String> first = DuplicationTest.of("A", "B", "C");
+		final FutureStream<Integer> second = DuplicationTest.of(1, 2, 3, 4);
 
 
-		final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
+		final FutureStream<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		assertThat(zipped.collect(Collectors.toList()).size(),is(3));
 	}
 
 	@Test
 	public void shouldTrimFirstFixedSeqIfLongerSequence() throws Exception {
-		final ReactiveSeq<String> first = DuplicationTest.of("A", "B", "C","D");
-		final ReactiveSeq<Integer> second = DuplicationTest.of(1, 2, 3);
-		final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
+		final FutureStream<String> first = DuplicationTest.of("A", "B", "C","D");
+		final FutureStream<Integer> second = DuplicationTest.of(1, 2, 3);
+		final FutureStream<String> zipped = first.zip(second, (a, b) -> a + b);
 
 
 		assertThat(zipped.collect(Collectors.toList()).size(),equalTo(3));
@@ -282,9 +282,9 @@ public class ZippingTest {
 	@Test
 	public void testUnzip() {
 
-		Supplier<ReactiveSeq<Tuple2<Integer, String>>> s = () -> DuplicationTest.of(Tuple.tuple(1, "a"), Tuple.tuple(2, "b"), Tuple.tuple(3, "c"));
+		Supplier<FutureStream<Tuple2<Integer, String>>> s = () -> DuplicationTest.of(Tuple.tuple(1, "a"), Tuple.tuple(2, "b"), Tuple.tuple(3, "c"));
 
-		Tuple2<ReactiveSeq<Integer>, ReactiveSeq<String>> u1 = ReactiveSeq.unzip(s.get());
+		Tuple2<ReactiveSeq<Integer>, ReactiveSeq<String>> u1 = ReactiveSeq.unzip(s.get().stream());
 
 		assertTrue(u1._1().toList().containsAll(Arrays.asList(1, 2, 3)));
 
@@ -295,9 +295,9 @@ public class ZippingTest {
 	@Test
 	public void testUnzipWithLimits() {
 
-		Supplier<ReactiveSeq<Tuple2<Integer, String>>> s = () -> DuplicationTest.of(Tuple.tuple(1, "a"), Tuple.tuple(2, "b"), Tuple.tuple(3, "c"));
+		Supplier<FutureStream<Tuple2<Integer, String>>> s = () -> DuplicationTest.of(Tuple.tuple(1, "a"), Tuple.tuple(2, "b"), Tuple.tuple(3, "c"));
 
-		Tuple2<ReactiveSeq<Integer>, ReactiveSeq<String>> u1 = ReactiveSeq.unzip(s.get());
+		Tuple2<ReactiveSeq<Integer>, ReactiveSeq<String>> u1 = ReactiveSeq.unzip(s.get().stream());
 
 		assertTrue(u1._1().limit(2).toList().containsAll(Arrays.asList(1, 2)));
 
@@ -308,9 +308,9 @@ public class ZippingTest {
 	@Test
 	public void testUnzip3WithLimits() {
 
-		Supplier<ReactiveSeq<Tuple3<Integer, String, Long>>> s = () -> DuplicationTest.of(new Tuple3(1, "a", 2l), new Tuple3(2, "b", 3l), new Tuple3(3, "c", 4l));
+		Supplier<FutureStream<Tuple3<Integer, String, Long>>> s = () -> DuplicationTest.of(new Tuple3(1, "a", 2l), new Tuple3(2, "b", 3l), new Tuple3(3, "c", 4l));
 
-		Tuple3<ReactiveSeq<Integer>, ReactiveSeq<String>, ReactiveSeq<Long>> u1 = ReactiveSeq.unzip3(s.get());
+		Tuple3<ReactiveSeq<Integer>, ReactiveSeq<String>, ReactiveSeq<Long>> u1 = ReactiveSeq.unzip3(s.get().stream());
 
 		assertTrue(u1._1().limit(1).toList().containsAll(Arrays.asList(1)));
 
@@ -322,9 +322,9 @@ public class ZippingTest {
 	@Test
 	public void testUnzip3() {
 
-		Supplier<ReactiveSeq<Tuple3<Integer, String, Long>>> s = () -> DuplicationTest.of(new Tuple3(1, "a", 2l), new Tuple3(2, "b", 3l), new Tuple3(3, "c", 4l));
+		Supplier<FutureStream<Tuple3<Integer, String, Long>>> s = () -> DuplicationTest.of(new Tuple3(1, "a", 2l), new Tuple3(2, "b", 3l), new Tuple3(3, "c", 4l));
 
-		Tuple3<ReactiveSeq<Integer>, ReactiveSeq<String>, ReactiveSeq<Long>> u1 = ReactiveSeq.unzip3(s.get());
+		Tuple3<ReactiveSeq<Integer>, ReactiveSeq<String>, ReactiveSeq<Long>> u1 = ReactiveSeq.unzip3(s.get().stream());
 
 		assertTrue(u1._1().toList().containsAll(Arrays.asList(1, 2, 3)));
 
@@ -336,10 +336,10 @@ public class ZippingTest {
 	@Test
 	public void testUnzip4() {
 
-		Supplier<ReactiveSeq<Tuple4<Integer, String, Long, Character>>> s = () -> DuplicationTest.of(new Tuple4(1, "a", 2l, 'z'), new Tuple4(2, "b", 3l, 'y'), new Tuple4(3, "c",
+		Supplier<FutureStream<Tuple4<Integer, String, Long, Character>>> s = () -> DuplicationTest.of(new Tuple4(1, "a", 2l, 'z'), new Tuple4(2, "b", 3l, 'y'), new Tuple4(3, "c",
 				4l, 'x'));
 
-		Tuple4<ReactiveSeq<Integer>, ReactiveSeq<String>, ReactiveSeq<Long>, ReactiveSeq<Character>> u1 = ReactiveSeq.unzip4(s.get());
+		Tuple4<ReactiveSeq<Integer>, ReactiveSeq<String>, ReactiveSeq<Long>, ReactiveSeq<Character>> u1 = ReactiveSeq.unzip4(s.get().stream());
 
 		assertTrue(u1._1().toList().containsAll(Arrays.asList(1, 2, 3)));
 
@@ -353,10 +353,10 @@ public class ZippingTest {
 	@Test
 	public void testUnzip4WithLimits() {
 
-		Supplier<ReactiveSeq<Tuple4<Integer, String, Long, Character>>> s = () -> DuplicationTest.of(new Tuple4(1, "a", 2l, 'z'), new Tuple4(2, "b", 3l, 'y'), new Tuple4(3, "c",
+		Supplier<FutureStream<Tuple4<Integer, String, Long, Character>>> s = () -> DuplicationTest.of(new Tuple4(1, "a", 2l, 'z'), new Tuple4(2, "b", 3l, 'y'), new Tuple4(3, "c",
 				4l, 'x'));
 
-		Tuple4<ReactiveSeq<Integer>, ReactiveSeq<String>, ReactiveSeq<Long>, ReactiveSeq<Character>> u1 = ReactiveSeq.unzip4(s.get());
+		Tuple4<ReactiveSeq<Integer>, ReactiveSeq<String>, ReactiveSeq<Long>, ReactiveSeq<Character>> u1 = ReactiveSeq.unzip4(s.get().stream());
 
 		assertTrue(u1._1().limit(1).toList().containsAll(Arrays.asList(1)));
 
