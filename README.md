@@ -1,11 +1,10 @@
-# Getting Cyclops X (10)
+# Getting Cyclops 17 
 
-* The latest version is [cyclops:10.4.0](http://mvnrepository.com/artifact/com.oath.cyclops/cyclops/10.4.0)
+* The latest version is 
 
 
-* Stackoverflow tag [cyclops-react](http://stackoverflow.com/search?q=cyclops-react)
 
-* [Documentation](https://github.com/aol/cyclops/wiki) (work in progress for Cyclops X)
+* [Documentation](https://github.com/aol/cyclops/wiki) (legacy documentation)
 
 * [Integration modules](https://github.com/aol/cyclops-integration)
 
@@ -43,11 +42,6 @@
 
 * [cyclops](https://github.com/aol/cyclops-react/tree/master/cyclops) - Persistent data structures and control types
 * [cyclops-futurestream](https://github.com/aol/cyclops-react/tree/master/cyclops-futurestream) - Parallel asynchronous streaming
-* [cyclops-reactive-collections](https://github.com/aol/cyclops-react/tree/master/cyclops-reactive-collections) - Fast, non-blocking, asynchronous extensions for JDK and Persistent Collections
-* [cyclops-anyM](https://github.com/aol/cyclops-react/tree/master/cyclops-anym) - Higher kinded abstractions for working with any Java Monad type.
-* [cyclops-pure](https://github.com/aol/cyclops-react/tree/master/cyclops-pure) - Higher kinded type classes for pure functional programming in Java
-* [cyclops-reactor-integration](https://github.com/aol/cyclops-react/tree/master/cyclops-reactor-integration) - Reactive collections and AnyM integrations with Reactor.
-* [cyclops-rxjava2-integration](https://github.com/aol/cyclops-react/tree/master/cyclops-rxjava2-integration) - Reactive collections and AnyM integrations with Rx Java 2.
 * [cyclops-jackson-integration](https://github.com/aol/cyclops-react/tree/master/cyclops-jackson) - Jackson databindings for Cyclops persistent data structures and control types.
 
 

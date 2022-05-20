@@ -25,6 +25,8 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+*.hprof
+**/*.hprof
 
 /build/
 /bin/

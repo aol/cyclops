@@ -45,7 +45,6 @@ new LazyReact(100,100).generate(()->"data") //100 active tasks, 100 threads
 | FutureStream     | Asynchronous and parallel stream             | Lazy, async, parallel, Reactive                 |
 | SimpleReact     | Asynchronous bulk operations on Futures            | Eager async                 |
 | LazyReact     | Builder for FutureStreams           |                 |
-| Pipes    | Event bus for managing data transfer via Adapters to connected data structures           |   Async              |
 
 
 ## cyclops.stream

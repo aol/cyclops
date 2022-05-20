@@ -1,4 +1,4 @@
-# Cyclops : Core functional platform for Java 8 and above
+# Cyclops : Core functional platform for Java 17 and above
 
 Cyclops core consists of the following features
 
@@ -458,8 +458,6 @@ ReactiveSeq<Integer> seq = Observables.of(1,2,3)
 |------|-------------|-----------------|
 | Spouts     | Creational factory methods for push based Streams with optional non-blocking back pressure (via reactive-streams).              | Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator fusion                |
 | ReactiveSeq     | Synchronous sequential stream, extends JDK Stream interface. Custom Stream faster engine. Streams are replayable.              | Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator fusion                |
-| Streamable     | Capturing and caching replayable Stream type              | Lazy, caching                |
-| Generator     | Kotlinesque Sequence Generator              |             |
 
 
 ## com.oath.cyclops.async
